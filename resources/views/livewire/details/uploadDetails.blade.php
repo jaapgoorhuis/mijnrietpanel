@@ -9,6 +9,7 @@
             </li>
 
             <li class="inline-flex items-center">
+                <i class="fa-solid fa-angle-right"></i>
                 <a href="/details" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
                     Details
                 </a>
