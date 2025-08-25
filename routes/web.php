@@ -3,9 +3,9 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', [AuthenticatedSessionController::class, 'create'])
-    ->name('login');
+Route::get('/', function () {
+    return redirect('/login');
+});
 
 Route::get('/dashboard', function () {
 
