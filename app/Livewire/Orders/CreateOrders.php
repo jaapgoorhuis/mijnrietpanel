@@ -188,7 +188,7 @@ class CreateOrders extends Component
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
 
-        Mail::to(env('MAIL_FROM_ADDRESS'))->send(new sendOrder($order));
+        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
 
         session()->flash('success','De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen');
         return $this->redirect('/orders', navigate: true);
