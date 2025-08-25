@@ -164,7 +164,7 @@
                                 Vierkante meters: <strong>{{$this->m2[$index]}} m²</strong>
                             </div>
                             <br/><br/><br/>
-                            <div style="background-image: url('/storage/images/rietpanel_panel.png');" class="mb-[30px] relative bg-contain bg-no-repeat bg-center w-full h-[75px] sm:h-[100px] md:h-[120px] lg:h-[140px] xl:h-[160px]">
+                            <div style="background-image: url('/public/storage/images/rietpanel_panel.png');" class="mb-[30px] relative bg-contain bg-no-repeat bg-center w-full h-[75px] sm:h-[100px] md:h-[120px] lg:h-[140px] xl:h-[160px]">
 
                                 <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px] sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px] text-[11px] md:text-[15px]">
                                    <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
