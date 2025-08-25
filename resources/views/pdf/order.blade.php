@@ -21,7 +21,8 @@
     <table class="w-full">
         <tr>
             <td class="w-half">
-                <div>Order #: {{$order->order_id}}</div><br/><br/>
+                <div>Order #: {{$order->order_id}}</div>
+                <div>Order datum:   {{date("d-m-Y", strtotime($order->created_at))}}</div><br/><br/>
                 <div><h4>Order informatie:</h4></div><br/>
                 <div>Project naam: {{$order->project_naam}}</div>
                 @if($order->project_adres)
