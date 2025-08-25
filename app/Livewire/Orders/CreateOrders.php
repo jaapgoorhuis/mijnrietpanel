@@ -9,7 +9,7 @@ use App\Models\OrderTemplate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
-use Spatie\LaravelPdf\Facades\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CreateOrders extends Component
 {
@@ -186,7 +186,7 @@ class CreateOrders extends Component
 
         $orderLines = OrderLines::where('order_id', $order->id)->get();
 
-        Pdf::view('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
+        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
 
         Mail::to(env('MAIL_FROM_ADDRESS'))->send(new sendOrder($order));
 
