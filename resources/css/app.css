@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button.datatable-pagination-list-item-link {
+    border: 1px solid #d1d5db;
+    padding: 10px;
+}
+.datatable-container {
+    overflow:auto;
+}
+
+@media(max-width:700px) {
+    .datatable-container {
+        width: 600px;
+    }
+}
+
+@media(max-width:600px) {
+    .datatable-container {
+        width: 500px;
+    }
+}
+
+@media(max-width:500px) {
+    .datatable-container {
+        width: 400px;
+    }
+}
+
+@media(max-width:400px) {
+    .datatable-container {
+        width: 300px;
+    }
+}
+
+
+.datatable-active {
+    text-decoration: underline;
+    font-weight: bold;
+}
