@@ -9,10 +9,14 @@
             </li>
 
             <li class="inline-flex items-center">
-                <a href="/marketing" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    Marketing
-                </a>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        Marketing
+                    </a>
+                </div>
             </li>
+
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
