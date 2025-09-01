@@ -72,7 +72,7 @@ class EditUsers extends Component
             'email.email' => 'Het lijkt erop dat dit geen geldig email adres is',
             'bedrijfsnaam.required' => 'De bedrijfsnaam is een verplicht veld.',
             'status.required' => 'De status is een verplicht veld.',
-            'phone.required' => 'De status is een verplicht veld.',
+            'phone.required' => 'Het telefoonnummer is een verplicht veld.',
         ];
     }
 
