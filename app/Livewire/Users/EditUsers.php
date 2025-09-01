@@ -22,6 +22,8 @@ class EditUsers extends Component
     public $email;
 
     public $bedrijfsnaam;
+    public $phone;
+    public $is_admin;
 
     public $status;
     public $oldStatus;
@@ -34,6 +36,8 @@ class EditUsers extends Component
         $this->gebruikersnaam = $this->user->name;
         $this->email = $this->user->email;
         $this->bedrijfsnaam = $this->user->bedrijfsnaam;
+        $this->phone = $this->user->phone;
+        $this->is_admin = $this->user->is_admin;
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
 
@@ -54,6 +58,8 @@ class EditUsers extends Component
         'email' => 'required|email|unique:users,email,' . $this->user->id,
         'bedrijfsnaam' => 'required',
         'status' => 'required',
+        'is_admin' => 'required',
+        'phone' => 'required',
 
     ];
     }
@@ -66,6 +72,7 @@ class EditUsers extends Component
             'email.email' => 'Het lijkt erop dat dit geen geldig email adres is',
             'bedrijfsnaam.required' => 'De bedrijfsnaam is een verplicht veld.',
             'status.required' => 'De status is een verplicht veld.',
+            'phone.required' => 'De status is een verplicht veld.',
         ];
     }
 
@@ -77,7 +84,9 @@ class EditUsers extends Component
             'name' => $this->gebruikersnaam,
             'email' => $this->email,
             'bedrijfsnaam' => $this->bedrijfsnaam,
-            'is_active' => $this->status
+            'is_active' => $this->status,
+            'phone' => $this->phone,
+            'is_admin' => $this->is_admin
         ]);
 
         if($this->oldStatus != $this->status) {

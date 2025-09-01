@@ -63,22 +63,22 @@
                     {{$orderLine->merk_paneel}}
                 </td>
                 <td>
-                    {{$orderLine->fillCb}}
+                    {{$orderLine->fillCb}}mm
                 </td>
                 <td>
-                    {{$orderLine->fillLb}}
+                    {{$orderLine->fillLb}}mm
                 </td>
                 <td>
                     {{$orderLine->kerndikte}}
                 </td>
                 <td>
-                    {{$orderLine->fillTotaleLengte}}
+                    {{$orderLine->fillTotaleLengte}}mm
                 </td>
                 <td>
-                    {{$orderLine->m2}}
+                    {{$orderLine->m2}} m²
                 </td>
                 <td>
-                    {{$orderLine->aantal}}
+                    {{$orderLine->aantal}} stuks
                 </td>
             </tr>
         @endforeach
@@ -119,13 +119,13 @@
     }
     table.products th {
         color: #ffffff;
-        padding: 0.5rem;
+        padding:0.5rem;
     }
     table tr.items {
         background-color: #f9fafb;
     }
     table tr.items td {
-        padding: 0.5rem;
+        padding: 0.5rem 0.5rem 0.5rem 1rem;
     }
     .total {
         text-align: right;

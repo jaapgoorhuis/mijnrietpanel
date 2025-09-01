@@ -119,7 +119,10 @@ class CreateOrders extends Component
     protected $rules = [
         'project_naam' => 'required',
         'intaker' => 'required',
-
+        'totaleLengte.*' => 'required|numeric|min:1',
+        'aantal.*' => 'required|numeric|min:1',
+        'lb.*' => 'required|numeric|max:210',
+        'cb.*' => 'required|numeric|max:200'
     ];
 
     public function messages(): array
@@ -127,12 +130,17 @@ class CreateOrders extends Component
         return [
             'project_naam.required' => 'De projectnaam is een verplicht veld.',
             'intaker.required' => 'Vul aub uw naam in.',
+            'totaleLengte.*.min' => 'De lengte moet mimimaal 1mm zijn.',
+            'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
+            'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
+            'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
         ];
     }
 
     public function saveOrder() {
 
         $this->validate();
+
         $latestOrder = Order::orderBy('id', 'desc')->first();
 
         if($latestOrder) {
@@ -159,7 +167,7 @@ class CreateOrders extends Component
 
         foreach($this->orderLines as $index => $key) {
 
-            $rietkleur   = array_key_exists($index, $this->rietkleur)   ? $this->rietkleur[$index]   : 'Oude look';
+            $rietkleur   = array_key_exists($index, $this->rietkleur)   ? $this->rietkleur[$index]   : 'Old look';
             $toepassing  = array_key_exists($index, $this->toepassing)  ? $this->toepassing[$index]  : 'Wand';
             $merk_paneel = array_key_exists($index, $this->merk_paneel) ? $this->merk_paneel[$index] : 'Kingspan';
             $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';

@@ -49,13 +49,13 @@
                     </button>
 
                     @user
-                    <button wire:click="newOrder()" type="button" class="relative md:absolute right-0 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    <button wire:click="newOrder()" type="button" class="relative md:absolute right-0 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                         <i class="fa fa-plus hover:cursor-pointer"></i> Order aanmaken
                     </button>
                     @enduser
 
                     @admin
-                        <button wire:click="uploadOrderForm()" type="button" class="relative md:absolute right-0 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                        <button wire:click="uploadOrderForm()" type="button" class="relative md:absolute right-0 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                             <i class="fa-solid fa-upload"></i> Order formulier uploaden
                         </button>
                     @endadmin

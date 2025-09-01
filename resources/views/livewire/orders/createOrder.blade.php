@@ -75,8 +75,8 @@
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="rietkleur" class="text-gray-400">Rietkleur *</label>
                                 <select id="rietkleur" wire:model="rietkleur.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    <option value="oldlook">Oude look</option>
-                                    <option value="newlook">Nieuwe look</option>
+                                    <option value="Old look">Old look</option>
+                                    <option value="New look">New look</option>
                                 </select>
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6">
@@ -111,6 +111,7 @@
                                         </div>
                                     </label>
                                     <input type="number" min="0" max="210" wire:model="fillLb.{{$index}}" wire:keydown="updateLb({{$index}})" name="fillLb" id="fillLb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <div class="text-red-500">@error('lb.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillLb" class="text-gray-400">CB (max 200mm)
@@ -122,6 +123,7 @@
                                         </div>
                                     </label>
                                     <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
                                 </div>
                             </div>
 
@@ -136,6 +138,7 @@
                                         </div>
                                     </label>
                                     <input type="number" min="1" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillTotaleLengte" class="text-gray-400">Aantal panelen *
@@ -146,7 +149,10 @@
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" min="1" wire:change="updateM2({{$index}})" wire:keydown="updateM2({{$index}})" wire:model="aantal.{{$index}}"  name="aantal" id="aantal" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required /></div>
+                                    <input type="number" min="1" wire:change="updateM2({{$index}})" wire:keydown="updateM2({{$index}})" wire:model="aantal.{{$index}}"  name="aantal" id="aantal" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+
+                                    <div class="text-red-500">@error('aantal.'.$index) {{ $message }} @enderror</div>
+                                </div>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="kerndikte" class="text-gray-400">Kerndikte *</label>

@@ -62,12 +62,23 @@
                             </th>
                             <th>
                                 <span class="flex items-center">
+                                    Telefoonnummer:
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center">
                                     Bedrijfsnaam:
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center">
                                     Status:
+                                </span>
+                            </th>
+
+                            <th>
+                                <span class="flex items-center">
+                                    Type account:
                                 </span>
                             </th>
 
@@ -91,6 +102,9 @@
                                     {{$user->email}}
                                 </td>
                                 <td class="font-medium text-gray-900 whitespace-nowrap">
+                                    {{$user->phone}}
+                                </td>
+                                <td class="font-medium text-gray-900 whitespace-nowrap">
                                     {{$user->bedrijfsnaam}}
                                 </td>
 
@@ -99,6 +113,14 @@
                                         Actief
                                     @else
                                         Non actief
+                                    @endif
+                                </td>
+
+                                <td class="font-medium text-gray-900 whitespace-nowrap">
+                                    @if($user->is_admin)
+                                        Admin
+                                    @else
+                                        Gebruiker
                                     @endif
                                 </td>
                                 <td class="font-medium text-center text-lg text-gray-900 whitespace-nowrap">
