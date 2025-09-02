@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Mail::to(env('MAIL_FROM_ADDRESS'))->send(new sendNewCustomer($request->email));
+        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendNewCustomer($request->email));
 
 
         session()->flash('success','Uw aanvraag is succesvol doorgekomen. U krijgt een mail zodra uw account actief is');
