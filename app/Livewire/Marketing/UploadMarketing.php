@@ -72,6 +72,8 @@ class UploadMarketing extends Component
 
     public function removeMarketing($id)
     {
+        $file =  \App\Models\Marketing::where('id', $id)->first();
+        Storage::disk('public')->delete('marketing/'.$file->file_name);
         \App\Models\Marketing::where('id', $id)->delete();
         session()->flash('success', 'Het bestand is verwijderd.');
     }

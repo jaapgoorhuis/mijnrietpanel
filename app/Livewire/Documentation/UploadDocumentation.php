@@ -72,6 +72,8 @@ class UploadDocumentation extends Component
 
     public function removeDocumentation($id)
     {
+        $file = \App\Models\Documentation::where('id', $id)->first();
+        Storage::disk('public')->delete('documentation/'.$file->file_name);
         \App\Models\Documentation::where('id', $id)->delete();
         session()->flash('success', 'Het bestand is verwijderd.');
     }

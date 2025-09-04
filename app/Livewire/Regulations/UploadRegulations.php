@@ -73,6 +73,8 @@ class UploadRegulations extends Component
 
     public function removeRegulation($id)
     {
+        $file = Regulation::where('id', $id)->first();
+        Storage::disk('public')->delete('regulations/'.$file->file_name);
         Regulation::where('id', $id)->delete();
         session()->flash('success', 'Het bestand is verwijderd.');
     }

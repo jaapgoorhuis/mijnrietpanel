@@ -74,6 +74,9 @@ class UploadDetails extends Component
 
     public function removeDetail($id)
     {
+        $detail = Detail::where('id', $id)->first();
+        Storage::disk('public')->delete('details/'.$detail->file_name);
+
         Detail::where('id', $id)->delete();
         session()->flash('success', 'Het bestand is verwijderd.');
     }

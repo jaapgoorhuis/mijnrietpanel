@@ -72,6 +72,8 @@ class UploadPricelist extends Component
 
     public function removePricelist($id)
     {
+        $file = \App\Models\Pricelist::where('id', $id)->first();
+        Storage::disk('public')->delete('pricelist/'.$file->file_name);
         \App\Models\Pricelist::where('id', $id)->delete();
         session()->flash('success', 'Het bestand is verwijderd.');
     }
