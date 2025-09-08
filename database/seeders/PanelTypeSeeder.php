@@ -35,7 +35,7 @@ class PanelTypeSeeder extends Seeder
 
            ],
            [
-               'name' => '160mm',
+               'name' => '150mm',
 
            ],
        ]);

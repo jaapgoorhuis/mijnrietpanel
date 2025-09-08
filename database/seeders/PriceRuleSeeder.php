@@ -45,7 +45,7 @@ class PriceRuleSeeder extends Seeder
 
            ],
            [
-               'rule_name' => 'Paneel 160mm',
+               'rule_name' => 'Paneel 150mm',
                'panel_type' => '6',
                'price' => '65',
 
