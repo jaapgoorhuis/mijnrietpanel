@@ -110,7 +110,8 @@ class EditAccountRequests extends Component
             session()->flash('error','Dit bedrijf bestaat al.');
         }else {
             Company::create([
-                'bedrijfsnaam' => $this->bedrijfsnaam
+                'bedrijfsnaam' => $this->bedrijfsnaam,
+                'discount' => 0
             ]);
             session()->flash('success','Het bedrijf is toegevoegd.');
         }
