@@ -66,7 +66,7 @@ class EditCompanyUsers extends Component
     {
         return [
             'gebruikersnaam' => 'required',
-            'email' => 'required|email|unique:accountRequests,email,' . $this->user->id,
+            'email' => 'required|email|unique:users,email,' . $this->user->id,
             'bedrijfsnaam' => 'required',
             'status' => 'required',
             'is_admin' => 'required',
