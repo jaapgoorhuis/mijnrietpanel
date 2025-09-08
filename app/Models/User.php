@@ -17,6 +17,8 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected $table = 'users';
     protected $fillable = [
         'name',
         'email',
@@ -24,9 +26,12 @@ class User extends Authenticatable
         'is_admin',
         'bedrijfsnaam',
         'phone',
-
-
+        'bedrijf_id'
     ];
+
+    public function companys() {
+        return $this->belongsTo(Company::class, 'bedrijf_id', 'id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,4 +55,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }

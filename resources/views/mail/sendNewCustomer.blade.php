@@ -10,7 +10,7 @@
             <td>
                 <h2>Nieuw account aanvraag</h2><br/>
                 Er is een nieuw account aangevraagd met het emailadres: {{$email}}<br/>
-                Je kunt het account in https://mijn.rietpanel.nl/users activeren.<br/>
+                Je kunt het account in https://mijn.rietpanel.nl/accountrequests activeren en aan een bedrijf toe wijzen.<br/>
                 De gebruiker krijgt automatisch een mail als het account geactiveerd is<br/>
 
                 <br/><br/>

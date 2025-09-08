@@ -36,9 +36,25 @@ Route::middleware('auth')->group(function () {
 
     Route::get('pricelist', \App\Livewire\Pricelist\Pricelist::class)->name('pricelist');
     Route::get('pricelist/upload', \App\Livewire\Pricelist\UploadPricelist::class);
+    Route::get('/companys/{slug}/users/edit/{id}', \App\Livewire\Companys\EditCompanyUsers::class);
+    Route::get('/companys/{id}/users', \App\Livewire\Companys\CompanyUsers::class);
+    Route::get('/companys/pricerules', \App\Livewire\Companys\PriceRules\PriceRules::class);
+    Route::get('/companys/pricerules/create', \App\Livewire\Companys\PriceRules\CreatePriceRules::class);
+    Route::get('/companys/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditPriceRules::class);
+    Route::get('/companys/pricerules/remove/{id}', \App\Livewire\Companys\PriceRules\RemovePriceRules::class);
 
-    Route::get('/users', \App\Livewire\Users\Users::class)->name('users');
-    Route::get('user/edit/{id}', \App\Livewire\Users\EditUsers::class);
+
+    Route::get('/companys', \App\Livewire\Companys\Companys::class)->name('companys');
+    Route::get('/companys/create', \App\Livewire\Companys\CreateCompanys::class);
+    Route::get('/companys/edit/{id}', \App\Livewire\Companys\EditCompanys::class);
+    Route::get('/companys/remove/{id}', \App\Livewire\Companys\RemoveCompanys::class);
+
+    Route::get('/accountrequests', \App\Livewire\AccountRequests\AccountRequests::class)->name('accountrequests');
+    Route::get('/accountrequests/edit/{id}', \App\Livewire\AccountRequests\EditAccountRequests::class);
+
+    Route::get('/oldorder', function() {
+        return view('pdf.orderold');
+    });
 
 });
 

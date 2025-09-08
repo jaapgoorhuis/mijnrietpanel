@@ -32,8 +32,14 @@
                         </x-dropdown-link>
 
                         @admin
-                        <x-dropdown-link :href="route('users')">
-                            {{ __('Gebruikers') }}
+                        <x-dropdown-link :href="route('companys')">
+                            {{ __('Bedrijven') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
+                        <x-dropdown-link :href="route('accountrequests')">
+                            {{ __('Account verzoeken') }}
                         </x-dropdown-link>
                         @endadmin
                         <!-- Authentication -->
@@ -83,8 +89,14 @@
                 </x-responsive-nav-link>
 
                 @admin
-                <x-responsive-nav-link  :href="route('users')">
-                    {{ __('Gebruikers') }}
+                <x-responsive-nav-link  :href="route('companys')">
+                    {{ __('Bedrijven') }}
+                </x-responsive-nav-link>
+                @endadmin
+
+                @admin
+                <x-responsive-nav-link  :href="route('accountrequests')">
+                    {{ __('Account verzoeken') }}
                 </x-responsive-nav-link>
                 @endadmin
                 <!-- Authentication -->

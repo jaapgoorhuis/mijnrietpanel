@@ -1,70 +1,146 @@
+<!doctype html>
 <html lang="en">
 <head>
-    <title>Invoice</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Order</title>
+    <link rel="stylesheet" href="{{ asset('pdf.css') }}" type="text/css">
 </head>
 <body>
+<table class="w-full">
+    <tr>
+        <td class="w-half">
+            <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+        </td>
 
-<div class="px-2 py-8 max-w-xl mx-auto">
-    <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center">
-            <img src="https://rietpanel.nl/wp-content/uploads/2024/08/Logo-Rietpanel-PNG-1024x419.png" alt="Logo" class="h-14"/>
-        </div>
-        <div class="text-gray-700">
-            <div class="font-bold text-xl mb-2 uppercase">Order</div>
-            <div class="text-sm">Order datum: {{date("d-m-Y", strtotime($order->created_at))}}</div>
-            <div class="text-sm">order #: {{$order->order_id}}</div>
-        </div>
-    </div>
-    <div class="border-b-2 border-gray-300 pb-8 mb-8">
-        <h2 class="text-2xl font-bold mb-4">Order informatie:</h2>
-        <div class="text-gray-700 mb-2"><strong>Project naam:</strong> {{$order->project_naam}}</div>
-        @if($order->project_adres)
-            <div class="text-gray-700 mb-2"><strong>Project adres:</strong> {{$order->project_adres}}</div>
-        @endif
-        <div class="text-gray-700 mb-2"><strong>Bedrijfsnaam:</strong> Crewa</div>
-        <div class="text-gray-700 mb-2"><strong>Aangemaakt door:</strong> {{$order->intaker}}</div>
-    </div>
-    <table class="w-full text-left mb-8">
-        <thead>
+    </tr>
+</table>
+
+<div class="margin-top">
+    <table class="w-full">
         <tr>
-            <th class="text-gray-700 font-bold text-[12px]">Rietkleur</th>
-            <th class="text-gray-700 font-bold text-[12px]">Toepassing</th>
-            <th class="text-gray-700 font-bold text-[12px]">Merk paneel</th>
-            <th class="text-gray-700 font-bold text-[12px]">CB</th>
-            <th class="text-gray-700 font-bold text-[12px]">LB</th>
-            <th class="text-gray-700 font-bold text-[12px]">Kerndikte</th>
-            <th class="text-gray-700 font-bold text-[12px]">Totale lengte</th>
-            <th class="text-gray-700 font-bold text-[12px]">m²</th>
-            <th class="text-gray-700 font-bold text-[12px]">Aantal</th>
-        </thead>
-        <tbody>
-        @foreach($orderLines as $orderLine)
-        <tr>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->rietkleur}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->toepassing}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->merk_paneel}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->fillCb}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->fillLb}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->kerndikte}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->fillTotaleLengte}}</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->m2}} m²</td>
-            <td class="py-4 text-gray-700 text-[12px]">{{$orderLine->aantal}}</td>
+            <td class="w-half">
+                <div>Order #: test</div>
+                <div>Order datum:   test</div><br/><br/>
+                <div><h4>Order informatie:</h4></div><br/>
+                <div>Project naam: test</div>
+
+
+
+            </td>
+
         </tr>
-        @endforeach
-        </tbody>
     </table>
-
-    <div class="text-right">
-        <?php $totalM2 = 0?>
-        @foreach($order->orderLines as $orderLine)
-                <?php $totalM2 += $orderLine->m2;?>
-        @endforeach
-
-
-        Totaal vierkante meters: <strong>{{$totalM2}} m²</strong>
-    </div>
 </div>
 
+<div class="margin-top">
+    <table class="products">
+        <tr>
+            <th>Rietkleur</th>
+            <th>Toepassing</th>
+            <th>Merk paneel</th>
+            <th>CB</th>
+            <th>LB</th>
+            <th>Kerndikte</th>
+            <th>Totale lengte</th>
+            <th>m²</th>
+            <th>Aantal</th>
+        </tr>
+
+
+            <tr class="items">
+                <td>
+                    asd
+                </td>
+                <td>
+                  asd
+                </td>
+                <td>
+                   tre
+                </td>
+                <td>
+                   23mm
+                </td>
+                <td>
+                    23mm
+                </td>
+                <td>
+                   23
+                </td>
+                <td>
+                    23mm
+                </td>
+                <td>
+                   23 m²
+                </td>
+                <td>
+                  23 stuks
+                </td>
+            </tr>
+
+    </table>
+</div>
+
+<div class="total">
+
+    <table class="total-table">
+        <tr>
+            <th>Totaal m²</th>
+            <th>12123</th>
+        </tr>
+        <tr>
+            <th>Prijs:</th>
+            <th>134</th>
+        </tr>
+    </table>
+</div>
+<style>
+    h4 {
+        margin: 0;
+    }
+    .w-full {
+        width: 100%;
+    }
+    .w-half {
+        width: 50%;
+    }
+    .margin-top {
+        margin-top: 1.25rem;
+    }
+
+    table {
+        width: 100%;
+        border-spacing: 0;
+    }
+    table.products {
+        font-size: 0.875rem;
+    }
+    table.products tr {
+        background-color: black;
+    }
+    table.products th {
+        color: #ffffff;
+        padding:0.5rem;
+    }
+    table tr.items {
+        background-color: #f9fafb;
+    }
+    table tr.items td {
+        padding: 0.5rem 0.5rem 0.5rem 1rem;
+    }
+
+    table.total-table {
+        width:150px;
+        position: absolute;
+        right: 20px;
+    }
+    .total {
+        text-align: right;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+    }
+
+</style>
 </body>
 </html>

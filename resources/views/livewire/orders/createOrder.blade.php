@@ -75,16 +75,20 @@
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="rietkleur" class="text-gray-400">Rietkleur *</label>
                                 <select id="rietkleur" wire:model="rietkleur.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+
                                     <option value="Old look">Old look</option>
                                     <option value="New look">New look</option>
+
                                 </select>
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="toepassing" class="text-gray-400">Toepassing *</label>
                                     <select id="toepassing" wire:model="toepassing.{{$index}}" wire:change="updateBrands({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                        <option value="wand">Wand</option>
-                                        <option value="dak">Dak</option>
+
+                                            <option value="Dak">Dak</option>
+                                            <option value="Wand">Wand</option>
+
                                     </select>
                                 </div>
 
@@ -157,12 +161,9 @@
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="kerndikte" class="text-gray-400">Kerndikte *</label>
                                 <select id="kerndikte" wire:model="kerndikte.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    <option value="60mm">60mm</option>
-                                    <option value="80mm">80mm</option>
-                                    <option value="100mm">100mm</option>
-                                    <option value="120mm">120mm</option>
-                                    <option value="140mm">140mm</option>
-                                    <option value="160mm">160mm</option>
+                                    @foreach($this->panelTypes as $type)
+                                        <option value="{{$type->name}}">{{$type->name}}</option>
+                                    @endforeach
                                 </select>
                             </div>
 

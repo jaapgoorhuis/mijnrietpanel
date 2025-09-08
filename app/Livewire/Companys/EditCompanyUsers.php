@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Users;
+namespace App\Livewire\Companys;
 
-use App\Mail\sendOrder;
 use App\Mail\sendUpdatedUser;
+use App\Models\Company;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +12,14 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use function Spatie\LaravelPdf\Support\pdf;
 
-class EditUsers extends Component
+class EditCompanyUsers extends Component
 {
+    public $users;
+
+    public $company_id;
+
     public $user;
-    public $userId;
+    public $user_id;
 
     public $gebruikersnaam;
 
@@ -27,11 +31,19 @@ class EditUsers extends Component
 
     public $status;
     public $oldStatus;
+    public $companys;
 
+    public $company;
 
-    public function mount() {
-        $this->userId = Route::current()->parameter('id');
-        $this->user = User::where('id', $this->userId)->first();
+    public function mount($id,$slug) {
+
+        $this->company_id = $slug;
+        $this->user_id = $id;
+
+        $this->user = User::where('id', $this->user_id)->first();
+        $this->company = Company::where('id', $this->company_id)->first();
+
+        $this->companys = Company::get();
 
         $this->gebruikersnaam = $this->user->name;
         $this->email = $this->user->email;
@@ -40,28 +52,27 @@ class EditUsers extends Component
         $this->is_admin = $this->user->is_admin;
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
-
     }
-    public function render()
-    {
-        if(Auth::user()->is_admin) {
-            return view('livewire.users.editUsers');
-        } else {
-            return $this->redirect('/dashboard', navigate: true);
-        }
-    }
+     public function render()
+     {
+         if(Auth::user()->is_admin) {
+             return view('livewire.companys.editCompanyUser');
+         } else {
+             return $this->redirect('/dashboard', navigate: true);
+         }
+     }
 
     public function rules(): array
     {
         return [
-        'gebruikersnaam' => 'required',
-        'email' => 'required|email|unique:users,email,' . $this->user->id,
-        'bedrijfsnaam' => 'required',
-        'status' => 'required',
-        'is_admin' => 'required',
-        'phone' => 'required',
+            'gebruikersnaam' => 'required',
+            'email' => 'required|email|unique:accountRequests,email,' . $this->user->id,
+            'bedrijfsnaam' => 'required',
+            'status' => 'required',
+            'is_admin' => 'required',
+            'phone' => 'required',
 
-    ];
+        ];
     }
 
     public function messages(): array
@@ -76,11 +87,11 @@ class EditUsers extends Component
         ];
     }
 
-    public function updateUser($id) {
+    public function updateUser() {
         $this->validate($this->rules());
 
 
-        User::where('id', $id)->update([
+        User::where('id', $this->user_id)->update([
             'name' => $this->gebruikersnaam,
             'email' => $this->email,
             'bedrijfsnaam' => $this->bedrijfsnaam,
@@ -96,10 +107,12 @@ class EditUsers extends Component
             session()->flash('success','De gebruiker is aangepast');
         }
 
-        return $this->redirect('/users', navigate: true);
+
+
+        return $this->redirect('/companys/'.$this->company_id.'/users', navigate: true);
     }
 
     public function cancelEditUser() {
-        return $this->redirect('/users', navigate: true);
+        return $this->redirect('/companys/'.$this->company_id.'/users', navigate: true);
     }
 }

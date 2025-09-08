@@ -7,12 +7,32 @@
                     Mijn rietpanel
                 </a>
             </li>
-
-            <li class="inline-flex items-center">
-                <a href="/users" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    Gebruikers
-                </a>
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/companys" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
+                        Bedrijven
+                    </a>
+                </div>
             </li>
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2"> {{$company->bedrijfsnaam}}</p>
+                </div>
+            </li>
+
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/companys/{{$this->company_id}}/users" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
+                        Gebruikers
+                    </a>
+                </div>
+            </li>
+
 
             <li>
                 <div class="flex items-center">
@@ -60,7 +80,12 @@
                             </div>
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="gebruikersnaam" class="text-gray-400">Bedrijfsnaam</label>
-                                <input type="text" wire:model="bedrijfsnaam" name="bedrijfsnaam" id="bedrijfsnaam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <select id="status" wire:model="status" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                    @foreach($companys as $company)
+                                        <option @if($this->user->bedrijf_id == $company->id) selected @endif value="{{$company_id}}">{{$company->bedrijfsnaam}}</option>
+                                    @endforeach
+                                </select>
+
                                 <div class="text-red-500">@error('bedrijfsnaam') {{ $message }} @enderror</div>
                             </div>
                         </div>

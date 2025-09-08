@@ -3,9 +3,13 @@
 namespace App\Livewire\Orders;
 
 use App\Mail\sendOrder;
+use App\Models\Application;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderTemplate;
+use App\Models\PanelBrand;
+use App\Models\PanelLook;
+use App\Models\PanelType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -34,6 +38,11 @@ class CreateOrders extends Component
     public $cb = [];
     public $totaleLengte = [];
 
+    public $panelBrands;
+    public $panelTypes;
+    public $panelApplications;
+    public $panelLooks;
+
 
     public $brands = [];
 
@@ -44,8 +53,19 @@ class CreateOrders extends Component
 
     public $saved = FALSE;
 
+    public function mount() {
+        if(Auth::user()->bedrijf_id == 0) {
+            session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen orders plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
+            return $this->redirect('/orders', navigate: true);
+        }
+    }
+
     public function render()
     {
+
+        $this->panelTypes = PanelType::get();
+
+
         return view('livewire.orders.createOrder');
     }
 
@@ -111,9 +131,16 @@ class CreateOrders extends Component
     }
 
     public function removeOrderLine($index) {
-
         unset($this->orderLines[$index]);
+        unset($this->totaleLengte[$index]);
+        unset($this->aantal[$index]);
+        unset($this->lb[$index]);
+        unset($this->cb[$index]);
         $this->orderLines = array_values($this->orderLines);
+        $this->totaleLengte = array_values($this->totaleLengte);
+        $this->aantal = array_values($this->aantal);
+        $this->lb = array_values($this->lb);
+        $this->cb = array_values($this->cb);
     }
 
     protected $rules = [
@@ -138,7 +165,6 @@ class CreateOrders extends Component
     }
 
     public function saveOrder() {
-
         $this->validate();
 
         $latestOrder = Order::orderBy('id', 'desc')->first();

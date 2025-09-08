@@ -25,7 +25,12 @@ class Orders extends Component
     }
 
     public function newOrder() {
-        return $this->redirect('/orders/create', navigate: true);
+        if(Auth::user()->bedrijf_id == 0) {
+            session()->flash('error','Uw account is niet gekoppeld aan een bedrijf. Neem contact met rietpanel op om dit probleem te verhelpen.');
+            return $this->redirect('/orders', navigate: true);
+        }else {
+            return $this->redirect('/orders/create', navigate: true);
+        }
     }
 
     public function download() {

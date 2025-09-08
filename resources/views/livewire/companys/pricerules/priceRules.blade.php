@@ -10,7 +10,17 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Gebruikers</p>
+                    <a href="/companys" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
+                        Bedrijven
+                    </a>
+                </div>
+            </li>
+
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Prijsregels</p>
                 </div>
             </li>
         </ol>
@@ -40,98 +50,82 @@
         @endif
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
+                <button wire:click="newRule()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    <i class="fa fa-plus hover:cursor-pointer"></i> Regel aanmaken
+                </button>
 
                 <div class="grid">
-                    <table id="user-table">
+                    <table id="priceRule-table">
                         <thead>
                         <tr>
                             <th>
                                 <span class="flex items-center">
-                                    Gebruiker ID:
+                                    ID:
                                 </span>
                             </th>
                             <th>
-                                <span class="flex items-center">
-                                    Gebruikersnaam:
-                                </span>
+                                Regel:
                             </th>
+
+
                             <th>
-                                <span class="flex items-center">
-                                    E-mail:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Telefoonnummer:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Bedrijfsnaam:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Status:
-                                </span>
+                                Dikte:
                             </th>
 
                             <th>
-                                <span class="flex items-center">
-                                    Type account:
+                                Prijs:
+                            </th>
+
+
+                            <th class="text-center">
+                                <span >
+                                    Regel bewerken:
                                 </span>
                             </th>
 
-                            <th>
-                                <span class="flex items-center">
-                                    Bewerken:
+                            <th class="text-center">
+                                <span >
+                                  Regel verwijderen:
                                 </span>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($this->users as $user)
+                        @if($this->priceRules)
+                        @foreach($this->priceRules as $rule)
                             <tr>
                                 <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->id}}
+                                    {{$rule->id}}
                                 </td>
                                 <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->name}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->email}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->phone}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->bedrijfsnaam}}
+                                    {{$rule->rule_name}}
                                 </td>
 
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    @if($user->is_active)
-                                        Actief
-                                    @else
-                                        Non actief
-                                    @endif
-                                </td>
+
 
                                 <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    @if($user->is_admin)
-                                        Admin
-                                    @else
-                                        Gebruiker
-                                    @endif
+                                    {{$rule->PanelType->name}}
                                 </td>
-                                <td class="font-medium text-center text-lg text-gray-900 whitespace-nowrap">
-                                    <button wire:click="editUser({{$user->id}})" class="disabled:cursor-not-allowed text-orange-500">
-                                        <i class="fa-solid fa-user-pen"></i>
+
+
+                                <td class="font-medium text-gray-900 whitespace-nowrap">
+                                    € {{$rule->price}},- m²
+                                </td>
+                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
+                                    <button wire:click="editPriceRule({{$rule->id}})" class=" disabled:cursor-not-allowed text-orange-500">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
                                 </td>
 
 
+                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
+                                    <button wire:click="removePriceRule({{$rule->id}})" class="disabled:cursor-not-allowed text-red-500">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
+                        @endif
                         </tbody>
                     </table>
 
@@ -142,16 +136,15 @@
     </div>
 </div>
 <script>
-    if (document.getElementById("user-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new simpleDatatables.DataTable("#user-table", {
+    if (document.getElementById("priceRule-table") && typeof simpleDatatables.DataTable !== 'undefined') {
+        const dataTable = new simpleDatatables.DataTable("#priceRule-table", {
             searchable: true,
             fixedHeight:true,
-
             labels: {
                 placeholder: "Zoeken",
                 info: "",
-                noRows: 'Geen gebruikers gevonden',
-                noResults: "Geen gebruikers gevonden",
+                noRows: 'Geen prijsregels gevonden',
+                noResults: "Geen prijsregels gevonden",
             },
             sortable: false,
             perPageSelect: false

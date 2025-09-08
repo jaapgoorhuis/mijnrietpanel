@@ -28,7 +28,7 @@
                 @if($order->project_adres)
                     <div>Project adres: {{$order->project_adres}}</div>
                 @endif
-                <div>Bedrijfsnaam: {{$order->user->bedrijfsnaam}}</div>
+                <div>Bedrijfsnaam: {{$order->user->companys->bedrijfnaam}}</div>
                 <div>Aangemaakt door: {{$order->intaker}}</div>
 
             </td>
@@ -36,21 +36,27 @@
         </tr>
     </table>
 </div>
+<?php
+$company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
+
+
+?>
 
 <div class="margin-top">
     <table class="products">
         <tr>
             <th>Rietkleur</th>
             <th>Toepassing</th>
-            <th>Merk paneel</th>
+            <th>Merk</th>
             <th>CB</th>
             <th>LB</th>
             <th>Kerndikte</th>
-            <th>Totale lengte</th>
+            <th>Lengte</th>
             <th>m²</th>
             <th>Aantal</th>
+            <th>Prijs</th>
         </tr>
-
+        <?php $totalPrice= 0?>
         @foreach($orderLines as $orderLine)
             <tr class="items">
                 <td>
@@ -75,10 +81,21 @@
                     {{$orderLine->fillTotaleLengte}}mm
                 </td>
                 <td>
-                    {{$orderLine->m2}} m²
+                    {{$orderLine->m2}}m²
                 </td>
                 <td>
-                    {{$orderLine->aantal}} stuks
+                    {{$orderLine->aantal}}
+                </td>
+                <td>
+                    <?php
+                        $panelType = \App\Models\PanelType::where('name', $orderLine->kerndikte)->first();
+                        $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->first();
+
+                        $discount = $priceRule->price/100*$company->discount;
+                        $m2price = $priceRule->price - $discount;
+                        $totalPrice += $orderLine->m2 * $m2price;
+                    ?>
+                    €{{$orderLine->m2 * $m2price}},-
                 </td>
             </tr>
         @endforeach
@@ -91,7 +108,17 @@
             <?php $totalM2 += $orderLine->m2;?>
     @endforeach
 
-    Totale m²: {{$totalM2}}
+
+    <table class="total-table">
+        <tr>
+            <th style="text-align: left; line-height: 35px;">Totaal m²:</th>
+            <th style="line-height: 35px; text-align: left">{{$totalM2}} m²</th>
+        </tr>
+        <tr>
+            <th style="text-align: left">Prijs:</th>
+            <th style="text-align: left">€ {{$totalPrice}},-</th>
+        </tr>
+    </table>
 </div>
 <style>
     h4 {
@@ -105,6 +132,12 @@
     }
     .margin-top {
         margin-top: 1.25rem;
+    }
+
+    table.total-table {
+        width:150px;
+        position: absolute;
+        right: 0px;
     }
 
     table {

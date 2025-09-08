@@ -433,7 +433,7 @@ INSERT INTO `sessions` VALUES ('E5VQfoE8REcie3z3WXMxXUA54AjHLZlulOPwkRpX',1,'192
 UNLOCK TABLES;
 
 --
--- Table structure for table `users`
+-- Table structure for table `accountRequests`
 --
 
 DROP TABLE IF EXISTS `users`;
@@ -457,13 +457,13 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `accountRequests`
 --
 
 LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `accountRequests` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'Crewa','info@crewa.nl',NULL,'$2y$12$twWA6pp.lv794GAgMLZ3UutKuijPijzzKZd4WA9ytXdAR7tDeL6Te',1,'Crewa',1,NULL,'2025-08-25 04:26:32','2025-08-25 04:26:32');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+/*!40000 ALTER TABLE `accountRequests` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
