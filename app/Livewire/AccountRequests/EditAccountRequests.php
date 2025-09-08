@@ -81,15 +81,15 @@ class EditAccountRequests extends Component
             'is_active' => $this->status,
         ]);
 
-        if($this->oldStatus != $this->status) {
-            Mail::to($this->email)->send(new sendUpdatedUser($this->status));
-            session()->flash('success','De gebruiker is aangepast. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate. LET OP! de gebruiker is niet toegekent aan een bedrijf en kan geen orders plaatsen');
+         if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {
+            session()->flash('success','De gebruiker is toegevoegd aan een bedrijf, en de status van het account is bijgewerkt. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate');
         }
         else if($this->oldCompany != $this->company_id) {
             session()->flash('success','De gebruiker is toegevoegd aan een bedrijf. Je kunt de gebruiker terug vinden onder het kopje bedrijven -> bedrijfsgebruikers');
         }
-        else if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {
-            session()->flash('success','De gebruiker is toegevoegd aan een bedrijf, en de status van het account is bijgewerkt. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate');
+        else if($this->oldStatus != $this->status) {
+            Mail::to($this->email)->send(new sendUpdatedUser($this->status));
+            session()->flash('success','De gebruiker is aangepast. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate. LET OP! de gebruiker is niet toegekent aan een bedrijf en kan geen orders plaatsen');
         }
         else {
             session()->flash('success','Er zijn geen gegevens aan de gebruiker aangepast.');
