@@ -38,6 +38,18 @@
                         @endadmin
 
                         @admin
+                        <x-dropdown-link :href="route('surcharges')">
+                            {{ __('Toeslagen') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
+                        <x-dropdown-link :href="route('companys/pricerules')">
+                            {{ __('Prijsregels') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
                         <x-dropdown-link :href="route('accountrequests')">
                             {{ __('Account verzoeken') }}
                         </x-dropdown-link>
@@ -91,6 +103,18 @@
                 @admin
                 <x-responsive-nav-link  :href="route('companys')">
                     {{ __('Bedrijven') }}
+                </x-responsive-nav-link>
+                @endadmin
+
+                @admin
+                <x-responsive-nav-link  :href="route('surcharges')">
+                    {{ __('Toeslagen') }}
+                </x-responsive-nav-link>
+                @endadmin
+
+                @admin
+                <x-responsive-nav-link  :href="route('companys/pricerules')">
+                    {{ __('Prijsregels') }}
                 </x-responsive-nav-link>
                 @endadmin
 

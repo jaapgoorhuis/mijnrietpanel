@@ -57,7 +57,13 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
             <th>Prijs</th>
         </tr>
         <?php $totalPrice= 0?>
-        @foreach($orderLines as $orderLine)
+        <?php $zaaglengtes = 0?>
+        <?php $count = 0;?>
+
+        <?php  $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();?>
+
+        @foreach($orderLines as $key =>  $orderLine)
+            {{$count++}}
             <tr class="items">
                 <td>
                    {{$orderLine->rietkleur}}
@@ -94,11 +100,19 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                         $discount = $priceRule->price/100*$company->discount;
                         $m2price = $priceRule->price - $discount;
                         $totalPrice += $orderLine->m2 * $m2price;
-                    ?>
-                    €{{$orderLine->m2 * $m2price}},-
+                            if($zaaglengteToeslag) {
+                                if($orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {
+                                    $zaaglengtes += $orderLine->aantal;
+                                }
+                            }
+                        ?>
+                    €{{str_replace('.', ',', round($orderLine->m2 * $m2price,2))}},-
+
                 </td>
             </tr>
         @endforeach
+
+
     </table>
 </div>
 
@@ -108,17 +122,59 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
             <?php $totalM2 += $orderLine->m2;?>
     @endforeach
 
+    <div class="totals-row">
+        <div style="position:relative">
+            <table class="total-table">
+                <tr>
+                    <th style="text-align: left; line-height: 35px; border-bottom:1px solid black">Totaal m²:</th>
+                    <th style="line-height: 35px; text-align: left; border-bottom:1px solid black">{{$totalM2}} m²</th>
+                </tr>
+                <br/>
+                <tr>
+                    <th style="text-align: left; border-bottom:1px solid black">Subtotaal:</th>
+                    <th style="text-align: left; border-bottom:1px solid black">€{{str_replace('.', ',', round($totalPrice,2))}},-</th>
+                </tr>
+                <br/>
+                <?php $btw = $totalPrice /100 *21?>
+                <tr>
+                    <th style="text-align: left">21% BTW:</th>
+                    <th style="text-align: left">€{{str_replace('.', ',', round($btw,2))}},-</th>
+                </tr>
+                <?php $toeslagen = \App\Models\Surcharges::get();?>
+                <?php $allInPrice = $totalPrice + $btw?>
+                @foreach($toeslagen as $toeslag)
+                    @if($toeslag)
+                        @if($toeslag->rule == 'vierkantemeter')
+                            @if( $totalM2 < $toeslag->number )
+                                <tr>
+                                    <th style="text-align: left; ">{{$toeslag->name}}:</th>
+                                    <th style="text-align: left;">€ {{$toeslag->price}},-</th>
+                                </tr>
+                            @endif
+                            <?php $allInPrice += $toeslag->price;?>
+                        @endif
 
-    <table class="total-table">
-        <tr>
-            <th style="text-align: left; line-height: 35px;">Totaal m²:</th>
-            <th style="line-height: 35px; text-align: left">{{$totalM2}} m²</th>
-        </tr>
-        <tr>
-            <th style="text-align: left">Prijs:</th>
-            <th style="text-align: left">€ {{$totalPrice}},-</th>
-        </tr>
-    </table>
+                        @if($toeslag->rule == 'zaaglengte')
+                                <?php $zaagprijs = $zaaglengtes * $toeslag->price?>
+                                <tr>
+                                    <th style="text-align: left;  padding-right: 20px; margin-right: 20px;">{{$toeslag->name}}:</th>
+                                    <th style="text-align: left">{{$zaaglengtes}} stuks * €{{$toeslag->price}},- = €{{$zaagprijs}},-</th>
+                                </tr>
+                                <?php $allInPrice += $zaagprijs?>
+                            @endif
+
+                        @endif
+
+                @endforeach
+                <br/>
+                <tr>
+                    <th style="text-align: left; border-top:1px solid black">Totaal incl. 21% BTW, incl. toeslagen:</th>
+                    <th style="text-align: left; border-top:1px solid black">€{{str_replace('.', ',', round($allInPrice,2))}},-</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
 </div>
 <style>
     h4 {
@@ -135,9 +191,13 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
     }
 
     table.total-table {
-        width:150px;
+        width:100%;
+
+    }
+    .totals-row {
         position: absolute;
-        right: 0px;
+        bottom: 50px;
+        right: 0;
     }
 
     table {

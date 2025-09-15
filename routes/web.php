@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('pricelist/upload', \App\Livewire\Pricelist\UploadPricelist::class);
     Route::get('/companys/{slug}/users/edit/{id}', \App\Livewire\Companys\EditCompanyUsers::class);
     Route::get('/companys/{id}/users', \App\Livewire\Companys\CompanyUsers::class);
-    Route::get('/companys/pricerules', \App\Livewire\Companys\PriceRules\PriceRules::class);
+    Route::get('/companys/pricerules', \App\Livewire\Companys\PriceRules\PriceRules::class)->name('companys/pricerules');
     Route::get('/companys/pricerules/create', \App\Livewire\Companys\PriceRules\CreatePriceRules::class);
     Route::get('/companys/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditPriceRules::class);
     Route::get('/companys/pricerules/remove/{id}', \App\Livewire\Companys\PriceRules\RemovePriceRules::class);
@@ -52,9 +52,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/accountrequests', \App\Livewire\AccountRequests\AccountRequests::class)->name('accountrequests');
     Route::get('/accountrequests/edit/{id}', \App\Livewire\AccountRequests\EditAccountRequests::class);
 
-    Route::get('/oldorder', function() {
-        return view('pdf.orderold');
-    });
+    Route::get('/oldorder', \App\Livewire\Orders\OrderExample::class);
+
+    Route::get('/surcharges', \App\Livewire\Surcharges\Surcharges::class)->name('surcharges');
+    Route::get('/surcharges/create', \App\Livewire\Surcharges\CreateSurcharges::class);
+    Route::get('/surcharges/edit/{id}', \App\Livewire\Surcharges\EditSurcharges::class);
+    Route::get('/surcharges/remove/{id}', \App\Livewire\Surcharges\RemoveSurcharges::class);
 
 });
 
