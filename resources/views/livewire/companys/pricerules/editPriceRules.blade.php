@@ -43,7 +43,7 @@
                 <div class="grid">
                     <form>
                         <div class="relative">
-                            <i wire:click="cancelCreatePriceRule()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
+                            <i wire:click="cancelEditPriceRule()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
                         </div>
 
                         Prijsregel bewerken
