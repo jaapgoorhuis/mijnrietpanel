@@ -97,6 +97,6 @@ class EditPriceRules extends Component
     }
 
     public function cancelEditPriceRule() {
-        return $this->redirect('/companys/'.$this->company_id.'/pricerules', navigate: true);
+        return $this->redirect('/companys/pricerules', navigate: true);
     }
 }
