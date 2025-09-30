@@ -14,6 +14,7 @@ class userSeeder extends Seeder
     public function run(): void
     {
        DB::table('users')->insert([
+           [
            'email' => 'info@crewa.nl',
            'name' => 'Jaap Goorhuis',
            'password' => '$2y$12$xTQ0kqduIb18Ds3IwjCA9OLyfOsX3XTbaQPfWlSTANq58zx2wo0Ju',
@@ -22,7 +23,7 @@ class userSeeder extends Seeder
            'bedrijfsnaam' => 'Rietpanel',
            'phone' => '+31631933506',
            'is_active' => 1
-       ,
+               ],
            [
            'email' => 'info@rietpanel.nl',
            'name' => 'Cheyenne Buitink',
