@@ -52,7 +52,7 @@ class MyCompany extends Component
         $this->validate();
         if ($this->files) {
             foreach ($this->files as $file) {
-                $file->storeAs(path: 'companyLogos', name: $file->getClientOriginalName(), options: 'public');
+                $file->storeAs(path: 'companylogos', name: $file->getClientOriginalName(), options: 'public');
 
                 \App\Models\Company::where('id', Auth::user()->companys->id)->update([
                     'logo' => $file->getClientOriginalName(),

@@ -12,7 +12,7 @@
     <tr>
         <td class="w-half">
             @if($order->user->companys->logo)
-            <img src="{{ public_path("storage/companyLogos/".$order->user->companys->logo)}}" alt="" style="width: 200px;"/>
+            <img src="{{ public_path("storage/companylogos/".$order->user->companys->logo)}}" alt="" style="width: 200px;"/>
             @else
                 <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
            @endif
