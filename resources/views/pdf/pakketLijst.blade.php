@@ -14,7 +14,7 @@
             <td class="label">Ordernummer:</td>
             <td>25001</td>
             <td rowspan="4" class="logo">
-                <img src="{{public_path('storage/images/rietpanel-R.png')}}" alt="Logo" height="100">
+                <img src="{{ public_path("storage/images/rietpanel_r.png")}}" alt="" style="height: 100px;"/>
             </td>
         </tr>
         <tr>
@@ -52,7 +52,7 @@
     <table>
         <tr>
             <td>
-                <img style="margin-left:30px; padding:10px;" src="{{public_path('storage/images/rietpanel_logo.png')}}" alt="Logo" width="110">
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 110px;"/>
 
         </tr>
     </table>
