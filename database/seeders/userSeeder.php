@@ -22,6 +22,18 @@ class userSeeder extends Seeder
            'bedrijfsnaam' => 'Rietpanel',
            'phone' => '+31631933506',
            'is_active' => 1
-       ]);
+       ,
+           [
+           'email' => 'info@rietpanel.nl',
+           'name' => 'Cheyenne Buitink',
+           'password' => '$2y$12$sCo5fKpbYzG1saubt8TuEuX2haEj8O1/4SIvRjOL46r8at8JLbXdW',
+           'is_admin' => 1,
+           'bedrijf_id' => 1,
+           'bedrijfsnaam' => 'Rietpanel',
+           'phone' => '0850290840',
+           'is_active' => 1,
+           ]
+           ]
+       );
     }
 }
