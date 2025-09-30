@@ -23,7 +23,7 @@ class userSeeder extends Seeder
            'bedrijfsnaam' => 'Rietpanel',
            'phone' => '+31631933506',
            'is_active' => 1
-               ],
+           ],
            [
            'email' => 'info@rietpanel.nl',
            'name' => 'Cheyenne Buitink',
@@ -34,7 +34,6 @@ class userSeeder extends Seeder
            'phone' => '0850290840',
            'is_active' => 1,
            ]
-           ]
-       );
+       ]);
     }
 }

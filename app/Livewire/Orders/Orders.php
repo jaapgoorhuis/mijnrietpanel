@@ -75,7 +75,7 @@ class Orders extends Component
     public function downloadPakketList($id) {
 
         $order = Order::where('id', $id)->first();
-        Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketLijst-'.$order->order_id.'.pdf'));
+        Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
 
         $url = asset('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);

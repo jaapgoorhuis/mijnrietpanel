@@ -28,6 +28,7 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
             <td class="w-half">
                 <div>Order #: {{$order->order_id}}</div>
                 <div>Order datum:   {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
+                <div>Project naam: {{$order->project_naam}}</div>
                 <div>Referentie: {{$order->referentie}}</div>
                 <div>Verkoper: {{$order->intaker}}</div>
             </td>
