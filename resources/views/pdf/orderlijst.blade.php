@@ -78,7 +78,7 @@
     <tr>
         <td>
 
-            <img src="{{public_path('storage/images/rietpanel_logo.png')}}" alt="Logo" height="70">
+            <img src="{{asset('storage/images/rietpanel_logo.png')}}" alt="Logo" height="70">
         </td>
     </tr>
 </table>

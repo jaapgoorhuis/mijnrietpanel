@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
         $user = User::where('id', $order->user_id)->first();
 
         $company = $user->company;
-        return view('pdf.orderlijst')->with('order', $order);
+        return view('pdf.zaaglijst')->with('order', $order);
     });
 });
 
