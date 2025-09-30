@@ -110,7 +110,7 @@ class Orders extends Component
         $order = Order::where('id', $id)->first();
         $leverancier = Supliers::where('name', $order->merk_paneel)->first();
 
-        Pdf::loadView('pdf.orderLijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
+        Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
         $url = asset('/storage/orderLijst/order-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);
