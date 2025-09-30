@@ -112,7 +112,7 @@ class Orders extends Component
 
         Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
-        $url = asset('/storage/orderLijst/order-'.$order->order_id.'.pdf');
+        $url = asset('/storage/orderlijst/order-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);
     }
 }
