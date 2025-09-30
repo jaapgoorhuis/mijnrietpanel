@@ -11,28 +11,47 @@
 <table class="w-full">
     <tr>
         <td class="w-half">
-            <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+            @if($order->user->companys->logo)
+            <img src="{{ public_path("storage/companyLogos/".$order->user->companys->logo)}}" alt="" style="width: 200px;"/>
+            @else
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+           @endif
         </td>
-
     </tr>
 </table>
-
+<?php
+$company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
+?>
 <div class="margin-top">
     <table class="w-full">
         <tr>
             <td class="w-half">
                 <div>Order #: {{$order->order_id}}</div>
-                <div>Order datum:   {{date("d-m-Y", strtotime($order->created_at))}}</div><br/><br/>
-                <div><h4>Order informatie:</h4></div><br/>
-                <div>Project naam: {{$order->project_naam}}</div>
-                @if($order->project_adres)
-                    <div>Project adres: {{$order->project_adres}}</div>
-                @endif
-                <div>Bedrijfsnaam: {{$order->user->companys->bedrijfnaam}}</div>
-                <div>Aangemaakt door: {{$order->intaker}}</div>
+                <div>Order datum:   {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
+                <div>Referentie: {{$order->referentie}}</div>
+                <div>Verkoper: {{$order->intaker}}</div>
+            </td>
+            <td class="w-half">
+                <div>{{$company->straat}}</div>
+                <div>{{$company->postcode}}</div>
+                <div>{{$company->plaats}}</div>
+                <div>M: {{$order->user->email}}</div>
+                <div>T: {{$order->user->phone}}</div>
+            </td>
+        </tr>
+    </table>
+<br/>
+    <table>
+        <tr>
+            <td class="w-half">
+                <div><strong>Aan:</strong></div>
+                <div>Klant naam: {{$order->klant_naam}}</div>
+                <div>Adres: {{$order->aflever_straat}}</div>
+                <div>Postcode: {{$order->aflever_postcode}}</div>
+                <div>Plaats: {{$order->aflever_plaats}}</div>
+                <div>Land: {{$order->aflever_land}}</div>
 
             </td>
-
         </tr>
     </table>
 </div>
@@ -66,13 +85,13 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
             {{$count++}}
             <tr class="items">
                 <td>
-                   {{$orderLine->rietkleur}}
+                   {{$order->rietkleur}}
                 </td>
                 <td>
-                    {{$orderLine->toepassing}}
+                    {{$order->toepassing}}
                 </td>
                 <td>
-                    {{$orderLine->merk_paneel}}
+                    {{$order->merk_paneel}}
                 </td>
                 <td>
                     {{$orderLine->fillCb}}mm
@@ -81,7 +100,7 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                     {{$orderLine->fillLb}}mm
                 </td>
                 <td>
-                    {{$orderLine->kerndikte}}
+                    {{$order->kerndikte}}
                 </td>
                 <td>
                     {{$orderLine->fillTotaleLengte}}mm
@@ -94,11 +113,19 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                 </td>
                 <td>
                     <?php
-                        $panelType = \App\Models\PanelType::where('name', $orderLine->kerndikte)->first();
-                        $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->first();
+                        $panelType = \App\Models\PanelType::where('name', $order->kerndikte)->first();
+                        if($company->is_reseller) {
+                            $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->where('company_id', $company->id)->first();
+                            $discount = 0;
+                        }else {
+                            $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->first();
+                            $discount = $priceRule->price/100*$company->discount;
+                        }
 
-                        $discount = $priceRule->price/100*$company->discount;
-                        $m2price = $priceRule->price - $discount;
+                        $m2priceBeforeDiscount = $priceRule->price - $discount;
+                        $orderDiscount = $m2priceBeforeDiscount/100*$order->discount;
+                        $m2price = $m2priceBeforeDiscount - $orderDiscount;
+
                         $totalPrice += $orderLine->m2 * $m2price;
                             if($zaaglengteToeslag) {
                                 if($orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {

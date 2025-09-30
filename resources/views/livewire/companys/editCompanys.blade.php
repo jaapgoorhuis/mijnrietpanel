@@ -45,13 +45,44 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="project_name" class="text-gray-400">Bedrijfsnaam *</label>
                             <input type="text"  wire:model="bedrijfsnaam" name="bedrijfsnaam" id="bedrijfsnaam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                            <div class="text-red-500">@error('company_name') {{ $message }} @enderror</div>
+                            <div class="text-red-500">@error('bedrijfsnaam') {{ $message }} @enderror</div>
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="discount" class="text-gray-400">Korting *</label>
                             <input type="number"  wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                             <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
+                        </div>
+
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="reseller" class="text-gray-400">Wederverkoper</label>
+                            <select id="reseller" wire:model="reseller" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+
+                                <option value="0">Nee</option>
+                                <option value="1">Ja</option>
+
+                            </select>
+                            <div class="text-red-500">@error('reseller') {{ $message }} @enderror</div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="straat" class="text-gray-400">straat *</label>
+                                <input type="text" wire:model="straat" name="straat" id="straat" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('straat') {{ $message }} @enderror</div>
+                            </div>
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="postcode" class="text-gray-400">postcode *</label>
+                                <input type="text" wire:model="postcode" name="postcode" id="postcode" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('postcode') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+
+
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="plaats" class="text-gray-400">plaats *</label>
+                            <input type="text" wire:model="plaats" name="plaats" id="plaats" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                            <div class="text-red-500">@error('plaats') {{ $message }} @enderror</div>
                         </div>
 
                         <button wire:loading.attr="disabled" wire:click.prevent="updateCompany({{$this->company->id}})" class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Bedrijf bewerken</button>

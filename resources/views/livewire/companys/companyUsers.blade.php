@@ -59,77 +59,31 @@
                 <div class="relative">
                 </div>
                 <br/>
-                <div class="grid">
-                    <table id="pagination-table">
-                        <thead>
+                <div class="overflow-x-auto">
+                    <table id="user-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th>
-                                <span class="flex items-center">
-                                    ID:
-                                </span>
+                            <th scope="col" class="px-4 py-3">ID</th>
+                            <th scope="col" class="px-4 py-3">Gebruikersnaam</th>
+                            <th scope="col" class="px-4 py-3">Email</th>
+                            <th scope="col" class="px-4 py-3">Telefoonnummer</th>
+                            <th scope="col" class="px-4 py-3">Bedrijf</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3">Rol</th>
+                            <th scope="col" class="px-4 py-3 text-right">
+                                <span>Actie's</span>
                             </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Gebruikersnaam:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    E-mail adres:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Telefoonnummer:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Bedrijf:
-                                </span>
-                            </th>
-
-                            <th>
-                                 <span class="flex items-center">
-                                    Status:
-                                </span>
-                            </th>
-
-                            <th>
-                                <span class="flex items-center">
-                                    Rol:
-                                </span>
-                            </th>
-
-                            @admin
-                            <th>
-                                <span class="flex items-center">
-                                    Bewerken:
-                                </span>
-                            </th>
-                            @endadmin
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($this->users as $user)
-                            <tr>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->id}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->name}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->email}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->phone}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$user->companys->bedrijfsnaam}}
-                                </td>
-
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
+                            <tr class="border-b ">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$user->id}}</th>
+                                <td class="px-4 py-3">{{$user->name}}</td>
+                                <td class="px-4 py-3">{{$user->email}} </td>
+                                <td class="px-4 py-3">{{$user->phone}} </td>
+                                <td class="px-4 py-3">{{$user->bedrijfsnaam}} </td>
+                                <td class="px-4 py-3">
                                     @if($user->is_active)
                                         Actief
                                     @else
@@ -137,43 +91,61 @@
                                     @endif
                                 </td>
 
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
+                                <td class="px-4 py-3">
                                     @if($user->is_admin)
                                         Admin
                                     @else
                                         Gebruiker
                                     @endif
                                 </td>
-                                <td class="font-medium text-center text-lg text-gray-900 whitespace-nowrap">
-                                    <button wire:click="editUser({{$user->id}})" class="disabled:cursor-not-allowed text-orange-500">
-                                        <i class="fa-solid fa-user-pen"></i>
+
+
+
+                                <td  class="px-4 py-3 flex items-center justify-end">
+                                    <button wire:ignore.self id="{{$user->id}}-dropdown-button" data-dropdown-toggle="{{$user->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        </svg>
                                     </button>
+                                    <div wire:ignore.self id="{{$user->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$user->id}}-dropdown-button">
+                                            <li>
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="editUser({{$user->id}})">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Bewerken
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
-
-
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 <script>
-    if (document.getElementById("pagination-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new simpleDatatables.DataTable("#pagination-table", {
-            searchable: true,
-            fixedHeight:true,
+    new DataTable("#user-table", {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/2.3.4/i18n/nl-NL.json',
+        },
+        paginate: true,
+        lengthChange: false,
+        filter: true,
 
-            labels: {
-                placeholder: "Zoeken",
-                info: "",
-                noRows: 'Geen orders gevonden',
-                noResults: "Geen orders gevonden",
-            },
-            sortable: false,
-            perPageSelect: false
-        });
-    }
+        layout: {
+            topEnd: {
+                search: {
+                    placeholder: 'Zoeken'
+                }
+            }
+        }
+    });
+
+
 </script>

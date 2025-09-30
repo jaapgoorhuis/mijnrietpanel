@@ -16,7 +16,12 @@ class CompanySeeder extends Seeder
        DB::table('companys')->insert([
            [
                'bedrijfsnaam' => 'Rietpanel',
-               'discount' => '0'
+               'discount' => '0',
+               'straat' => 'Nijverheidsweg 59',
+               'postcode' => '3771 ME',
+               'plaats' => 'Barneveld',
+               'is_reseller' => 1,
+               'created_at' => '2025-09-29 15:12:37',
            ]
        ]);
     }

@@ -25,6 +25,7 @@
         "@floating-ui/dom": "^1.7.3",
         "@preline/tooltip": "^3.2.3",
         "flowbite": "^3.1.2",
-        "preline": "^3.2.3"
+        "preline": "^3.2.3",
+        "simple-datatables": "^10.0.0"
     }
 }

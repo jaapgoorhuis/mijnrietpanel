@@ -17,5 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PanelTypeSeeder::class);
         $this->call(userSeeder::class);
         $this->call(PriceRuleSeeder::class);
+        $this->call(SurchargeSeeder::class);
+        $this->call(SuplierSeeder::class);
     }
 }

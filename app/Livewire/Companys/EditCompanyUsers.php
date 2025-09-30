@@ -25,7 +25,7 @@ class EditCompanyUsers extends Component
 
     public $email;
 
-    public $bedrijfsnaam;
+    public $bedrijfid;
     public $phone;
     public $is_admin;
 
@@ -47,7 +47,7 @@ class EditCompanyUsers extends Component
 
         $this->gebruikersnaam = $this->user->name;
         $this->email = $this->user->email;
-        $this->bedrijfsnaam = $this->user->bedrijfsnaam;
+        $this->bedrijfid = $this->user->bedrijf_id;
         $this->phone = $this->user->phone;
         $this->is_admin = $this->user->is_admin;
         $this->status = $this->user->is_active;
@@ -67,7 +67,6 @@ class EditCompanyUsers extends Component
         return [
             'gebruikersnaam' => 'required',
             'email' => 'required|email|unique:users,email,' . $this->user->id,
-            'bedrijfsnaam' => 'required',
             'status' => 'required',
             'is_admin' => 'required',
             'phone' => 'required',
@@ -81,7 +80,6 @@ class EditCompanyUsers extends Component
             'gebruikersnaam.required' => 'De gebruikersnaam is een verplicht veld.',
             'email.required' => 'Het email adres is een verplicht veld.',
             'email.email' => 'Het lijkt erop dat dit geen geldig email adres is',
-            'bedrijfsnaam.required' => 'De bedrijfsnaam is een verplicht veld.',
             'status.required' => 'De status is een verplicht veld.',
             'phone.required' => 'Het telefoonnummer is een verplicht veld.',
         ];
@@ -94,7 +92,7 @@ class EditCompanyUsers extends Component
         User::where('id', $this->user_id)->update([
             'name' => $this->gebruikersnaam,
             'email' => $this->email,
-            'bedrijfsnaam' => $this->bedrijfsnaam,
+            'bedrijf_id' => $this->bedrijfid,
             'is_active' => $this->status,
             'phone' => $this->phone,
             'is_admin' => $this->is_admin

@@ -14,10 +14,21 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
+            $table->string('klantnaam');
+            $table->string('referentie');
+            $table->string('aflever_straat');
+            $table->string('order_ordered')->nullable();
             $table->string('project_naam');
-            $table->string('project_adres')->nullable();
+            $table->string('aflever_postcode');
+            $table->string('aflever_plaats');
+            $table->string('aflever_land');
+            $table->string('rietkleur');
+            $table->string('toepassing');
+            $table->string('merk_paneel');
+            $table->string('kerndikte');
             $table->string('intaker');
             $table->integer('user_id');
+            $table->integer('discount');
             $table->string('status');
             $table->timestamps();
         });

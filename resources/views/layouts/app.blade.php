@@ -15,9 +15,22 @@
         <script src="https://kit.fontawesome.com/a865bbd52d.js" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.0.3"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+        <link href="https://cdn.datatables.net/2.3.4/css/dataTables.tailwindcss.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
         <!-- Scripts -->
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.tailwindcss.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 
@@ -40,11 +53,20 @@
             <!-- Page Content -->
             <main>
                 {{ $slot }}
+                <div class="fixed bottom-0 right-0 p-2">
+                    <a href="https://crewa.nl"><img src="{{asset('storage/images/crewa-logo.png')}}" class="h-[20px]"/></a>
+                </div>
             </main>
         </div>
         @livewireScripts
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.addEventListener('popstate', function () {
+                location.reload();
+            });
+        });
+    </script>
     </body>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>
+
+
 </html>

@@ -42,7 +42,7 @@
             <div class="p-6 text-gray-900">
 
                 <div class="relative">
-                    <div class="relative md:absolute left-0 top-0">
+                    <div class="relative left-0 top-0">
                         @admin
                         <button wire:click="newCompany()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                             <i class="fa fa-plus hover:cursor-pointer"></i> Bedrijf aanmaken
@@ -54,105 +54,98 @@
                     </div>
                 </div>
 
-                <div class="grid">
-                    <table id="company-table">
-                        <thead>
+                <div class="overflow-x-auto">
+                    <table id="company-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th>
-                                <span class="flex items-center">
-                                    Bedrijf ID:
-                                </span>
-                            </th>
-                            <th>
-
-                                Bedrijfsnaam:
-
-                            </th>
-
-                            <th>
-
-                                Korting:
-
-                            </th>
-
-                            <th class="text-center">
-                                <span >
-                                    Bedrijfsgebruikers:
-                                </span>
-                            </th>
-
-
-                            <th class="text-center">
-                                <span >
-                                    Bedrijf bewerken:
-                                </span>
-                            </th>
-
-                            <th class="text-center">
-                                <span >
-                                  Bedrijf verwijderen:
-                                </span>
+                            <th scope="col" class="px-4 py-3">Bedrijf ID</th>
+                            <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
+                            <th scope="col" class="px-4 py-3">Korting</th>
+                            <th scope="col" class="px-4 py-3">Wederverkoper</th>
+                            <th scope="col" class="px-4 py-3 text-right">
+                                <span>Actie's</span>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($this->companys as $company)
-                            <tr>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$company->id}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$company->bedrijfsnaam}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$company->discount}} %
+                            <tr class="border-b ">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$company->id}}</th>
+                                <td class="px-4 py-3">{{$company->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3">{{$company->discount}} %</td>
+                                <td class="px-4 py-3">
+                                    @if($company->is_reseller)
+                                        Ja
+                                    @else
+                                        Nee
+                                    @endif
                                 </td>
 
-                                <td class="font-medium text-lg text-gray-900 whitespace-nowrap text-center">
-                                    <button wire:click="companyUsers({{$company->id}})" class="disabled:cursor-not-allowed text-[#C0A16E]">
-                                        <i class="fa-solid fa-user-pen"></i>
+                                <td  class="px-4 py-3 flex items-center justify-end">
+                                    <button id="{{$company->id}}-dropdown-button" data-dropdown-toggle="{{$company->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        </svg>
                                     </button>
+                                    <div  id="{{$company->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$company->id}}-dropdown-button">
+
+                                            <li>
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="companyUsers({{$company->id}})">
+                                                    <i class="fa-solid fa-user-pen"></i> Bekijk gebruikers
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="editCompany({{$company->id}})">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Bewerken
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="removeCompany({{$company->id}})">
+                                                    <i class="fa-solid fa-trash"></i> Verwijderen
+                                                </button>
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
                                 </td>
-
-                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
-                                    <button wire:click="editCompany({{$company->id}})" class=" disabled:cursor-not-allowed text-orange-500">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                </td>
-
-
-                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
-                                    <button wire:click="removeCompany({{$company->id}})" class="disabled:cursor-not-allowed text-red-500">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-
-
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    if (document.getElementById("company-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new simpleDatatables.DataTable("#company-table", {
-            searchable: true,
-            fixedHeight:true,
+    if (!$.fn.DataTable.isDataTable('#company-table')) {
 
-            labels: {
-                placeholder: "Zoeken",
-                info: "",
-                noRows: 'Geen bedrijven gevonden',
-                noResults: "Geen bedrijven gevonden",
-            },
-            sortable: false,
-            perPageSelect: false
-        });
+    new DataTable("#company-table", {
+        language: {
+            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+            "infoEmpty": "Geen resultaten om weer te geven",
+            "emptyTable": "Geen resultaten aanwezig in de tabel",
+        },
+        paginate: false,
+        lengthChange: false,
+        filter: true,
+
+        layout: {
+            topEnd: {
+                search: {
+                    placeholder: 'Zoeken'
+                }
+            }
+        }
+    });
     }
+
 </script>

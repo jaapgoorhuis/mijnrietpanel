@@ -39,27 +39,105 @@
                         Project gegevens
                         <br/><br/>
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="project_name" class="text-gray-400">Project naam *</label>
-                            <input type="text"  wire:model="project_naam" name="project_naam" id="project_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                            <div class="text-red-500">@error('project_naam') {{ $message }} @enderror</div>
+                            <label for="klant_naam" class="text-gray-400">Klant naam *</label>
+                            <input type="text"  wire:model="klant_naam" name="klant_naam" id="klant_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('klant_naam') {{ $message }} @enderror</div>
+                        </div>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="klant_naam" class="text-gray-400">Project naam *</label>
+                                <input type="text"  wire:model="project_naam" name="project_naam" id="project_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('project_naam') {{ $message }} @enderror</div>
+                            </div>
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="referentie" class="text-gray-400">Referentie *</label>
+                                <input type="text"  wire:model="referentie" name="referentie" id="referentie" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('referentie') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+
+
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="aflever_straat" class="text-gray-400">Aflever straat *</label>
+                                <input type="text" wire:model="aflever_straat" name="aflever_straat" id="aflever_straat" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('aflever_straat') {{ $message }} @enderror</div>
+                            </div>
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="aflever_postcode" class="text-gray-400">Aflever postcode *</label>
+                                <input type="text" wire:model="aflever_postcode" name="aflever_postcode" id="aflever_postcode" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('aflever_postcode') {{ $message }} @enderror</div>
+                            </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="project_adres" class="text-gray-400">Project adres</label>
-                                <input type="text" wire:model="project_adres" name="project_adres" id="project_adres" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <label for="aflever_plaats" class="text-gray-400">Aflever plaats *</label>
+                                <input type="text" wire:model="aflever_plaats" name="aflever_plaats" id="aflever_plaats" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('aflever_plaats') {{ $message }} @enderror</div>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="intaker_name" class="text-gray-400">Uw naam *</label>
-                                <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
+                                <label for="aflever_land" class="text-gray-400">Aflever land *</label>
+                                <input type="text" wire:model="aflever_land" name="aflever_land" id="aflever_land" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                                <div class="text-red-500">@error('aflever_land') {{ $message }} @enderror</div>
                             </div>
                         </div>
 
-                        <br/>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="intaker_name" class="text-gray-400">Verkoper *</label>
+                                <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
+                            </div>
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="discount" class="text-gray-400">Korting (%)*</label>
+                                <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="rietkleur" class="text-gray-400">Rietkleur *</label>
+                                <select id="rietkleur" wire:model="rietkleur" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
-                        <br/>
+                                    <option value="Old look">Old look</option>
+                                    <option value="New look">New look</option>
 
+                                </select>
+                            </div>
+
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="kerndikte" class="text-gray-400">Kerndikte *</label>
+                                <select id="kerndikte" wire:model="kerndikte" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                    @foreach($this->panelTypes as $type)
+                                        <option value="{{$type->name}}">{{$type->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="toepassing" class="text-gray-400">Toepassing *</label>
+                                <select id="toepassing" wire:model="toepassing" wire:change="updateBrands()" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+
+                                    <option value="Dak">Dak</option>
+                                    <option value="Wand">Wand</option>
+
+                                </select>
+                            </div>
+
+
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="merk_paneel" class="text-gray-400">Merk paneel *</label>
+                                <select @if(count($this->orderLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                    @foreach($this->brands as  $brands)
+                                        <option @if($brands->status) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <br/><br/>
                         @foreach($orderLines as $index => $orders)
                             @if($index > 0)
                             <hr class="border-2 border-[#C0A16E]"/><br/><br/>
@@ -70,37 +148,6 @@
                                 </button>
 
 
-                            </div>
-                            Paneel optie's<br/><br/>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="rietkleur" class="text-gray-400">Rietkleur *</label>
-                                <select id="rietkleur" wire:model="rietkleur.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-
-                                    <option value="Old look">Old look</option>
-                                    <option value="New look">New look</option>
-
-                                </select>
-                            </div>
-                            <div class="grid md:grid-cols-2 md:gap-6">
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="toepassing" class="text-gray-400">Toepassing *</label>
-                                    <select id="toepassing" wire:model="toepassing.{{$index}}" wire:change="updateBrands({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-
-                                            <option value="Dak">Dak</option>
-                                            <option value="Wand">Wand</option>
-
-                                    </select>
-                                </div>
-
-
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="merk_paneel" class="text-gray-400">Merk paneel *</label>
-                                    <select id="merk_paneel" wire:change="updateM2({{$index}})" wire:model="merk_paneel.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                      @foreach($this->brands[$index] as $key => $brands)
-                                        <option value="{{$key}}">{{$key}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
                             </div>
                             <br/>
                             Afmetingen paneel<br/><br/>
@@ -158,14 +205,7 @@
                                     <div class="text-red-500">@error('aantal.'.$index) {{ $message }} @enderror</div>
                                 </div>
                             </div>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="kerndikte" class="text-gray-400">Kerndikte *</label>
-                                <select id="kerndikte" wire:model="kerndikte.{{$index}}" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    @foreach($this->panelTypes as $type)
-                                        <option value="{{$type->name}}">{{$type->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+
 
                             <div class="text-right">
                                 Vierkante meters: <strong>{{$this->m2[$index]}} m²</strong>

@@ -54,103 +54,86 @@
                     <i class="fa fa-plus hover:cursor-pointer"></i> Toeslag aanmaken
                 </button>
 
-                <div class="grid">
-                    <table id="surcharges-table">
-                        <thead>
+                <div class="overflow-x-auto">
+                    <table id="surcharges-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th>
-                                Toeslag:
-                            </th>
-                            <th>
-                                Conditie:
-                            </th>
-                            <th>
-                                Aantal:
-                            </th>
-                            <th>
-                                Regel:
-                            </th>
-
-                            <th>
-                                Invloed op prijs:
-                            </th>
-
-
-                            <th class="text-center">
-                                <span >
-                                    Toeslag bewerken:
-                                </span>
-                            </th>
-
-                            <th class="text-center">
-                                <span >
-                                  Toeslag verwijderen:
-                                </span>
+                            <th scope="col" class="px-4 py-3">Toeslag:</th>
+                            <th scope="col" class="px-4 py-3">Conditie:</th>
+                            <th scope="col" class="px-4 py-3">Aantal:</th>
+                            <th scope="col" class="px-4 py-3">Regel:</th>
+                            <th scope="col" class="px-4 py-3">Invloed op prijs:</th>
+                            <th scope="col" class="px-4 py-3 text-right">
+                                <span>Actie's</span>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        @if($this->surcharges)
-                        @foreach($this->surcharges as $surcharge)
-                            <tr>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$surcharge->name}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$surcharge->condition}}
-                                </td>
+                            @if($this->surcharges)
+                                @foreach($this->surcharges as $surcharge)
+                                <tr class="border-b ">
+                                    <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$surcharge->name}}</th>
+                                    <td class="px-4 py-3">{{$surcharge->condition}}</td>
+                                    <td class="px-4 py-3">{{$surcharge->number}} </td>
+                                    <td class="px-4 py-3">{{$surcharge->rule}} </td>
+                                    <td class="px-4 py-3">€ {{$surcharge->price}},- </td>
 
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$surcharge->number}}
-                                </td>
+                                    <td  class="px-4 py-3 flex items-center justify-end">
+                                        <button wire:ignore.self id="{{$surcharge->id}}-dropdown-button" data-dropdown-toggle="{{$surcharge->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">
+                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                            </svg>
+                                        </button>
+                                        <div wire:ignore.self id="{{$surcharge->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
+                                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$surcharge->id}}-dropdown-button">
+                                                <li>
+                                                    <button
+                                                        class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                        wire:click="editSurcharge({{$surcharge->id}})">
+                                                        <i class="fa-solid fa-pen-to-square"></i> Bewerken
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                        wire:click="removeSurcharges({{$surcharge->id}})">
+                                                        <i class="fa-solid fa-trash"></i> Verwijderen
+                                                    </button>
+                                                </li>
 
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$surcharge->rule}}
-                                </td>
+                                            </ul>
 
-
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    € {{$surcharge->price}},-
-                                </td>
-                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
-                                    <button wire:click="editSurcharge({{$surcharge->id}})" class=" disabled:cursor-not-allowed text-orange-500">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                </td>
-
-
-                                <td class="font-medium  text-lg text-gray-900 whitespace-nowrap text-center">
-                                    <button wire:click="removeSurcharges({{$surcharge->id}})" class="disabled:cursor-not-allowed text-red-500">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                        @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @endif
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    if (document.getElementById("surcharges-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new simpleDatatables.DataTable("#surcharges-table", {
-            searchable: true,
+    new DataTable("#surcharges-table", {
+        language: {
+            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+            "infoEmpty": "Geen resultaten om weer te geven",
+        },
+        paginate: true,
+        lengthChange: false,
+        filter: true,
+        info:false,
 
-            scrollX: true,
+        layout: {
+            topEnd: {
+                search: {
+                    placeholder: 'Zoeken'
+                }
+            }
+        }
+    });
 
-            labels: {
-                placeholder: "Zoeken",
-                info: "",
-                noRows: 'Geen toeslagen gevonden',
-                noResults: "Geen toeslagen gevonden",
-            },
-            sortable: false,
-            perPageSelect: false
-        });
-    }
+
 </script>

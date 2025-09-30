@@ -13,12 +13,17 @@ class Company extends Authenticatable
     protected $fillable = [
         'bedrijfsnaam',
         'discount',
+        'is_reseller',
+        'straat',
+        'postcode',
+        'plaats',
+        'logo',
 
     ];
 
     protected $table = 'companys';
 
     public function users() {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'bedrijf_id', 'id');
     }
 }

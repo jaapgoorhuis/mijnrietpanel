@@ -30,6 +30,11 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        @reseller
+                        <x-dropdown-link :href="route('mycompany')">
+                            {{ __('Mijn bedrijf') }}
+                        </x-dropdown-link>
+                        @endreseller
 
                         @admin
                         <x-dropdown-link :href="route('companys')">
@@ -37,9 +42,22 @@
                         </x-dropdown-link>
                         @endadmin
 
+
                         @admin
                         <x-dropdown-link :href="route('surcharges')">
                             {{ __('Toeslagen') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
+                        <x-dropdown-link :href="route('supliers')">
+                            {{ __('Leveranciers') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
+                        <x-dropdown-link :href="route('statistics')">
+                            {{ __('Statistieken') }}
                         </x-dropdown-link>
                         @endadmin
 
@@ -100,6 +118,12 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
+                @reseller
+                <x-responsive-nav-link :href="route('mycompany')">
+                    {{ __('Mijn bedrijf') }}
+                </x-responsive-nav-link>
+                @endreseller
+
                 @admin
                 <x-responsive-nav-link  :href="route('companys')">
                     {{ __('Bedrijven') }}
@@ -109,6 +133,18 @@
                 @admin
                 <x-responsive-nav-link  :href="route('surcharges')">
                     {{ __('Toeslagen') }}
+                </x-responsive-nav-link>
+                @endadmin
+
+                @admin
+                <x-responsive-nav-link  :href="route('supliers')">
+                    {{ __('Leveranciers') }}
+                </x-responsive-nav-link>
+                @endadmin
+
+                @admin
+                <x-responsive-nav-link  :href="route('statistics')">
+                    {{ __('Statistieken') }}
                 </x-responsive-nav-link>
                 @endadmin
 

@@ -79,14 +79,15 @@
                                 <div class="text-red-500">@error('phone') {{ $message }} @enderror</div>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="gebruikersnaam" class="text-gray-400">Bedrijfsnaam</label>
-                                <select id="status" wire:model="status" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <label for="bedrijfid" class="text-gray-400">Bedrijfsnaam</label>
+                                <select id="bedrijfid" wire:model="bedrijfid" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($companys as $company)
-                                        <option @if($this->user->bedrijf_id == $company->id) selected @endif value="{{$company_id}}">{{$company->bedrijfsnaam}}</option>
+
+                                        <option @if($this->user->bedrijf_id == $company->id) selected @endif value="{{$company->id}}">{{$company->bedrijfsnaam}}</option>
                                     @endforeach
                                 </select>
 
-                                <div class="text-red-500">@error('bedrijfsnaam') {{ $message }} @enderror</div>
+                                <div class="text-red-500">@error('bedrijfid') {{ $message }} @enderror</div>
                             </div>
                         </div>
 

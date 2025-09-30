@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return redirect('/login');
 });
@@ -21,6 +22,10 @@ Route::middleware('auth')->group(function () {
     Route::get('orders/create', \App\Livewire\Orders\CreateOrders::class);
     Route::get('orders/edit/{id}', \App\Livewire\Orders\EditOrders::class);
     Route::get('orders/upload', \App\Livewire\Orders\UploadOrders::class);
+
+    Route::get('offertes', \App\Livewire\Offertes\Offertes::class)->name('orders');
+    Route::get('offertes/create', \App\Livewire\Offertes\CreateOffertes::class);
+    Route::get('offertes/edit/{id}', \App\Livewire\Offertes\EditOffertes::class);
 
     Route::get('regulations', \App\Livewire\Regulations\Regulations::class)->name('regulations');
     Route::get('regulations/upload', \App\Livewire\Regulations\UploadRegulations::class);
@@ -44,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/companys/pricerules/remove/{id}', \App\Livewire\Companys\PriceRules\RemovePriceRules::class);
 
 
+    Route::get('/mycompany', \App\Livewire\MyCompany\MyCompany::class)->name('mycompany');
+    Route::get('/company/{slug}/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditCompanyPriceRules::class);
+
+
     Route::get('/companys', \App\Livewire\Companys\Companys::class)->name('companys');
     Route::get('/companys/create', \App\Livewire\Companys\CreateCompanys::class);
     Route::get('/companys/edit/{id}', \App\Livewire\Companys\EditCompanys::class);
@@ -59,6 +68,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/surcharges/edit/{id}', \App\Livewire\Surcharges\EditSurcharges::class);
     Route::get('/surcharges/remove/{id}', \App\Livewire\Surcharges\RemoveSurcharges::class);
 
+    Route::get('/supliers', \App\Livewire\Supliers\Supliers::class)->name('supliers');
+    Route::get('/supliers/create', \App\Livewire\Supliers\CreateSupliers::class);
+    Route::get('/supliers/edit/{id}', \App\Livewire\Supliers\EditSupliers::class);
+    Route::get('/supliers/remove/{id}', \App\Livewire\Supliers\RemoveSupliers::class);
+
+    Route::get('/statisctics', \App\Livewire\Statistics\Statistics::class)->name('statistics');
+    Route::get('/statistics/{id}', \App\Livewire\Statistics\ExpandedStatistics::class);
+    Route::get('/zaaglijst', function () {
+
+
+        $order = \App\Models\Order::where('id', 1)->first();
+        $user = User::where('id', $order->user_id)->first();
+
+        $company = $user->company;
+        return view('pdf.orderlijst')->with('order', $order);
+    });
 });
 
 

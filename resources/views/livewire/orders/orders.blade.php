@@ -62,14 +62,14 @@
 
                 <div class="relative">
                     <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-                        <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download order formulier
+                        <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
 
                         </a>
                     </button>
                     <div class="relative md:absolute right-0 top-0">
                         @admin
                         <button wire:click="uploadOrderForm()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-                            <i class="fa-solid fa-upload"></i> Order formulier uploaden
+                            <i class="fa-solid fa-upload"></i> Inmeetformulier uploaden
                         </button>
                         @endadmin
                         <button wire:click="newOrder()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
@@ -79,79 +79,43 @@
 
                 </div>
                 <br/>
-                <div class="grid">
-                    <table id="pagination-table">
-                        <thead>
+
+                <div wire:ignore class="overflow-x-auto">
+                    <table id="pagination-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th>
-                                <span class="flex items-center">
-                                    Order ID:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Project naam:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Geplaatst door:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Bedrijfsnaam:
-                                </span>
-                            </th>
-                            <th>
-                                <span class="flex items-center">
-                                    Status:
-                                </span>
-                            </th>
-
-                            <th>
-                                 <span class="flex items-center">
-                                    Totaal m²:
-                                </span>
-                            </th>
-
-                            <th>
-                                <span class="flex items-center">
-                                    Download order:
-                                </span>
-                            </th>
-
+                            <th scope="col" class="px-4 py-3">ORDER ID</th>
+                            <th scope="col" class="px-4 py-3">Project naam</th>
+                            <th scope="col" class="px-4 py-3">Geplaatst door:</th>
+                            <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
                             @admin
-                            <th>
-                                <span class="flex items-center">
-                                    Status bevestigen:
-                                </span>
-                            </th>
+                                <th scope="col" class="px-4 py-3">Order besteld</th>
                             @endadmin
+                            <th scope="col" class="px-4 py-3">Aantal m²</th>
+                            <th scope="col" class="px-4 py-3 text-right">
+                                <span>Actie's</span>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($this->orders as $order)
-                            <tr>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$order->order_id}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$order->project_naam}}
-                                </td>
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$order->intaker}}
-                                </td>
-
-                                <td class="font-medium text-gray-900 whitespace-nowrap">
-                                    {{$order->user->bedrijfsnaam}}
-                                </td>
-
-                                <td class="font-medium @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
+                            <tr class="border-b ">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$order->order_id}}</th>
+                                <td class="px-4 py-3">{{$order->project_naam}}</td>
+                                <td class="px-4 py-3">{{$order->intaker}}</td>
+                                <td class="px-4 py-3">{{$order->user->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
                                     {{$order->status}}
                                 </td>
-
-                                <td class="font-medium text-center text-gray-900 whitespace-nowrap">
+                                <td class="px-4 py-3">
+                                    @if($order->order_ordered == '')
+                                        Nee
+                                    @else
+                                        {{$order->order_ordered}}
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
                                         <?php $totalM2 = 0?>
                                     @foreach($order->orderLines as $orderLine)
                                             <?php $totalM2 += $orderLine->m2;?>
@@ -159,20 +123,53 @@
                                     {{$totalM2}} m²
                                 </td>
 
-                                <td class="font-medium text-center text-gray-900 whitespace-nowrap">
-                                    <a href="{{asset('/storage/orders/order-'.$order->order_id.'.pdf')}}" target="_blank"><i class="fa-solid fa-download"></i></a>
-                                </td>
-
-
-
-                                @admin
-                                <td class="font-medium text-center text-gray-900 whitespace-nowrap">
-                                    <button wire:click="editOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif class="disabled:cursor-not-allowed disabled:text-[#16a34a54] text-green-700">
-                                        <i class="fa-solid fa-circle-check" ></i>
+                                <td  class="px-4 py-3 flex items-center justify-end">
+                                    <button wire:ignore.self id="{{$order->id}}-dropdown-button" data-dropdown-toggle="{{$order->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        </svg>
                                     </button>
+                                    <div wire:ignore.self id="{{$order->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$order->id}}-dropdown-button">
+                                            <li>
+                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="editOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
+                                                    <i class="fa-solid fa-circle-check" ></i> Order bevestigen
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/storage/orders/order-'.$order->order_id.'.pdf')}}" target="_blank">
+                                                    <i class="fa-solid fa-download"></i> Order downloaden
+                                                </a>
+                                            </li>
+                                            @admin
+                                            <li>
+                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadPakketList({{$order->id}})" >
+                                                    <i class="fa-solid fa-download"></i> Pakketlijst downloaden
+                                                </button>
 
+                                            </li>
+                                            <li>
+                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadZaagList({{$order->id}})" >
+                                                    <i class="fa-solid fa-download"></i> Zaaglijst downloaden
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button @if($order->status == 'In behandeling') disabled @endif @if($order->order_ordered) disabled @endif class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:bg-[#e9eaeb] disabled:text-[#b5aeae]" wire:click="SendOrderList({{$order->id}})">
+                                                    <i class="fa-solid fa-download"></i> Bestellijst versturen
+                                                </button>
+
+                                            </li>
+
+                                            <li>
+                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadBestellijst({{$order->id}})" >
+                                                    <i class="fa-solid fa-download"></i> Bestellijst downloaden
+                                                </button>
+                                            </li>
+                                            @endadmin
+                                        </ul>
+
+                                    </div>
                                 </td>
-                                @endadmin
                             </tr>
                         @endforeach
                         </tbody>
@@ -183,19 +180,23 @@
     </div>
 </div>
 <script>
-    if (document.getElementById("pagination-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new simpleDatatables.DataTable("#pagination-table", {
-            searchable: true,
-            fixedHeight:true,
 
-            labels: {
-                placeholder: "Zoeken",
-                info: "",
-                noRows: 'Geen orders gevonden',
-                noResults: "Geen orders gevonden",
-            },
-            sortable: false,
-            perPageSelect: false
-        });
-    }
+     new DataTable("#pagination-table", {
+         paginate: false,
+         lengthChange: false,
+         filter: true,
+         info:false,
+
+         layout: {
+             topEnd: {
+                 search: {
+                     placeholder: 'Zoeken'
+                 }
+             }
+         }
+    });
+
+     document.addEventListener('open-new-tab', function (event) {
+         window.open(event.detail[0].url, '_blank');
+     });
 </script>

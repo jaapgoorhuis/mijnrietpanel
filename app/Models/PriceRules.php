@@ -13,7 +13,9 @@ class PriceRules extends Authenticatable
     protected $fillable = [
         'rule_name',
         'panel_type',
-        'price'
+        'price',
+        'reseller',
+        'company_id'
 
     ];
 
@@ -24,4 +26,7 @@ class PriceRules extends Authenticatable
         return $this->hasOne(PanelType::class,'id', 'panel_type');
     }
 
+    public function company() {
+        return $this->belongsTo(Company::class, 'id', 'company_id');
+    }
 }

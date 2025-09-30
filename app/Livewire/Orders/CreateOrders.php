@@ -10,6 +10,7 @@ use App\Models\OrderTemplate;
 use App\Models\PanelBrand;
 use App\Models\PanelLook;
 use App\Models\PanelType;
+use App\Models\Supliers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -18,17 +19,23 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class CreateOrders extends Component
 {
 
-    public $project_naam;
-    public $project_adres;
     public $intaker;
 
-    public $rietkleur = [];
-    public $toepassing = [];
-    public $merk_paneel = [];
+    public $klant_naam;
+    public $referentie;
+    public $aflever_straat;
+    public $aflever_postcode;
+    public $aflever_plaats;
+    public $aflever_land;
+
+    public $rietkleur = 'Old look';
+    public $toepassing = 'Dak';
+    public $merk_paneel;
     public $aantal = [];
-    public $kerndikte = [];
+    public $kerndikte = '60mm';
 
     public $m2 = [];
+    public $discount = 0;
 
     public $fillTotaleLengte = ['0'];
     public $fillCb = ['0'];
@@ -53,7 +60,25 @@ class CreateOrders extends Component
 
     public $saved = FALSE;
 
+    public $wandSupliers;
+    public $dakSupliers;
+    public $supliers;
+
+    public $project_naam;
+
+    public $werkendeBreedte;
     public function mount() {
+        $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
+        $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
+        $this->supliers = Supliers::get();
+
+        $this->merk_paneel = $this->dakSupliers->first()->name;
+        $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
+
+
+
+        $this->brands = $this->dakSupliers;
+
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen orders plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
             return $this->redirect('/orders', navigate: true);
@@ -62,7 +87,6 @@ class CreateOrders extends Component
 
     public function render()
     {
-
         $this->panelTypes = PanelType::get();
 
 
@@ -92,22 +116,19 @@ class CreateOrders extends Component
         }
     }
 
-    public function updateBrands($index) {
-        if($this->toepassing[$index] == 'wand') {
-            $this->brands[$index] = [
-                'Kingspan' => '1000',
-                'Joriside' => '1000',
-                'SAB Profiel' => '1000',
-                'FALK' => '1060'
-            ];
-        }else {
-            $this->merk_paneel[$index] = 'Kingspan';
-            $this->brands[$index] = [
-                'Kingspan' => '1000'
-            ];
+    public function updateBrands() {
+
+
+        if($this->toepassing == 'Wand') {
+
+            $this->brands = $this->wandSupliers;
+
+        }else if($this->toepassing == 'Dak') {
+            $this->merk_paneel = $this->dakSupliers->first()->name;
+            $this->brands = $this->dakSupliers;
         }
 
-        $this->updateM2($index);
+
     }
 
     public function addOrderLine() {
@@ -120,14 +141,6 @@ class CreateOrders extends Component
         $this->totaleLengte[] = '0';
         $this->fillTotaleLengte[] = '0';
         $this->aantal[] = '1';
-        $this->merk_paneel[] = 'Kingspan';
-        $this->brands[] = [
-
-            'Kingspan' => '1000',
-            'Joriside' => '1000',
-            'SAB Profiel' => '1000',
-            'FALK' => '1060'
-        ];
     }
 
     public function removeOrderLine($index) {
@@ -144,8 +157,15 @@ class CreateOrders extends Component
     }
 
     protected $rules = [
+        'klant_naam' => 'required',
         'project_naam' => 'required',
+        'referentie' => 'required',
+        'aflever_straat' => 'required',
+        'aflever_postcode' => 'required',
+        'aflever_plaats' => 'required',
+        'aflever_land' => 'required',
         'intaker' => 'required',
+        'discount' => 'required',
         'totaleLengte.*' => 'required|numeric|min:1',
         'aantal.*' => 'required|numeric|min:1',
         'lb.*' => 'required|numeric|max:210',
@@ -155,7 +175,14 @@ class CreateOrders extends Component
     public function messages(): array
     {
         return [
+            'klant_naam.required' => 'De klantnaam is een verplicht veld.',
             'project_naam.required' => 'De projectnaam is een verplicht veld.',
+            'referentie.required' => 'De referentie is een verplicht veld.',
+            'aflever_straat.required' => 'De straat is een verplicht veld.',
+            'aflever_postcode.required' => 'De postcode is een verplicht veld.',
+            'aflever_plaats.required' => 'De plaats is een verplicht veld.',
+            'aflever_land.required' => 'Het land is een verplicht veld.',
+            'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
             'intaker.required' => 'Vul aub uw naam in.',
             'totaleLengte.*.min' => 'De lengte moet mimimaal 1mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
@@ -181,9 +208,19 @@ class CreateOrders extends Component
             $orderId = 250600;
         }
         Order::create([
-            'project_naam' => $this->project_naam,
-            'project_adres' => $this->project_adres,
+            'klantnaam' => $this->klant_naam,
+            'referentie' => $this->referentie,
+            'aflever_straat' => $this->aflever_straat,
+            'aflever_postcode' => $this->aflever_postcode,
+            'aflever_land' => $this->aflever_land,
+            'aflever_plaats' => $this->aflever_plaats,
             'intaker' => $this->intaker,
+            'discount' => $this->discount,
+            'merk_paneel' => $this->merk_paneel,
+            'rietkleur' => $this->rietkleur,
+            'toepassing' => $this->toepassing,
+            'kerndikte' => $this->kerndikte,
+            'project_naam' => $this->project_naam,
             'user_id' => Auth::user()->id,
             'status' => 'In behandeling',
             'order_id' => $orderId
@@ -192,25 +229,16 @@ class CreateOrders extends Component
         $order = Order::orderBy('id', 'desc')->first();
 
         foreach($this->orderLines as $index => $key) {
-
-            $rietkleur   = array_key_exists($index, $this->rietkleur)   ? $this->rietkleur[$index]   : 'Old look';
-            $toepassing  = array_key_exists($index, $this->toepassing)  ? $this->toepassing[$index]  : 'Wand';
-            $merk_paneel = array_key_exists($index, $this->merk_paneel) ? $this->merk_paneel[$index] : 'Kingspan';
             $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
             $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-            $kerndikte = array_key_exists($index, $this->kerndikte) ? $this->kerndikte[$index] : '60mm';
             $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
             $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
             $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
 
             OrderLines::create([
                 'order_id' => $order->id,
-                'rietkleur' => $rietkleur,
-                'toepassing' => $toepassing,
-                'merk_paneel' => $merk_paneel,
                 'fillCb' => $fillCb,
                 'fillLb' => $fillLb,
-                'kerndikte' => $kerndikte,
                 'fillTotaleLengte' => $fillTotaleLengte,
                 'aantal' => $aantal,
                 'user_id' => Auth::user()->id,
@@ -232,20 +260,25 @@ class CreateOrders extends Component
         return $this->redirect('/orders', navigate: true);
     }
 
+
     public function updateM2($index) {
-           $werkendeBreedte = (int)$this->brands[$index][$this->merk_paneel[$index]];
 
-           $lengtePaneel = (int)$this->fillTotaleLengte[$index];
-
-           $werkendeBreedteM = $werkendeBreedte / 1000;
-           $lengtePaneelM = $lengtePaneel / 1000;
-
-
-           if($lengtePaneel == '0' || $werkendeBreedte == '0') {
-               $this->m2[$index] = 0;
+        foreach($this->brands as $brands) {
+           if($brands->name == $this->merk_paneel) {
+               $this->werkendeBreedte = $brands->werkende_breedte;
            }
-           else {
-               $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
-           }
+        }
+       $lengtePaneel = (int)$this->fillTotaleLengte[$index];
+
+       $werkendeBreedteM = $this->werkendeBreedte / 1000;
+       $lengtePaneelM = $lengtePaneel / 1000;
+
+
+       if($lengtePaneel == '0' || $this->werkendeBreedte == '0') {
+           $this->m2[$index] = 0;
+       }
+       else {
+           $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
+       }
     }
 }

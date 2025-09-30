@@ -20,6 +20,9 @@ button.datatable-pagination-list-item-link {
     .datatable-container {
         width: 500px;
     }
+    .dt-search {
+        text-align: left !important;
+    }
 }
 
 @media(max-width:500px) {
@@ -38,4 +41,19 @@ button.datatable-pagination-list-item-link {
 .datatable-active {
     text-decoration: underline;
     font-weight: bold;
+}
+
+.dt-search {
+    text-align: right;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+label[for="dt-search-0"]
+{
+    display:none;
+}
+
+.dt-paging {
+    text-align: right;
 }

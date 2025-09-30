@@ -14,12 +14,8 @@ return new class extends Migration
         Schema::create('order_lines', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
-            $table->string('rietkleur');
-            $table->string('toepassing');
-            $table->string('merk_paneel');
             $table->string('fillCb');
             $table->string('fillLb');
-            $table->string('kerndikte');
             $table->string('fillTotaleLengte');
             $table->string('aantal');
             $table->integer('user_id');
