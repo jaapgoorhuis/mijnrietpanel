@@ -52,7 +52,7 @@
     <table>
         <tr>
             <td>
-                <img src="{{ public_path("storage/images/rietpanel-R.png")}}" alt="" style="width: 110px;"/>
+                <img src="{{ public_path("storage/images/rietpanel-R.png")}}" alt="" style="width: 60px;"/>
 
         </tr>
     </table>
