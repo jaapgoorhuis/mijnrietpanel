@@ -53,7 +53,7 @@
         <tr>
             <td>
 
-                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 60px;"/>
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 100px; padding:10px; margin-left:30px;"/>
         </tr>
     </table>
 
