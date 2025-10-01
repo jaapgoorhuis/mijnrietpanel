@@ -14,7 +14,7 @@
             <td class="label">Ordernummer:</td>
             <td>25001</td>
             <td rowspan="4" class="logo">
-                <img src="https://mijnrietpanel.crewa.nl/public/storage/images/rietpanel-R.png" alt="" style="height: 100px;"/>
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
             </td>
         </tr>
         <tr>
@@ -52,7 +52,7 @@
     <table>
         <tr>
             <td>
-                <img src="https://mijnrietpanel.crewa.nl/public/storage/images/rietpanel_logo.png" alt="" style="width: 110px;"/>
+                <img src="{{ public_path("storage/images/rietpanel-R.png")}}" alt="" style="width: 110px;"/>
 
         </tr>
     </table>

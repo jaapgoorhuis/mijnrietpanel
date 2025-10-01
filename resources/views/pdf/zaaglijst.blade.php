@@ -16,7 +16,7 @@
             <td class="label">Dikte paneel:</td>
             <td style="color:red">{{$order->kerndikte}}</td>
             <td rowspan="5" class="logo">
-                <img src="https://mijnrietpanel.crewa.nl/public/storage/images/rietpanel-R.png" alt="Logo" height="100">
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
             </td>
         </tr>
         <tr>

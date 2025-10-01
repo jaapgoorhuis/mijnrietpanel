@@ -78,7 +78,7 @@
     <tr>
         <td>
 
-            <img src="https://mijnrietpanel.crewa.nl/public/storage/images/rietpanel_logo.png" alt="Logo" height="70">
+            <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
         </td>
     </tr>
 </table>
