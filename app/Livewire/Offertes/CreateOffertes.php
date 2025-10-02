@@ -233,8 +233,8 @@ class CreateOffertes extends Component
                 $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
                 $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
 
-                OrderLines::create([
-                    'order_id' => $offerte->id,
+                OfferteLines::create([
+                    'offerte_id' => $offerte->id,
                     'fillCb' => $fillCb,
                     'fillLb' => $fillLb,
                     'fillTotaleLengte' => $fillTotaleLengte,
