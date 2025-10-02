@@ -108,6 +108,7 @@
                                 <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
                                     {{$order->status}}
                                 </td>
+                                @admin
                                 <td class="px-4 py-3">
                                     @if($order->order_ordered == '')
                                         Nee
@@ -115,6 +116,7 @@
                                         {{$order->order_ordered}}
                                     @endif
                                 </td>
+                                @endadmin
                                 <td class="px-4 py-3">
                                         <?php $totalM2 = 0?>
                                     @foreach($order->orderLines as $orderLine)
