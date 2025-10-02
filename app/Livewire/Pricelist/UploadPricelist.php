@@ -23,15 +23,14 @@ class UploadPricelist extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf|max:2048',
+        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
     ];
 
     public function messages(): array
     {
         return [
             'files.required' => 'Het is verplicht om een bestand te uploaden.',
-            'files.*.mimes' => 'Alle bestanden moeten een PDF bestand zijn.',
-            'files.*.max' => 'Alle bestanden mogen niet groter dan 2MB zijn.',
+            'files.*.mimes' => 'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
         ];
     }
 

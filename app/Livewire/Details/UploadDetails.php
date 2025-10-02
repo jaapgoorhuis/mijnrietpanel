@@ -25,15 +25,14 @@ class UploadDetails extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|max:4096',
+        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
     ];
 
     public function messages(): array
     {
         return [
             'files.required' => 'Het is verplicht om een bestand te uploaden.',
-            'files.*.mimes' => 'Alle bestanden moeten een PDF of DWG bestand zijn.',
-            'files.*.max' => 'Alle bestanden mogen niet groter dan 4MB zijn.',
+            'files.*.mimes' => 'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
         ];
     }
 
