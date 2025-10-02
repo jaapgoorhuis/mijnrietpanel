@@ -182,6 +182,11 @@
 <script>
 
      new DataTable("#pagination-table", {
+         language: {
+             "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+             "infoEmpty": "Geen resultaten om weer te geven",
+             "emptyTable": "Geen resultaten aanwezig in de tabel",
+         },
          paginate: false,
          lengthChange: false,
          filter: true,
