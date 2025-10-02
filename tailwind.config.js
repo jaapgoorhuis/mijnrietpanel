@@ -1,5 +1,9 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+module.exports = {
+    darkMode: false, // geen dark mode
+    // ...
+}
 
 /** @type {import('tailwindcss').Config} */
 export default {
