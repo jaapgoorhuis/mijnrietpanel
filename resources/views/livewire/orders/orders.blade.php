@@ -133,11 +133,13 @@
                                     </button>
                                     <div wire:ignore.self id="{{$order->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
                                         <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$order->id}}-dropdown-button">
+                                            @admin
                                             <li>
                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="editOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
                                                     <i class="fa-solid fa-circle-check" ></i> Order bevestigen
                                                 </button>
                                             </li>
+                                            @endadmin
                                             <li>
                                                 <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/storage/orders/order-'.$order->order_id.'.pdf')}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Order downloaden
