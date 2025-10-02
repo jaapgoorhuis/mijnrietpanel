@@ -3,7 +3,7 @@
     <table align="center" width="600" style="align:center; text-align:center;  background-color:#e5e7eb; margin:auto; padding:20px;">
         <tr>
             <td>
-                <img src="https://rietpanel.nl/wp-content/uploads/2024/08/Logo-Rietpanel-PNG-1024x419.png" height="70"  alt="Rietpanel logo"/>
+                <img src="https://mijn.rietpanel.nl/public/storage/images/rietpanel_logo.png" height="70"  alt="Rietpanel logo"/>
             </td>
         </tr>
         <tr>
