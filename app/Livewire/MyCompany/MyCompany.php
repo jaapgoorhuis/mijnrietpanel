@@ -3,6 +3,7 @@
 namespace App\Livewire\MyCompany;
 
 use App\Models\Company;
+use App\Models\PriceRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -15,16 +16,20 @@ class MyCompany extends Component
 
     public $company;
 
-    public $files =[];
+    public $files;
 
     public $straat;
     public $postcode;
     public $plaats;
+    public $basicPriceRules;
+    public $companyDiscount;
 
     public function render()
     {
         $this->company = Auth::user()->companys->first();
 
+        $this->companyDiscount = $this->company->discount;
+        $this->basicPriceRules = PriceRules::where('company_id', '0')->where('reseller', 0)->get();
         $this->straat = $this->company->straat;
         $this->postcode = $this->company->postcode;
         $this->plaats = $this->company->plaats;
@@ -34,15 +39,15 @@ class MyCompany extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|image|mimes:jpeg,jpg,png,webP,svg|max:2048',
+        'files' => 'required|image|mimes:jpeg,jpg,png,webP,svg|max:2048',
     ];
 
     public function messages(): array
     {
         return [
             'files.required' => 'Het is verplicht om een bestand te uploaden.',
-            'files.*.mimes' => 'Alle bestanden moeten een afbeeldingbestand zijn.',
-            'files.*.max' => 'Alle bestanden mogen niet groter dan 2MB zijn.',
+            'files.mimes' => 'Alle bestanden moeten een afbeeldingbestand zijn.',
+            'files.max' => 'Alle bestanden mogen niet groter dan 2MB zijn.',
         ];
     }
 
@@ -51,14 +56,14 @@ class MyCompany extends Component
     {
         $this->validate();
         if ($this->files) {
-            foreach ($this->files as $file) {
-                $file->storeAs(path: 'companylogos', name: $file->getClientOriginalName(), options: 'public');
+            $this->files->storeAs(path: '/companylogos', name: $this->files->getClientOriginalName(), options: 'public');
 
-                \App\Models\Company::where('id', Auth::user()->companys->id)->update([
-                    'logo' => $file->getClientOriginalName(),
+            $filename = $this->files->getClientOriginalName();
 
-                ]);
-            }
+            \App\Models\Company::where('id',$this->company->id)->update([
+                'logo' => $filename,
+            ]);
+
             session()->flash('success', 'Het logo is geupload.');
             return $this->redirect('/mycompany', navigate: true);
         } else {
