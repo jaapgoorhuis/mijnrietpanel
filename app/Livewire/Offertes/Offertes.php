@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Offertes;
 
+use App\Mail\sendOrder;
 use App\Models\Offerte;
 use App\Models\OfferteLines;
 use App\Models\Order;
 use App\Models\OrderLines;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use function Spatie\LaravelPdf\Support\pdf;
 
@@ -101,6 +103,8 @@ class Offertes extends Component
         }
 
         $order = Order::orderBy('id', 'desc')->first();
+
+        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
         $orderLines = OrderLines::where('order_id', $order->id)->get();
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
