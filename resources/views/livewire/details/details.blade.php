@@ -36,7 +36,7 @@
                             Er zijn geen bestanden gevonden
                         @else
                             @foreach($this->details as $detail)
-                                <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
+                                    <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
                                     <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$detail->friendly_name}}</h2>
                                     <a target="_blank" href="{{asset('/storage/details/'.$detail->file_name)}}">
                                         <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">

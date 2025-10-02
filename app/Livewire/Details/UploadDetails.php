@@ -50,13 +50,15 @@ class UploadDetails extends Component
         if ($this->files) {
             foreach ($this->files as $file) {
                 $file->storeAs(path: 'details', name: $file->getClientOriginalName(), options: 'public');
-                $latestDetail = Detail::orderBy('id', 'desc')->first();
+                $latestDetail = Detail::orderBy('order_id', 'desc')->first();
 
                 if ($latestDetail) {
                     $orderId = $latestDetail->order_id + 1;
                 } else {
                     $orderId = 1;
                 }
+
+
                 Detail::create([
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),

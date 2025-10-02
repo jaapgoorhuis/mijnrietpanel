@@ -48,7 +48,7 @@ class UploadDocumentation extends Component
         if ($this->files) {
             foreach ($this->files as $file) {
                 $file->storeAs(path: 'documentation', name: $file->getClientOriginalName(), options: 'public');
-                $latestDocumentation = \App\Models\Documentation::orderBy('id', 'desc')->first();
+                $latestDocumentation = \App\Models\Documentation::orderBy('order_id', 'desc')->first();
 
                 if ($latestDocumentation) {
                     $orderId = $latestDocumentation->order_id + 1;

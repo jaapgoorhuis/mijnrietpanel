@@ -48,7 +48,7 @@ class UploadMarketing extends Component
         if ($this->files) {
             foreach ($this->files as $file) {
                 $file->storeAs(path: 'marketing', name: $file->getClientOriginalName(), options: 'public');
-                $latestMarketing = \App\Models\Marketing::orderBy('id', 'desc')->first();
+                $latestMarketing = \App\Models\Marketing::orderBy('order_id', 'desc')->first();
 
                 if ($latestMarketing) {
                     $orderId = $latestMarketing->order_id + 1;
