@@ -37,6 +37,13 @@ button.datatable-pagination-list-item-link {
     }
 }
 
+@media(max-width:768px) {
+    input#dt-search-0 {
+        width: 100%;
+        margin:0px;
+    }
+}
+
 
 .datatable-active {
     text-decoration: underline;
@@ -48,6 +55,8 @@ button.datatable-pagination-list-item-link {
     margin-bottom: 10px;
     margin-top: 20px;
 }
+
+
 
 label[for="dt-search-0"]
 {

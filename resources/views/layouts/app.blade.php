@@ -23,7 +23,7 @@
             crossorigin="anonymous"></script>
 
         <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-        <link href="https://cdn.datatables.net/2.3.4/css/dataTables.tailwindcss.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
         <!-- Scripts -->
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
@@ -65,6 +65,51 @@
                 location.reload();
             });
         });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.custom-datatable').each(function() {
+                let enableScroll = window.innerWidth < 768; // bijv. < md breakpoint
+                $(this).DataTable({
+                    language: {
+                         "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+                         "infoEmpty": "Geen resultaten om weer te geven",
+                         "emptyTable": "Geen resultaten aanwezig in de tabel",
+                        searchPlaceholder: 'Zoeken...',
+                     },
+                    paginate: false,
+                     lengthChange: false,
+                     filter: true,
+                     info:false,
+                    responsive: true,
+                    // andere opties
+                });
+            });
+            $('.dt-container .grid').each(function (index) {
+                if ($(this).hasClass('grid-cols-2')) {
+                    $(this).removeClass('grid-cols-2').addClass('grid-cols-1 md:grid-cols-2');
+                }
+            });
+
+            $('.dt-container').each(function () {
+
+
+                const $grids = $(this).find('.grid');
+
+                // Check of er minstens 2 grids zijn
+                if ($grids.length >= 2) {
+                    const $secondGrid = $grids.eq(1);
+
+                    // Alleen op kleine schermen
+
+                        $secondGrid.addClass('overflow-x-auto');
+
+                }
+            });
+        });
+
+
+
     </script>
     </body>
 

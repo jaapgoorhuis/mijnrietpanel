@@ -61,18 +61,18 @@
             <div class="p-6 text-gray-900">
 
                 <div class="relative">
-                    <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    <button type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                         <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
 
                         </a>
                     </button>
                     <div class="relative md:absolute right-0 top-0">
                         @admin
-                        <button wire:click="uploadOrderForm()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
+                        <button wire:click="uploadOrderForm()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
                             <i class="fa-solid fa-upload"></i> Inmeetformulier uploaden
                         </button>
                         @endadmin
-                        <button wire:click="newOrder()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <button wire:click="newOrder()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                             <i class="fa fa-plus hover:cursor-pointer"></i> Order aanmaken
                         </button>
                     </div>
@@ -80,8 +80,7 @@
                 </div>
                 <br/>
 
-                <div wire:ignore class="overflow-x-auto">
-                    <table id="pagination-table" class="w-full text-sm text-left text-gray-500 ">
+                    <table id="pagination-table" class="datatable w-full text-sm text-left text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
@@ -178,33 +177,12 @@
                         @endforeach
                         </tbody>
                     </table>
-                </div>
+
             </div>
         </div>
     </div>
 </div>
 <script>
-
-     new DataTable("#pagination-table", {
-         language: {
-             "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-             "infoEmpty": "Geen resultaten om weer te geven",
-             "emptyTable": "Geen resultaten aanwezig in de tabel",
-         },
-         paginate: false,
-         lengthChange: false,
-         filter: true,
-         info:false,
-
-         layout: {
-             topEnd: {
-                 search: {
-                     placeholder: 'Zoeken'
-                 }
-             }
-         }
-    });
-
      document.addEventListener('open-new-tab', function (event) {
          window.open(event.detail[0].url, '_blank');
      });
