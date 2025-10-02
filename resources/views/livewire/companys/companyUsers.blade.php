@@ -60,8 +60,8 @@
                 </div>
                 <br/>
                 <div class="overflow-x-auto">
-                    <table id="user-table" class="custom-datatable w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <table id="user-table" class="custom-datatable w-full text-sm text-left text-gray-500  mt-[25px]">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
                             <th scope="col" class="px-4 py-3">ID</th>
                             <th scope="col" class="px-4 py-3">Gebruikersnaam</th>
@@ -108,7 +108,7 @@
                                         </svg>
                                     </button>
                                     <div wire:ignore.self id="{{$user->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
-                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$user->id}}-dropdown-button">
+                                        <ul class="py-1 text-sm text-gray-700 " aria-labelledby="{{$user->id}}-dropdown-button">
                                             <li>
                                                 <button
                                                     class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
