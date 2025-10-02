@@ -52,7 +52,7 @@
                     Jaarstatistieken > {{$this->company->bedrijfsnaam}}
                 </h2>
                 <div class="overflow-x-auto">
-                    <table id="year-statistics-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                    <table id="year-statistics-table" class="custom-datatable w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-4 py-3">Jaar:</th>
@@ -104,86 +104,59 @@
                 </div>
             </div>
             <br/>
-
         </div>
         <br/>
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <h2 class="text-lg font-medium text-gray-900">
-                            Totaaloverzicht > {{$this->company->bedrijfsnaam}}
-                        </h2>
-                        <div class="overflow-x-auto">
-                            <table id="year-statistics-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" class="px-4 py-3">Afgenomen m²:</th>
-                                    <th scope="col" class="px-4 py-3">Orders:</th>
-                                    <th scope="col" class="px-4 py-3">Offertes:</th>
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900">
+                <h2 class="text-lg font-medium text-gray-900">
+                    Totaaloverzicht > {{$this->company->bedrijfsnaam}}
+                </h2>
+                <div class="overflow-x-auto">
+                    <table id="total-statistics-table" class="custom-datatable w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Afgenomen m²:</th>
+                            <th scope="col" class="px-4 py-3">Orders:</th>
+                            <th scope="col" class="px-4 py-3">Offertes:</th>
 
-                                </tr>
-                                </thead>
-                                <tbody>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                                    <tr class="border-b ">
-                                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                            @php
-                                                $count = \App\Models\OrderLines::whereHas('order')
-                                                          ->whereIn('user_id', $this->company->users->pluck('id'))->sum('m2');
-                                            @endphp
+                            <tr class="border-b ">
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    @php
+                                        $count = \App\Models\OrderLines::whereHas('order')
+                                                  ->whereIn('user_id', $this->company->users->pluck('id'))->sum('m2');
+                                    @endphp
 
-                                            {{ $count }}
+                                    {{ $count }}
 
-                                        </th>
-                                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                            @php
-                                                $userIds = $this->company->users->pluck('id');
-                                                $count = \App\Models\Order::whereIn('user_id', $userIds)
-                                                      ->count();
-                                            @endphp
+                                </th>
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    @php
+                                        $userIds = $this->company->users->pluck('id');
+                                        $count = \App\Models\Order::whereIn('user_id', $userIds)
+                                              ->count();
+                                    @endphp
 
-                                            {{ $count }}
-                                        </th>
-                                        <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
-                                            @php
-                                                $userIds = $this->company->users->pluck('id');
-                                                $count = \App\Models\Offerte::whereIn('user_id', $userIds)
-                                                      ->count();
-                                            @endphp
+                                    {{ $count }}
+                                </th>
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    @php
+                                        $userIds = $this->company->users->pluck('id');
+                                        $count = \App\Models\Offerte::whereIn('user_id', $userIds)
+                                              ->count();
+                                    @endphp
 
-                                            {{ $count }}
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <br/>
-
+                                    {{ $count }}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+            <br/>
+        </div>
     </div>
-
 </div>
-
-<script>
-    new DataTable("#year-statistics-table", {
-        language: {
-            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-            "infoEmpty": "Geen resultaten om weer te geven",
-        },
-        order: [[1, 'desc']],
-        paginate: false,
-        lengthChange: false,
-        filter: true,
-        info:false,
-
-        layout: {
-            topEnd: {
-                search: {
-                    placeholder: 'Zoeken'
-                }
-            }
-        }
-    });
-
-
-</script>

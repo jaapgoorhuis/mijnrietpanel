@@ -91,6 +91,11 @@
                 }
             });
 
+            $('.dt-search label').contents().filter(function () {
+                return this.nodeType === 3; // Node type 3 = text
+            }).remove();
+
+
             $('.dt-container').each(function () {
 
 

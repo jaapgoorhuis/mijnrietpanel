@@ -56,12 +56,12 @@
                    <h2 class="text-[20px]">Rietpanel prijsregel overzicht</h2>
 
                     @admin
-                    <button wire:click="newRule()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    <button wire:click="newRule()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                         <i class="fa fa-plus hover:cursor-pointer"></i> Regel aanmaken
                     </button>
                     @endadmin
                     <div class="overflow-x-auto">
-                        <table id="pricerules-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                        <table id="pricerules-table" class="custom-datatable  w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">Id:</th>
@@ -184,26 +184,3 @@
         </div>
     </div>
 </div>
-<script>
-    new DataTable("#pricerules-table", {
-        language: {
-            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-            "infoEmpty": "Geen resultaten om weer te geven",
-            "emptyTable": "Geen resultaten aanwezig in de tabel",
-        },
-        paginate: false,
-        lengthChange: false,
-        filter: false,
-        info:false,
-
-        layout: {
-            topEnd: {
-                search: {
-                    placeholder: 'Zoeken'
-                }
-            }
-        }
-    });
-
-
-</script>

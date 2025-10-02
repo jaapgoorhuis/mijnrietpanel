@@ -60,7 +60,7 @@
                 <h2 class="text-lg font-medium text-gray-900">
                     Bedrijfslogo
                 </h2>
-                <div class="overflow-x-auto">
+
                     <br/>
                     <small>dit logo komt op gemaakte offertes en orders te staan.</small>
 
@@ -83,9 +83,6 @@
                     <label>Huidige logo</label><br/>
                     <img src="{{asset('storage/companylogos/'.$this->company->logo)}}" class="h-[75px]"/>
                 </div>
-
-
-            </div>
         </div>
 
     <br/>
@@ -95,7 +92,7 @@
                 <h2 class="text-lg font-medium text-gray-900">
                     Prijsregels
                 </h2>
-                <button wire:click="priceRules()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                <button wire:click="priceRules()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                     <i class="fa-solid fa-money-check-dollar"></i> Ga naar prijsregels
                 </button>
             </div>
@@ -163,7 +160,7 @@
                         </div>
 
 
-                        <button wire:click="updateCompany()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                        <button wire:click="updateCompany()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                             Opslaan
                         </button>
                     </div>

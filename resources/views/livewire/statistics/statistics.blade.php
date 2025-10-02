@@ -44,7 +44,7 @@
                     Bedrijfsstatistieken
                 </h2>
                 <div class="overflow-x-auto">
-                    <table id="statistics-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                    <table id="statistics-table" class="custom-datatable w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam:</th>
@@ -125,27 +125,3 @@
     </div>
 
 </div>
-
-<script>
-    new DataTable("#statistics-table", {
-        language: {
-            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-            "infoEmpty": "Geen resultaten om weer te geven",
-        },
-        order: [[1, 'desc']],
-        paginate: true,
-        lengthChange: false,
-        filter: true,
-        info:false,
-
-        layout: {
-            topEnd: {
-                search: {
-                    placeholder: 'Zoeken'
-                }
-            }
-        }
-    });
-
-
-</script>

@@ -24,7 +24,7 @@
                 <div class="p-6 text-gray-900">
                     @admin
                     <div class="text-right">
-                        <button wire:click="uploadRegulation()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                        <button wire:click="uploadRegulation()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                              <i class="fa-solid fa-upload"></i> Bestanden toevoegen
                         </button>
                     </div>
