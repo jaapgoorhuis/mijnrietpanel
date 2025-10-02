@@ -30,11 +30,10 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
-                        @reseller
+
                         <x-dropdown-link :href="route('mycompany')">
                             {{ __('Mijn bedrijf') }}
                         </x-dropdown-link>
-                        @endreseller
 
                         @admin
                         <x-dropdown-link :href="route('companys')">
@@ -118,11 +117,9 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                @reseller
                 <x-responsive-nav-link :href="route('mycompany')">
                     {{ __('Mijn bedrijf') }}
                 </x-responsive-nav-link>
-                @endreseller
 
                 @admin
                 <x-responsive-nav-link  :href="route('companys')">
