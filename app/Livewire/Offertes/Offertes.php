@@ -104,10 +104,11 @@ class Offertes extends Component
 
         $order = Order::orderBy('id', 'desc')->first();
 
-        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
+
         $orderLines = OrderLines::where('order_id', $order->id)->get();
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
+        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
 
         session()->flash('success', 'Er is een order aangemaakt van deze offerte.');
         return $this->redirect('/offertes', navigate: true);
