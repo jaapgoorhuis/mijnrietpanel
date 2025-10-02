@@ -125,6 +125,21 @@
                 // Zet de gefilterde klassen terug
                 $(this).attr('class', cleanedClasses);
             });
+
+            $('input[type="search"]').on('focus', function () {
+                $(this).css({
+                    'border-color': 'rgba(192, 161, 110, 0.5)',
+                    'box-shadow': '0 0 0 3px rgba(192, 161, 110, 0.5)'
+                });
+            });
+
+            $('input[type="search"]').on('blur', function () {
+                // Reset eventueel naar standaard of verwijder inline styles
+                $(this).css({
+                    'border-color': '',
+                    'box-shadow': ''
+                });
+            });
         });
 
 
