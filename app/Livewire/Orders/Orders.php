@@ -95,7 +95,7 @@ class Orders extends Component
         Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
         if($leverancier->suplier_email != '') {
-            Mail::to('info@crewa.nl')->send(new sendOrderList($order));
+            Mail::to($leverancier->suplier_email)->send(new sendOrderList($order));
         }
 
         Order::where('id', $order->id)->update([

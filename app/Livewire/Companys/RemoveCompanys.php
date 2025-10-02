@@ -42,8 +42,15 @@ class RemoveCompanys extends Component
 
         foreach($users as $user) {
             User::where('id', $user->id)->update([
-                'company_id' => '0'
+                'bedrijf_id' => '0',
+                'status' => '0',
             ]);
+        }
+
+        $priceRules = PriceRules::where('company_id', $id)->get();
+
+        foreach($priceRules as $rules) {
+            PriceRules::where('id', $rules->id)->delete();
         }
 
         return $this->redirect('/companys/', navigate: true);

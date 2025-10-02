@@ -4,6 +4,7 @@
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+
                     Mijn rietpanel
                 </a>
             </li>
@@ -40,7 +41,7 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h2 class="text-lg font-medium text-gray-900">
-                    Bedrijfslogo
+                    Bedrijfsstatistieken
                 </h2>
                 <div class="overflow-x-auto">
                     <table id="statistics-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
