@@ -40,7 +40,7 @@
         @endif
 
         @if(Session::has('error'))
-                    <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                    <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
                         <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                         </svg>
@@ -48,7 +48,7 @@
                         <div class="ms-3 text-sm font-medium">
                             {{ session('error') }}
                         </div>
-                        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-2" aria-label="Close">
+                        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#alert-2" aria-label="Close">
                             <span class="sr-only">Close</span>
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -61,18 +61,18 @@
             <div class="p-6 text-gray-900">
 
                 <div class="relative">
-                    <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                         <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
 
                         </a>
                     </button>
                     <div class="relative md:absolute right-0 top-0">
                         @admin
-                        <button wire:click="uploadOrderForm()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                        <button wire:click="uploadOrderForm()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
                             <i class="fa-solid fa-upload"></i> Inmeetformulier uploaden
                         </button>
                         @endadmin
-                        <button wire:click="newOrder()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                        <button wire:click="newOrder()" type="button" class="mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                             <i class="fa fa-plus hover:cursor-pointer"></i> Order aanmaken
                         </button>
                     </div>
@@ -81,8 +81,8 @@
                 <br/>
 
                 <div wire:ignore class="overflow-x-auto">
-                    <table id="pagination-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <table id="pagination-table" class="w-full text-sm text-left text-gray-500 ">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
                             <th scope="col" class="px-4 py-3">Project naam</th>
@@ -132,7 +132,7 @@
                                         </svg>
                                     </button>
                                     <div wire:ignore.self id="{{$order->id}}-dropdown" class="hidden z-10 w-auto bg-white rounded divide-y divide-gray-100 shadow block " style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1412px, 425px);" data-popper-placement="bottom">
-                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="{{$order->id}}-dropdown-button">
+                                        <ul class="py-1 text-sm text-gray-700 " aria-labelledby="{{$order->id}}-dropdown-button">
                                             @admin
                                             <li>
                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="editOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
