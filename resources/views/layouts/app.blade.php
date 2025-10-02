@@ -111,6 +111,20 @@
 
                 }
             });
+
+            $('input[type="search"]').each(function () {
+                // Haal alle class-namen op
+                const originalClasses = $(this).attr('class') || '';
+
+                // Filter alle klassen die niet met "dark:" beginnen
+                const cleanedClasses = originalClasses
+                    .split(' ')
+                    .filter(c => !c.startsWith('dark:'))
+                    .join(' ');
+
+                // Zet de gefilterde klassen terug
+                $(this).attr('class', cleanedClasses);
+            });
         });
 
 
