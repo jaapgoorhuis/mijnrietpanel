@@ -66,7 +66,6 @@ class UploadDocumentation extends Component
         } else {
             session()->flash('error', 'Upload één of meerdere bestanden.');
         }
-
     }
 
     public function removeDocumentation($id)

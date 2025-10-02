@@ -23,8 +23,6 @@
             crossorigin="anonymous"></script>
 
         <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
         <!-- Scripts -->
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.tailwindcss.js"></script>
@@ -32,8 +30,6 @@
         <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>
         <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-
 
         @livewireStyles
     </head>
@@ -66,85 +62,89 @@
             });
         });
     </script>
-    <script>
-        $(document).ready(function() {
-            $('.custom-datatable').each(function() {
-                let enableScroll = window.innerWidth < 768; // bijv. < md breakpoint
-                $(this).DataTable({
-                    language: {
-                         "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-                         "infoEmpty": "Geen resultaten om weer te geven",
-                         "emptyTable": "Geen resultaten aanwezig in de tabel",
-                        searchPlaceholder: 'Zoeken...',
-                     },
-                    paginate: false,
-                     lengthChange: false,
-                     filter: true,
-                     info:false,
-                    responsive: true,
-                    // andere opties
+        <script>
+            $(document).ready(function() {
+                $('.custom-datatable').each(function () {
+                    if ($.fn.DataTable.isDataTable(this)) {
+                        $(this).DataTable().clear().destroy();
+                    }
+
+                    $(this).DataTable({
+                        language: {
+                            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+                            "infoEmpty": "Geen resultaten om weer te geven",
+                            "emptyTable": "Geen resultaten aanwezig in de tabel",
+                            searchPlaceholder: 'Zoeken...',
+                        },
+                        paging: false,
+                        lengthChange: false,
+                        searching: true,
+                        info: false,
+                        responsive: true,
+                    });
                 });
-            });
-            $('.dt-container .grid').each(function (index) {
-                if ($(this).hasClass('grid-cols-2')) {
-                    $(this).removeClass('grid-cols-2').addClass('grid-cols-1 md:grid-cols-2');
-                }
-            });
 
-            $('.dt-search label').contents().filter(function () {
-                return this.nodeType === 3; // Node type 3 = text
-            }).remove();
+                $('.dt-container .grid').each(function (index) {
+                    if ($(this).hasClass('grid-cols-2')) {
+                        $(this).removeClass('grid-cols-2').addClass('grid-cols-1 md:grid-cols-2');
+                    }
+                });
 
-
-            $('.dt-container').each(function () {
+                $('.dt-search label').contents().filter(function () {
+                    return this.nodeType === 3; // Node type 3 = text
+                }).remove();
 
 
-                const $grids = $(this).find('.grid');
+                $('.dt-container').each(function () {
 
-                // Check of er minstens 2 grids zijn
-                if ($grids.length >= 2) {
-                    const $secondGrid = $grids.eq(1);
 
-                    // Alleen op kleine schermen
+                    const $grids = $(this).find('.grid');
+
+                    // Check of er minstens 2 grids zijn
+                    if ($grids.length >= 2) {
+                        const $secondGrid = $grids.eq(1);
+
+                        // Alleen op kleine schermen
 
                         $secondGrid.addClass('overflow-x-auto');
 
-                }
-            });
+                    }
+                });
 
-            $('input[type="search"]').each(function () {
-                // Haal alle class-namen op
-                const originalClasses = $(this).attr('class') || '';
+                $('input[type="search"]').each(function () {
+                    // Haal alle class-namen op
+                    const originalClasses = $(this).attr('class') || '';
 
-                // Filter alle klassen die niet met "dark:" beginnen
-                const cleanedClasses = originalClasses
-                    .split(' ')
-                    .filter(c => !c.startsWith('dark:'))
-                    .join(' ');
+                    // Filter alle klassen die niet met "dark:" beginnen
+                    const cleanedClasses = originalClasses
+                        .split(' ')
+                        .filter(c => !c.startsWith('dark:'))
+                        .join(' ');
 
-                // Zet de gefilterde klassen terug
-                $(this).attr('class', cleanedClasses);
-            });
+                    // Zet de gefilterde klassen terug
+                    $(this).attr('class', cleanedClasses);
+                });
 
-            $('input[type="search"]').on('focus', function () {
-                $(this).css({
-                    'border-color': 'rgba(192, 161, 110, 0.5)',
-                    'box-shadow': '0 0 0 3px rgba(192, 161, 110, 0.5)'
+                $('input[type="search"]').on('focus', function () {
+                    $(this).css({
+                        'border-color': 'rgba(192, 161, 110, 0.5)',
+                        'box-shadow': '0 0 0 3px rgba(192, 161, 110, 0.5)'
+                    });
+                });
+
+                $('input[type="search"]').on('blur', function () {
+                    // Reset eventueel naar standaard of verwijder inline styles
+                    $(this).css({
+                        'border-color': '',
+                        'box-shadow': ''
+                    });
                 });
             });
 
-            $('input[type="search"]').on('blur', function () {
-                // Reset eventueel naar standaard of verwijder inline styles
-                $(this).css({
-                    'border-color': '',
-                    'box-shadow': ''
-                });
-            });
-        });
 
 
+        </script>
 
-    </script>
     </body>
 
 

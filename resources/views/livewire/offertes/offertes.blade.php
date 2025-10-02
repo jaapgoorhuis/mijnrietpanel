@@ -72,7 +72,7 @@
                 <br/>
 
                 <div wire:ignore class="relative">
-                    <table  class="custom-datatable w-full text-sm text-left text-gray-500 ">
+                    <table id="offerte-table"  class=" w-full text-sm text-left text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
                             <th scope="col" class="px-4 py-3">Offerte ID</th>
@@ -144,3 +144,32 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('open-new-tab', function (event) {
+        window.open(event.detail[0].url, '_blank');
+    });
+
+    new DataTable("#offerte-table", {
+
+        language: {
+            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+            "infoEmpty": "Geen resultaten om weer te geven",
+            "emptyTable": "Geen resultaten aanwezig in de tabel",
+        },
+        paginate: false,
+        lengthChange: false,
+        filter: true,
+        info:false,
+
+        layout: {
+            topEnd: {
+                search: {
+                    placeholder: 'Zoeken'
+                }
+            }
+        }
+    });
+
+
+</script>
+

@@ -111,25 +111,26 @@
 </div>
 <script>
 
-        new DataTable("#userrequest-table", {
-            language: {
-                "info": "_START_ tot _END_ van _TOTAL_ resultaten",
-                "infoEmpty": "Geen resultaten om weer te geven",
-                "emptyTable": "Geen resultaten aanwezig in de tabel",
-            },
-            paginate: false,
-            info:false,
-            lengthChange: false,
-            filter: true,
+    new DataTable("#userrequest-table", {
 
-            layout: {
-                topEnd: {
-                    search: {
-                        placeholder: 'Zoeken'
-                    }
+        language: {
+            "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+            "infoEmpty": "Geen resultaten om weer te geven",
+            "emptyTable": "Geen resultaten aanwezig in de tabel",
+        },
+        paginate: false,
+        lengthChange: false,
+        filter: true,
+        info:false,
+
+        layout: {
+            topEnd: {
+                search: {
+                    placeholder: 'Zoeken'
                 }
             }
-        });
+        }
+    });
 
 
 </script>

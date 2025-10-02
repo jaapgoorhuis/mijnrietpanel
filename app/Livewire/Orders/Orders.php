@@ -52,7 +52,6 @@ class Orders extends Component
         ]);
     }
 
-
     public function editOrder($id)
     {
         if(Auth::user()->is_admin) {
@@ -79,6 +78,7 @@ class Orders extends Component
 
         $url = asset('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);
+        return $this->redirect('/orders', navigate: true);
     }
 
     public function downloadZaagList($id) {
@@ -87,7 +87,10 @@ class Orders extends Component
 
         $url = asset('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);
+
+        return $this->redirect('/orders', navigate: true);
     }
+
     public function SendOrderList($id) {
         $order = Order::where('id', $id)->first();
         $leverancier = Supliers::where('name', $order->merk_paneel)->first();
@@ -114,5 +117,6 @@ class Orders extends Component
 
         $url = asset('/storage/orderlijst/order-'.$order->order_id.'.pdf');
         $this->dispatch('open-new-tab', ['url' => $url]);
+        return $this->redirect('/orders', navigate: true);
     }
 }

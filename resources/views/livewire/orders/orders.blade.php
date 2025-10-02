@@ -61,7 +61,7 @@
             <div class="p-6 text-gray-900">
 
                 <div class="relative">
-                    <button type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    <button type="button" class="w-full ] mb-[20px] sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                         <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
 
                         </a>
@@ -80,7 +80,7 @@
                 </div>
                 <br/>
 
-                    <table id="pagination-table" class="custom-datatable w-full text-sm text-left text-gray-500 ">
+                    <table id="pagination-table" class=" w-full text-sm text-left text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
@@ -146,7 +146,7 @@
                                             </li>
                                             @admin
                                             <li>
-                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadPakketList({{$order->id}})" >
+                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click.prevent="downloadPakketList({{$order->id}})" >
                                                     <i class="fa-solid fa-download"></i> Pakketlijst downloaden
                                                 </button>
 
@@ -186,4 +186,28 @@
      document.addEventListener('open-new-tab', function (event) {
          window.open(event.detail[0].url, '_blank');
      });
+
+     new DataTable("#pagination-table", {
+
+         language: {
+             "info": "_START_ tot _END_ van _TOTAL_ resultaten",
+             "infoEmpty": "Geen resultaten om weer te geven",
+             "emptyTable": "Geen resultaten aanwezig in de tabel",
+         },
+         paginate: false,
+         lengthChange: false,
+         filter: true,
+         info:false,
+
+         layout: {
+             topEnd: {
+                 search: {
+                     placeholder: 'Zoeken'
+                 }
+             }
+         }
+     });
+
+
 </script>
+

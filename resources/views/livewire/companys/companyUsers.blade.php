@@ -60,7 +60,7 @@
                 </div>
                 <br/>
                 <div class="overflow-x-auto">
-                    <table id="user-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
+                    <table id="user-table" class="custom-datatable w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-[25px]">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-4 py-3">ID</th>
@@ -129,23 +129,4 @@
         </div>
     </div>
 </div>
-<script>
-    new DataTable("#user-table", {
-        language: {
-            url: '//cdn.datatables.net/plug-ins/2.3.4/i18n/nl-NL.json',
-        },
-        paginate: true,
-        lengthChange: false,
-        filter: true,
 
-        layout: {
-            topEnd: {
-                search: {
-                    placeholder: 'Zoeken'
-                }
-            }
-        }
-    });
-
-
-</script>
