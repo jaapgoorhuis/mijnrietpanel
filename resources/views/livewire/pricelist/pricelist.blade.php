@@ -31,7 +31,7 @@
                     <br/>
                     @endadmin
 
-                    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
+                    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 :grid-cols-4 text-left">
                         @if(!count($this->pricelist))
                             Er zijn geen bestanden gevonden
                         @else
