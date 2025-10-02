@@ -80,7 +80,7 @@
                 </div>
                 <br/>
 
-                    <table id="pagination-table" class="datatable w-full text-sm text-left text-gray-500 ">
+                    <table id="pagination-table" class="custom-datatable w-full text-sm text-left text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
