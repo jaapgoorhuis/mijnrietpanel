@@ -31,13 +31,13 @@
                     <br/>
                     @endadmin
 
-                    <div class="grid grid-cols-1 gap-10 md:grid-cols-4 text-left">
+                    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-2  text-left">
                         @if(!count($this->documentation))
                             Er zijn geen bestanden gevonden
                         @else
                             @foreach($this->documentation as $documentation)
                                 <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
-                                    <h2 class="text-md font-bold pb-5">{{$documentation->friendly_name}}</h2>
+                                    <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$documentation->friendly_name}}</h2>
                                     <a target="_blank" href="{{asset('/storage/documentation/'.$documentation->file_name)}}">
                                         <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                             <i class="fa-solid fa-download"></i> Downloaden
