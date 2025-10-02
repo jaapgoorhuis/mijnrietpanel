@@ -18,35 +18,34 @@
 </x-slot>
 
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    @admin
-                    <div class="text-right">
-                        <button wire:click="uploadDetails()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                            <i class="fa-solid fa-upload"></i> Bestanden toevoegen
-                        </button>
-                    </div>
-                    <br/>
-                    @endadmin
 
-                    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
-                        @if(!count($this->details))
-                            Er zijn geen bestanden gevonden
-                        @else
-                            @foreach($this->details as $detail)
-                                    <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
-                                    <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$detail->friendly_name}}</h2>
-                                    <a target="_blank" href="{{asset('/storage/details/'.$detail->file_name)}}">
-                                        <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                                            <i class="fa-solid fa-download"></i> Downloaden
-                                        </button>
-                                    </a>
-                                </div>
-                            @endforeach
-                        @endif
-                    </div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900">
+                @admin
+                <div class="text-right">
+                    <button wire:click="uploadDetails()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                        <i class="fa-solid fa-upload"></i> Bestanden toevoegen
+                    </button>
+                </div>
+                <br/>
+                @endadmin
+
+                <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
+                    @if(!count($this->details))
+                        Er zijn geen bestanden gevonden
+                    @else
+                        @foreach($this->details as $detail)
+                                <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
+                                <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$detail->friendly_name}}</h2>
+                                <a target="_blank" href="{{asset('/storage/details/'.$detail->file_name)}}">
+                                    <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                                        <i class="fa-solid fa-download"></i> Downloaden
+                                    </button>
+                                </a>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
