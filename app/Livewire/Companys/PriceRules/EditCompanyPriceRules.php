@@ -4,6 +4,7 @@ namespace App\Livewire\Companys\PriceRules;
 
 use App\Mail\sendUpdatedUser;
 use App\Models\Application;
+use App\Models\Company;
 use App\Models\PanelBrand;
 use App\Models\PanelLook;
 use App\Models\PanelType;
@@ -35,7 +36,7 @@ class EditCompanyPriceRules extends Component
     public $companyId;
 
     public $rietpanel_panel_price;
-
+    public $company;
 
     public function mount($id, $slug) {
 
@@ -47,6 +48,7 @@ class EditCompanyPriceRules extends Component
         $this->panel_types = PanelType::get();
 
         $rietpanelPrice = \App\Models\PriceRules::where('panel_type', $this->priceRule->panel_type)->first();
+        $this->company = Company::where('id', $slug)->first();
 
         $this->rietpanel_panel_price = $rietpanelPrice->price;
         $this->panel_type = $this->priceRule->panel_type;
@@ -56,7 +58,7 @@ class EditCompanyPriceRules extends Component
     }
     public function render()
     {
-        return view('livewire.companys.pricerules.editPriceRules');
+        return view('livewire.companys.pricerules.editCompanyPriceRules');
     }
 
     public function rules(): array
