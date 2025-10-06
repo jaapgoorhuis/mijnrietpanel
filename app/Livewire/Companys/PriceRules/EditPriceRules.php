@@ -60,12 +60,20 @@ class EditPriceRules extends Component
         return [
             'rule_name' => [
                 'required',
-                Rule::unique('price_rules', 'rule_name')->ignore($this->priceRuleId)
+                Rule::unique('price_rules', 'rule_name')  ->where(fn($query) => $query
+                    ->where('company_id', 0)
+                )
+                    ->ignore($this->priceRuleId, 'id')
             ],
             'panel_type' => [
                 'required',
-                Rule::unique('price_rules', 'panel_type')->ignore($this->priceRuleId)->where(function ($query) {
-                    return $query->where('company_id', 0);})
+                Rule::unique('price_rules')
+                    ->where(fn($query) => $query
+                        ->where('company_id', 0)
+                        ->where('panel_type', $this->panel_type)
+
+                    )
+                    ->ignore($this->priceRuleId)
             ],
             'panel_price' => 'required'
         ];
