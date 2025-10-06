@@ -55,13 +55,13 @@
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="project_name" class="text-gray-400">Regelnaam *</label>
-                                <input type="text"  wire:model="rule_name" name="rule_name" id="rule_name" @if(Auth::user()->is_admin !== 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <input type="text"  wire:model="rule_name" name="rule_name" id="rule_name" @if(Auth::user()->is_admin !=1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('rule_name') {{ $message }} @enderror</div>
                             </div>
 
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="panel_type" class="text-gray-400">Dikte paneel *</label>
-                                <select id="panel_type" wire:model="panel_type" @if(Auth::user()->is_admin !== 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <select id="panel_type" wire:model="panel_type" @if(Auth::user()->is_admin != 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->panel_types as $panel_types)
                                         <option value="{{$panel_types->id}}">{{$panel_types->name}}</option>
                                     @endforeach
@@ -74,7 +74,7 @@
                             @if($this->priceRule->company_id !== 0)
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="rietpanel_panel_price" class="text-gray-400">Rietpanel's prijs per m² *</label>
-                                <input type="number" wire:model="rietpanel_panel_price" name="rietpanel_panel_price" id="rietpanel_panel_price" @if(Auth::user()->is_admin !== 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <input type="number" wire:model="rietpanel_panel_price" name="rietpanel_panel_price" id="rietpanel_panel_price" @if(Auth::user()->is_admin != 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                             </div>
                             @endif
 
