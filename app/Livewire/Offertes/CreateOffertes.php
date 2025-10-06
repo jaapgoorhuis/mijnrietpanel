@@ -13,6 +13,7 @@ use App\Models\OrderTemplate;
 use App\Models\PanelBrand;
 use App\Models\PanelLook;
 use App\Models\PanelType;
+use App\Models\PriceRules;
 use App\Models\Supliers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -35,7 +36,7 @@ class CreateOffertes extends Component
     public $toepassing = 'Dak';
     public $merk_paneel;
     public $aantal = [];
-    public $kerndikte = '60mm';
+    public $kerndikte;
 
     public $project_naam;
 
@@ -84,7 +85,9 @@ class CreateOffertes extends Component
     public function render()
     {
 
-        $this->panelTypes = PanelType::get();
+        $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
+
+        $this->kerndikte = $this->panelTypes->first()->name;
 
         return view('livewire.offertes.createOfferte');
     }

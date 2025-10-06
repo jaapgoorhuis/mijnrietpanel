@@ -43,6 +43,7 @@ class EditPriceRules extends Component
         $this->panel_price = $this->priceRule->price;
         $this->rule_name = $this->priceRule->rule_name;
 
+
     }
     public function render()
     {
@@ -63,7 +64,8 @@ class EditPriceRules extends Component
             ],
             'panel_type' => [
                 'required',
-                Rule::unique('price_rules', 'panel_type')->ignore($this->priceRuleId)
+                Rule::unique('price_rules', 'panel_type')->ignore($this->priceRuleId)->where(function ($query) {
+                    return $query->where('company_id', 0);})
             ],
             'panel_price' => 'required'
         ];
@@ -89,6 +91,18 @@ class EditPriceRules extends Component
             'panel_type' => $this->panel_type,
             'price' => $this->panel_price,
         ]);
+
+        PanelType::where('id', $this->panel_type)->update([
+            'name'=> $this->rule_name
+        ]);
+
+        $companyPriceRules = \App\Models\PriceRules::where('panel_type', $this->panel_type)->get();
+
+        foreach($companyPriceRules as $companyPriceRule) {
+            $companyPriceRule->update([
+                'rule_name' => $this->rule_name
+            ]);
+        }
 
 
         session()->flash('success','De prijsregel is aangepast');

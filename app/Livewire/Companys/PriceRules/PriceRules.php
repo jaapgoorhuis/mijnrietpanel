@@ -21,11 +21,11 @@ class PriceRules extends Component
 
     public function render()
     {
-        $this->priceRules = \App\Models\PriceRules::where('company_id', 0)->where('reseller', 0)->get();
+        $this->priceRules = \App\Models\PriceRules::where('company_id', 0)->where('reseller', 0)->orderBy('panel_type','asc')->get();
 
         $companyid = Auth::user()->companys->id;
 
-        $this->companyPriceRules = \App\Models\PriceRules::where('company_id', $companyid)->get();
+        $this->companyPriceRules = \App\Models\PriceRules::orderBy('panel_type', 'asc')->where('company_id', $companyid)->get();
         return view('livewire.companys.pricerules.priceRules');
     }
 

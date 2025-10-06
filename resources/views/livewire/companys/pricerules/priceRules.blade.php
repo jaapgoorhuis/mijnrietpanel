@@ -53,7 +53,7 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             @admin
                 <div class="p-6 text-gray-900">
-                   <h2 class="text-[20px]">Rietpanel prijsregel overzicht</h2>
+                   <h2 class="text-[20px]">Algemene prijsregels overzicht</h2>
 
                     @admin
                     <button wire:click="newRule()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
@@ -61,7 +61,7 @@
                     </button>
                     @endadmin
                     <div class="overflow-x-auto">
-                        <table id="pricerules-table" class="custom-datatable  w-full text-sm text-left text-gray-500  mt-[25px]">
+                        <table id="pricerules-table" class=" w-full text-sm text-left text-gray-500  mt-[25px]">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                             <tr>
                                 <th scope="col" class="px-4 py-3">Id:</th>
@@ -78,6 +78,7 @@
                             <tbody>
                             @if($this->priceRules)
                                 @foreach($this->priceRules as $rule)
+
                                     <tr class="border-b ">
                                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$rule->id}}</th>
                                         <td class="px-4 py-3">{{$rule->rule_name}}</td>
@@ -125,7 +126,7 @@
             @reseller
             <div class="p-6 text-gray-900">
                 <h2 class="text-[20px]">{{Auth::user()->companys->bedrijfsnaam}} prijsregels</h2>
-                <small>Bepaal hier uw eigen prijsregels.</small>
+                <small>Bepaal hier uw eigen prijsregels voor uw bedrijf.</small>
                 <div class="overflow-x-auto">
                     <table id="pricerules-table" class="w-full text-sm text-left text-gray-500  mt-[25px]">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
@@ -148,11 +149,13 @@
                                     <td class="px-4 py-3">{{$rule->PanelType->name}} </td>
                                     <td class="px-4 py-3">€ {{$rule->price}},- </td>
                                     <td class="px-4 py-3">
-                                            <?php
+
+                                        @php
                                             $company = \App\Models\Company::where('id', $rule->company_id)->first();
-                                            $discount = \App\Models\PriceRules::where('company_id', 0)->find($key+1)->price/100*$company->discount;
-                                            ?>
-                                        € {{\App\Models\PriceRules::where('company_id', 0)->find($key+1)->price - $discount}},-
+                                            $defaultRule = \App\Models\PriceRules::where('company_id', 0)->where('panel_type', $rule->panel_type)->first(); // maak er array van
+                                            $discount = $defaultRule->price/100*$company->discount;
+                                        @endphp
+                                        € {{$defaultRule->price - $discount}},-
                                     </td>
 
                                     <td  class="px-4 py-3 flex items-center justify-end">

@@ -33,7 +33,13 @@ class RemovePriceRules extends Component
     public function deletePriceRule($id) {
         session()->flash('success','De prijsregel is verwijderd');
 
-        \App\Models\PriceRules::where('id', $id)->delete();
+        $pricerule = \App\Models\PriceRules::where('id', $id)->first();
+
+
+        \App\Models\PriceRules::where('panel_type', $pricerule->panel_type)->delete();
+
+        $pricerule->delete();
+
         return $this->redirect('/companys/pricerules', navigate: true);
     }
 

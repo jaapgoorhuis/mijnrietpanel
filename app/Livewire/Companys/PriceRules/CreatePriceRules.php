@@ -72,6 +72,23 @@ class CreatePriceRules extends Component
             'price' => $this->panel_price,
         ]);
 
+        $companyPriceRules = \App\Models\PriceRules::where('company_id', '!=', 0)->get();
+
+        foreach($companyPriceRules as $companyPriceRule) {
+            $exists = \App\Models\PriceRules::where('company_id', $companyPriceRule->company_id)
+                ->where('panel_type', $this->panel_type)
+                ->exists();
+
+            if (!$exists) {
+                \App\Models\PriceRules::create([
+                    'rule_name' => $this->rule_name,
+                    'panel_type' => $this->panel_type,
+                    'price' => $this->panel_price,
+                    'company_id' => $companyPriceRule->company_id,
+                    'reseller' => $companyPriceRule->reseller
+                ]);
+            }
+        }
 
 
         return $this->redirect('/companys/pricerules', navigate: true);
