@@ -23,6 +23,10 @@ class PanelTypeSeeder extends Seeder
 
            ],
            [
+               'name' => '90mm',
+
+           ],
+           [
                'name' => '100mm',
 
            ],

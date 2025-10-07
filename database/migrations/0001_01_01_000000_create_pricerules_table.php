@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('rule_name');
             $table->integer('panel_type');
-            $table->integer('price');
+            $table->decimal('price');
+            $table->integer('company_id');
+            $table->integer('reseller');
 
 
             $table->timestamps();

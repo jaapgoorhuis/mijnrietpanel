@@ -100,10 +100,6 @@ class EditPriceRules extends Component
             'price' => $this->panel_price,
         ]);
 
-        PanelType::where('id', $this->panel_type)->update([
-            'name'=> $this->rule_name
-        ]);
-
         $companyPriceRules = \App\Models\PriceRules::where('panel_type', $this->panel_type)->get();
 
         foreach($companyPriceRules as $companyPriceRule) {
