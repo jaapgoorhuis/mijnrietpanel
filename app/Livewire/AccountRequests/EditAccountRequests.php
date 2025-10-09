@@ -83,6 +83,7 @@ class EditAccountRequests extends Component
 
          if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {
             session()->flash('success','De gebruiker is toegevoegd aan een bedrijf, en de status van het account is bijgewerkt. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate');
+             Mail::to($this->email)->send(new sendUpdatedUser($this->status));
         }
         else if($this->oldCompany != $this->company_id) {
             session()->flash('success','De gebruiker is toegevoegd aan een bedrijf. Je kunt de gebruiker terug vinden onder het kopje bedrijven -> bedrijfsgebruikers');
