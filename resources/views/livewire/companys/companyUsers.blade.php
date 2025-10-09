@@ -82,7 +82,7 @@
                                 <td class="px-4 py-3">{{$user->name}}</td>
                                 <td class="px-4 py-3">{{$user->email}} </td>
                                 <td class="px-4 py-3">{{$user->phone}} </td>
-                                <td class="px-4 py-3">{{$user->bedrijfsnaam}} </td>
+                                <td class="px-4 py-3">{{$company->bedrijfsnaam}} </td>
                                 <td class="px-4 py-3">
                                     @if($user->is_active)
                                         Actief
