@@ -26,8 +26,7 @@ class MyCompany extends Component
 
     public function render()
     {
-        $this->company = Auth::user()->companys->first();
-
+        $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
         $this->basicPriceRules = PriceRules::where('company_id', '0')->where('reseller', 0)->get();
         $this->straat = $this->company->straat;
