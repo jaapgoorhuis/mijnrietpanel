@@ -21,7 +21,10 @@ class Offertes extends Component
 
     public function render()
     {
-        if(Auth::user()->companys->is_reseller) {
+        if(Auth::user()->is_admin) {
+            $this->offertes = Offerte::get();
+        }
+        else if(Auth::user()->companys->is_reseller) {
             $this->offertes = Offerte::whereHas('user', function ($query) {
                 $query->where('bedrijf_id', Auth::user()->bedrijf_id);
             })->get();
@@ -109,6 +112,8 @@ class Offertes extends Component
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
         Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
+
+        Mail::to(Auth::user()->email)->send(new sendOrder($order));
 
         session()->flash('success', 'Er is een order aangemaakt van deze offerte.');
         return $this->redirect('/offertes', navigate: true);

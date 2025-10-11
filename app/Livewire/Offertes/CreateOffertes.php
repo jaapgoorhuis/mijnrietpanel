@@ -5,6 +5,7 @@ namespace App\Livewire\Offertes;
 use App\Mail\sendOfferte;
 use App\Mail\sendOrder;
 use App\Models\Application;
+use App\Models\Company;
 use App\Models\Offerte;
 use App\Models\OfferteLines;
 use App\Models\Order;
@@ -15,6 +16,7 @@ use App\Models\PanelLook;
 use App\Models\PanelType;
 use App\Models\PriceRules;
 use App\Models\Supliers;
+use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -66,7 +68,11 @@ class CreateOffertes extends Component
 
     public $werkendeBreedte;
     public $offerteLineValues = [];
+    public $company;
+    public $companyDiscount;
+    public $priceRule;
 
+    public $marge;
     public $saved = FALSE;
 
     public function mount() {
@@ -76,6 +82,12 @@ class CreateOffertes extends Component
         }
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
+
+        $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
+        $this->companyDiscount = $this->company->discount;
+
+        $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
+        $this->kerndikte = $this->panelTypes->first()->name;
 
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
@@ -87,10 +99,15 @@ class CreateOffertes extends Component
 
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
 
-        $this->kerndikte = $this->panelTypes->first()->name;
 
         return view('livewire.offertes.createOfferte');
     }
+
+    public function updatePrice() {
+        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+        $this->kerndikte = $this->kerndikte;
+    }
+
 
     public function updateCb($index) {
 
@@ -156,21 +173,35 @@ class CreateOffertes extends Component
         $this->cb = array_values($this->cb);
     }
 
-    protected $rules = [
-        'klant_naam' => 'required',
-        'referentie' => 'required',
-        'project_naam' => 'required',
-        'aflever_straat' => 'required',
-        'aflever_postcode' => 'required',
-        'aflever_plaats' => 'required',
-        'aflever_land' => 'required',
-        'intaker' => 'required',
-        'discount' => 'required',
-        'totaleLengte.*' => 'required|numeric|min:1',
-        'aantal.*' => 'required|numeric|min:1',
-        'lb.*' => 'required|numeric|max:210',
-        'cb.*' => 'required|numeric|max:200'
-    ];
+    public function rules()
+    {
+        return [
+            'klant_naam' => 'required',
+            'referentie' => 'required',
+            'project_naam' => 'required',
+            'aflever_straat' => 'required',
+            'aflever_postcode' => 'required',
+            'aflever_plaats' => 'required',
+            'aflever_land' => 'required',
+            'intaker' => 'required',
+            'discount' => 'required|min:0',
+            'totaleLengte.*' => 'required|numeric|min:500',
+            'aantal.*' => 'required|numeric|min:1',
+            'lb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
+                if ($value != 0 && $value < 20) {
+                    $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
+                }
+            },],
+            'cb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
+                if ($value != 0 && $value < 20) {
+                    $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
+                }
+            },
+                ],
+            ];
+    }
+
+
 
     public function messages(): array
     {
@@ -184,7 +215,8 @@ class CreateOffertes extends Component
             'aflever_land.required' => 'Het land is een verplicht veld.',
             'intaker.required' => 'Vul aub uw naam in.',
             'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
-            'totaleLengte.*.min' => 'De lengte moet mimimaal 1mm zijn.',
+            'discount.min' => 'De korting kan niet lager dan 0 procent zijn.',
+            'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
             'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
@@ -222,6 +254,7 @@ class CreateOffertes extends Component
             'kerndikte' => $this->kerndikte,
             'project_naam' => $this->project_naam,
             'user_id' => Auth::user()->id,
+            'marge' => $this->marge,
             'status' => 'In behandeling',
             'offerte_id' => $offerteId
         ]);

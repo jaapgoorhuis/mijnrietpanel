@@ -26,7 +26,10 @@ class Orders extends Component
     }
     public function render()
     {
-        if(Auth::user()->companys->is_reseller) {
+        if(Auth::user()->is_admin) {
+            $this->orders = Order::get();
+        }
+        else if(Auth::user()->companys->is_reseller) {
             $this->orders = Order::whereHas('user', function ($query) {
                 $query->where('bedrijf_id', Auth::user()->bedrijf_id);
             })->get();

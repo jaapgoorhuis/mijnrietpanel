@@ -89,11 +89,29 @@
                                 <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
                             </div>
+                            @reseller
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="discount" class="text-gray-400">Korting (%)*</label>
+                                <label for="discount" class="text-gray-400">Korting (%)</label>
                                 <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
                             </div>
+                            @endreseller
+                            @user
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="marge" class="text-gray-400"><strong>Jouw prijs:    <?php $discount = $this->companyDiscount /100 * $this->priceRule->price;?>
+                                        € {{$this->priceRule->price - $discount}},- excl. BTW </strong></label><br/>
+
+                                <label for="marge" class="text-gray-400">Marge (%)</label>
+                                <div class="tooltip">
+                                    <div class="tooltip-content">
+                                        Vul hier een percentage marge in.
+                                    </div>
+                                    <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
+                                </div>
+                                <input type="number" wire:model="marge" name="marge" id="marge" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('marge') {{ $message }} @enderror</div>
+                            </div>
+                            @enduser
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
@@ -108,7 +126,7 @@
 
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="kerndikte" class="text-gray-400">Kerndikte *</label>
-                                <select id="kerndikte" wire:model="kerndikte" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <select id="kerndikte" wire:change="updatePrice()" wire:model="kerndikte" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->panelTypes as $type)
                                         <option value="{{$type->name}}">{{$type->name}}</option>
                                     @endforeach
@@ -131,7 +149,7 @@
                                 <label for="merk_paneel" class="text-gray-400">Merk paneel *</label>
                                 <select @if(count($this->orderLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->brands as  $brands)
-                                        <option @if($brands->status) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
+                                        <option @if($brands->status == 0) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
                                     @endforeach
                                 </select>
                             </div>

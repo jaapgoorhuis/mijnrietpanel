@@ -124,9 +124,16 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                         }
 
                         $m2priceBeforeDiscount = $priceRule->price - $discount;
-                        $orderDiscount = $m2priceBeforeDiscount/100*$order->discount;
-                        $m2price = $m2priceBeforeDiscount - $orderDiscount;
 
+                        $orderDiscount = $m2priceBeforeDiscount/100*$order->discount;
+                        $orderMarge = $m2priceBeforeDiscount/100*$order->marge;
+                        if($company->is_reseller) {
+                            $m2price = $m2priceBeforeDiscount - $orderDiscount;
+                        } else if($order->marge != 0) {
+                            $m2price = $m2priceBeforeDiscount + $orderMarge;
+                        } else {
+                            $m2price = $m2priceBeforeDiscount;
+                        }
                         $totalPrice += $orderLine->m2 * $m2price;
                             if($zaaglengteToeslag) {
                                 if($orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {

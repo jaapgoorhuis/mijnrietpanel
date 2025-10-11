@@ -4,6 +4,7 @@ namespace App\Livewire\Orders;
 
 use App\Mail\sendOrder;
 use App\Models\Application;
+use App\Models\Company;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderTemplate;
@@ -12,6 +13,7 @@ use App\Models\PanelLook;
 use App\Models\PanelType;
 use App\Models\PriceRules;
 use App\Models\Supliers;
+use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -51,6 +53,8 @@ class CreateOrders extends Component
     public $panelApplications;
     public $panelLooks;
 
+    public $marge;
+
 
     public $brands = [];
 
@@ -67,6 +71,9 @@ class CreateOrders extends Component
 
     public $project_naam;
 
+    public $priceRule;
+    public $company;
+    public $companyDiscount;
     public $werkendeBreedte;
     public function mount() {
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
@@ -76,8 +83,12 @@ class CreateOrders extends Component
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
 
+        $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
+        $this->companyDiscount = $this->company->discount;
 
-
+        $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
+        $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
+        $this->kerndikte = $this->panelTypes->first()->name;
         $this->brands = $this->dakSupliers;
 
         if(Auth::user()->bedrijf_id == 0) {
@@ -88,12 +99,11 @@ class CreateOrders extends Component
 
     public function render()
     {
-
-        $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
-
-        $this->kerndikte = $this->panelTypes->first()->name;
-
         return view('livewire.orders.createOrder');
+    }
+
+    public function updatePrice() {
+        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
     }
 
     public function updateCb($index) {
@@ -159,21 +169,33 @@ class CreateOrders extends Component
         $this->cb = array_values($this->cb);
     }
 
-    protected $rules = [
-        'klant_naam' => 'required',
-        'project_naam' => 'required',
-        'referentie' => 'required',
-        'aflever_straat' => 'required',
-        'aflever_postcode' => 'required',
-        'aflever_plaats' => 'required',
-        'aflever_land' => 'required',
-        'intaker' => 'required',
-        'discount' => 'required',
-        'totaleLengte.*' => 'required|numeric|min:1',
-        'aantal.*' => 'required|numeric|min:1',
-        'lb.*' => 'required|numeric|max:210',
-        'cb.*' => 'required|numeric|max:200'
-    ];
+    public function rules()
+    {
+        return [
+            'klant_naam' => 'required',
+            'referentie' => 'required',
+            'project_naam' => 'required',
+            'aflever_straat' => 'required',
+            'aflever_postcode' => 'required',
+            'aflever_plaats' => 'required',
+            'aflever_land' => 'required',
+            'intaker' => 'required',
+            'discount' => 'required|min:0',
+            'totaleLengte.*' => 'required|numeric|min:500',
+            'aantal.*' => 'required|numeric|min:1',
+            'lb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
+                if ($value != 0 && $value < 20) {
+                    $fail("De waarde van de LB moet 0 zijn (geen LB) of minimaal 20mm");
+                }
+            },],
+            'cb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
+                if ($value != 0 && $value < 20) {
+                    $fail("De waarde van de CB moet 0 zijn (geen CB) of minimaal 20mm");
+                }
+            },
+            ],
+        ];
+    }
 
     public function messages(): array
     {
@@ -186,10 +208,13 @@ class CreateOrders extends Component
             'aflever_plaats.required' => 'De plaats is een verplicht veld.',
             'aflever_land.required' => 'Het land is een verplicht veld.',
             'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
+            'discount.min' => 'De korting kan niet lager dan 0 procent zijn',
             'intaker.required' => 'Vul aub uw naam in.',
-            'totaleLengte.*.min' => 'De lengte moet mimimaal 1mm zijn.',
+            'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
+            'cb.*.min' => 'De CB moet minimaal 20mm zijn.',
+            'lb.*.min' => 'De LB moet minimaal 20mm zijn.',
             'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
         ];
     }
@@ -226,7 +251,8 @@ class CreateOrders extends Component
             'project_naam' => $this->project_naam,
             'user_id' => Auth::user()->id,
             'status' => 'In behandeling',
-            'order_id' => $orderId
+            'order_id' => $orderId,
+            'marge' => $this->marge
         ]);
 
         $order = Order::orderBy('id', 'desc')->first();
@@ -254,6 +280,8 @@ class CreateOrders extends Component
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
 
         Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
+
+        Mail::to(Auth::user()->email)->send(new sendOrder($order));
 
         session()->flash('success','De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen');
         return $this->redirect('/orders', navigate: true);
