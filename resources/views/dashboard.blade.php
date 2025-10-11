@@ -11,14 +11,7 @@
                 <!-- Grid 3x2, responsive -->
                 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     <!-- Card -->
-                    <a href="/orders" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
-                        <!-- Icon: Squares 2x2 -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.75h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm8.5 0h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm-8.5 8.5h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm8.5 0h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3z"/>
-                        </svg>
-                        <span class="text-lg font-semibold tracking-tight text-neutral-900">@admin Alle orders @endadmin @user Mijn orders @enduser</span>
-                        <span class="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-neutral-200/80"></span>
-                    </a>
+
 
                     <!-- Card -->
                     <a href="/offertes" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
@@ -32,6 +25,14 @@
                         <span class="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-neutral-200/80"></span>
                     </a>
 
+                    <a href="/orders" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                        <!-- Icon: Squares 2x2 -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.75h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm8.5 0h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm-8.5 8.5h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3zm8.5 0h-3a3 3 0 00-3 3v3a3 3 0 003 3h3a3 3 0 003-3v-3a3 3 0 00-3-3z"/>
+                        </svg>
+                        <span class="text-lg font-semibold tracking-tight text-neutral-900">@admin Alle orders @endadmin @user Mijn orders @enduser</span>
+                        <span class="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-neutral-200/80"></span>
+                    </a>
                     <!-- Card -->
                     <a href="/details" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                         <!-- Icon: Magnifying Glass -->
