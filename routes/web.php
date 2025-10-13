@@ -85,7 +85,7 @@ Route::middleware('auth')->group(function () {
 
         Pdf::loadView('pdf.zaaglijst',['order' => $order])->save(public_path('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf'));
 
-        $url = storage_path('app/public/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
+        $url = public_path('storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
 
         return response()->file($url);
     });
@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
         Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketLijst/pakketLijst-'.$order->order_id.'.pdf'));
 
-        $url = storage_path('app/public/pakketLijst/pakketLijst-'.$order->order_id.'.pdf');
+        $url = public_path('storage/pakketLijst/pakketLijst-'.$order->order_id.'.pdf');
 
         return response()->file($url);
     });
@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
         $leverancier = Supliers::where('name', $order->merk_paneel)->first();
         Pdf::loadView('pdf.zaaglijst',['order' => $order,'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
-        $url = storage_path('app/public/orderlijst/order-'.$order->order_id.'.pdf');
+        $url = public_path('storage/orderlijst/order-'.$order->order_id.'.pdf');
 
         return response()->file($url);
     });
