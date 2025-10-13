@@ -93,7 +93,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-pakketlijst/{id}', function($id) {
         $order = Order::where('id', $id)->first();
 
-        Pdf::loadView('pdf.pakketlijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketLijst-'.$order->order_id.'.pdf'));
+        Pdf::loadView('pdf.pakketlijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
 
         $url = public_path('storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
 
