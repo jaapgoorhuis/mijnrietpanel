@@ -26,6 +26,11 @@ Marketing extends Component
         }
     }
 
+    public function updateDownload() {
+        $this->selectedDownloads = $this->selectedDownloads;
+    }
+
+
     public function downloadSelected()
     {
         if (empty($this->selectedDownloads)) {
