@@ -51,7 +51,7 @@
                     @endif
                 </div>
                 @if($this->selectedDownloads)
-                    <div class="fixed md:static bottom-[20px] w-full pr-[49px] md:block">
+                    <div class="sticky bottom-0 w-full pr-[49px] bg-white md:static">
                         <button wire:click="downloadSelected()" type="button" class="mt-[20px] w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                             <i class="fa-solid fa-download"></i> Geselecteerde bestanden downloaden
                         </button>
