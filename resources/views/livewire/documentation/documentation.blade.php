@@ -56,6 +56,7 @@
                             <i class="fa-solid fa-download"></i> Geselecteerde bestanden downloaden
                         </button>
                     </div>
+                @endif
             </div>
         </div>
     </div>
