@@ -82,13 +82,14 @@ class CreateOffertes extends Component
         }
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
+        $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
+
 
         $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
         $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
         $this->kerndikte = $this->panelTypes->first()->name;
-
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
@@ -96,8 +97,6 @@ class CreateOffertes extends Component
 
     public function render()
     {
-
-        $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
 
 
         return view('livewire.offertes.createOfferte');
