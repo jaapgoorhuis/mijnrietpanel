@@ -24,7 +24,7 @@ class ZipDownloadController extends Controller
         $zip = Zip::create('archive.zip');
 
         foreach ($files as $fileName) {
-            $zip->add(storage_path('app/public/'.$fileRoute.'/'.$fileName));
+            $zip->add(public_path('/storage/'.$fileRoute.'/'.$fileName));
         }
 
         return $zip;
