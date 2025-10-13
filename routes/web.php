@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
         Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketLijst/pakketLijst-'.$order->order_id.'.pdf'));
 
-        $url = public_path('storage/pakketLijst/pakketLijst-'.$order->order_id.'.pdf');
+        $url = public_path('storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
 
         return response()->file($url);
     });
