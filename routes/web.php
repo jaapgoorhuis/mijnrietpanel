@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Order;
+use App\Models\Supliers;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -75,15 +78,37 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/statisctics', \App\Livewire\Statistics\Statistics::class)->name('statistics');
     Route::get('/statistics/{id}', \App\Livewire\Statistics\ExpandedStatistics::class);
-    Route::get('/zaaglijst', function () {
 
+    Route::get('/download-zaaglijst/{id}', function($id) {
+        $order = Order::where('id', $id)->first();
 
-        $order = \App\Models\Order::where('id', 1)->first();
-        $user = User::where('id', $order->user_id)->first();
+        Pdf::loadView('pdf.zaaglijst',['order' => $order])->save(public_path('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf'));
 
-        $company = $user->company;
-        return view('pdf.zaaglijst')->with('order', $order);
+        $url = storage_path('app/public/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
+
+        return response()->file($url);
     });
+
+    Route::get('/download-pakketlijst/{id}', function($id) {
+        $order = Order::where('id', $id)->first();
+
+        Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketLijst/pakketLijst-'.$order->order_id.'.pdf'));
+
+        $url = storage_path('app/public/pakketLijst/pakketLijst-'.$order->order_id.'.pdf');
+
+        return response()->file($url);
+    });
+
+    Route::get('/download-orderlist/{id}', function($id) {
+        $order = Order::where('id', $id)->first();
+        $leverancier = Supliers::where('name', $order->merk_paneel)->first();
+        Pdf::loadView('pdf.zaaglijst',['order' => $order,'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
+
+        $url = storage_path('app/public/orderlijst/order-'.$order->order_id.'.pdf');
+
+        return response()->file($url);
+    });
+
 });
 
 

@@ -74,25 +74,7 @@ class Orders extends Component
         }
     }
 
-    public function downloadPakketList($id) {
 
-        $order = Order::where('id', $id)->first();
-        Pdf::loadView('pdf.pakketLijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
-
-        $url = asset('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
-        $this->dispatch('open-new-tab', ['url' => $url]);
-        return $this->redirect('/orders', navigate: true);
-    }
-
-    public function downloadZaagList($id) {
-        $order = Order::where('id', $id)->first();
-        Pdf::loadView('pdf.zaaglijst',['order' => $order])->save(public_path('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf'));
-
-        $url = asset('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
-        $this->dispatch('open-new-tab', ['url' => $url]);
-
-        return $this->redirect('/orders', navigate: true);
-    }
 
     public function SendOrderList($id) {
         $order = Order::where('id', $id)->first();
@@ -112,14 +94,4 @@ class Orders extends Component
         return $this->redirect('/orders', navigate: true);
     }
 
-    public function downloadBestellijst($id) {
-        $order = Order::where('id', $id)->first();
-        $leverancier = Supliers::where('name', $order->merk_paneel)->first();
-
-        Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
-
-        $url = asset('/storage/orderlijst/order-'.$order->order_id.'.pdf');
-        $this->dispatch('open-new-tab', ['url' => $url]);
-        return $this->redirect('/orders', navigate: true);
-    }
 }

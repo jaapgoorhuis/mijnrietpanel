@@ -146,15 +146,14 @@
                                             </li>
                                             @admin
                                             <li>
-                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click.prevent="downloadPakketList({{$order->id}})" >
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-pakketlijst/'.$order->id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Pakketlijst downloaden
-                                                </button>
-
+                                                </a>
                                             </li>
                                             <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadZaagList({{$order->id}})" >
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/'.$order->id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Zaaglijst downloaden
-                                                </button>
+                                                </a>
                                             </li>
                                             <li>
                                                 <button @if($order->status == 'In behandeling') disabled @endif @if($order->order_ordered) disabled @endif class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:bg-[#e9eaeb] disabled:text-[#b5aeae]" wire:click="SendOrderList({{$order->id}})">
@@ -164,9 +163,9 @@
                                             </li>
 
                                             <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed " wire:click="downloadBestellijst({{$order->id}})" >
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-orderlist/'.$order->id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Bestellijst downloaden
-                                                </button>
+                                                </a>
                                             </li>
                                             @endadmin
                                         </ul>
