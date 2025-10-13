@@ -13,6 +13,7 @@ class
 Details extends Component
 {
     public $details;
+    public array $selectedDownloads = [];
 
     public function render()
     {
@@ -27,5 +28,28 @@ Details extends Component
         else {
             return $this->redirect('/details', navigate: true);
         }
+    }
+
+    public function updateDownload() {
+        $this->selectedDownloads = $this->selectedDownloads;
+    }
+
+    public function downloadSelected()
+    {
+        if (empty($this->selectedDownloads)) {
+            session()->flash('error','Geen bestand geselecteerd.');
+            return;
+        }
+
+        $params = [
+            'files' => $this->selectedDownloads,
+            'route' => 'details',
+        ];
+
+        $query = http_build_query($params);
+        $url = route('download.bulk.zip') . '?' . $query;
+
+        // Livewire 3 event naar frontend
+        $this->dispatch('download-zip', url: $url);
     }
 }

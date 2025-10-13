@@ -18,7 +18,26 @@
 </x-slot>
 
 <div class="py-12">
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        @if(Session::has('error'))
+            <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
+                <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                </svg>
+                <span class="sr-only">Info</span>
+                <div class="ms-3 text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+                <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#alert-2" aria-label="Close">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+
+        @endif
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 @admin
@@ -30,23 +49,54 @@
                 <br/>
                 @endadmin
 
-                <div class="grid grid-cols-1 gap-10 md:grid-cols-2 :grid-cols-4 text-left">
+                <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
                     @if(!count($this->pricelist))
                         Er zijn geen bestanden gevonden
                     @else
-                        @foreach($this->pricelist as $pricelist)
-                            <div class="border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
+                        @foreach($this->pricelist as $key => $pricelist)
+                            <div wire:key="{{$pricelist->id}}" class="relative border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
                                 <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$pricelist->friendly_name}}</h2>
                                 <a target="_blank" href="{{asset('/storage/pricelist/'.$pricelist->file_name)}}">
                                     <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                         <i class="fa-solid fa-download"></i> Downloaden
                                     </button>
                                 </a>
+                                    <div class="absolute right-[10px] bottom-[10px]">
+                                        <input wire:click="updateDownload" wire:model="selectedDownloads" value="{{ $pricelist->file_name }}" type="checkbox"/>
+                                    </div>
+
                             </div>
                         @endforeach
                     @endif
                 </div>
+                @if($this->selectedDownloads)
+                    <div class="fixed md:static bottom-[20px] w-full pr-[49px] md:block">
+                        <button wire:click="downloadSelected()" type="button" class="mt-[20px] w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                            <i class="fa-solid fa-download"></i> Geselecteerde bestanden downloaden
+                        </button>
+                    </div>
+                @endif
+
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener("livewire:initialized", () => {
+            if (typeof Livewire !== 'undefined') {
+                Livewire.on('download-zip', ({ url }) => {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', '');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            } else {
+                console.error('Livewire is not defined');
+            }
+        });
+    });
+</script>
+

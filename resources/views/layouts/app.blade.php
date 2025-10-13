@@ -54,7 +54,7 @@
                 </div>
             </main>
         </div>
-        @livewireScripts
+        <livewire:scripts />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             window.addEventListener('popstate', function () {
@@ -144,6 +144,7 @@
 
 
         </script>
+
 
     </body>
 

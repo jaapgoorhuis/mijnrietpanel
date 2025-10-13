@@ -6,6 +6,7 @@ use App\Models\Supliers;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use STS\ZipStream\Facades\Zip;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -109,6 +110,7 @@ Route::middleware('auth')->group(function () {
         return response()->file($url);
     });
 
+    Route::get('/download-bulk-zip', [\App\Http\Controllers\ZipDownloadController::class, 'download'])->name('download.bulk.zip');
 });
 
 
