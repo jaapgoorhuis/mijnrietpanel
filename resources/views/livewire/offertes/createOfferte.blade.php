@@ -10,8 +10,8 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/orders" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
-                        Mijn orders
+                    <a href="/offertes" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
+                        Offertes
                     </a>
                 </div>
             </li>
