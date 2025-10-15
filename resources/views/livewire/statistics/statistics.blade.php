@@ -69,7 +69,7 @@
                                                 ->sum('m2');
                                         @endphp
 
-                                        {{ $count }} m²
+                                        {{ round($count,2) }} m²
                                     </th>
 
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
@@ -78,7 +78,7 @@
                                                 ->flatMap->ordersYear
                                                 ->count();
                                         @endphp
-                                        {{$count}} orders
+                                        {{ round($count,2) }} orders
 
                                     </th>
 
@@ -88,7 +88,7 @@
                                                 ->flatMap->offertesYear
                                                 ->count();
                                         @endphp
-                                        {{$count}} offertes
+                                        {{ round($count,2) }} offertes
 
                                     </th>
 

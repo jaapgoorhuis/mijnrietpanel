@@ -74,7 +74,7 @@
                                             })->sum('m2');
                                         @endphp
 
-                                        {{ $count }}
+                                        {{ $count }} M²
 
                                     </th>
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
@@ -85,7 +85,7 @@
                                                   ->count();
                                         @endphp
 
-                                        {{ $count }}
+                                        {{ $count }} Orders
                                     </th>
                                     <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                         @php
@@ -95,7 +95,7 @@
                                                   ->count();
                                         @endphp
 
-                                        {{ $count }}
+                                        {{ $count }} Offertes
                                     </th>
                                 </tr>
                         @endforeach
@@ -130,7 +130,7 @@
                                                   ->whereIn('user_id', $this->company->users->pluck('id'))->sum('m2');
                                     @endphp
 
-                                    {{ $count }}
+                                    {{ round($count,2) }}
 
                                 </th>
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
@@ -140,7 +140,7 @@
                                               ->count();
                                     @endphp
 
-                                    {{ $count }}
+                                    {{ round($count,2) }}
                                 </th>
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                                     @php
@@ -149,7 +149,7 @@
                                               ->count();
                                     @endphp
 
-                                    {{ $count }}
+                                    {{ round($count,2) }}
                                 </th>
                             </tr>
                         </tbody>
