@@ -87,6 +87,7 @@
 
     <br/>
         @reseller
+        @if(!\Illuminate\Support\Facades\Auth::user()->is_architect)
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h2 class="text-lg font-medium text-gray-900">
@@ -97,9 +98,11 @@
                 </button>
             </div>
         </div>
+        @endif
         @endreseller
 
         @userNonReseller
+        @if(!\Illuminate\Support\Facades\Auth::user()->is_architect)
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h2 class="text-lg font-medium text-gray-900">
@@ -135,6 +138,7 @@
                 </div>
             </div>
         </div>
+        @endif
         @enduserNonReseller
         <br/>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

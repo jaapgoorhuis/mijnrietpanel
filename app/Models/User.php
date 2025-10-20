@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_admin',
         'bedrijfsnaam',
         'phone',
+        'is_architect',
         'bedrijf_id'
     ];
 

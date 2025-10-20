@@ -3,6 +3,7 @@
 namespace App\Livewire\Orders;
 
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -13,6 +14,15 @@ class UploadOrders extends Component
 
     public $orderForm;
 
+
+    public function mount() {
+        if(Auth::user()->is_admin) {
+            return view('livewire.orders.editOrder');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
     public function render()
     {
         return view('livewire.orders.uploadOrder');

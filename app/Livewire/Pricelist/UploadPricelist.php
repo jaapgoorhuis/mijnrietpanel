@@ -3,6 +3,7 @@
 namespace App\Livewire\Pricelist;
 
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -15,6 +16,16 @@ class UploadPricelist extends Component
     public $pricelist;
 
     public $friendly_name = [];
+
+
+    public function mount() {
+        if(Auth::user()->is_admin) {
+            return view('livewire.pricelist.uploadPricelist');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
 
     public function render()
     {

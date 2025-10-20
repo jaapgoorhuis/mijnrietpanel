@@ -31,7 +31,7 @@
 
 
 <div class="py-12">
-
+    @if(!\Illuminate\Support\Facades\Auth::user()->is_architect)
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('success'))
             <div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 " role="alert">
@@ -185,4 +185,5 @@
 
         </div>
     </div>
+    @endif
 </div>

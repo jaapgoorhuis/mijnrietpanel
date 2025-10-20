@@ -21,6 +21,7 @@ class EditAccountRequests extends Component
     public $user;
     public $user_id;
 
+    public $architect;
 
     public $bedrijfsnaam;
 
@@ -46,6 +47,8 @@ class EditAccountRequests extends Component
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
         $this->oldCompany = $this->user->bedrijf_id;
+        $this->architect = $this->user->is_architect;
+
 
     }
      public function render()
@@ -79,6 +82,7 @@ class EditAccountRequests extends Component
         User::where('id', $id)->update([
             'bedrijf_id' => $this->company_id,
             'is_active' => $this->status,
+            'is_architect' => $this->architect,
         ]);
 
          if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {

@@ -24,7 +24,7 @@ class Orders extends Component
     public function change() {
         dd('updated');
     }
-    public function render()
+    public function mount()
     {
         if(Auth::user()->is_admin) {
             $this->orders = Order::get();
@@ -36,7 +36,13 @@ class Orders extends Component
         } else {
             $this->orders  = Order::where('user_id', Auth::user()->id)->get();
         }
-        return view('livewire.orders.orders');
+
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.orders.orders');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
     }
 
     public function newOrder() {

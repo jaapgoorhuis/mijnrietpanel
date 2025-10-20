@@ -20,13 +20,23 @@ class EditOffertes extends Component
     public $orderId;
 
     public $order;
+
+    public function mount() {
+        if(Auth::user()->is_admin) {
+            return view('livewire.orders.editOffertes');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
+
     public function render()
     {
         $this->orderId = Route::current()->parameter('id');
 
         $this->order = Order::where('id', $this->orderId)->first();
 
-        return view('livewire.orders.editOrder');
+        return view('livewire.orders.editOffertes');
     }
 
    public function updateOrder($id) {

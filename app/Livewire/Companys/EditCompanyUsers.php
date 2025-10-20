@@ -35,6 +35,8 @@ class EditCompanyUsers extends Component
 
     public $company;
 
+    public $architect;
+
     public function mount($id,$slug) {
 
         $this->company_id = $slug;
@@ -52,6 +54,7 @@ class EditCompanyUsers extends Component
         $this->is_admin = $this->user->is_admin;
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
+        $this->architect = $this->user->is_architect;
     }
      public function render()
      {
@@ -95,7 +98,8 @@ class EditCompanyUsers extends Component
             'bedrijf_id' => $this->bedrijfid,
             'is_active' => $this->status,
             'phone' => $this->phone,
-            'is_admin' => $this->is_admin
+            'is_admin' => $this->is_admin,
+            'is_architect' => $this->architect,
         ]);
 
         if($this->oldStatus != $this->status) {

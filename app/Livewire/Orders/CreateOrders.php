@@ -90,11 +90,21 @@ class CreateOrders extends Component
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
         $this->kerndikte = $this->panelTypes->first()->name;
         $this->brands = $this->dakSupliers;
-
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen orders plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
             return $this->redirect('/orders', navigate: true);
         }
+
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.orders.createOrder');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+
+
+
+
     }
 
     public function render()

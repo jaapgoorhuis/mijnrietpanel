@@ -93,6 +93,15 @@ class CreateOffertes extends Component
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
+
+
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.offertes.offertes');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+
     }
 
     public function render()

@@ -16,6 +16,15 @@ Pricelist extends Component
     public array $selectedDownloads = [];
 
 
+    public function mount() {
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.pricelist.pricelist');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
+
     public function render()
     {
         $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->get();

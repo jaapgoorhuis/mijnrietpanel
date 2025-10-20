@@ -36,5 +36,10 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
             return $user && $user->is_admin == 0 && $user->is_reseller == 0;
         });
+
+        Blade::if('architect', function () {
+            $user = auth()->user();
+            return $user && $user->is_architect;
+        });
     }
 }

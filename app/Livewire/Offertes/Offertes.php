@@ -19,6 +19,14 @@ class Offertes extends Component
     public $editOfferteId;
 
 
+    public function mount() {
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.offertes.offertes');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
     public function render()
     {
         if(Auth::user()->is_admin) {
