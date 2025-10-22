@@ -54,6 +54,18 @@ class Offertes extends Component
         }
     }
 
+
+    public function removeOfferte($id)
+    {
+        if(Auth::user()->is_admin) {
+            return $this->redirect('/offertes/remove/' . $id, navigate: true);
+        }
+        else {
+            return $this->redirect('/offertes', navigate: true);
+        }
+    }
+
+
     public function createOfferteOrder($offerteId) {
         $offerte = Offerte::where('id', $offerteId)->first();
 

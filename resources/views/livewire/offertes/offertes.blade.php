@@ -130,6 +130,14 @@
                                                     <i class="fa-solid fa-circle-check" ></i> Order maken
                                                 </button>
                                             </li>
+
+                                            @admin
+                                            <li>
+                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
+                                                    <i class="fa-solid fa-circle-check" ></i> Offerte verwijderen
+                                                </button>
+                                            </li>
+                                            @endadmin
                                         </ul>
 
                                     </div>
