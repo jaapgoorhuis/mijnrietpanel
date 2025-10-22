@@ -95,19 +95,19 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                     {{$order->merk_paneel}}
                 </td>
                 <td>
-                    {{$orderLine->fillCb}}mm
+                    {{$orderLine->fillCb}} mm
                 </td>
                 <td>
-                    {{$orderLine->fillLb}}mm
+                    {{$orderLine->fillLb}} mm
                 </td>
                 <td>
                     {{$order->kerndikte}}
                 </td>
                 <td>
-                    {{$orderLine->fillTotaleLengte}}mm
+                    {{$orderLine->fillTotaleLengte}} mm
                 </td>
                 <td>
-                    {{$orderLine->m2}}m²
+                    {{$orderLine->m2}} m²
                 </td>
                 <td>
                     {{$orderLine->aantal}}
@@ -141,7 +141,7 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                                 }
                             }
                         ?>
-                    €{{str_replace('.', ',', round($orderLine->m2 * $m2price,2))}},-
+                    € {{number_format($orderLine->m2 * $m2price, 2, ',', '.')}}
 
                 </td>
             </tr>
@@ -167,13 +167,13 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                 <br/>
                 <tr>
                     <th style="text-align: left; border-bottom:1px solid black">Subtotaal:</th>
-                    <th style="text-align: left; border-bottom:1px solid black">€{{str_replace('.', ',', round($totalPrice,2))}},-</th>
+                    <th style="text-align: left; border-bottom:1px solid black">€ {{number_format($totalPrice, 2, ',', '.')}}</th>
                 </tr>
                 <br/>
                 <?php $btw = $totalPrice /100 *21?>
                 <tr>
                     <th style="text-align: left">21% BTW:</th>
-                    <th style="text-align: left">€{{str_replace('.', ',', round($btw,2))}},-</th>
+                    <th style="text-align: left">€ {{number_format($btw, 2, ',', '.')}}</th>
                 </tr>
                 <?php $toeslagen = \App\Models\Surcharges::get();?>
                 <?php $allInPrice = $totalPrice + $btw?>
@@ -204,7 +204,7 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                 <br/>
                 <tr>
                     <th style="text-align: left; border-top:1px solid black">Totaal incl. 21% BTW, incl. toeslagen:</th>
-                    <th style="text-align: left; border-top:1px solid black">€{{str_replace('.', ',', round($allInPrice,2))}},-</th>
+                    <th style="text-align: left; border-top:1px solid black">€ {{number_format($allInPrice, 2, ',', '.')}}</th>
                 </tr>
             </table>
         </div>

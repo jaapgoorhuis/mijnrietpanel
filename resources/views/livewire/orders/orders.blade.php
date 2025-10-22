@@ -152,7 +152,7 @@
                                             </li>
                                             <li>
                                                 <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/'.$order->id)}}" target="_blank">
-                                                    <i class="fa-solid fa-download"></i> Zaaglijst downloaden
+                                                    <i class="fa-solid fa-download"></i> Fabrieklijst downloaden
                                                 </a>
                                             </li>
                                             <li>
