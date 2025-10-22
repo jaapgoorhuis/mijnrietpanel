@@ -69,8 +69,6 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             <th>Rietkleur</th>
             <th>Toepassing</th>
             <th>Merk</th>
-            <th>CB</th>
-            <th>LB</th>
             <th>Kerndikte</th>
             <th>Lengte</th>
             <th>m²</th>
@@ -96,19 +94,13 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                     {{$offerte->merk_paneel}}
                 </td>
                 <td>
-                    {{$offerteLine->fillCb}}mm
-                </td>
-                <td>
-                    {{$offerteLine->fillLb}}mm
-                </td>
-                <td>
                     {{$offerte->kerndikte}}
                 </td>
                 <td>
-                    {{$offerteLine->fillTotaleLengte}}mm
+                    {{$offerteLine->fillTotaleLengte}} mm
                 </td>
                 <td>
-                    {{$offerteLine->m2}}m²
+                    {{$offerteLine->m2}} m²
                 </td>
                 <td>
                     {{$offerteLine->aantal}}
@@ -142,7 +134,9 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                             }
                         }
                         ?>
-                    €{{str_replace('.', ',', round($offerteLine->m2 * $m2price,2))}},-
+
+                    {!! '&euro;&nbsp;' . number_format($offerteLine->m2 * $m2price, 2, ',', '.') !!}
+
 
                 </td>
             </tr>
@@ -168,13 +162,13 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 <br/>
                 <tr>
                     <th style="text-align: left; border-bottom:1px solid black">Subtotaal:</th>
-                    <th style="text-align: left; border-bottom:1px solid black">€{{str_replace('.', ',', round($totalPrice,2))}},-</th>
+                    <th style="text-align: left; border-bottom:1px solid black">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
                 </tr>
                 <br/>
                 <?php $btw = $totalPrice /100 *21?>
                 <tr>
                     <th style="text-align: left">21% BTW:</th>
-                    <th style="text-align: left">€{{str_replace('.', ',', round($btw,2))}},-</th>
+                    <th style="text-align: left">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
                 </tr>
                 <?php $toeslagen = \App\Models\Surcharges::get();?>
                 <?php $allInPrice = $totalPrice + $btw?>
@@ -184,7 +178,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                             @if( $totalM2 < $toeslag->number )
                                 <tr>
                                     <th style="text-align: left; ">{{$toeslag->name}}:</th>
-                                    <th style="text-align: left;">€ {{$toeslag->price}},-</th>
+                                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</th>
                                 </tr>
                             @endif
                             <?php $allInPrice += $toeslag->price;?>
@@ -194,7 +188,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                                 <?php $zaagprijs = $zaaglengtes * $toeslag->price?>
                                 <tr>
                                     <th style="text-align: left;  padding-right: 20px; margin-right: 20px;">{{$toeslag->name}}:</th>
-                                    <th style="text-align: left">{{$zaaglengtes}} stuks * €{{$toeslag->price}},- = €{{$zaagprijs}},-</th>
+                                    <th style="text-align: left">{{$zaaglengtes}} stuks * {!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!} = {!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</th>
                                 </tr>
                                 <?php $allInPrice += $zaagprijs?>
                             @endif
@@ -205,7 +199,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 <br/>
                 <tr>
                     <th style="text-align: left; border-top:1px solid black">Totaal incl. 21% BTW, incl. toeslagen:</th>
-                    <th style="text-align: left; border-top:1px solid black">€{{str_replace('.', ',', round($allInPrice,2))}},-</th>
+                    <th style="text-align: left; border-top:1px solid black">{!! '&euro;&nbsp;' . number_format($allInPrice, 2, ',', '.') !!}</th>
                 </tr>
             </table>
         </div>
