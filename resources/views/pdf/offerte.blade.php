@@ -141,7 +141,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 </td>
             </tr>
         @endforeach
-
+        <?php $toeslagen = \App\Models\Surcharges::get();?>
         @foreach($toeslagen as $toeslag)
             @if($toeslag)
 
@@ -195,7 +195,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                     <th style="text-align: left">21% BTW:</th>
                     <th style="text-align: left">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
                 </tr>
-                <?php $toeslagen = \App\Models\Surcharges::get();?>
+
                 <?php $allInPrice = $totalPrice + $btw?>
 
                 <br/>
