@@ -28,10 +28,9 @@ class RemoveOffertes extends Component
             return view('livewire.offertes.removeOfferte');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
-            return $this->redirect('/dashboard', navigate: true);
+            return $this->redirect('/offertes', navigate: true);
         }
     }
-
     public function render()
     {
         $this->offerteId = Route::current()->parameter('id');
@@ -41,23 +40,16 @@ class RemoveOffertes extends Component
         return view('livewire.offertes.removeOfferte');
     }
 
-   public function updateOrder($id) {
+    public function deleteOfferte($id) {
+        Offerte::where('id', $id)->delete();
+        OfferteLines::where('offerte_id', $id)->delete();
 
-       Offerte::where('id', $id)->delete();
-       OfferteLines::where('offerte_id', $id)->delete();
+        session()->flash('success','De offerte #'.$this->offerte->offerte_id.' is verwijderd');
 
-       session()->flash('success','De offerte #'.$this->offerte->offerte_id.' is verwijderd');
+        return $this->redirect('/offertes', navigate: true);
+    }
 
-        Order::where('id', $id)->update([
-            'status' => 'Bevestigd'
-        ]);
-
-       Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
-
-       return $this->redirect('/offertes', navigate: true);
-   }
-
-   public function cancelRemoveOfferte() {
+    public function cancelDeleteOfferte() {
         return $this->redirect('/offertes', navigate: true);
     }
 }
