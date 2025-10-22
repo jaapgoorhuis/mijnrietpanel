@@ -176,32 +176,32 @@
                             </div>
                             <br/>
                             Afmetingen paneel<br/><br/>
-                            <div class="grid md:grid-cols-2 md:gap-6">
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="fillLb" class="text-gray-400">LB (max 210mm)
-                                        <div class="tooltip">
-                                            <div class="tooltip-content">
-                                                Vul hier de LB in mm in. De maximale LB mag 210mm zijn. Laat dit op nul staan als de LB niet van toepassing is. Heeft u toch een grotere LB nodig? Neem dan contact met ons op.
-                                            </div>
-                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip{{$index}}"></i>
-                                        </div>
-                                    </label>
-                                    <input type="number" min="0" max="210" wire:model="fillLb.{{$index}}" wire:keydown="updateLb({{$index}})" name="fillLb" id="fillLb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
-                                    <div class="text-red-500">@error('lb.'.$index) {{ $message }} @enderror</div>
-                                </div>
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)
-                                        <div class="tooltip">
-                                            <div class="tooltip-content">
-                                               Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.
-                                            </div>
-                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
-                                        </div>
-                                    </label>
-                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
-                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
-                                </div>
-                            </div>
+{{--                            <div class="grid md:grid-cols-2 md:gap-6">--}}
+{{--                                <div class="relative z-0 w-full mb-5 group">--}}
+{{--                                    <label for="fillLb" class="text-gray-400">LB (max 210mm)--}}
+{{--                                        <div class="tooltip">--}}
+{{--                                            <div class="tooltip-content">--}}
+{{--                                                Vul hier de LB in mm in. De maximale LB mag 210mm zijn. Laat dit op nul staan als de LB niet van toepassing is. Heeft u toch een grotere LB nodig? Neem dan contact met ons op.--}}
+{{--                                            </div>--}}
+{{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip{{$index}}"></i>--}}
+{{--                                        </div>--}}
+{{--                                    </label>--}}
+{{--                                    <input type="number" min="0" max="210" wire:model="fillLb.{{$index}}" wire:keydown="updateLb({{$index}})" name="fillLb" id="fillLb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
+{{--                                    <div class="text-red-500">@error('lb.'.$index) {{ $message }} @enderror</div>--}}
+{{--                                </div>--}}
+{{--                                <div class="relative z-0 w-full mb-5 group">--}}
+{{--                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)--}}
+{{--                                        <div class="tooltip">--}}
+{{--                                            <div class="tooltip-content">--}}
+{{--                                               Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.--}}
+{{--                                            </div>--}}
+{{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>--}}
+{{--                                        </div>--}}
+{{--                                    </label>--}}
+{{--                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
+{{--                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
