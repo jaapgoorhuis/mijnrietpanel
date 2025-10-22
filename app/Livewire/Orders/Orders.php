@@ -71,6 +71,16 @@ class Orders extends Component
         }
     }
 
+    public function removeOrder($id)
+    {
+        if(Auth::user()->is_admin) {
+            return $this->redirect('/orders/remove/' . $id, navigate: true);
+        }
+        else {
+            return $this->redirect('/orders', navigate: true);
+        }
+    }
+
     public function uploadOrderForm() {
         if(Auth::user()->is_admin) {
             return $this->redirect('/orders/upload', navigate: true);
