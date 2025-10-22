@@ -144,7 +144,10 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         <?php $toeslagen = \App\Models\Surcharges::get();?>
         <?php $btw = $totalPrice /100 *21?>
         <?php $allInPrice = $totalPrice + $btw?>
-
+        <?php $totalM2 = 0?>
+        @foreach($offerte->offerteLines as $offerteLine)
+                <?php $totalM2 += $offerteLine->m2;?>
+        @endforeach
         @foreach($toeslagen as $toeslag)
             @if($toeslag)
 
@@ -175,10 +178,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
 </div>
 
 <div class="total">
-    <?php $totalM2 = 0?>
-    @foreach($offerte->offerteLines as $offerteLine)
-            <?php $totalM2 += $offerteLine->m2;?>
-    @endforeach
+
 
     <div class="totals-row">
         <div style="position:relative">
