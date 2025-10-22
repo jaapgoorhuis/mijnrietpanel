@@ -142,7 +142,32 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             </tr>
         @endforeach
 
+        @foreach($toeslagen as $toeslag)
+            @if($toeslag)
 
+
+            @if($toeslag->rule == 'vierkantemeter')
+                    @if( $totalM2 < $toeslag->number )
+                        <tr class="items">
+                            <th style="text-align: left; ">{{$toeslag->name}}:</th>
+                            <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</th>
+                        </tr>
+                    @endif
+                        <?php $allInPrice += $toeslag->price;?>
+                @endif
+
+                @if($toeslag->rule == 'zaaglengte')
+                        <?php $zaagprijs = $zaaglengtes * $toeslag->price?>
+                    <tr class="items">
+                        <th style="text-align: left;">{{$toeslag->name}}:</th>
+                        <th style="text-align: left">{{$zaaglengtes}} stuks * {!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!} = {!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</th>
+                    </tr>
+                        <?php $allInPrice += $zaagprijs?>
+                @endif
+
+
+            @endif
+        @endforeach
     </table>
 </div>
 
@@ -172,30 +197,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 </tr>
                 <?php $toeslagen = \App\Models\Surcharges::get();?>
                 <?php $allInPrice = $totalPrice + $btw?>
-                @foreach($toeslagen as $toeslag)
-                    @if($toeslag)
-                        @if($toeslag->rule == 'vierkantemeter')
-                            @if( $totalM2 < $toeslag->number )
-                                <tr>
-                                    <th style="text-align: left; ">{{$toeslag->name}}:</th>
-                                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</th>
-                                </tr>
-                            @endif
-                            <?php $allInPrice += $toeslag->price;?>
-                        @endif
 
-                        @if($toeslag->rule == 'zaaglengte')
-                                <?php $zaagprijs = $zaaglengtes * $toeslag->price?>
-                                <tr>
-                                    <th style="text-align: left;  padding-right: 20px; margin-right: 20px;">{{$toeslag->name}}:</th>
-                                    <th style="text-align: left">{{$zaaglengtes}} stuks * {!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!} = {!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</th>
-                                </tr>
-                                <?php $allInPrice += $zaagprijs?>
-                            @endif
-
-                        @endif
-
-                @endforeach
                 <br/>
                 <tr>
                     <th style="text-align: left; border-top:1px solid black">Totaal incl. 21% BTW, incl. toeslagen:</th>

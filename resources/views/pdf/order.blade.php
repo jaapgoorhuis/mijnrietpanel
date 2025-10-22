@@ -161,13 +161,13 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                 <br/>
                 <tr>
                     <th style="text-align: left; border-bottom:1px solid black">Subtotaal:</th>
-                    <th style="text-align: left; border-bottom:1px solid black">{{number_format($totalPrice, 2, ',', '.')}}</th>
+                    <th style="text-align: left; border-bottom:1px solid black">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
                 </tr>
                 <br/>
                 <?php $btw = $totalPrice /100 *21?>
                 <tr>
                     <th style="text-align: left">21% BTW:</th>
-                    <th style="text-align: left">{{number_format($btw, 2, ',', '.')}}</th>
+                    <th style="text-align: left">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
                 </tr>
                 <?php $toeslagen = \App\Models\Surcharges::get();?>
                 <?php $allInPrice = $totalPrice + $btw?>
