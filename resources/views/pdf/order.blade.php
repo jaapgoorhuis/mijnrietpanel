@@ -141,7 +141,9 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
                                 }
                             }
                         ?>
-                    € {{number_format($orderLine->m2 * $m2price, 2, ',', '.')}}
+
+                    {!! '&euro;&nbsp;' . number_format($orderLine->m2 * $m2price, 2, ',', '.') !!}
+
 
                 </td>
             </tr>
