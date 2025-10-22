@@ -25,7 +25,7 @@ class RemoveOffertes extends Component
 
     public function mount() {
         if(Auth::user()->is_admin) {
-            return view('livewire.offertes.removeOffertes');
+            return view('livewire.offertes.removeOfferte');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
             return $this->redirect('/dashboard', navigate: true);
@@ -38,7 +38,7 @@ class RemoveOffertes extends Component
 
         $this->offerte = Offerte::where('id', $this->offerteId)->first();
 
-        return view('livewire.offertes.removeOffertes');
+        return view('livewire.offertes.removeOfferte');
     }
 
    public function updateOrder($id) {
