@@ -51,7 +51,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         <tr>
             <td class="w-half">
                 <div><strong>Aan:</strong></div>
-                <div>Klant naam: {{$offerte->klant_naam}}</div>
+                <div>Klant naam: {{$offerte->klantnaam}}</div>
                 <div>Adres: {{$offerte->aflever_straat}}</div>
                 <div>Postcode: {{$offerte->aflever_postcode}}</div>
                 <div>Plaats: {{$offerte->aflever_plaats}}</div>

@@ -171,7 +171,7 @@
                             <hr class="border-2 border-[#C0A16E]"/><br/><br/>
                             @endif
                             <div class="text-right">
-                                <button wire:click.prevent="removeOrderLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                                <button wire:click.prevent="removeOfferteLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                     <i class="fa-solid fa-trash hover:cursor-pointer text-white"></i>
                                 </button>
 

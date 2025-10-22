@@ -43,7 +43,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6h16.5V18A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 11.25h6"/>
                         </svg>
-                        <span class="text-lg font-semibold tracking-tight text-neutral-900">Offertes</span>
+                        <span class="text-lg font-semibold tracking-tight text-neutral-900">Offerte tool</span>
                         <span class="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-neutral-200/80"></span>
                     </a>
 

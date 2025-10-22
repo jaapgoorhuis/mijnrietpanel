@@ -133,8 +133,8 @@
                             <th scope="col" class="px-4 py-3">Id:</th>
                             <th scope="col" class="px-4 py-3">Regel:</th>
                             <th scope="col" class="px-4 py-3">Dikte:</th>
+                            <th scope="col" class="px-4 py-3">Rietpanel's prijs:</th>
                             <th scope="col" class="px-4 py-3">Uw prijs:</th>
-                            <th scope="col" class="px-4 py-3">Rietpanel´s prijs:</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
                             </th>

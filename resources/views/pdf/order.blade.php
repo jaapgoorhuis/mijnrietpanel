@@ -46,7 +46,7 @@ $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
         <tr>
             <td class="w-half">
                 <div><strong>Aan:</strong></div>
-                <div>Klant naam: {{$order->klant_naam}}</div>
+                <div>Klant naam: {{$order->klantnaam}}</div>
                 <div>Adres: {{$order->aflever_straat}}</div>
                 <div>Postcode: {{$order->aflever_postcode}}</div>
                 <div>Plaats: {{$order->aflever_plaats}}</div>
