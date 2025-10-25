@@ -98,8 +98,15 @@ class Orders extends Component
 
         Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
-        if($leverancier->suplier_email != '') {
-            Mail::to($leverancier->suplier_email)->send(new sendOrderList($order));
+        try {
+            if ($leverancier->suplier_email != '') {
+                Mail::to(strtolower($leverancier->suplier_email))->send(new sendOrderList($order));
+            } else {
+                session()->flash('error','Er is geen email beschikbaar van deze leverancier.');
+                return $this->redirect('/orders', navigate: true);
+            }
+        } catch (\Exception $e) {
+            return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.');
         }
 
         Order::where('id', $order->id)->update([
