@@ -64,9 +64,9 @@
                             <strong>CB:</strong>{{$orderLines->fillCb}} mm
                         </div>
 
-                        <div class="lb-label">
-                            <strong>LB:</strong> {{$orderLines->fillLb}} mm
-                        </div>
+{{--                        <div class="lb-label">--}}
+{{--                            <strong>LB:</strong> {{$orderLines->fillLb}} mm--}}
+{{--                        </div>--}}
 
                         <div class="totale-maat" style="margin-bottom: 10px;">
                             <strong><- Totale maat: </strong> {{$orderLines->fillTotaleLengte}}

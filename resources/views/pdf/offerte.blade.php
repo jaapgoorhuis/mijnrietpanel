@@ -69,6 +69,7 @@
                 <th>Merk</th>
                 <th>Kerndikte</th>
                 <th>Lengte</th>
+                <th>CB</th>
                 <th>m²</th>
                 <th>Aantal</th>
                 <th>Prijs</th>
@@ -87,6 +88,7 @@
                     <td>{{$offerte->merk_paneel}}</td>
                     <td>{{$offerte->kerndikte}}</td>
                     <td>{{$offerteLine->fillTotaleLengte}} mm</td>
+                    <td>{{$offerteLine->fillCb}} mm</td>
                     <td>{{$offerteLine->m2}} m²</td>
                     <td>{{$offerteLine->aantal}}</td>
                     <td>

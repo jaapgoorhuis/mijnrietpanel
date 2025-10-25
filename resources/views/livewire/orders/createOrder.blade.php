@@ -203,6 +203,19 @@
 {{--                                </div>--}}
 {{--                            </div>--}}
 
+                                <div class="relative z-0 w-full mb-5 group">
+                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)
+                                        <div class="tooltip">
+                                            <div class="tooltip-content">
+                                               Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.
+                                            </div>
+                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
+                                        </div>
+                                    </label>
+                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
+                                </div>
+
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillTotaleLengte" class="text-gray-400">Totale paneellengte (mm) *
@@ -241,7 +254,7 @@
                                 <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px] sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px] text-[11px] md:text-[15px]">
                                    <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
                                 </div>
-                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>
+{{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
                                 <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]"><strong><- Totale maat: </strong>{{$this->totaleLengte[$index]}} mm -> </div>
                             </div>
                         @endforeach

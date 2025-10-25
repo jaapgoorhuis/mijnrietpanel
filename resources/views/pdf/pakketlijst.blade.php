@@ -37,7 +37,7 @@
             <td>Aantal</td>
             <td>Lengte</td>
             <td>CB</td>
-            <td>LB</td>
+{{--            <td>LB</td>--}}
         </tr>
         @foreach($order->orderLines as $key => $orderLines)
             <tr>
@@ -45,7 +45,7 @@
                 <td>{{$orderLines->aantal}} stuks</td>
                 <td>{{$orderLines->fillTotaleLengte}} mm</td>
                 <td>{{$orderLines->fillCb}} mm</td>
-                <td>{{$orderLines->fillLb}} mm</td>
+{{--                <td>{{$orderLines->fillLb}} mm</td>--}}
             </tr>
         @endforeach
     </table>
