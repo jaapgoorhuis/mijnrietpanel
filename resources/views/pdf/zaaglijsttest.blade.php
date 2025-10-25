@@ -9,72 +9,34 @@
 </head>
 <body>
 <div class="margin-top">
-    <table class="text">
-        <tr>
-            <td class="label">Ordernummer:</td>
-            <td>25001</td>
-            <td class="label">Dikte paneel:</td>
-            <td style="color:red">{{$order->kerndikte}}</td>
-            <td rowspan="5" class="logo">
-                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
-            </td>
-        </tr>
-        <tr>
-            <td class="label">Klantnaam:</td>
-            <td>{{$order->klantnaam}}</td>
-            <td class="label">Riet spoort:</td>
-            <td  style="color:red">{{$order->rietkleur}}</td>
-        </tr>
-        <tr>
-            <td class="label">Projectnaam:</td>
-            <td>{{$order->project_naam}}</td>
-            <td class="label">Toepassing:</td>
-            <td  style="color:red">{{$order->toepassing}}</td>
-        </tr>
-        <tr>
-            <td class="label">Aanmaakdatum:</td>
-            <td>{{$order->updated_at->format('d-m-Y')}}</td>
-            <td class="label">Merk paneel:</td>
-            <td  style="color:red">{{$order->merk_paneel}}</td>
-        </tr>
 
-        <tr>
-            <td class="label">Totale m²:</td>
-            <td>
-              {{$order->orderlines()->sum('m2')}} m²
-            </td>
-            <td class="label">Artikelnummer:</td>
-            <td  style="color:red">
-                RP{{str_replace('m', '', $order->kerndikte)}}-{{strtoupper(substr($order->merk_paneel, 0, 2))}}-{{strtoupper(substr($order->rietkleur, 0, 1))}}
-            </td>
-        </tr>
-    </table>
     <table class="order-table-visual">
-      @foreach($order->orderLines as $key => $orderLines)
+
         <tr>
-            <td class="header">Order regel {{$key+1}}</td>
+            <td class="header">Order regel 1</td>
             <td class="right">
-                <span class="aantal">Aantal: <span style="color: red;">{{$orderLines->aantal}}</span></span>
+                <span class="aantal">Aantal: <span style="color: red;">1</span></span>
             </td>
         </tr>
-            <tr class="bar-row">
-                <td colspan="2">
-                    <div class="panel-banner" style="background-image: url('/public/storage/images/rietpanel_panel.png');">
-                        <div class="cb-label">
-                            <strong>CB:</strong>{{$orderLines->fillCb}} mm
-                        </div>
 
-                        <div class="lb-label">
-                            <strong>LB:</strong> {{$orderLines->fillLb}} mm
-                        </div>
-
-                        <div class="totale-maat" style="margin-bottom: 10px;">
-                            <strong><- Totale maat: </strong> {{$orderLines->fillTotaleLengte}}
-                        </div>
+        <tr class="bar-row">
+            <td colspan="2">
+                <div class="panel-banner" style="background-image: url('/storage/images/rietpanel_panel.png');">
+                    <div class="cb-label">
+                        <strong>CB:</strong> 0
+                        <span class="break-mobile"><br/></span>mm
                     </div>
-                </td>
-            </tr>
-        @endforeach
+
+                    <div class="lb-label">
+                        <strong>LB:</strong> 0 mm
+                    </div>
+
+                    <div class="totale-maat" style="margin-bottom:10px;">
+                        <strong><- Totale maat: </strong> 100mm
+                    </div>
+                </div>
+            </td>
+        </tr>
     </table>
 
 
@@ -248,16 +210,14 @@
         background-repeat: no-repeat;
         background-position: center;
         margin-bottom: 30px;
-        margin-top: 30px;
     }
 
     /* Posities van de tekstlabels */
     .cb-label {
         position: absolute;
-        right: 20px;
+        right: 40px;
         bottom: 10px;
-        width:auto;
-        font-size: 12px;
+        font-size: 14px;
     }
 
     .lb-label {
@@ -269,8 +229,8 @@
 
     .totale-maat {
         position: absolute;
-        top: -5px;
-        left: 50%;
+        top: 5px;
+        left: 45%;
         transform: translateX(-50%);
         font-size: 14px;
     }
@@ -279,7 +239,6 @@
     .panel-banner strong {
         font-weight: bold;
     }
-
 </style>
 </body>
 </html>

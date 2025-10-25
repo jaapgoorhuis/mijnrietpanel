@@ -144,7 +144,7 @@
             {{$orderLines->aantal}}
         </td>
         <td>
-            {{$orderLines->fillTotaleLengte}}
+            {{$orderLines->fillTotaleLengte}} mm
         </td>
     </tr>
     @endforeach

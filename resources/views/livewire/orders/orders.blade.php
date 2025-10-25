@@ -146,12 +146,12 @@
                                             </li>
                                             @admin
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-pakketlijst/'.$order->id)}}" target="_blank">
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-pakketlijst/pakketlijst-'.$order->order_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Pakketlijst downloaden
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/'.$order->id)}}" target="_blank">
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/fabrieklijst-'.$order->order_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Fabrieklijst downloaden
                                                 </a>
                                             </li>
@@ -163,7 +163,7 @@
                                             </li>
 
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-orderlist/'.$order->id)}}" target="_blank">
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-orderlist/bestellijst-'.$order->order_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Bestellijst downloaden
                                                 </a>
                                             </li>

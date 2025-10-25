@@ -81,8 +81,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/statisctics', \App\Livewire\Statistics\Statistics::class)->name('statistics');
     Route::get('/statistics/{id}', \App\Livewire\Statistics\ExpandedStatistics::class);
 
-    Route::get('/download-zaaglijst/{id}', function($id) {
-        $order = Order::where('id', $id)->first();
+    Route::get('/zaaglijst', function () {
+
+        return view('pdf.zaaglijsttest');
+    });
+
+
+    Route::get('/download-zaaglijst/fabrieklijst-{id}', function($id) {
+        $order = Order::where('order_id', $id)->first();
 
         Pdf::loadView('pdf.zaaglijst',['order' => $order])->save(public_path('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf'));
 
@@ -91,8 +97,8 @@ Route::middleware('auth')->group(function () {
         return response()->file($url);
     });
 
-    Route::get('/download-pakketlijst/{id}', function($id) {
-        $order = Order::where('id', $id)->first();
+    Route::get('/download-pakketlijst/pakketlijst-{id}', function($id) {
+        $order = Order::where('order_id', $id)->first();
 
         Pdf::loadView('pdf.pakketlijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
 
@@ -101,10 +107,10 @@ Route::middleware('auth')->group(function () {
         return response()->file($url);
     });
 
-    Route::get('/download-orderlist/{id}', function($id) {
-        $order = Order::where('id', $id)->first();
+    Route::get('/download-orderlist/bestellijst-{id}', function($id) {
+        $order = Order::where('order_id', $id)->first();
         $leverancier = Supliers::where('name', $order->merk_paneel)->first();
-        Pdf::loadView('pdf.zaaglijst',['order' => $order,'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
+        Pdf::loadView('pdf.orderlijst',['order' => $order,'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
         $url = public_path('storage/orderlijst/order-'.$order->order_id.'.pdf');
 
