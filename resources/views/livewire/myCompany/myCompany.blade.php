@@ -127,7 +127,7 @@
                                     <td class="px-4 py-3">{{$priceRule->PanelType->name}} </td>
                                     <td class="px-4 py-3">
                                         <?php $discount = $this->companyDiscount /100 * $priceRule->price;?>
-                                        € {{$priceRule->price - $discount}},- excl. BTW
+                                        {!! '&euro;&nbsp;' . number_format($priceRule->price - $discount, 2, ',', '.') !!} excl. BTW
                                     </td>
 
                                 </tr>

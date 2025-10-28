@@ -106,7 +106,8 @@
                             @user
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="marge" class="text-gray-400"><strong>Jouw prijs:    <?php $discount = $this->companyDiscount /100 * $this->priceRule->price;?>
-                                        € {{$this->priceRule->price - $discount}},- excl. BTW </strong></label><br/>
+                                        {!! '&euro;&nbsp;' . number_format($this->priceRule->price - $discount, 2, ',', '.') !!} excl. BTW
+                                       </strong></label><br/>
 
                                 <label for="marge" class="text-gray-400">Marge (%)</label>
                                 <div class="tooltip">
