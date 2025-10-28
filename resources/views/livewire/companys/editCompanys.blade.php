@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="reseller" class="text-gray-400">Wederverkoper</label>
+                            <label for="reseller" class="text-gray-400">Dealer</label>
                             <select id="reseller" wire:model="reseller" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
                                 <option value="0">Nee</option>

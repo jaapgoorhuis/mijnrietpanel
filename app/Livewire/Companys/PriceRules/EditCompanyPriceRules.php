@@ -50,9 +50,16 @@ class EditCompanyPriceRules extends Component
         $rietpanelPrice = \App\Models\PriceRules::where('panel_type', $this->priceRule->panel_type)->first();
         $this->company = Company::where('id', $slug)->first();
 
-        $this->rietpanel_panel_price = $rietpanelPrice->price;
+        $discount = $rietpanelPrice->price/100*$this->company->discount;
+
+        $discountedPrice = $rietpanelPrice->price - $discount;
+
+
+        $this->rietpanel_panel_price = number_format( $discountedPrice, 2);
+
         $this->panel_type = $this->priceRule->panel_type;
-        $this->panel_price = $this->priceRule->price;
+        $this->panel_price = number_format( $this->priceRule->price, 2);
+
         $this->rule_name = $this->priceRule->rule_name;
 
     }
