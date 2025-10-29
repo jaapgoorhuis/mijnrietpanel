@@ -76,9 +76,11 @@
             </tr>
 
             <?php $totalPrice= 0 ?>
+            <!--            zaaglengtes zijn de panelen die onder de 2500mm zijn-->
             <?php $zaaglengtes = 0 ?>
             <?php $count = 0; ?>
             <?php $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first(); ?>
+
 
             @foreach($orderLines as $key =>  $orderLine)
                 {{$count++}}
@@ -131,6 +133,7 @@
 
         <?php $btw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
+        <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first(); ?>
         <?php $totalToeslagPrice = 0?>
         <?php $allInPrice = $totalPrice + $btw ?>
         <?php $totalM2 = 0 ?>
@@ -138,7 +141,8 @@
                 <?php $totalM2 += $orderLine->m2; ?>
         @endforeach
 
-        @if(count($toeslagen))
+
+        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>Toeslag</strong></td>
@@ -156,9 +160,9 @@
                                     <td>1</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                @endif
-                                    <?php $allInPrice += $toeslag->price; ?>
                                     <?php $totalToeslagPrice += $toeslag->price; ?>
+                                @endif
+
                             </tr>
                         @endif
 
@@ -170,8 +174,7 @@
                                 <td>{{$zaaglengtes}}</td>
                                 <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
                                 <td>{!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</td>
-                                    <?php $allInPrice += $zaagprijs ?>
-                                    <?php $totalToeslagPrice += $toeslag->price; ?>
+                                    <?php $totalToeslagPrice += $zaagprijs; ?>
 
                             </tr>
                             @endif
@@ -198,7 +201,7 @@
                 <th style="text-align: left;">21% BTW:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
-            @if(count($toeslagen))
+            @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
             <tr>
                 <th style="text-align: left;">Toeslagen:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
@@ -206,10 +209,10 @@
             @endif
             <tr>
                 <th style="text-align: left; border-top:1px solid black">
-                    <strong>Totaal incl. 21% BTW, @if(count($toeslagen))incl. toeslagen:@endif</strong>
+                    <strong>Totaal incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )incl. toeslagen:@endif</strong>
                 </th>
                 <th style="text-align: left; border-top:1px solid black">
-                    € {{number_format($allInPrice, 2, ',', '.')}}
+                    € {{number_format($allInPrice + $totalToeslagPrice, 2, ',', '.')}}
                 </th>
             </tr>
         </table>
