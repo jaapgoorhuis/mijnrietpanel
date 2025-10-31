@@ -274,7 +274,7 @@
 
                         <button wire:loading.attr="disabled" wire:target="saveOfferte" wire:click.prevent="saveOfferte()" @if(!count($this->offerteLines)) disabled @endif class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
                             <div wire:loading wire:target="saveOfferte">
-                               <i class="fa-solid fa-spinner fa-spin"></i> Offerte aanmaken
+                               <i class="fa-solid fa-spinner fa-spin"></i> Offerte bewerken
                             </div>
                             <div wire:loading.attr="hidden" wire:target="saveOfferte">
                                 Aanpassingen opslaan
