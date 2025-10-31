@@ -133,7 +133,7 @@ class ChangeOrder extends Component
 
     public function render()
     {
-        return view('livewire.orders.changeorder');
+        return view('livewire.orders.changeOrder');
     }
 
     public function showLines() {
