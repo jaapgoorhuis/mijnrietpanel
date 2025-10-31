@@ -121,7 +121,7 @@ class ChangeOfferte extends Component
             $this->fillTotaleLengte[$key] = $exsistingOfferteLine->fillTotaleLengte;
             $this->aantal[$key] = $exsistingOfferteLine->aantal;
             $this->m2[$key] = $exsistingOfferteLine->m2;
-            $this->cb[$key] = $exsistingOfferteLine->cb;
+            $this->cb[$key] = $exsistingOfferteLine->fillCb;
             $this->totaleLengte[$key] = $exsistingOfferteLine->fillTotaleLengte;
 
         }

@@ -118,7 +118,7 @@ class ChangeOrder extends Component
             $this->fillTotaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
             $this->aantal[$key] = $exsistingOrderLine->aantal;
             $this->m2[$key] = $exsistingOrderLine->m2;
-            $this->cb[$key] = $exsistingOrderLine->cb;
+            $this->cb[$key] = $exsistingOrderLine->fillCb;
             $this->totaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
 
         }
