@@ -10,8 +10,8 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/offertes" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
-                        Offertes
+                    <a href="/orders" class="inline-flex items-center md:ms-2 text-sm font-medium text-gray-700 hover:text-[#C0A16E] ">
+                        Orders
                     </a>
                 </div>
             </li>
@@ -19,7 +19,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Offerte bewerken</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">order bewerken</p>
                 </div>
             </li>
         </ol>
@@ -33,7 +33,7 @@
                 <div class="grid">
                     <form>
                         <div class="relative">
-                            <i wire:click="cancelChangeOfferte()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
+                            <i wire:click="cancelChangeOrder()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
                         </div>
 
                         Project gegevens
@@ -156,7 +156,7 @@
 
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="merk_paneel" class="text-gray-400">Merk paneel *</label>
-                                <select @if(count($this->offerteLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <select @if(count($this->orderLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->brands as  $brands)
                                         <option @if($brands->status == 0) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
                                     @endforeach
@@ -167,12 +167,12 @@
 
                         <br/>
 
-                        @foreach($offerteLines as $index => $offertes)
+                        @foreach($orderLines as $index => $orders)
                             @if($index > 0)
                             <hr class="border-2 border-[#C0A16E]"/><br/><br/>
                             @endif
                             <div class="text-right">
-                                <button wire:click.prevent="removeOfferteLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                                <button wire:click.prevent="removeOrderLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                     <i class="fa-solid fa-trash hover:cursor-pointer text-white"></i>
                                 </button>
 
@@ -267,16 +267,16 @@
                         @endforeach
                         <div class="text-right">
 
-                            <button wire:click="addOfferteLine()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                            <button wire:click="addOrderLine()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                                 <i class="fa fa-plus hover:cursor-pointer"></i> Paneel toevoegen
                             </button>
                         </div>
 
-                        <button wire:loading.attr="disabled" wire:target="saveOfferte" wire:click.prevent="saveOfferte()" @if(!count($this->offerteLines)) disabled @endif class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-                            <div wire:loading wire:target="saveOfferte">
-                               <i class="fa-solid fa-spinner fa-spin"></i> Offerte aanmaken
+                        <button wire:loading.attr="disabled" wire:target="saveOrder" wire:click.prevent="saveOrder()" @if(!count($this->orderLines)) disabled @endif class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                            <div wire:loading wire:target="saveOrder">
+                               <i class="fa-solid fa-spinner fa-spin"></i> Order aanpassen
                             </div>
-                            <div wire:loading.attr="hidden" wire:target="saveOfferte">
+                            <div wire:loading.attr="hidden" wire:target="saveOrder">
                                 Aanpassingen opslaan
                             </div>
                         </button>

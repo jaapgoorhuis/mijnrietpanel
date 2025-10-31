@@ -90,6 +90,10 @@ class Orders extends Component
         }
     }
 
+    public function changeOrder($id)
+    {
+        return $this->redirect('/orders/edit/' . $id, navigate: true);
+    }
 
 
     public function SendOrderList($id) {

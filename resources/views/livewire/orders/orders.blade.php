@@ -168,8 +168,12 @@
                                                 </a>
                                             </li>
                                             @endadmin
-
                                             @admin
+                                            <li>
+                                                <button class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
+                                                    <i class="fas fa-edit"></i> Order bewerken
+                                                </button>
+                                            </li>
                                             <li>
                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOrder({{$order->id}})">
                                                     <i class="fa-solid fa-circle-check" ></i> Order verwijderen

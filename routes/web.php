@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('orders/create', \App\Livewire\Orders\CreateOrders::class);
     Route::get('orders/edit/{id}', \App\Livewire\Orders\EditOrders::class);
     Route::get('orders/remove/{id}', \App\Livewire\Orders\RemoveOrders::class);
+    Route::get('orders/edit/{id}', \App\Livewire\Orders\ChangeOrder::class);
     Route::get('orders/upload', \App\Livewire\Orders\UploadOrders::class);
 
     Route::get('offertes', \App\Livewire\Offertes\Offertes::class)->name('orders');
