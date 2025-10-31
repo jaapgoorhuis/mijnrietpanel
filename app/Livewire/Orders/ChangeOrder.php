@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Orders;
 
+use App\Mail\orderUpdated;
 use App\Mail\sendOrder;
 use App\Models\Application;
 use App\Models\Company;
