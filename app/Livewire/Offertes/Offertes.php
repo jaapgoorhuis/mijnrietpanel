@@ -65,6 +65,16 @@ class Offertes extends Component
         }
     }
 
+    public function changeOfferte($id)
+    {
+        $offerte = Offerte::where('id', $id)->first();
+        if($offerte->is_order == 0) {
+            return $this->redirect('/offertes/edit/' . $id, navigate: true);
+        } else {
+            return $this->redirect('/offertes', navigate: true);
+        }
+    }
+
 
     public function createOfferteOrder($offerteId) {
         $offerte = Offerte::where('id', $offerteId)->first();

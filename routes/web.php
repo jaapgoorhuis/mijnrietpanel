@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('offertes', \App\Livewire\Offertes\Offertes::class)->name('orders');
     Route::get('offertes/create', \App\Livewire\Offertes\CreateOffertes::class);
     Route::get('offertes/remove/{id}', \App\Livewire\Offertes\RemoveOffertes::class);
+    Route::get('offertes/edit/{id}', \App\Livewire\Offertes\ChangeOfferte::class);
 
     Route::get('regulations', \App\Livewire\Regulations\Regulations::class)->name('regulations');
     Route::get('regulations/upload', \App\Livewire\Regulations\UploadRegulations::class);
