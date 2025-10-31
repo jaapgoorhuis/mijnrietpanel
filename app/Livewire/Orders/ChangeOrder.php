@@ -14,6 +14,7 @@ use App\Models\PanelLook;
 use App\Models\PanelType;
 use App\Models\PriceRules;
 use App\Models\Supliers;
+use App\Models\User;
 use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -297,10 +298,11 @@ class ChangeOrder extends Component
             }
 
         $orderLines = OrderLines::where('order_id', $order->id)->get();
+        $user = User::where('id', $order->user_id)->first();
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
 
-        Mail::to('info@crewa.nl')->send(new orderUpdated($order));
+        Mail::to($user->email)->send(new orderUpdated($order));
 
         session()->flash('success','De order is bewerkt.');
         return $this->redirect('/orders', navigate: true);
