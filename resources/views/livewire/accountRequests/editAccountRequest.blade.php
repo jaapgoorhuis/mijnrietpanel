@@ -45,13 +45,13 @@
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="gebruikersnaam" class="text-gray-400">Gebruikersnaam</label>
-                                <input type="text" disabled wire:model="gebruikersnaam" name="gebruikersnaam" id="gebruikersnaam" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <input type="text" wire:model="gebruikersnaam" name="gebruikersnaam" id="gebruikersnaam" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('gebruikersnaam') {{ $message }} @enderror</div>
                             </div>
 
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="intaker_name" class="text-gray-400">E-mail</label>
-                                <input type="text" disabled wire:model="email" name="email" id="email" class=" disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <input type="text" wire:model="email" name="email" id="email" class=" disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('email') {{ $message }} @enderror</div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="phone" class="text-gray-400">Telefoonnummer</label>
-                                <input type="text" disabled wire:model="phone" name="phone" id="phone" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <input type="text" wire:model="phone" name="phone" id="phone" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('phone') {{ $message }} @enderror</div>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">

@@ -81,6 +81,9 @@ class EditAccountRequests extends Component
 
         User::where('id', $id)->update([
             'bedrijf_id' => $this->company_id,
+            'name' => $this->gebruikersnaam,
+            'phone' => $this->phone,
+            'email' => $this->email,
             'is_active' => $this->status,
             'is_architect' => $this->architect,
         ]);
@@ -104,7 +107,7 @@ class EditAccountRequests extends Component
     }
 
     public function cancelEditAccountRequest() {
-        return $this->redirect('/accountRequests', navigate: true);
+        return $this->redirect('/accountrequests', navigate: true);
     }
 
     public function addCompany() {
