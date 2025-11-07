@@ -139,7 +139,7 @@
 
 
                                             <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
+                                                <button  @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
                                                     <i class="fa-solid fa-circle-check" ></i> Offerte verwijderen
                                                 </button>
                                             </li>
