@@ -93,6 +93,14 @@
                                                 </button>
                                             </li>
 
+                                            <li>
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="removeAccountRequest({{$user->id}})">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Verwijderen
+                                                </button>
+                                            </li>
+
 
                                         </ul>
 

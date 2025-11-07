@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/accountrequests', \App\Livewire\AccountRequests\AccountRequests::class)->name('accountrequests');
     Route::get('/accountrequests/edit/{id}', \App\Livewire\AccountRequests\EditAccountRequests::class);
+    Route::get('/accountrequests/remove/{id}', \App\Livewire\AccountRequests\RemoveAccountRequests::class);
 
     Route::get('/oldorder', \App\Livewire\Orders\OrderExample::class);
 

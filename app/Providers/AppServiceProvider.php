@@ -41,5 +41,6 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
             return $user && $user->is_architect;
         });
+
     }
 }

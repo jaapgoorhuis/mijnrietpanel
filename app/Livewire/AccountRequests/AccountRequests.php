@@ -30,4 +30,8 @@ class AccountRequests extends Component
     public function editAccountRequest($id) {
         return $this->redirect('accountrequests/edit/'.$id, navigate: true);
     }
+
+    public function removeAccountRequest($id) {
+        return $this->redirect('accountrequests/remove/'.$id, navigate: true);
+    }
 }

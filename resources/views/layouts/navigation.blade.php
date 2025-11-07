@@ -10,6 +10,8 @@
                     </a>
                 </div>
             </div>
+            <?php $accountRequests = \App\Models\User::where('bedrijf_id', 0)->get();?>
+
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -67,8 +69,14 @@
                         @endadmin
 
                         @admin
+
                         <x-dropdown-link :href="route('accountrequests')">
-                            {{ __('Account verzoeken') }}
+                            <div class="flex items-center gap-2">
+                                {{ __('Account verzoeken') }}
+                                @if(count($accountRequests))
+                                    <span class="block h-[25px] w-[25px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
+                                @endif
+                            </div>
                         </x-dropdown-link>
                         @endadmin
                         <!-- Authentication -->
@@ -153,7 +161,12 @@
 
                 @admin
                 <x-responsive-nav-link  :href="route('accountrequests')">
-                    {{ __('Account verzoeken') }}
+                    <div class="flex items-center gap-2">
+                        {{ __('Account verzoeken') }}
+                        @if(count($accountRequests))
+                            <span class="block h-[25px] w-[25px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
+                        @endif
+                    </div>
                 </x-responsive-nav-link>
                 @endadmin
                 <!-- Authentication -->
