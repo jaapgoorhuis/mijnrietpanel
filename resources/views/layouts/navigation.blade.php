@@ -74,7 +74,7 @@
                             <div class="flex items-center gap-2">
                                 {{ __('Account verzoeken') }}
                                 @if(count($accountRequests))
-                                    <span class="block h-[25px] w-[25px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
+                                    <span class="block h-[20px] w-[20px] text-[12px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
                                 @endif
                             </div>
                         </x-dropdown-link>
@@ -164,7 +164,7 @@
                     <div class="flex items-center gap-2">
                         {{ __('Account verzoeken') }}
                         @if(count($accountRequests))
-                            <span class="block h-[25px] w-[25px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
+                            <span class="block h-[20px] w-[20px] text-[12px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
                         @endif
                     </div>
                 </x-responsive-nav-link>
