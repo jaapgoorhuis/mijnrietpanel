@@ -175,8 +175,6 @@
                                 <button wire:click.prevent="removeOfferteLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                     <i class="fa-solid fa-trash hover:cursor-pointer text-white"></i>
                                 </button>
-
-
                             </div>
 
                             Afmetingen paneel<br/><br/>
@@ -263,10 +261,8 @@
 {{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
                                 <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]"><strong><- Totale maat: </strong>{{$this->totaleLengte[$index]}} mm -> </div>
                             </div>
-
                         @endforeach
                         <div class="text-right">
-
                             <button wire:click="addOfferteLine()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                                 <i class="fa fa-plus hover:cursor-pointer"></i> Paneel toevoegen
                             </button>
@@ -286,4 +282,3 @@
         </div>
     </div>
 </div>
-
