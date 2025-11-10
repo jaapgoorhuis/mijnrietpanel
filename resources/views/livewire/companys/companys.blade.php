@@ -102,7 +102,7 @@
                                                 <button
                                                     class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
                                                     wire:click="subcontractors({{$company->id}})">
-                                                    <i class="fa-solid fa-user-pen"></i> Onderaannemers
+                                                    <i class="fa-solid fa-building"></i> Onderaannemers
                                                 </button>
                                             </li>
                                             <li>
