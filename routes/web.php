@@ -55,6 +55,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/companys/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditPriceRules::class);
     Route::get('/companys/pricerules/remove/{id}', \App\Livewire\Companys\PriceRules\RemovePriceRules::class);
 
+    Route::get('/companys/{slug}/subcontractors', \App\Livewire\Companys\Subcontractors\Subcontractor::class)->name('companys/subcontractors');
+    Route::get('/companys/{slug}/subcontractors/create', \App\Livewire\Companys\Subcontractors\CreateSubcontractor::class);
+    Route::get('/companys/{slug}/subcontractors/edit/{id}', \App\Livewire\Companys\Subcontractors\EditSubcontractor::class);
+    Route::get('/companys/{slug}/subcontractors/remove/{id}', \App\Livewire\Companys\Subcontractors\RemoveSubcontractor::class);
+
+
 
     Route::get('/mycompany', \App\Livewire\MyCompany\MyCompany::class)->name('mycompany');
     Route::get('/company/{slug}/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditCompanyPriceRules::class);

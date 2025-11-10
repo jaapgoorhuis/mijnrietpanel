@@ -40,9 +40,12 @@
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="project_name" class="text-gray-400">Bedrijfsnaam *</label>
-                            <input type="text"  wire:model="bedrijfsnaam" name="bedrijfsnaam" id="bedrijfsnaam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <input type="text" wire:keydown="filterSubcontractors()" wire:model.debounce.500ms="bedrijfsnaam" name="bedrijfsnaam" id="bedrijfsnaam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                             <div class="text-red-500">@error('company_name') {{ $message }} @enderror</div>
                         </div>
+                        @if ($message)
+                            <p class="text-red-500 mt-1">{{ $message }}</p>
+                        @endif
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="discount" class="text-gray-400">Korting *</label>

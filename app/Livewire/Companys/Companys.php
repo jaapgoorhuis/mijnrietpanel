@@ -39,6 +39,10 @@ class Companys extends Component
         return $this->redirect('/companys/edit/'.$id, navigate: true);
     }
 
+    public function subcontractors($id) {
+        return $this->redirect('/companys/'.$id.'/subcontractors', navigate: true);
+    }
+
     public function removeCompany($id){
         return $this->redirect('/companys/remove/'.$id, navigate: true);
     }

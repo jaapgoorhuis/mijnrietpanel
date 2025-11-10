@@ -5,6 +5,7 @@ namespace App\Livewire\Companys;
 use App\Models\Company;
 use App\Models\Order;
 use App\Models\PriceRules;
+use App\Models\Subcontractors;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -20,6 +21,8 @@ class CreateCompanys extends Component
     public $postcode;
     public $plaats;
 
+    public $message;
+
     public function render()
     {
         if(Auth::user()->is_admin) {
@@ -32,6 +35,56 @@ class CreateCompanys extends Component
 
     public function cancelAddCompany() {
         return $this->redirect('/companys', navigate: true);
+    }
+
+    public function filterSubcontractors() {
+
+        $this->message = '';
+
+//        if (trim($this->bedrijfsnaam) === '') {
+//            return;
+//        }
+//
+//        // Splits de ingevoerde tekst in woorden
+//        $words = collect(explode(' ', $this->bedrijfsnaam))
+//            ->map(fn($w) => trim($w))
+//            ->filter();
+//
+//        // Haal alle waarden op uit de database (alleen de kolom die je wilt vergelijken)
+//        $dbValues = Subcontractors::pluck('name')->toArray();
+//
+//        // Check of een woord voorkomt in één van de databasewaarden
+//        $foundedvalue = '';
+//        $found = false;
+//        foreach ($dbValues as $dbValue) {
+//            foreach ($words as $word) {
+//                if (stripos($dbValue, $word) !== false) {
+//                    $found = true;
+//                    $foundedvalue = $dbValue;
+//
+//                    break 2; // stop beide loops
+//                }
+//            }
+//        }
+
+
+        $search = trim(mb_strtolower($this->bedrijfsnaam));
+        if ($search === '') return;
+
+
+        // Controleer of er een exacte match is als substring in de database
+        $exists = Subcontractors::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+            ->exists();
+
+        $subcontractor = Subcontractors::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+            ->first();
+
+        if ($exists) {
+            if($subcontractor) {
+                $headCompany = Company::where('id', $subcontractor->company_id)->first();
+                $this->message = 'Let op: Het bedrijf ' . $subcontractor->name . ' is een onderaannemer van het bedrijf ' . $headCompany->bedrijfsnaam . '. Je kunt het bedrijf alsnog toevoegen.';
+            }
+        }
     }
 
 
