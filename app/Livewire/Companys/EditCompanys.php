@@ -5,6 +5,7 @@ namespace App\Livewire\Companys;
 use App\Models\Company;
 use App\Models\Order;
 use App\Models\PriceRules;
+use App\Models\Subcontractors;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -21,6 +22,8 @@ class EditCompanys extends Component
     public $straat;
     public $postcode;
     public $plaats;
+
+    public $message;
 
     public function mount($id) {
         $this->company = Company::where('id', $id)->first();
@@ -40,6 +43,28 @@ class EditCompanys extends Component
             return view('livewire.companys.editCompanys');
         } else {
             return $this->redirect('/dashboard', navigate: true);
+        }
+    }
+
+    public function filterSubcontractors() {
+
+        $this->message = '';
+        $search = trim(mb_strtolower($this->bedrijfsnaam));
+        if ($search === '') return;
+
+
+        // Controleer of er een exacte match is als substring in de database
+        $exists = Subcontractors::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+            ->exists();
+
+        $subcontractor = Subcontractors::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+            ->first();
+
+        if ($exists) {
+            if($subcontractor) {
+                $headCompany = Company::where('id', $subcontractor->company_id)->first();
+                $this->message = 'Let op: Het bedrijf ' . $subcontractor->name . ' is een onderaannemer van het bedrijf ' . $headCompany->bedrijfsnaam . '. Je kunt het bedrijf alsnog toevoegen.';
+            }
         }
     }
 

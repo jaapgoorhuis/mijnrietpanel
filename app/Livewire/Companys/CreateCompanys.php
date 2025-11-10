@@ -40,34 +40,6 @@ class CreateCompanys extends Component
     public function filterSubcontractors() {
 
         $this->message = '';
-
-//        if (trim($this->bedrijfsnaam) === '') {
-//            return;
-//        }
-//
-//        // Splits de ingevoerde tekst in woorden
-//        $words = collect(explode(' ', $this->bedrijfsnaam))
-//            ->map(fn($w) => trim($w))
-//            ->filter();
-//
-//        // Haal alle waarden op uit de database (alleen de kolom die je wilt vergelijken)
-//        $dbValues = Subcontractors::pluck('name')->toArray();
-//
-//        // Check of een woord voorkomt in één van de databasewaarden
-//        $foundedvalue = '';
-//        $found = false;
-//        foreach ($dbValues as $dbValue) {
-//            foreach ($words as $word) {
-//                if (stripos($dbValue, $word) !== false) {
-//                    $found = true;
-//                    $foundedvalue = $dbValue;
-//
-//                    break 2; // stop beide loops
-//                }
-//            }
-//        }
-
-
         $search = trim(mb_strtolower($this->bedrijfsnaam));
         if ($search === '') return;
 
