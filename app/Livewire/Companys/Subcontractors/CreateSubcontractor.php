@@ -19,6 +19,9 @@ class CreateSubcontractor extends Component
 
     public $company_id;
     public $name;
+    public $street;
+    public $zipcode;
+    public $place;
 
     public function mount($slug) {
         $this->company_id = $slug;
@@ -36,12 +39,18 @@ class CreateSubcontractor extends Component
     {
         return [
             'name' => 'required|unique:subcontractors,name',
+            'street' => 'required',
+            'zipcode' => 'required',
+            'place' => 'required',
     ];}
 
     public function messages(): array
     {
         return [
             'name.required' => 'De bedrijfsnaam is verplicht.',
+            'street.required' => 'De straat is verplicht.',
+            'zipcode.required' => 'De postcode is verplicht.',
+            'place.required' => 'De plaats is verplicht.',
             'name.unique' => 'Er bestaat al een bedrijf met deze naam.',
 
         ];
@@ -52,6 +61,9 @@ class CreateSubcontractor extends Component
 
         \App\Models\Subcontractors::create([
             'name' => $this->name,
+            'street' => $this->street,
+            'zipcode' => $this->zipcode,
+            'place' => $this->place,
             'company_id' => $this->company_id,
         ]);
         session()->flash('success','De onderaannemer is aangemaakt');

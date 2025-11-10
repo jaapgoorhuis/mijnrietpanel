@@ -23,6 +23,9 @@ class EditSubcontractor extends Component
     public $id;
     public $name;
     public $subcontractor;
+    public $street;
+    public $zipcode;
+    public $place;
 
     public function mount($id, $slug) {
 
@@ -47,6 +50,10 @@ class EditSubcontractor extends Component
                 Rule::unique('subcontractors', 'name')->ignore($this->id)->where(function ($query) {
                     return $query->where('company_id', $this->company_id);})
             ],
+            'street' => 'required',
+            'place' => 'required',
+            'zipcode' => 'required',
+
         ];
     }
 
@@ -54,6 +61,9 @@ class EditSubcontractor extends Component
     {
         return [
             'name.required' => 'De bedrijfsnaam is een verplicht veld.',
+            'street.required' => 'De straat is een verplicht veld.',
+            'zipcode.required' => 'De postcode is een verplicht veld.',
+            'place.required' => 'De plaats is een verplicht veld.',
             'name.unique' => 'Er bestaat al een bedrijf met deze naam.',
 
         ];
@@ -66,6 +76,10 @@ class EditSubcontractor extends Component
 
         \App\Models\Subcontractors::where('id', $this->id)->update([
             'name' => $this->name,
+            'street' => $this->street,
+            'zipcode' => $this->zipcode,
+            'place' => $this->place,
+            'company_id' => $this->company_id,
 
         ]);
 

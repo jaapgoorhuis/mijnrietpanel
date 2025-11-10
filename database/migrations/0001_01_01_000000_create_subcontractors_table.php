@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('company_id');
             $table->string('name');
+            $table->string('street')->nullable();
+            $table->string('zipcode')->nullable();
+            $table->string('place')->nullable();
+
             $table->timestamps();
         });
 

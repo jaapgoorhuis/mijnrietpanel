@@ -22,25 +22,14 @@ class CreateCompanys extends Component
     public $plaats;
 
     public $message;
+    public $messageStraat;
 
-    public function render()
-    {
-        if(Auth::user()->is_admin) {
-            $this->companys = Company::get();
-            return view('livewire.companys.createCompanys');
-        } else {
-            return $this->redirect('/dashboard', navigate: true);
-        }
-    }
 
-    public function cancelAddCompany() {
-        return $this->redirect('/companys', navigate: true);
-    }
 
-    public function filterSubcontractors() {
+    public function updatedBedrijfsnaam($value) {
 
         $this->message = '';
-        $search = trim(mb_strtolower($this->bedrijfsnaam));
+        $search = trim(mb_strtolower($value));
         if ($search === '') return;
 
 
@@ -58,6 +47,44 @@ class CreateCompanys extends Component
             }
         }
     }
+
+    public function updatedStraat($value) {
+
+        $this->messageStraat = '';
+        $search = trim($value);
+        if ($search === '') return;
+
+
+        // Controleer of er een exacte match is als substring in de database
+        $exists = Subcontractors::whereRaw('LOWER(street) = ?', [mb_strtolower($search)])
+            ->exists();
+
+        $subcontractor = Subcontractors::whereRaw('LOWER(street) = ?', [mb_strtolower($search)])
+            ->first();
+
+        if ($exists) {
+            if($subcontractor) {
+                $headCompany = Company::where('id', $subcontractor->company_id)->first();
+                $this->messageStraat = 'Let op: Onderaannemer ' . $subcontractor->name . ' van ' . $headCompany->bedrijfsnaam . '. heeft hetzelfde adres.';
+            }
+        }
+    }
+
+    public function render()
+    {
+        if(Auth::user()->is_admin) {
+            $this->companys = Company::get();
+            return view('livewire.companys.createCompanys');
+        } else {
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
+
+    public function cancelAddCompany() {
+        return $this->redirect('/companys', navigate: true);
+    }
+
+
 
 
     protected $rules = [

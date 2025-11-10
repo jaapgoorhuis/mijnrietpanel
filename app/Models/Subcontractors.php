@@ -23,6 +23,9 @@ class Subcontractors extends Authenticatable
     protected $fillable = [
         'name',
         'company_id',
+        'street',
+        'zipcode',
+        'place',
     ];
 
 

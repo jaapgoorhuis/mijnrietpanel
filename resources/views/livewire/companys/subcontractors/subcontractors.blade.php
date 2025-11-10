@@ -74,6 +74,9 @@
                                 <th scope="col" class="px-4 py-3">Id:</th>
                                 <th scope="col" class="px-4 py-3">Naam:</th>
                                 <th scope="col" class="px-4 py-3">Bedrijf:</th>
+                                <th scope="col" class="px-4 py-3">Straat:</th>
+                                <th scope="col" class="px-4 py-3">Postcode:</th>
+                                <th scope="col" class="px-4 py-3">Plaats:</th>
                                 @admin
                                 <th scope="col" class="px-4 py-3 text-right">
                                     <span>Actie's</span>
@@ -88,6 +91,9 @@
                                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$subcontractor->id}}</th>
                                             <td class="px-4 py-3">{{$subcontractor->name}}</td>
                                             <td class="px-4 py-3">{{$subcontractor->company->bedrijfsnaam}} </td>
+                                            <td class="px-4 py-3">{{$subcontractor->street}} </td>
+                                            <td class="px-4 py-3">{{$subcontractor->zipcode}} </td>
+                                            <td class="px-4 py-3">{{$subcontractor->place}} </td>
 
                                         @admin
                                         <td  class="px-4 py-3 flex items-center justify-end">

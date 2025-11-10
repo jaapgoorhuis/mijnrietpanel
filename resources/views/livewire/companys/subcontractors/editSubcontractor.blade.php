@@ -55,6 +55,23 @@
                             <div class="text-red-500">@error('name') {{ $message }} @enderror</div>
                         </div>
 
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="project_name" class="text-gray-400">Straat *</label>
+                            <input type="text"  wire:model="street" name="street" id="street" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('street') {{ $message }} @enderror</div>
+                        </div>
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="zipcode" class="text-gray-400">Postcode *</label>
+                            <input type="text"  wire:model="zipcode" name="zipcode" id="zipcode" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('zipcode') {{ $message }} @enderror</div>
+                        </div>
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="place" class="text-gray-400">Plaats *</label>
+                            <input type="text"  wire:model="place" name="place" id="place" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('place') {{ $message }} @enderror</div>
+                        </div>
+
+
 
                         <button wire:loading.attr="disabled" wire:click.prevent="saveSubcontractor()" class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Opslaan</button>
 

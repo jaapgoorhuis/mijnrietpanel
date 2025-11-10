@@ -25,6 +25,8 @@ class EditCompanys extends Component
 
     public $message;
 
+    public $messageStraat;
+
     public function mount($id) {
         $this->company = Company::where('id', $id)->first();
 
@@ -46,10 +48,10 @@ class EditCompanys extends Component
         }
     }
 
-    public function filterSubcontractors() {
+    public function updatedBedrijfsnaam($value) {
 
         $this->message = '';
-        $search = trim(mb_strtolower($this->bedrijfsnaam));
+        $search = trim(mb_strtolower($value));
         if ($search === '') return;
 
 
@@ -64,6 +66,30 @@ class EditCompanys extends Component
             if($subcontractor) {
                 $headCompany = Company::where('id', $subcontractor->company_id)->first();
                 $this->message = 'Let op: Het bedrijf ' . $subcontractor->name . ' is een onderaannemer van het bedrijf ' . $headCompany->bedrijfsnaam . '. Je kunt het bedrijf alsnog toevoegen.';
+            }
+        }
+    }
+
+    public function updatedStraat($value) {
+
+        $this->messageStraat = '';
+        $search = trim($value);
+        if ($search === '') return;
+
+
+        // Controleer of er een exacte match is als substring in de database
+        $exists = Subcontractors::whereRaw('LOWER(street) = ?', [mb_strtolower($search)])
+            ->exists();
+
+        $subcontractor = Subcontractors::whereRaw('LOWER(street) = ?', [mb_strtolower($search)])
+            ->first();
+
+
+
+        if ($exists) {
+            if($subcontractor) {
+                $headCompany = Company::where('id', $subcontractor->company_id)->first();
+                $this->messageStraat = 'Let op: Onderaannemer ' . $subcontractor->name . ' van ' . $headCompany->bedrijfsnaam . '. heeft hetzelfde adres.';
             }
         }
     }
