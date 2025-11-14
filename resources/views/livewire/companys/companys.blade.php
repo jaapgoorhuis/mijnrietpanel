@@ -61,7 +61,7 @@
                             <th scope="col" class="px-4 py-3">Bedrijf ID</th>
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
                             <th scope="col" class="px-4 py-3">Korting</th>
-                            <th scope="col" class="px-4 py-3">Wederverkoper</th>
+                            <th scope="col" class="px-4 py-3">Dealer</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
                             </th>
