@@ -125,7 +125,7 @@
                             @if($this->company->is_reseller == 0)
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="marge" class="text-gray-400"><strong>Jouw prijs:    @if($this->priceRulePrice == 0)(Selecteer kerndikte) @else <?php $discount = $this->companyDiscount /100 * $this->priceRulePrice?>
-                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW excl. marge@endif
+                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW excl. marge @endif
                                     </strong></label><br/>
                                 @admin<label><small>Je ziet de marge omdat jouw bedrijf geen reseller is maar een gewoon bedrijf en je ingelogd bent als admin<br/></small></label>@endadmin
                                 <label for="marge" class="text-gray-400">Marge (%)</label>
