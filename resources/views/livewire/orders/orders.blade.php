@@ -94,7 +94,7 @@
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$order->order_id}}</th>
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
-                                <td class="px-4 py-3">{{$order->user->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3">{{$order->user->company->bedrijfsnaam}}</td>
                                 <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
                                     {{$order->status}}
                                 </td>
