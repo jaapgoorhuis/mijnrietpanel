@@ -24,12 +24,7 @@ class RemoveOffertes extends Component
     public $offerte;
 
     public function mount() {
-        if(Auth::user()->is_admin) {
-            return view('livewire.offertes.removeOfferte');
-        } else {
-            session()->flash('error','U heeft geen rechten voor deze pagina');
-            return $this->redirect('/offertes', navigate: true);
-        }
+        return view('livewire.offertes.removeOfferte');
     }
     public function render()
     {

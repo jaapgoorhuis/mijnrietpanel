@@ -123,7 +123,7 @@
                                 @if($creator_user->company->is_reseller == 0)
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="marge" class="text-gray-400"><strong>Jouw prijs:    @if($this->priceRulePrice == 0)(Selecteer kerndikte) @else <?php $discount = $this->companyDiscount /100 * $this->priceRulePrice?>
-                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW @endif
+                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW excl. margephp artisan serve @endif
                                     </strong></label><br/>
 
                                 <label for="marge" class="text-gray-400">Marge (%)</label>
