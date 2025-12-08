@@ -17,7 +17,7 @@ class UploadOffertes extends Component
 
     public function mount() {
         if(Auth::user()->is_admin) {
-            return view('livewire.offertes.editOfferte');
+            return view('livewire.offertes.uploadOfferte');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
             return $this->redirect('/dashboard', navigate: true);
