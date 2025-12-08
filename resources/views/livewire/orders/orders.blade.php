@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Mijn orders</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">@admin Alle orders @endadmin @user Mijn orders @enduser</p>
                 </div>
             </li>
         </ol>
