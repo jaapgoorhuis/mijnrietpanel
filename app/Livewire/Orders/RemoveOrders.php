@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Orders;
 
+use App\Mail\newOrderCustomer;
+use App\Mail\orderRemoved;
 use App\Mail\sendNewCustomer;
 use App\Mail\sendOrder;
 use App\Mail\sendOrderConfirmed;
@@ -43,8 +45,11 @@ class RemoveOrders extends Component
         OrderLines::where('order_id', $id)->delete();
 
        session()->flash('success','De order #'.$this->order->order_id.' is verwijderd');
+       Mail::to(env('MAIL_TO_ADDRESS'))->send(new orderRemoved($this->order));
 
        return $this->redirect('/orders', navigate: true);
+
+
    }
 
    public function cancelDeleteOrder() {

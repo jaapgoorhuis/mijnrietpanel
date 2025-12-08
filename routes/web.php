@@ -24,15 +24,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('orders', \App\Livewire\Orders\Orders::class)->name('orders');
     Route::get('orders/create', \App\Livewire\Orders\CreateOrders::class);
-    Route::get('orders/edit/{id}', \App\Livewire\Orders\EditOrders::class);
+    Route::get('orders/confirm/{id}', \App\Livewire\Orders\EditOrders::class);
     Route::get('orders/remove/{id}', \App\Livewire\Orders\RemoveOrders::class);
     Route::get('orders/edit/{id}', \App\Livewire\Orders\ChangeOrder::class);
-    Route::get('orders/upload', \App\Livewire\Orders\UploadOrders::class);
 
     Route::get('offertes', \App\Livewire\Offertes\Offertes::class)->name('orders');
     Route::get('offertes/create', \App\Livewire\Offertes\CreateOffertes::class);
     Route::get('offertes/remove/{id}', \App\Livewire\Offertes\RemoveOffertes::class);
     Route::get('offertes/edit/{id}', \App\Livewire\Offertes\ChangeOfferte::class);
+    Route::get('offertes/upload', \App\Livewire\Offertes\UploadOffertes::class);
 
     Route::get('regulations', \App\Livewire\Regulations\Regulations::class)->name('regulations');
     Route::get('regulations/upload', \App\Livewire\Regulations\UploadRegulations::class);

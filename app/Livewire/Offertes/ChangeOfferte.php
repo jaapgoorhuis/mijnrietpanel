@@ -16,6 +16,7 @@ use App\Models\PanelLook;
 use App\Models\PanelType;
 use App\Models\PriceRules;
 use App\Models\Supliers;
+use App\Models\User;
 use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -75,9 +76,11 @@ class ChangeOfferte extends Component
 
     public $marge;
     public $offerte_id;
-
+    public $creator_user_id;
+    public $creator_user;
     public $exsistingOfferteLines;
     public $saved = FALSE;
+    public $priceRulePrice;
 
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
@@ -89,13 +92,14 @@ class ChangeOfferte extends Component
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
         $this->offerte = Offerte::where('id', $id)->first();
+        $this->creator_user_id = $this->offerte->user_id;
 
-        $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
+        $this->creator_user = User::where('id', $this->creator_user_id)->first();
+
+        $this->company = Company::where('id', $this->creator_user->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
         $this->exsistingOfferteLines = OfferteLines::where('offerte_id', $id)->get();
-
-        $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
@@ -113,7 +117,10 @@ class ChangeOfferte extends Component
         $this->kerndikte = $this->offerte->kerndikte;
         $this->discount = $this->offerte->discount;
         $this->project_naam = $this->offerte->project_naam;
+        $this->marge = $this->offerte->marge;
 
+        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+        $this->priceRulePrice = $this->priceRule->price;
 
         foreach($this->exsistingOfferteLines as $key => $exsistingOfferteLine) {
             $this->offerteLines[] = $key;
@@ -145,6 +152,7 @@ class ChangeOfferte extends Component
 
     public function updatePrice() {
         $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+        $this->priceRulePrice = $this->priceRule->price;
         $this->kerndikte = $this->kerndikte;
     }
 
@@ -271,7 +279,7 @@ class ChangeOfferte extends Component
             'toepassing' => $this->toepassing,
             'kerndikte' => $this->kerndikte,
             'project_naam' => $this->project_naam,
-            'user_id' => Auth::user()->id,
+            'user_id' => $this->creator_user_id,
             'marge' => $this->marge,
             'status' => 'In behandeling',
         ]);
@@ -293,7 +301,7 @@ class ChangeOfferte extends Component
                     'fillLb' => $fillLb,
                     'fillTotaleLengte' => $fillTotaleLengte,
                     'aantal' => $aantal,
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $this->creator_user_id,
                     'm2' => $m2
                 ]);
             }

@@ -75,8 +75,14 @@ class ChangeOrder extends Component
     public $marge;
     public $order_id;
 
+    public $creator_user_id;
+
     public $exsistingOrderLines;
+    public $creator_user;
+
+    public $priceRulePrice;
     public $saved = FALSE;
+
 
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
@@ -84,17 +90,23 @@ class ChangeOrder extends Component
             return $this->redirect('/orders', navigate: true);
         }
         $this->order_id = $id;
+
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
         $this->order = Order::where('id', $id)->first();
+        $this->creator_user_id = $this->order->user_id;
 
-        $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
+        $this->creator_user = User::where('id', $this->creator_user_id)->first();
+
+
+
+        $this->company = Company::where('id', $this->creator_user->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
         $this->exsistingOrderLines = OrderLines::where('order_id', $id)->get();
 
-        $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
+
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
@@ -112,7 +124,10 @@ class ChangeOrder extends Component
         $this->kerndikte = $this->order->kerndikte;
         $this->discount = $this->order->discount;
         $this->project_naam = $this->order->project_naam;
+        $this->marge = $this->order->marge;
 
+        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+        $this->priceRulePrice = $this->priceRule->price;
 
         foreach($this->exsistingOrderLines as $key => $exsistingOrderLine) {
             $this->orderLines[] = $key;
@@ -144,8 +159,10 @@ class ChangeOrder extends Component
 
     public function updatePrice() {
         $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+        $this->priceRulePrice = $this->priceRule->price;
         $this->kerndikte = $this->kerndikte;
     }
+
 
 
     public function updateCb($index) {
@@ -223,12 +240,6 @@ class ChangeOrder extends Component
             'fillTotaleLengte.*' => 'required|numeric|min:500',
             'aantal.*' => 'required|numeric|min:1',
 
-            'fillCb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
-                if ($value != 0 && $value < 20) {
-                    $fail("De CB moet 0 zijn (geen CB) of minimaal 20mm.");
-                }
-            },
-                ],
             ];
     }
 
@@ -270,8 +281,8 @@ class ChangeOrder extends Component
             'toepassing' => $this->toepassing,
             'kerndikte' => $this->kerndikte,
             'project_naam' => $this->project_naam,
-            'user_id' => Auth::user()->id,
             'marge' => $this->marge,
+            'user_id' => $this->creator_user_id,
             'status' => 'In behandeling',
         ]);
 
@@ -292,7 +303,7 @@ class ChangeOrder extends Component
                     'fillLb' => $fillLb,
                     'fillTotaleLengte' => $fillTotaleLengte,
                     'aantal' => $aantal,
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $this->creator_user_id,
                     'm2' => $m2
                 ]);
             }

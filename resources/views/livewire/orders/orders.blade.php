@@ -60,23 +60,14 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
 
-                <div class="relative">
-                    <button type="button" class="w-full ] mb-[20px] sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
+                <div class="relative mb-[20px]">
 
-                        </a>
-                    </button>
-                    <div class="relative md:absolute right-0 top-[-9px]">
-                        @admin
-                        <button wire:click="uploadOrderForm()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
-                            <i class="fa-solid fa-upload"></i> Inmeetformulier uploaden
-                        </button>
-                        @endadmin
+                    <div class="relative md:absolute right-0 top-0 ">
+
                         <button wire:click="newOrder()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                             <i class="fa fa-plus hover:cursor-pointer"></i> Order aanmaken
                         </button>
                     </div>
-
                 </div>
                 <br/>
 
@@ -134,7 +125,7 @@
                                         <ul class="py-1 text-sm text-gray-700 " aria-labelledby="{{$order->id}}-dropdown-button">
                                             @admin
                                             <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="editOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
+                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="confirmOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
                                                     <i class="fa-solid fa-circle-check" ></i> Order bevestigen
                                                 </button>
                                             </li>

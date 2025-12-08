@@ -72,7 +72,8 @@
                 <th>CB</th>
                 <th>m²</th>
                 <th>Aantal</th>
-                <th>Prijs</th>
+                <th>M2 prijs</th>
+                <th>Totale prijs</th>
             </tr>
 
             <?php $totalPrice= 0 ?>
@@ -124,6 +125,11 @@
                                 }
                             }
                             ?>
+                        {!! '&euro;&nbsp;' . number_format($m2price, 2, ',', '.') !!}
+
+                    </td>
+                    <td>
+
 
                         {!! '&euro;&nbsp;' . number_format($offerteLine->m2 * $m2price, 2, ',', '.') !!}
                     </td>

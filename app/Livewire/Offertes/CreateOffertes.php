@@ -38,13 +38,13 @@ class CreateOffertes extends Component
     public $toepassing = 'Dak';
     public $merk_paneel;
     public $aantal = [];
-    public $kerndikte;
+    public $kerndikte = '';
 
     public $project_naam;
 
     public $m2 = [];
 
-    public $fillTotaleLengte = ['0'];
+    public $fillTotaleLengte = [''];
     public $fillCb = ['0'];
     public $fillLb = ['0'];
 
@@ -73,6 +73,7 @@ class CreateOffertes extends Component
     public $priceRule;
 
     public $marge;
+    public $priceRulePrice;
     public $saved = FALSE;
 
     public function mount() {
@@ -88,8 +89,7 @@ class CreateOffertes extends Component
         $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
-        $this->priceRule = PriceRules::where('company_id', '0')->where('reseller', 0)->where('panel_type', '1')->first();
-        $this->kerndikte = $this->panelTypes->first()->name;
+        $this->priceRulePrice = 0;
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
@@ -112,8 +112,13 @@ class CreateOffertes extends Component
     }
 
     public function updatePrice() {
-        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
-        $this->kerndikte = $this->kerndikte;
+        if($this->kerndikte != '') {
+            $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
+            $this->priceRulePrice = $this->priceRule->price;
+            $this->kerndikte = $this->kerndikte;
+        } else {
+            $this->priceRulePrice = 0;
+        }
     }
 
 
@@ -163,8 +168,8 @@ class CreateOffertes extends Component
         $this->lb[] = '0';
         $this->fillLb[] = '0';
         $this->totaleLengte[] = '0';
-        $this->fillTotaleLengte[] = '0';
-        $this->aantal[] = '1';
+        $this->fillTotaleLengte[] = '';
+        $this->aantal[] = '';
 
     }
 
@@ -183,7 +188,7 @@ class CreateOffertes extends Component
 
     public function rules()
     {
-        return [
+        $rules = [
             'klant_naam' => 'required',
             'referentie' => 'required',
             'project_naam' => 'required',
@@ -195,18 +200,24 @@ class CreateOffertes extends Component
             'discount' => 'required|min:0',
             'totaleLengte.*' => 'required|numeric|min:500',
             'aantal.*' => 'required|numeric|min:1',
-            'lb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
-                if ($value != 0 && $value < 20) {
-                    $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
-                }
-            },],
-            'cb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
-                if ($value != 0 && $value < 20) {
-                    $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
-                }
-            },
-                ],
-            ];
+            'kerndikte' => 'required',
+
+            'cb.*' => [
+                'required', 'numeric', 'max:200',
+                function ($attribute, $value, $fail) {
+                    if ($value != 0 && $value < 20) {
+                        $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
+                    }
+                },
+            ],
+        ];
+
+        // Conditioneel extra rule toevoegen op lb.*
+        if (Auth::user()->is_admin == 0 && Auth::user()->company->is_reseller == 0) {
+            $rules['marge'] = 'required';
+        }
+
+        return $rules;
     }
 
 
@@ -226,12 +237,16 @@ class CreateOffertes extends Component
             'discount.min' => 'De korting kan niet lager dan 0 procent zijn.',
             'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
+            'aantal.*.required' => 'Het aantal panelen is een verplicht veld.',
             'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
             'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
+            'marge' => 'De marge is een verplicht veld',
+            'kerndikte' => 'De kerndikte is een verplicht veld',
         ];
     }
 
     public function saveOfferte() {
+
         $this->validate();
 
         $latestOfferte = Offerte::orderBy('id', 'desc')->first();

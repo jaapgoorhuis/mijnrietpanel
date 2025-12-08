@@ -76,6 +76,15 @@ class Offertes extends Component
     }
 
 
+    public function uploadOrderForm() {
+        if(Auth::user()->is_admin) {
+            return $this->redirect('/offertes/upload', navigate: true);
+        }
+        else {
+            return $this->redirect('/offertes', navigate: true);
+        }
+    }
+
     public function createOfferteOrder($offerteId) {
         $offerte = Offerte::where('id', $offerteId)->first();
 

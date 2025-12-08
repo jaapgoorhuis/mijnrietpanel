@@ -85,44 +85,6 @@
 
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="intaker_name" class="text-gray-400">Verkoper *</label>
-                                <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
-                            </div>
-                            @reseller
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="discount" class="text-gray-400">Korting (%)</label>
-                                <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
-                            </div>
-                            @endreseller
-                            @admin
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="discount" class="text-gray-400">Korting (%)</label>
-                                <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
-                            </div>
-                            @endadmin
-                            @user
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="marge" class="text-gray-400"><strong>Jouw prijs:    <?php $discount = $this->companyDiscount /100 * $this->priceRule->price;?>
-                                        {!! '&euro;&nbsp;' . number_format($this->priceRule->price - $discount, 2, ',', '.') !!} excl. BTW
-                       </strong></label><br/>
-
-                                <label for="marge" class="text-gray-400">Marge (%)</label>
-                                <div class="tooltip">
-                                    <div class="tooltip-content">
-                                        Vul hier een percentage marge in.
-                                    </div>
-                                    <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
-                                </div>
-                                <input type="number" wire:model="marge" name="marge" id="marge" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('marge') {{ $message }} @enderror</div>
-                            </div>
-                            @enduser
-                        </div>
-                        <div class="grid md:grid-cols-2 md:gap-6">
-                            <div class="relative z-0 w-full mb-5 group">
                                 <label for="rietkleur" class="text-gray-400">Rietkleur *</label>
                                 <select id="rietkleur" wire:model="rietkleur" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
@@ -131,15 +93,51 @@
 
                                 </select>
                             </div>
-
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="kerndikte" class="text-gray-400">Kerndikte *</label>
                                 <select id="kerndikte" wire:change="updatePrice()" wire:model="kerndikte" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                    <option value="" selected>Selecteer een kerndikte</option>
                                     @foreach($this->panelTypes as $type)
                                         <option value="{{$type->name}}">{{$type->name}}</option>
                                     @endforeach
                                 </select>
+                                <div class="text-red-500">@error('kerndikte') {{ $message }} @enderror</div>
                             </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="intaker_name" class="text-gray-400">Verkoper *</label>
+                                <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
+                            </div>
+                            @reseller
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="discount" class="text-gray-400">Korting (%)</label>
+                                @admin<br/><label><small>Je ziet de korting omdat jouw bedrijf een wederverkoper is en je ingelogd bent als admin<br/></small></label>@endadmin
+                                <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
+                            </div>
+                            @endreseller
+                            @user
+                            @if($this->company->is_reseller == 0)
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="marge" class="text-gray-400"><strong>Jouw prijs:    @if($this->priceRulePrice == 0)(Selecteer kerndikte) @else <?php $discount = $this->companyDiscount /100 * $this->priceRulePrice?>
+                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW @endif
+                                    </strong></label><br/>
+                                @admin<label><small>Je ziet de marge omdat jouw bedrijf geen reseller is maar een gewoon bedrijf en je ingelogd bent als admin<br/></small></label>@endadmin
+                                <label for="marge" class="text-gray-400">Marge (%)</label>
+                                <div class="tooltip">
+                                    <div class="tooltip-content">
+                                        Vul hier een percentage marge in.
+                                    </div>
+                                    <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
+                                </div> *
+                                <input type="number" wire:model="marge" name="marge" id="marge" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('marge') {{ $message }} @enderror</div>
+                            </div>
+                            @endif
+                            @enduser
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
@@ -213,7 +211,22 @@
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <select id="fillCb" wire:model="fillCb.{{$index}}" wire:change="updateCb({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+
+                                        <option value="0">0mm</option>
+                                        <option value="20">20mm</option>
+                                        <option value="40">40mm</option>
+                                        <option value="60">60mm</option>
+                                        <option value="80">80mm</option>
+                                        <option value="100">100mm</option>
+                                        <option value="120">120mm</option>
+                                        <option value="140">140mm</option>
+                                        <option value="160">160mm</option>
+                                        <option value="180">180mm</option>
+                                        <option value="200">200mm</option>
+
+                                    </select>
+
                                     <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
                                 </div>
 
@@ -222,12 +235,12 @@
                                     <label for="fillTotaleLengte" class="text-gray-400">Totale paneellengte (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
-                                                Vul hier de totale paneel lengte in mm in, inclusief de LB & de CB in.
+                                                Vul hier de totale paneel lengte in mm in, inclusief de CB in.
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" min="1" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <input type="number" value="" min="500" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" required />
                                     <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
@@ -239,7 +252,7 @@
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" min="1" wire:change="updateM2({{$index}})" wire:keydown="updateM2({{$index}})" wire:model="aantal.{{$index}}"  name="aantal" id="aantal" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <input type="number" min="1" value="" wire:change="updateM2({{$index}})" wire:keydown="updateM2({{$index}})" wire:model="aantal.{{$index}}"  name="aantal" id="aantal" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
 
                                     <div class="text-red-500">@error('aantal.'.$index) {{ $message }} @enderror</div>
                                 </div>

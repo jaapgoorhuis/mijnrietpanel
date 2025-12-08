@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Orders;
+namespace App\Livewire\Offertes;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class UploadOrders extends Component
+class UploadOffertes extends Component
 {
     use WithFileUploads;
 
@@ -17,7 +17,7 @@ class UploadOrders extends Component
 
     public function mount() {
         if(Auth::user()->is_admin) {
-            return view('livewire.orders.editOrder');
+            return view('livewire.offertes.editOfferte');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
             return $this->redirect('/dashboard', navigate: true);
@@ -25,7 +25,7 @@ class UploadOrders extends Component
     }
     public function render()
     {
-        return view('livewire.orders.uploadOrder');
+        return view('livewire.offertes.uploadOfferte');
     }
 
     protected $rules = [
@@ -46,11 +46,11 @@ class UploadOrders extends Component
         Storage::delete('rietpanel-order-formulier.pdf');
         $this->orderForm->storeAs(path: 'uploads', name: 'rietpanel-order-formulier.pdf', options: 'public');
 
-        session()->flash('success','Het nieuwe order formulier is geupload');
-        return $this->redirect('/orders', navigate: true);
+        session()->flash('success','Het nieuwe inmeet formulier is geupload');
+        return $this->redirect('/offertes', navigate: true);
     }
 
     public function cancelUploadOrderForm() {
-        return $this->redirect('/orders', navigate: true);
+        return $this->redirect('/offertes', navigate: true);
     }
 }

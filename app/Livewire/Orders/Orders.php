@@ -61,10 +61,10 @@ class Orders extends Component
         ]);
     }
 
-    public function editOrder($id)
+    public function confirmOrder($id)
     {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/orders/edit/' . $id, navigate: true);
+            return $this->redirect('/orders/confirm/' . $id, navigate: true);
         }
         else {
             return $this->redirect('/orders', navigate: true);
@@ -81,14 +81,7 @@ class Orders extends Component
         }
     }
 
-    public function uploadOrderForm() {
-        if(Auth::user()->is_admin) {
-            return $this->redirect('/orders/upload', navigate: true);
-        }
-        else {
-            return $this->redirect('/orders', navigate: true);
-        }
-    }
+
 
     public function changeOrder($id)
     {
