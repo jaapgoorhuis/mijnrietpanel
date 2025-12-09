@@ -102,7 +102,7 @@
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$offerte->offerte_id}}</th>
                                 <td class="px-4 py-3">{{$offerte->klantnaam}}</td>
                                 <td class="px-4 py-3">{{$offerte->intaker}}</td>
-                                <td class="px-4 py-3">{{$offerte->user->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3">{{$offerte->user->company->bedrijfsnaam}}</td>
 
 
                                 <td class="px-4 py-3">
