@@ -60,7 +60,7 @@
             <tr>
                 <td class="label">Ordernummer:</td>
                 <td>{{ $order->order_id }}</td>
-                <td rowspan="4" class="logo">
+                <td rowspan="5" class="logo">
                     <img src="{{ public_path('storage/images/rietpanel-R.png') }}" alt="" style="width: 100px;">
                 </td>
             </tr>
@@ -76,6 +76,12 @@
                 <td class="label">Project / ref:</td>
                 <td>{{ $order->referentie }}</td>
             </tr>
+
+            <tr>
+                <td class="label">Pakket:</td>
+                <td>{{ $index + 1 }} van {{ count($pakketten) }}</td>
+            </tr>
+
 
         </table>
 
