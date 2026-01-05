@@ -111,14 +111,7 @@
                                 <input type="text" wire:model="intaker" name="intaker" id="intaker" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
                             </div>
-                            @reseller
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="discount" class="text-gray-400">Korting (%)</label>
-                                @admin<br/><label><small>Je ziet de korting omdat jouw bedrijf een wederverkoper is en je ingelogd bent als admin<br/></small></label>@endadmin
-                                <input type="number" wire:model="discount" name="discount" id="discount" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('discount') {{ $message }} @enderror</div>
-                            </div>
-                            @endreseller
+
                             @user
                             @if($this->company->is_reseller == 0)
                             <div class="relative z-0 w-full mb-5 group">

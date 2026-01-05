@@ -50,7 +50,7 @@
         </tr>
     </table>
     <table class="order-table-visual">
-      @foreach($order->orderLines as $key => $orderLines)
+    @foreach($order->orderLines->sortByDesc('fillTotaleLengte')->values() as $key => $orderLines)
         <tr>
             <td class="header">Order regel {{$key+1}}</td>
             <td class="right">

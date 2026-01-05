@@ -135,7 +135,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($order->orderLines as $key => $orderLines)
+    @foreach($order->orderLines->sortByDesc('fillTotaleLengte')->values() as $key => $orderLines)
     <tr>
         <td>
             {{$key+1}}

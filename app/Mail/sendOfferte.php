@@ -50,8 +50,12 @@ class sendOfferte extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromPath(public_path('/storage/offetes/offerte-'.$this->offerte_id.'.pdf'))
+            Attachment::fromPath(public_path('/storage/offertes/offerte-'.$this->offerte_id.'.pdf'))
                 ->as('offerte-'.$this->offerte_id.'.pdf')
+                ->withMime('application/pdf'),
+
+            Attachment::fromPath(public_path('/storage/Riet Panel B.V. Algemene Voorwaarden.pdf'))
+                ->as('Riet Panel B.V. Algemene Voorwaarden.pdf')
                 ->withMime('application/pdf'),
         ];
     }
