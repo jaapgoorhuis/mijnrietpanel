@@ -307,7 +307,7 @@ class CreateOffertes extends Component
 
         Pdf::loadView('pdf.offerte',['offerte' => $offerte, 'offerteLines' => $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerteId.'.pdf'));
 
-//        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
+        Mail::to(Auth::user()->email)->send(new sendOfferte($offerte));
 
         session()->flash('success','De offerte is aangemaakt.');
         return $this->redirect('/offertes', navigate: true);

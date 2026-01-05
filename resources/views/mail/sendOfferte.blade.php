@@ -10,8 +10,9 @@
             <td>
                 <h2>Offerte</h2><br/>
                 Geachte heer/mevrouw,
-
-                Hierbij ontvangt u een offerte voor de aangevraagde
+                <br/>
+               Hierbij ontvangt u een copy van de aangemaakte offerte op https://mijn.rietpanel.nl<br/>
+                De offerte zit als bijlage toegevoegd.<br/>
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>
                 Team Rietpanel<br/><br/>
