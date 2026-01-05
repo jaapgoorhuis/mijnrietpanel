@@ -141,6 +141,8 @@
                                                     <i class="fa-solid fa-download"></i> Pakketlijst downloaden
                                                 </a>
                                             </li>
+
+
                                             <li>
                                                 <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/fabrieklijst-'.$order->order_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Fabrieklijst downloaden

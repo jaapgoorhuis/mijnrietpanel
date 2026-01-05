@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderPakketList;
 use App\Http\Controllers\ProfileController;
 use App\Models\Order;
 use App\Models\Supliers;
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('orders/confirm/{id}', \App\Livewire\Orders\EditOrders::class);
     Route::get('orders/remove/{id}', \App\Livewire\Orders\RemoveOrders::class);
     Route::get('orders/edit/{id}', \App\Livewire\Orders\ChangeOrder::class);
+    Route::get('pakketten/{id}', [OrderPakketList::class, 'generate']);
 
     Route::get('offertes', \App\Livewire\Offertes\Offertes::class)->name('orders');
     Route::get('offertes/create', \App\Livewire\Offertes\CreateOffertes::class);
@@ -106,15 +108,17 @@ Route::middleware('auth')->group(function () {
         return response()->file($url);
     });
 
-    Route::get('/download-pakketlijst/pakketlijst-{id}', function($id) {
-        $order = Order::where('order_id', $id)->first();
+    Route::get('download-pakketlijst/pakketlijst-{id}', [OrderPakketList::class, 'generatePdf']);
 
-        Pdf::loadView('pdf.pakketlijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
-
-        $url = public_path('storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
-
-        return response()->file($url);
-    });
+//    Route::get('/download-pakketlijst/pakketlijst-{id}', function($id) {
+//        $order = Order::where('order_id', $id)->first();
+//
+//        Pdf::loadView('pdf.pakketlijst',['order' => $order])->save(public_path('/storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf'));
+//
+//        $url = public_path('storage/pakketlijst/pakketlijst-'.$order->order_id.'.pdf');
+//
+//        return response()->file($url);
+//    });
 
     Route::get('/download-orderlist/bestellijst-{id}', function($id) {
         $order = Order::where('order_id', $id)->first();

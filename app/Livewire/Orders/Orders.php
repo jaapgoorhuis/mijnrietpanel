@@ -7,6 +7,7 @@ use App\Mail\sendOrderList;
 use App\Models\Company;
 use App\Models\Offerte;
 use App\Models\Order;
+use App\Models\OrderLines;
 use App\Models\Supliers;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -20,6 +21,9 @@ class Orders extends Component
 {
     public $orders;
     public $editOrderId;
+
+    public array $pakketten = [];
+
 
     public function change() {
         dd('updated');
@@ -112,6 +116,92 @@ class Orders extends Component
 
         session()->flash('success','De inkoop order is verstuurd.');
         return $this->redirect('/orders', navigate: true);
+    }
+
+    public function generatePdf($order_id)
+    {
+        // Haal orderlines
+        $order = Order::where('id', $order_id)->first();
+        $orderlines = OrderLines::where('order_id', $order_id)->get()->toArray();
+        $maxDikte = 1350;
+
+        if (empty($orderlines)) {
+            session()->flash('error', 'Geen orderlines gevonden voor deze order.');
+            return;
+        }
+
+        // -----------------------------
+        // Pakketlogica
+        // -----------------------------
+        $groepen = [];
+        foreach ($orderlines as $line) {
+            $groepen[$line['fillTotaleLengte']][] = $line;
+        }
+        krsort($groepen);
+
+        $pakketten = [];
+        $leftovers = [];
+
+        foreach ($groepen as $lengte => $lines) {
+            $items = [];
+            foreach ($lines as $l) {
+                for ($i = 0; $i < $l['aantal']; $i++) {
+                    $items[] = [
+                        'id' => $l['id'],
+                        'dikte' => 90,
+                        'lengte' => $lengte,
+                    ];
+                }
+            }
+
+            $diktePerItem = $items[0]['dikte'];
+            $perPakket = intdiv($maxDikte, $diktePerItem);
+            $vollPakketten = intdiv(count($items), $perPakket);
+
+            for ($i = 0; $i < $vollPakketten; $i++) {
+                $pakket = array_splice($items, 0, $perPakket);
+                usort($pakket, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+                $pakketten[] = $pakket;
+            }
+
+            if (count($items) > 0) {
+                $leftovers = array_merge($leftovers, $items);
+            }
+        }
+
+        // Leftovers mixen
+        usort($leftovers, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+        $current = [];
+        $currentDikte = 0;
+        foreach ($leftovers as $item) {
+            if ($currentDikte + $item['dikte'] > $maxDikte) {
+                usort($current, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+                $pakketten[] = $current;
+                $current = [];
+                $currentDikte = 0;
+            }
+            $current[] = $item;
+            $currentDikte += $item['dikte'];
+        }
+        if (!empty($current)) {
+            usort($current, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+            $pakketten[] = $current;
+        }
+
+        // -----------------------------
+        // PDF genereren
+        // -----------------------------
+        $pdf = PDF::loadView('pdf.pakketlijst', [
+            'order_id' => $order_id,
+            'order' => $order,
+            'pakketten' => $pakketten
+        ]);
+
+        $filename = 'pakketlijst-' . $order_id . '.pdf';
+
+        return response()->streamDownload(function() use ($pdf) {
+            echo $pdf->output();
+        }, $filename);
     }
 
 }
