@@ -81,6 +81,8 @@ class ChangeOfferte extends Component
     public $exsistingOfferteLines;
     public $saved = FALSE;
     public $priceRulePrice;
+    public $requested_delivery_date;
+    public $comment;
 
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
@@ -118,9 +120,11 @@ class ChangeOfferte extends Component
         $this->discount = $this->offerte->discount;
         $this->project_naam = $this->offerte->project_naam;
         $this->marge = $this->offerte->marge;
+        $this->comment = $this->offerte->comment;
 
         $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
         $this->priceRulePrice = $this->priceRule->price;
+        $this->requested_delivery_date = $this->offerte->requested_delivery_date;
 
         foreach($this->exsistingOfferteLines as $key => $exsistingOfferteLine) {
             $this->offerteLines[] = $key;
@@ -229,8 +233,9 @@ class ChangeOfferte extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'fillTotaleLengte.*' => 'required|numeric|min:500',
+            'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
+            'requested_delivery_date' => 'required',
 
             'fillCb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
                 if ($value != 0 && $value < 20) {
@@ -257,8 +262,10 @@ class ChangeOfferte extends Component
             'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
             'discount.min' => 'De korting kan niet lager dan 0 procent zijn.',
             'fillTotaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
+            'totaleLengte.*.max' => 'De lengte mag maximaal 14500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'fillCb.*.max' => 'De CB mag maximaal 200mm zijn.',
+            'requested_delivery_date.required' => 'Dit is een verplicht veld.',
         ];
     }
 
@@ -282,6 +289,8 @@ class ChangeOfferte extends Component
             'user_id' => $this->creator_user_id,
             'marge' => $this->marge,
             'status' => 'In behandeling',
+            'requested_delivery_date' => $this->requested_delivery_date,
+            'comment' => $this->comment,
         ]);
 
         $offerte = Offerte::orderBy('id', 'desc')->first();

@@ -3,6 +3,7 @@
 use App\Http\Controllers\OrderPakketList;
 use App\Http\Controllers\ProfileController;
 use App\Models\Order;
+use App\Models\OrderLines;
 use App\Models\Supliers;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -95,6 +96,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/zaaglijst', function () {
 
         return view('pdf.zaaglijsttest');
+    });
+
+
+    Route::get('/download-order/order-{id}', function($id) {
+        $order = Order::where('order_id', $id)->first();
+        $orderLines = OrderLines::where('order_id', $order->id)->get();
+        Pdf::loadView('pdf.order',['order' => $order,'orderLines'=> $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
+
+        $url = public_path('storage/orders/order-'.$order->order_id.'.pdf');
+
+        return response()->file($url);
+    });
+
+    Route::get('/download-offerte/offerte-{id}', function($id) {
+        $offerte = \App\Models\Offerte::where('offerte_id', $id)->first();
+        $offerteLines = \App\Models\OfferteLines::where('offerte_id', $offerte->id)->get();
+        Pdf::loadView('pdf.offerte',['offerte' => $offerte,'offerteLines'=> $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf'));
+
+        $url = public_path('storage/offertes/offerte-'.$offerte->offerte_id.'.pdf');
+
+        return response()->file($url);
     });
 
 

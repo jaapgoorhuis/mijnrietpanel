@@ -20,7 +20,7 @@
 
 <div class="py-12">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('success'))
             <div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50" role="alert">
                 <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -75,9 +75,11 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
-                            <th scope="col" class="px-4 py-3">Project naam</th>
+                            <th scope="col" class="px-4 py-3">Project</th>
                             <th scope="col" class="px-4 py-3">Geplaatst door:</th>
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
+                            <th scope="col" class="px-4 py-3">Gewenste leverdatum</th>
+                            <th scope="col" class="px-4 py-3">Leverdatum Rietpanel</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             @admin
                                 <th scope="col" class="px-4 py-3">Order besteld</th>
@@ -95,6 +97,8 @@
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
                                 <td class="px-4 py-3">{{$order->user->company->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3">@if($order->requested_delivery_date) {{$order->requested_delivery_date}} @else Geen datum @endif</td>
+                                <td class="px-4 py-3">@if($order->delivery_date) {{$order->delivery_date}} @else Geen datum @endif</td>
                                 <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
                                     {{$order->status}}
                                 </td>
@@ -131,22 +135,40 @@
                                             </li>
                                             @endadmin
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/storage/orders/order-'.$order->order_id.'.pdf')}}" target="_blank">
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-order/order-'.$order->order_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Order downloaden
                                                 </a>
                                             </li>
                                             @admin
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-pakketlijst/pakketlijst-'.$order->order_id)}}" target="_blank">
+                                                <a
+                                                    @if($order->status == 'In behandeling')
+                                                        style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
+                                                    href="javascript:void(0)"
+                                                    @else
+                                                        href="{{ asset('/download-pakketlijst/pakketlijst-'.$order->order_id) }}"
+                                                    target="_blank"
+                                                    @endif
+                                                    class="block py-2 px-4 hover:bg-gray-100"
+                                                >
                                                     <i class="fa-solid fa-download"></i> Pakketlijst downloaden
                                                 </a>
                                             </li>
-
-
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-zaaglijst/fabrieklijst-'.$order->order_id)}}" target="_blank">
+                                                <a
+                                                    @if($order->status == 'In behandeling')
+                                                        style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
+                                                    href="javascript:void(0)"
+                                                    @else
+                                                        href="{{ asset('/download-zaaglijst/fabrieklijst-'.$order->order_id) }}"
+                                                    target="_blank"
+                                                    @endif
+                                                    class="block py-2 px-4 hover:bg-gray-100"
+                                                >
                                                     <i class="fa-solid fa-download"></i> Fabrieklijst downloaden
                                                 </a>
+
+
                                             </li>
                                             <li>
                                                 <button @if($order->status == 'In behandeling') disabled @endif @if($order->order_ordered) disabled @endif class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:bg-[#e9eaeb] disabled:text-[#b5aeae]" wire:click="SendOrderList({{$order->id}})">
@@ -156,14 +178,23 @@
                                             </li>
 
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-orderlist/bestellijst-'.$order->order_id)}}" target="_blank">
+                                                <a
+                                                    @if($order->status == 'In behandeling')
+                                                        style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
+                                                    href="javascript:void(0)"
+                                                    @else
+                                                        href="{{ asset('/download-orderlist/bestellijst-'.$order->order_id) }}"
+                                                    target="_blank"
+                                                    @endif
+                                                    class="block py-2 px-4 hover:bg-gray-100"
+                                                >
                                                     <i class="fa-solid fa-download"></i> Bestellijst downloaden
                                                 </a>
                                             </li>
                                             @endadmin
                                             @admin
                                             <li>
-                                                <button class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
+                                                <button @if($order->status == "Bevestigd") disabled @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
                                                     <i class="fas fa-edit"></i> Order bewerken
                                                 </button>
                                             </li>

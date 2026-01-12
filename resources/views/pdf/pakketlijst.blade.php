@@ -60,7 +60,7 @@
             <tr>
                 <td class="label">Ordernummer:</td>
                 <td>{{ $order->order_id }}</td>
-                <td rowspan="5" class="logo">
+                <td     @if($order->orderRules) rowspan="6" @else rowspan="5" @endif class="logo">
                     <img src="{{ public_path('storage/images/rietpanel-R.png') }}" alt="" style="width: 100px;">
                 </td>
             </tr>
@@ -76,6 +76,13 @@
                 <td class="label">Project / ref:</td>
                 <td>{{ $order->referentie }}</td>
             </tr>
+
+            @if($order->orderRules)
+                <tr>
+                    <td class="label">Opmerking(en):</td>
+                    <td>{{ $order->orderRules->rule }}</td>
+                </tr>
+            @endif
 
             <tr>
                 <td class="label">Pakket:</td>

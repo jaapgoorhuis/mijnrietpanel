@@ -12,11 +12,7 @@
     <table class="w-full">
         <tr>
             <td class="w-half">
-                @if($order->user->companys->logo)
-                    <img src="{{ public_path("storage/companylogos/".$order->user->companys->logo)}}" alt="" style="width: 200px;"/>
-                @else
-                    <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
-                @endif
+                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
             </td>
         </tr>
     </table>
@@ -34,6 +30,7 @@
                     <div>Project naam: {{$order->project_naam}}</div>
                     <div>Referentie: {{$order->referentie}}</div>
                     <div>Verkoper: {{$order->intaker}}</div>
+                    <div>Leverdatum: {{$order->requested_delivery_date}}</div>
                 </td>
                 <td class="w-half">
                     <div>{{$company->straat}}</div>
@@ -183,6 +180,18 @@
                 @endforeach
             </table>
         @endif
+
+        @if($order->comment)
+            <table class="products toeslagen">
+                <tr class="items">
+                    <td><strong>Klant opmerking</strong></td>
+                </tr>
+                <tr class="items">
+                    <td>{{$order->comment}}</td>
+                </tr>
+            </table>
+
+        @endif
     </div>
 
 
@@ -201,19 +210,34 @@
                 <th style="text-align: left;">21% BTW:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
+
             @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
             <tr>
                 <th style="text-align: left;">Toeslagen:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
             </tr>
             @endif
+
+            @if($order->orderRules)
+                <tr>
+                    <th style="text-align: left;">{{$order->orderRules->rule}}:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}</th>
+                </tr>
+            @endif
             <tr>
                 <th style="text-align: left; border-top:1px solid black">
-                    <strong>Totaal incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )incl. toeslagen:@endif</strong>
+                    <strong>Totaal incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $order->orderRules)incl. toeslagen:@endif</strong>
                 </th>
-                <th style="text-align: left; border-top:1px solid black">
-                    € {{number_format($allInPrice + $totalToeslagPrice, 2, ',', '.')}}
-                </th>
+
+                @if($order->orderRules)
+                    <th style="text-align: left; border-top:1px solid black">
+                        € {{number_format($allInPrice + $totalToeslagPrice + $order->orderRules->price, 2, ',', '.')}}
+                    </th>
+                @else
+                    <th style="text-align: left; border-top:1px solid black">
+                        € {{number_format($allInPrice + $totalToeslagPrice, 2, ',', '.')}}
+                    </th>
+                @endif
             </tr>
         </table>
     </div>

@@ -41,7 +41,8 @@
         }
 
         .order-details {
-            width:200px;
+            width:auto;
+            padding-right: 50px;
         }
 
         .logo {
@@ -105,11 +106,19 @@
                     <td>Projectnaam:</td><td>{{$order->project_naam}}</td>
                 </tr>
                 <tr>
-                    <td>Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
+                    <td style="padding-right: 30px;">Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
                 </tr>
                 <tr>
                     <td>Leverdatum:</td><td>{{$order->updated_at->addDays(14)->format('d-m-Y')}}</td>
                 </tr>
+                @if($order->orderRules)
+                    @if($order->orderRules->show_orderlist)
+                        <tr>
+                            <td><strong>Opmerking(en):</strong></td>
+                            <td>{{$order->orderRules->rule}}</td>
+                        </tr>
+                   @endif
+                @endif
             </table>
         </td>
         <td class="right">
@@ -154,6 +163,8 @@
 <p class="footer">
     Bij elke levering graag duidelijk vermelden welk ordernummer het is
 </p>
+
+
 
 </body>
 </html>

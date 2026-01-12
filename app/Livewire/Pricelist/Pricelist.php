@@ -5,6 +5,7 @@ namespace App\Livewire\Pricelist;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use ZipStream\ZipStream;
 use function Spatie\LaravelPdf\Support\pdf;
 use STS\ZipStream\Facades\Zip;
 
@@ -61,6 +62,32 @@ Pricelist extends Component
 
         // Livewire 3 event naar frontend
         $this->dispatch('download-zip', url: $url);
+    }
+
+    public function downloadAll() {
+
+        return response()->streamDownload(function () {
+
+            $zip = new ZipStream();
+
+            foreach ($this->pricelist as $pricelist) {
+
+                // pad in storage/app/public
+                $filePath = public_path('/storage/pricelist/' . $pricelist->file_name);
+
+                $filePath = str_replace(['%20'], ' ', $filePath);
+
+                if (file_exists($filePath)) {
+                    $zip->addFileFromPath(
+                        basename($filePath), // naam in zip
+                        $filePath
+                    );
+                }
+            }
+
+            $zip->finish();
+
+        }, 'prijslijst.zip');
     }
 
 

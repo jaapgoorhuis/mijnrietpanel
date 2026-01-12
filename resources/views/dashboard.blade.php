@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <main class="min-h-full flex items-center">
-            <div class="w-full max-w-7xl mx-auto p-6 sm:p-10">
+            <div class="w-full max-w-8xl mx-auto p-6 sm:p-10">
                 @if(Session::has('error'))
                     <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
                         <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">

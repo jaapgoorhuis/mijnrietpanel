@@ -9,6 +9,7 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './app/Livewire/**/*.php',
+        "./node_modules/flowbite-datepicker/**/*.js",
     ],
 
     theme: {

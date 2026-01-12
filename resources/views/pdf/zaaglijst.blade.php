@@ -15,7 +15,7 @@
             <td>25001</td>
             <td class="label">Dikte paneel:</td>
             <td style="color:red">{{$order->kerndikte}}</td>
-            <td rowspan="5" class="logo">
+            <td rowspan="6" class="logo">
                 <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
             </td>
         </tr>
@@ -48,7 +48,23 @@
                 RP{{str_replace('m', '', $order->kerndikte)}}-{{strtoupper(substr($order->merk_paneel, 0, 2))}}-{{strtoupper(substr($order->rietkleur, 0, 1))}}
             </td>
         </tr>
+        <tr>
+            <td>Leverdatum:</td>
+            <td >{{$order->delivery_date}}</td>
+            <td></td>
+            <td></td>
+        </tr>
     </table>
+
+    @if($order->orderRules)
+    <table class="order-table-visual">
+        <tr>
+            <td class="header">Opmerkingen</td>
+            <td style="color:red; font-weight: bold">{{$order->orderRules->rule}}</td>
+        </tr>
+    </table>
+    @endif
+
     <table class="order-table-visual">
     @foreach($order->orderLines->sortByDesc('fillTotaleLengte')->values() as $key => $orderLines)
         <tr>

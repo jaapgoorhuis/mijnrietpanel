@@ -34,6 +34,7 @@
                     <div>Project naam: {{$offerte->project_naam}}</div>
                     <div>Referentie: {{$offerte->referentie}}</div>
                     <div>Verkoper: {{$offerte->intaker}}</div>
+                    <div>Leverdatum: {{$offerte->requested_delivery_date}}</div>
                 </td>
                 <td class="w-half">
                     <div>{{$company->straat}}</div>
@@ -188,6 +189,18 @@
                     @endif
                 @endforeach
             </table>
+        @endif
+
+        @if($offerte->comment)
+            <table class="products toeslagen">
+                <tr class="items">
+                    <td><strong>Klant opmerking</strong></td>
+                </tr>
+                <tr class="items">
+                    <td>{{$offerte->comment}}</td>
+                </tr>
+            </table>
+
         @endif
     </div>
 

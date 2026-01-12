@@ -20,7 +20,7 @@
 
 <div class="py-12">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('success'))
             <div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50" role="alert">
                 <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -89,6 +89,7 @@
                             <th scope="col" class="px-4 py-3">Klantnaam</th>
                             <th scope="col" class="px-4 py-3">Geplaatst door:</th>
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
+                            <th scope="col" class="px-4 py-3">Gewenste leverdatum</th>
                             <th scope="col" class="px-4 py-3">Aantal m²</th>
                             <th scope="col" class="px-4 py-3">Omgezet tot order</th>
                             <th scope="col" class="px-4 py-3 text-right">
@@ -103,8 +104,7 @@
                                 <td class="px-4 py-3">{{$offerte->klantnaam}}</td>
                                 <td class="px-4 py-3">{{$offerte->intaker}}</td>
                                 <td class="px-4 py-3">{{$offerte->user->company->bedrijfsnaam}}</td>
-
-
+                                <td class="px-4 py-3">@if($offerte->requested_delivery_date) {{$offerte->requested_delivery_date}} @else Geen datum @endif</td>
                                 <td class="px-4 py-3">
                                         <?php $totalM2 = 0?>
                                     @foreach($offerte->offerteLines as $offerteLine)
@@ -130,7 +130,7 @@
                                         <ul class="py-1 text-sm text-gray-700 " aria-labelledby="{{$offerte->id}}-dropdown-button">
 
                                             <li>
-                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf')}}" target="_blank">
+                                                <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-offerte/offerte-'.$offerte->offerte_id)}}" target="_blank">
                                                     <i class="fa-solid fa-download"></i> Offerte downloaden
                                                 </a>
                                             </li>
@@ -141,12 +141,11 @@
                                                 </button>
                                             </li>
 
-                                                <li>
-                                                    <button @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOfferte({{$offerte->id}})">
-                                                        <i class="fas fa-edit"></i> Offerte bewerken
-                                                    </button>
-                                                </li>
-
+                                            <li>
+                                                <button @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOfferte({{$offerte->id}})">
+                                                    <i class="fas fa-edit"></i> Offerte bewerken
+                                                </button>
+                                            </li>
 
                                             <li>
                                                 <button  @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">

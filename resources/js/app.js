@@ -2,6 +2,7 @@ import './bootstrap';
 import {HSCopyMarkup as FlowbiteInstances} from "preline";
 import {Modal} from "flowbite";
 import 'livewire-sortable'
+import 'flowbite-datepicker';
 
 import { initFlowbite } from 'flowbite';
 

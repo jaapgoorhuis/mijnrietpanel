@@ -76,6 +76,10 @@ class CreateOffertes extends Component
     public $priceRulePrice;
     public $saved = FALSE;
 
+    public $requested_delivery_date;
+
+    public $comment;
+
     public function mount() {
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen offertes plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
@@ -198,10 +202,10 @@ class CreateOffertes extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'totaleLengte.*' => 'required|numeric|min:500',
+            'totaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
             'kerndikte' => 'required',
-
+            'requested_delivery_date' => 'required',
             'cb.*' => [
                 'required', 'numeric', 'max:200',
                 function ($attribute, $value, $fail) {
@@ -236,12 +240,14 @@ class CreateOffertes extends Component
             'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
             'discount.min' => 'De korting kan niet lager dan 0 procent zijn.',
             'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
+            'totaleLengte.*.max' => 'De lengte mag maximaal 14500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'aantal.*.required' => 'Het aantal panelen is een verplicht veld.',
             'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
             'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
             'marge' => 'De marge is een verplicht veld',
             'kerndikte' => 'De kerndikte is een verplicht veld',
+            'requested_delivery_date.required' => 'Dit is een verplicht veld.',
         ];
     }
 
@@ -279,7 +285,9 @@ class CreateOffertes extends Component
             'user_id' => Auth::user()->id,
             'marge' => $this->marge,
             'status' => 'In behandeling',
-            'offerte_id' => $offerteId
+            'offerte_id' => $offerteId,
+            'requested_delivery_date' => $this->requested_delivery_date,
+            'comment'=> $this->comment
         ]);
 
         $offerte = Offerte::orderBy('id', 'desc')->first();

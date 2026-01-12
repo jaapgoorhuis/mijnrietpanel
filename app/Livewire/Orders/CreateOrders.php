@@ -76,7 +76,11 @@ class CreateOrders extends Component
     public $werkendeBreedte;
     public $priceRulePrice;
 
+    public $requested_delivery_date;
+
     public $marge;
+
+    public $comment;
 
     public function mount() {
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
@@ -200,9 +204,10 @@ class CreateOrders extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'totaleLengte.*' => 'required|numeric|min:500',
+            'totaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
             'kerndikte' => 'required',
+            'requested_delivery_date' => 'required',
 
             'cb.*' => [
                 'required', 'numeric', 'max:200',
@@ -236,6 +241,7 @@ class CreateOrders extends Component
             'discount.min' => 'De korting kan niet lager dan 0 procent zijn',
             'intaker.required' => 'Vul aub uw naam in.',
             'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
+            'totaleLengte.*.max' => 'De lengte mag maximaal 14500mm zijn.',
             'totaleLengte.*.required' => 'De lengte is een verplicht veld.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'aantal.*.required' => 'Het aantal panelen is een verplicht veld.',
@@ -244,10 +250,15 @@ class CreateOrders extends Component
             'lb.*.min' => 'De LB moet minimaal 20mm zijn.',
             'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
             'kerndikte' => 'De kerndikte is een verplicht veld',
+            'requested_delivery_date.required' => 'Dit is een verplicht veld.',
         ];
     }
 
+
+
     public function saveOrder() {
+
+
         $this->validate();
 
         $latestOrder = Order::orderBy('id', 'desc')->first();
@@ -281,6 +292,8 @@ class CreateOrders extends Component
             'status' => 'In behandeling',
             'order_id' => $orderId,
             'marge' => $this->marge,
+            'requested_delivery_date' => $this->requested_delivery_date,
+            'comment' => $this->comment,
         ]);
 
         $order = Order::orderBy('id', 'desc')->first();

@@ -27,7 +27,7 @@
 </x-slot>
 
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="grid">
@@ -38,10 +38,25 @@
 
                         Project gegevens
                         <br/><br/>
-                        <div class="relative z-0 w-full mb-5 group">
-                            <label for="klant_naam" class="text-gray-400">Klant naam *</label>
-                            <input type="text"  wire:model="klant_naam" name="klant_naam" id="klant_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                            <div class="text-red-500">@error('klant_naam') {{ $message }} @enderror</div>
+                        <div class="grid md:grid-cols-2 md:gap-6">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="klant_naam" class="text-gray-400">Klant naam *</label>
+                                <input type="text"  wire:model="klant_naam" name="klant_naam" id="klant_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                                <div class="text-red-500">@error('klant_naam') {{ $message }} @enderror</div>
+                            </div>
+
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="requested_delivery_date" class="text-gray-400">Gewenste leveringsdatum *</label>
+
+                                <input
+                                    type="text"
+                                    class="datepicker block w-full bg-neutral-secondary-medium border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"
+                                    wire:model="requested_delivery_date"
+                                    placeholder="Selecteer datum"
+                                />
+                                <div class="text-red-500">@error('requested_delivery_date') {{ $message }} @enderror</div>
+                            </div>
+
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
@@ -155,6 +170,19 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="comment" class="text-gray-400">Opmerkingen
+                                <div class="tooltip">
+                                    <div class="tooltip-content">
+                                        Geef hier aan wanneer er een speciale bewerking of actie vereist is.
+                                    </div>
+                                    <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
+                                </div>
+                            </label>
+                            <textarea wire:model="comment" name="comment" id="comment" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" "></textarea>
+                            <div class="text-red-500">@error('comment') {{ $message }} @enderror</div>
+                        </div>
                         <br/>
 
                         <br/>
@@ -235,12 +263,12 @@
                                     <label for="fillTotaleLengte" class="text-gray-400">Totale paneellengte (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
-                                                Vul hier de totale paneel lengte in mm in, inclusief de CB in.
+                                                Vul hier de totale paneel lengte in mm in, inclusief de CB in. De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn. Wil je langere lengtes bestellen? Neem dan contact met ons op.
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" value=""  wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
+                                    <input type="number" min="500" max="14500" value=""  wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />
                                     <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">

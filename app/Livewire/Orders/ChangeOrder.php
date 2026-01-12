@@ -82,6 +82,8 @@ class ChangeOrder extends Component
 
     public $priceRulePrice;
     public $saved = FALSE;
+    public $requested_delivery_date;
+    public $comment;
 
 
     public function mount($id) {
@@ -98,15 +100,10 @@ class ChangeOrder extends Component
         $this->creator_user_id = $this->order->user_id;
 
         $this->creator_user = User::where('id', $this->creator_user_id)->first();
-
-
-
         $this->company = Company::where('id', $this->creator_user->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
         $this->exsistingOrderLines = OrderLines::where('order_id', $id)->get();
-
-
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
@@ -125,6 +122,8 @@ class ChangeOrder extends Component
         $this->discount = $this->order->discount;
         $this->project_naam = $this->order->project_naam;
         $this->marge = $this->order->marge;
+        $this->requested_delivery_date = $this->order->requested_delivery_date;
+        $this->comment = $this->order->comment;
 
         $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
         $this->priceRulePrice = $this->priceRule->price;
@@ -237,8 +236,9 @@ class ChangeOrder extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'fillTotaleLengte.*' => 'required|numeric|min:500',
+            'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
+            'requested_delivery_date' => 'required',
 
             ];
     }
@@ -256,11 +256,13 @@ class ChangeOrder extends Component
             'aflever_plaats.required' => 'De plaats is een verplicht veld.',
             'aflever_land.required' => 'Het land is een verplicht veld.',
             'intaker.required' => 'Vul aub uw naam in.',
+            'totaleLengte.*.max' => 'De lengte mag maximaal 14500mm zijn.',
             'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
             'discount.min' => 'De korting kan niet lager dan 0 procent zijn.',
             'fillTotaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
             'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
             'fillCb.*.max' => 'De CB mag maximaal 200mm zijn.',
+            'requested_delivery_date.required' => 'Dit is een verplicht veld.',
         ];
     }
 
@@ -284,6 +286,8 @@ class ChangeOrder extends Component
             'marge' => $this->marge,
             'user_id' => $this->creator_user_id,
             'status' => 'In behandeling',
+            'requested_delivery_date' => $this->requested_delivery_date,
+            'comment' => $this->comment,
         ]);
 
         $order = Order::orderBy('id', 'desc')->first();
