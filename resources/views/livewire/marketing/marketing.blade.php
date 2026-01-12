@@ -23,26 +23,29 @@
             <div class="p-6 text-gray-900">
                 @admin
                 <div class="text-right">
-                    <button
-                        type="button"
-                        wire:click="uploadMarketing"
-                        wire:loading.attr="disabled"
-                        wire:target="uploadMarketing"
-                        class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-                    >
-                        <!-- Spinner verschijnt alleen tijdens de actie -->
-                        <span wire:loading wire:target="uploadMarketing">
-                                <i class="fa-solid fa-spinner fa-spin me-2"></i>
-                            </span>
-                        <!-- Icon + tekst normaal -->
-                        <i class="fa-solid fa-upload me-2"></i> Bestanden toevoegen
+                    <button wire:click="uploadMarketing()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                        <i class="fa-solid fa-upload"></i> Bestanden toevoegen
+
                     </button>
                 </div>
                 <br/>
                 @endadmin
                 <div class="text-left">
-                    <button wire:click="downloadAll()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <i class="fa-solid fa-download"></i> Alle bestanden downloaden
+                    <button
+                        wire:click="downloadAll()"
+                        wire:loading.attr="disabled"
+                        wire:target="downloadAll"
+                        type="button"
+                        class="disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                    >
+                        <!-- Spinner verschijnt alleen tijdens downloadAll() -->
+                        <span wire:loading wire:target="downloadAll">
+                            <i class="fa-solid fa-spinner fa-spin me-2"></i>
+                        </span>
+
+                        <!-- Download icon en tekst normaal -->
+                        <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
+                        Alle bestanden downloaden
                     </button>
                 </div>
                 <br/>
