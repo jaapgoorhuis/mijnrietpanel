@@ -116,7 +116,9 @@ class Offertes extends Component
             'user_id' => Auth::user()->id,
             'status' => 'In behandeling',
             'order_id' => $orderId,
-            'discount' => $offerte->discount
+            'discount' => $offerte->discount,
+            'requested_delivery_date' => $offerte->requested_delivery_date,
+            'comment'=> $offerte->comment
         ]);
 
         $orderAfterCreate = Order::orderBy('id', 'desc')->first();
