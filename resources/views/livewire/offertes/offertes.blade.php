@@ -91,7 +91,9 @@
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Bedrijfsnaam') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Gewenste leverdatum') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Aantal') }} m²</th>
+                            @admin
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Land') }}</th>
+                            @endadmin
                             <th scope="col" class="px-4 py-3">{{ __('messages.Omgezet tot order') }}</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span> {{ __('messages.acties') }}</span>
@@ -120,7 +122,9 @@
                                     {{$totalM2}} m²
                                 </td>
                                 @admin
+
                                 <td class="px-4 py-3">
+
                                     @if($offerte->lang == 'nl')
                                         NL
                                     @else
@@ -164,7 +168,7 @@
                                             </li>
 
                                             <li>
-                                                <button  @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
+                                                <button @user @if($offerte->is_order == 1) disabled  @endif @enduser class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
                                                     <i class="fa-solid fa-circle-check" ></i> {{ __('messages.Offerte verwijderen') }}
                                                 </button>
                                             </li>
@@ -195,6 +199,7 @@
             "infoEmpty": "Geen resultaten om weer te geven",
             "emptyTable": "Geen resultaten aanwezig in de tabel",
         },
+        "order": [[0, "desc"]],
         paginate: false,
         lengthChange: false,
         filter: true,

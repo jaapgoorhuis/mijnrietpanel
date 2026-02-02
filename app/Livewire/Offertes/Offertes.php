@@ -29,15 +29,17 @@ class Offertes extends Component
     }
     public function render()
     {
+
         if(Auth::user()->is_admin) {
-            $this->offertes = Offerte::get();
+
+            $this->offertes = Offerte::orderby('offerte_id', 'DESC')->get();
         }
         else if(Auth::user()->companys->is_reseller) {
             $this->offertes = Offerte::whereHas('user', function ($query) {
                 $query->where('bedrijf_id', Auth::user()->bedrijf_id);
-            })->get();
+            })->OrderBy('offerte_id', 'asc')->get();
         } else {
-            $this->offertes = Offerte::where('user_id', Auth::user()->id)->get();
+            $this->offertes = Offerte::where('user_id', Auth::user()->id)->OrderBy('offerte_id', 'asc')->get();
         }
 
 

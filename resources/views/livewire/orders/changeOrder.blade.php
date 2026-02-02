@@ -153,18 +153,19 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="comment" class="text-gray-400">{{ __('messages.Opmerkingen') }}
                                 <div class="tooltip">
-                                    <div class="tooltip-content">
-                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.') }}
+                                    <div class="tooltip-content ml-[40px]">
+                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is Let op: Toegevoegde bewerkingen of acties kan een meerprijs geven Neem hiervoor contact op bij vragen') }}
                                     </div>
                                     <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                 </div>
+                                <strong></strong>
                             </label>
                             <textarea wire:model="comment" name="comment" id="comment" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" "></textarea>
                             <div class="text-red-500">@error('comment') {{ $message }} @enderror</div>
                         </div>
 
                         <br/><br/>
-                        @foreach($orderLines as $index => $orders)
+                        @foreach($orderLines as $index => $order)
                             @if($index > 0)
                                 <hr class="border-2 border-[#C0A16E]"/><br/><br/>
                             @endif
@@ -208,8 +209,7 @@
                                 <label for="fillLb" class="text-gray-400">CB (max 200mm)
                                     <div class="tooltip">
                                         <div class="tooltip-content">
-                                            {{ __('messages.Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.') }}
-                                        </div>
+                                            {{ __( 'messages.Vul hier de CB in mm in De maximale CB mag 200mm zijn Laat dit op nul staan als de CB niet van toepassing is Heeft u toch een grotere CB nodig? Neem dan contact met ons op' )}}             </div>
                                         <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                     </div>
                                 </label>
@@ -237,7 +237,7 @@
                                     <label for="fillTotaleLengte" class="text-gray-400"> {{ __('messages.Totale paneellengte') }} (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier de totale paneel lengte in mm in, inclusief de CB in. De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn. Wil je langere lengtes bestellen? Neem dan contact met ons op.') }}
+                                                {{ __('messages.Vul hier de totale paneel lengte in mm in, inclusief de CB in De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn Wil je langere lengtes bestellen? Neem dan contact met ons op') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
@@ -249,7 +249,7 @@
                                     <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal panelen') }} *
                                         <div class="tooltip">
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties. Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken.') }}
+                                                {{ __('messages.Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>

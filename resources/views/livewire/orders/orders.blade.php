@@ -246,6 +246,7 @@
              "infoEmpty": "Geen resultaten om weer te geven",
              "emptyTable": "Geen resultaten aanwezig in de tabel",
          },
+         "order": [[0, "desc"]],
          paginate: false,
          lengthChange: false,
          filter: true,

@@ -73,3 +73,7 @@ label[for="dt-search-0"]
     z-index: 999;
     background: white;
 }
+
+.tooltip-content {
+    margin-left: 40px !important;
+}

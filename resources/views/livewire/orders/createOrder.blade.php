@@ -155,20 +155,21 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="comment" class="text-gray-400">{{ __('messages.Opmerkingen') }}
                                 <div class="tooltip">
-                                    <div class="tooltip-content">
-                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.') }}
+                                    <div class="tooltip-content ml-[40px]">
+                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is Let op: Toegevoegde bewerkingen of acties kan een meerprijs geven Neem hiervoor contact op bij vragen') }}
                                     </div>
                                     <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                 </div>
+                                <strong></strong>
                             </label>
                             <textarea wire:model="comment" name="comment" id="comment" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" "></textarea>
                             <div class="text-red-500">@error('comment') {{ $message }} @enderror</div>
                         </div>
 
                         <br/><br/>
-                        @foreach($orderLines as $index => $orders)
+                        @foreach($orderLines as $index => $order)
                             @if($index > 0)
-                            <hr class="border-2 border-[#C0A16E]"/><br/><br/>
+                                <hr class="border-2 border-[#C0A16E]"/><br/><br/>
                             @endif
                             <div class="text-right">
                                 <button wire:click.prevent="removeOrderLine({{$index}})" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
@@ -178,68 +179,67 @@
 
                             </div>
                             <br/>
-                                {{ __('messages.Afmetingen paneel') }}<br/><br/>
-{{--                            <div class="grid md:grid-cols-2 md:gap-6">--}}
-{{--                                <div class="relative z-0 w-full mb-5 group">--}}
-{{--                                    <label for="fillLb" class="text-gray-400">LB (max 210mm)--}}
-{{--                                        <div class="tooltip">--}}
-{{--                                            <div class="tooltip-content">--}}
-{{--                                                Vul hier de LB in mm in. De maximale LB mag 210mm zijn. Laat dit op nul staan als de LB niet van toepassing is. Heeft u toch een grotere LB nodig? Neem dan contact met ons op.--}}
-{{--                                            </div>--}}
-{{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip{{$index}}"></i>--}}
-{{--                                        </div>--}}
-{{--                                    </label>--}}
-{{--                                    <input type="number" min="0" max="210" wire:model="fillLb.{{$index}}" wire:keydown="updateLb({{$index}})" name="fillLb" id="fillLb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
-{{--                                    <div class="text-red-500">@error('lb.'.$index) {{ $message }} @enderror</div>--}}
-{{--                                </div>--}}
-{{--                                <div class="relative z-0 w-full mb-5 group">--}}
-{{--                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)--}}
-{{--                                        <div class="tooltip">--}}
-{{--                                            <div class="tooltip-content">--}}
-{{--                                               Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.--}}
-{{--                                            </div>--}}
-{{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>--}}
-{{--                                        </div>--}}
-{{--                                    </label>--}}
-{{--                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
-{{--                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            {{ __('messages.Afmetingen paneel') }}<br/><br/>
+                            {{--                            <div class="grid md:grid-cols-2 md:gap-6">--}}
+                            {{--                                <div class="relative z-0 w-full mb-5 group">--}}
+                            {{--                                    <label for="fillLb" class="text-gray-400">LB (max 210mm)--}}
+                            {{--                                        <div class="tooltip">--}}
+                            {{--                                            <div class="tooltip-content">--}}
+                            {{--                                                Vul hier de LB in mm in. De maximale LB mag 210mm zijn. Laat dit op nul staan als de LB niet van toepassing is. Heeft u toch een grotere LB nodig? Neem dan contact met ons op.--}}
+                            {{--                                            </div>--}}
+                            {{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip{{$index}}"></i>--}}
+                            {{--                                        </div>--}}
+                            {{--                                    </label>--}}
+                            {{--                                    <input type="number" min="0" max="210" wire:model="fillLb.{{$index}}" wire:keydown="updateLb({{$index}})" name="fillLb" id="fillLb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
+                            {{--                                    <div class="text-red-500">@error('lb.'.$index) {{ $message }} @enderror</div>--}}
+                            {{--                                </div>--}}
+                            {{--                                <div class="relative z-0 w-full mb-5 group">--}}
+                            {{--                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)--}}
+                            {{--                                        <div class="tooltip">--}}
+                            {{--                                            <div class="tooltip-content">--}}
+                            {{--                                               Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.--}}
+                            {{--                                            </div>--}}
+                            {{--                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>--}}
+                            {{--                                        </div>--}}
+                            {{--                                    </label>--}}
+                            {{--                                    <input type="number" min="0" max="200" wire:model="fillCb.{{$index}}" wire:keydown="updateCb({{$index}})" name="fillCb" id="fillCb" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" placeholder=" " required />--}}
+                            {{--                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>--}}
+                            {{--                                </div>--}}
+                            {{--                            </div>--}}
 
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="fillLb" class="text-gray-400">CB (max 200mm)
-                                        <div class="tooltip">
-                                            <div class="tooltip-content">
-                                                {{ __('messages.Vul hier de CB in mm in. De maximale CB mag 200mm zijn. Laat dit op nul staan als de CB niet van toepassing is. Heeft u toch een grotere CB nodig? Neem dan contact met ons op.') }}
-                                            </div>
-                                            <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
-                                        </div>
-                                    </label>
-                                    <select id="fillCb" wire:model="fillCb.{{$index}}" wire:change="updateCb({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="fillLb" class="text-gray-400">CB (max 200mm)
+                                    <div class="tooltip">
+                                        <div class="tooltip-content">
+                                            {{ __( 'messages.Vul hier de CB in mm in De maximale CB mag 200mm zijn Laat dit op nul staan als de CB niet van toepassing is Heeft u toch een grotere CB nodig? Neem dan contact met ons op' )}}             </div>
+                                        <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
+                                    </div>
+                                </label>
+                                <select id="fillCb" wire:model="fillCb.{{$index}}" wire:change="updateCb({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
-                                        <option value="0">0mm</option>
-                                        <option value="20">20mm</option>
-                                        <option value="40">40mm</option>
-                                        <option value="60">60mm</option>
-                                        <option value="80">80mm</option>
-                                        <option value="100">100mm</option>
-                                        <option value="120">120mm</option>
-                                        <option value="140">140mm</option>
-                                        <option value="160">160mm</option>
-                                        <option value="180">180mm</option>
-                                        <option value="200">200mm</option>
+                                    <option value="0">0mm</option>
+                                    <option value="20">20mm</option>
+                                    <option value="40">40mm</option>
+                                    <option value="60">60mm</option>
+                                    <option value="80">80mm</option>
+                                    <option value="100">100mm</option>
+                                    <option value="120">120mm</option>
+                                    <option value="140">140mm</option>
+                                    <option value="160">160mm</option>
+                                    <option value="180">180mm</option>
+                                    <option value="200">200mm</option>
 
-                                    </select>
+                                </select>
 
-                                    <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
-                                </div>
+                                <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
+                            </div>
 
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillTotaleLengte" class="text-gray-400"> {{ __('messages.Totale paneellengte') }} (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier de totale paneel lengte in mm in, inclusief de CB in. De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn. Wil je langere lengtes bestellen? Neem dan contact met ons op.') }}
+                                                {{ __('messages.Vul hier de totale paneel lengte in mm in, inclusief de CB in De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn Wil je langere lengtes bestellen? Neem dan contact met ons op') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
@@ -251,7 +251,7 @@
                                     <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal panelen') }} *
                                         <div class="tooltip">
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties. Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken.') }}
+                                                {{ __('messages.Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
@@ -270,9 +270,9 @@
                             <div style="background-image: url('/public/storage/images/rietpanel_panel.png');" class="mb-[30px] relative bg-contain bg-no-repeat bg-center w-full h-[75px] sm:h-[100px] md:h-[120px] lg:h-[140px] xl:h-[160px]">
 
                                 <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px] sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px] text-[11px] md:text-[15px]">
-                                   <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
+                                    <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
                                 </div>
-{{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
+                                {{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
                                 <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]"><strong><- {{ __('messages.Totale maat') }}: </strong>{{$this->totaleLengte[$index]}} mm -> </div>
                             </div>
                         @endforeach
