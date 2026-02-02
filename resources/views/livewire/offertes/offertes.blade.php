@@ -21,7 +21,7 @@
 <div class="py-12">
 
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
-            @if(Session::has('success'))
+        @if(Session::has('success'))
             <div id="alert-3" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50" role="alert">
                 <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
@@ -40,21 +40,21 @@
         @endif
 
         @if(Session::has('error'))
-                    <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
-                        <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                        </svg>
-                        <span class="sr-only">Info</span>
-                        <div class="ms-3 text-sm font-medium">
-                            {{ session('error') }}
-                        </div>
-                        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#alert-2" aria-label="Close">
-                            <span class="sr-only">Close</span>
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </button>
-                    </div>
+            <div id="alert-2" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 " role="alert">
+                <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                </svg>
+                <span class="sr-only">Info</span>
+                <div class="ms-3 text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+                <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#alert-2" aria-label="Close">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
 
         @endif
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -86,10 +86,10 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
                             <th scope="col" class="px-4 py-3">Offerte ID</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Klant naam') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Geplaatst door') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Bedrijfsnaam') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Gewenste leverdatum') }}</th>
-                            <th scope="col" class="px-4 py-3"> {{ __('messages.Leverdatum rietpanel') }}</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Aantal') }} m²</th>
                             <th scope="col" class="px-4 py-3"> {{ __('messages.Land') }}</th>
                             <th scope="col" class="px-4 py-3">{{ __('messages.Omgezet tot order') }}</th>
@@ -104,7 +104,13 @@
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$offerte->offerte_id}}</th>
                                 <td class="px-4 py-3">{{$offerte->klantnaam}}</td>
                                 <td class="px-4 py-3">{{$offerte->intaker}}</td>
-                                <td class="px-4 py-3">{{$offerte->user->company->bedrijfsnaam}}</td>
+                                <td class="px-4 py-3">
+                                    @if($offerte->user)
+                                        {{$offerte->user->company->bedrijfsnaam}}
+                                    @else
+                                        Gebruiker is verwijderd
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3">@if($offerte->requested_delivery_date) {{$offerte->requested_delivery_date}} @else Geen datum @endif</td>
                                 <td class="px-4 py-3">
                                         <?php $totalM2 = 0?>
@@ -115,7 +121,7 @@
                                 </td>
                                 @admin
                                 <td class="px-4 py-3">
-                                    @if($offerte->lang === 'nl')
+                                    @if($offerte->lang == 'nl')
                                         NL
                                     @else
                                         {{ __('messages.Buitenland')}}
