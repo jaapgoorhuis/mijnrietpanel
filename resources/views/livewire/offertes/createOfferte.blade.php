@@ -175,10 +175,11 @@
                             <label for="comment" class="text-gray-400">{{ __('messages.Opmerkingen') }}
                                 <div class="tooltip">
                                     <div class="tooltip-content">
-                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is.') }}
+                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.') }}
                                     </div>
                                     <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                 </div>
+                                <strong></strong>
                             </label>
                             <textarea wire:model="comment" name="comment" id="comment" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" "></textarea>
                             <div class="text-red-500">@error('comment') {{ $message }} @enderror</div>

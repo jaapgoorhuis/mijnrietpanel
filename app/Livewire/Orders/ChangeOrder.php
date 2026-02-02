@@ -72,7 +72,7 @@ class ChangeOrder extends Component
     public $priceRule;
     public $order;
 
-    public $marge;
+    public $marge = 0;
     public $order_id;
 
     public $creator_user_id;

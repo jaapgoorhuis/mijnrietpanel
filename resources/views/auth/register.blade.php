@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold"> {{__('Auth.Account aanvragen')}}</h2>
         <br/>
 
-        {{__('Auth.Vraag hier uw account aan voor mijn.rietpanel.nl.<br/> Na goedkeuring ontvangt u een e-mail zodra uw account actief is')}}
+        {{__('Auth.Vraag hier uw account aan voor mijn.rietpanel.nl. Na goedkeuring ontvangt u een e-mail zodra uw account actief is')}}
 
     </div>
     <br/>

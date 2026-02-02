@@ -128,26 +128,7 @@
                                 <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
                             </div>
 
-                            @user
-                            @if($this->company->is_reseller == 0)
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="marge" class="text-gray-400"><strong>{{ __('messages.Jouw prijs') }}:    @if($this->priceRulePrice == 0)({{ __('messages.Selecteer kerndikte') }}) @else <?php $discount = $this->companyDiscount /100 * $this->priceRulePrice?>
-                                        {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW excl. marge @endif
-                                    </strong></label><br/>
-                                @admin<label><small>Je ziet de marge omdat jouw bedrijf geen reseller is maar een gewoon bedrijf en je ingelogd bent als admin<br/></small></label>@endadmin
-                                <label for="marge" class="text-gray-400">Marge (%)</label>
-                                <div class="tooltip">
-                                    <div class="tooltip-content">
-                                        {{ __('messages.Vul hier een percentage marge in. Marge is het percentage winst wat je bovenop de inkoopprijs kunt plaatsen.') }}
 
-                                    </div>
-                                    <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
-                                </div> *
-                                <input type="number" wire:model="marge" name="marge" id="marge" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('marge') {{ $message }} @enderror</div>
-                            </div>
-                            @endif
-                            @enduser
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
@@ -175,7 +156,7 @@
                             <label for="comment" class="text-gray-400">{{ __('messages.Opmerkingen') }}
                                 <div class="tooltip">
                                     <div class="tooltip-content">
-                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is.') }}
+                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.') }}
                                     </div>
                                     <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                 </div>

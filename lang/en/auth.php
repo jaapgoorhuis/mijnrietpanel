@@ -20,7 +20,7 @@ return [
     'Telefoonnummer' => 'Phone number',
     'Bedrijfsnaam'=> 'Company name',
     'Account aanvragen' => 'Request account',
-    'Vraag hier uw account aan voor mijn.rietpanel.nl.<br/> Na goedkeuring ontvangt u een e-mail zodra uw account actief is' => 'Request your account for mijn.rietpanel.nl here. After approval, you will receive an email once your account is active.',
+    'Vraag hier uw account aan voor mijn.rietpanel.nl. Na goedkeuring ontvangt u een e-mail zodra uw account actief is' => 'Request your account for mijn.rietpanel.nl here. After approval, you will receive an email once your account is active.',
     'Deze combinatie van e-mail en wachtwoord is niet geldig.' => 'This combination of email and password do not match our records',
 
 ];

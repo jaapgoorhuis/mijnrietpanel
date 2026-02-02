@@ -52,7 +52,7 @@ return [
     'Paneel toevoegen' => 'Add panel',
     'Order plaatsen' => 'Add order',
     'Selecteer een kerndikte' => 'Select a core thickness',
-    'Geef hier aan wanneer er een speciale bewerking of actie vereist is.' => 'Please specify here when u need a special adjustment or action.',
+    'Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.' => 'Please specify here when u need a special adjustment or action. Note! Additional edits or actions may incur an additional charge. Please contact us if you have any questions.',
     'Afmetingen paneel' => 'Panel dimensions',
     'Totale paneellengte' => 'Total panellength',
     'Aantal panelen' => 'Number of panels',
@@ -162,6 +162,7 @@ return [
     'Het nieuwe inmeet formulier is geupload' => 'The new measurement form has been uploaded',
     'Het bestand moet een pdf bestand zijn.' => 'The file has to be an PDF',
     'Het bestand mag niet groter dan 2MB zijn.' => 'The file cannot be bigger than 2MB',
-
+    'profiel' => 'Profile',
+    'Log uit' => 'Log out',
 
 ];

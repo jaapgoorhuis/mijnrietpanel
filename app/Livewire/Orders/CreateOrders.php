@@ -78,7 +78,7 @@ class CreateOrders extends Component
 
     public $requested_delivery_date;
 
-    public $marge;
+    public $marge = 0;
 
     public $locale;
     public $comment;

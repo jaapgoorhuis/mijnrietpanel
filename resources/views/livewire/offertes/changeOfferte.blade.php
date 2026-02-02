@@ -175,7 +175,7 @@
                             <label for="comment" class="text-gray-400">{{ __('messages.Opmerkingen') }}
                                 <div class="tooltip">
                                     <div class="tooltip-content">
-                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is.') }}
+                                        {{ __('messages.Geef hier aan wanneer er een speciale bewerking of actie vereist is. Let op: Toegevoegde bewerkingen of acties kan meerprijs geven. Neem hiervoor contact op bij vragen.') }}
                                     </div>
                                     <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                 </div>
