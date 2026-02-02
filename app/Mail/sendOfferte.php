@@ -27,9 +27,19 @@ class sendOfferte extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Offerte ontvangen #offerte-'.$this->offerte_id.' van mijn.rietpanel.nl',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Envelope(
+                subject: 'Offerte ontvangen #offerte-'.$this->offerte_id.' van mijn.rietpanel.nl',
+            );
+        } else {
+
+            return new Envelope(
+                subject: 'Quotation #quotation-'.$this->offerte_id.' van my.rietpanel.com',
+            );
+        }
+
     }
 
     /**
@@ -37,9 +47,19 @@ class sendOfferte extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.sendOfferte',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Content(
+                view: 'mail.sendOfferte',
+            );
+        } else {
+            return new Content(
+                view: 'mail.sendOfferteEn',
+            );
+        }
+
+
     }
 
     /**

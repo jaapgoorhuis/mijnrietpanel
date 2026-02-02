@@ -4,13 +4,13 @@
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    Mijn rietpanel
+                    {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">Details</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Details') }}</p>
                 </div>
             </li>
         </ol>
@@ -25,7 +25,7 @@
                 @admin
                 <div class="text-right">
                     <button wire:click="uploadDetails()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <i class="fa-solid fa-upload"></i> Bestanden toevoegen
+                        <i class="fa-solid fa-upload"></i>    {{ __('messages.Bestanden toevoegen') }}
                     </button>
                 </div>
                 <br/>
@@ -45,7 +45,7 @@
 
                         <!-- Download icon en tekst normaal -->
                         <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
-                        Alle bestanden downloaden
+                        {{ __('messages.Alle bestanden downloaden') }}
                     </button>
                 </div>
                 <br/>
@@ -53,7 +53,7 @@
 
                 <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
                     @if(!count($this->details))
-                        Er zijn geen bestanden gevonden
+                        {{ __('messages.Er zijn geen bestanden gevonden') }}
                     @else
                         @foreach($this->details as $detail)
                                 <div class="relative border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
@@ -74,7 +74,7 @@
                     <div class="fixed bottom-[20px] w-full pr-[49px]">
                         <button wire:click="downloadSelected()" type="button"
                                 class="mt-[20px] w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                            <i class="fa-solid fa-download"></i> Geselecteerde bestanden downloaden
+                            <i class="fa-solid fa-download"></i>    {{ __('messages.Geselecteerde bestanden downloaden') }}
                         </button>
                     </div>
                 @endif

@@ -1,9 +1,10 @@
 <x-guest-layout>
     <div class="text-center">
-        <h2 class="text-lg font-bold">Account aanvragen</h2>
+        <h2 class="text-lg font-bold"> {{__('Auth.Account aanvragen')}}</h2>
         <br/>
-        Vraag hier uw account aan voor mijn.rietpanel.nl.<br/>
-        Na goedkeuring ontvangt u een e-mail zodra uw account actief is
+
+        {{__('Auth.Vraag hier uw account aan voor mijn.rietpanel.nl.<br/> Na goedkeuring ontvangt u een e-mail zodra uw account actief is')}}
+
     </div>
     <br/>
 
@@ -26,7 +27,7 @@
 
         <!-- Email Address -->
         <div class="mt-4">
-            <x-input-label for="phone" :value="__('Telefoonnummer')" />
+            <x-input-label for="phone" :value="__('auth.Telefoonnummer')" />
             <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autocomplete="phone" />
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
@@ -55,7 +56,7 @@
         </div>
 
         <div>
-            <x-input-label for="bedrijfsnaam" :value="__('Bedrijfsnaam')" />
+            <x-input-label for="bedrijfsnaam" :value="__('auth.Bedrijfsnaam')" />
             <x-text-input id="bedrijfsnaam" class="block mt-1 w-full" type="text" name="bedrijfsnaam" :value="old('bedrijfsnaam')" required autofocus autocomplete="bedrijfsnaam" />
             <x-input-error :messages="$errors->get('bedrijfsnaam')" class="mt-2" />
         </div>

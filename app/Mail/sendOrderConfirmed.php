@@ -28,9 +28,19 @@ class sendOrderConfirmed extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Order #'.$this->order->order_id.' bevestigd',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+
+            return new Envelope(
+                subject: 'Order #'.$this->order->order_id.' bevestigd',
+            );
+        } else {
+            return new Envelope(
+                subject: 'Order #'.$this->order->order_id.' confirmed',
+            );
+        }
+
     }
 
     /**
@@ -38,9 +48,21 @@ class sendOrderConfirmed extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.sendOrderConfirmation',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+
+
+            return new Content(
+                view: 'mail.sendOrderConfirmation',
+            );
+        } else {
+
+            return new Content(
+                view: 'mail.sendOrderConfirmationEn',
+            );
+        }
+
     }
 
     /**

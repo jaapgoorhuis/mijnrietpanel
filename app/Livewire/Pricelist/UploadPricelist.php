@@ -16,6 +16,7 @@ class UploadPricelist extends Component
     public $pricelist;
 
     public $friendly_name = [];
+    public $locale;
 
 
     public function mount() {
@@ -29,7 +30,13 @@ class UploadPricelist extends Component
 
     public function render()
     {
-        $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->get();
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if ($this->locale === 'nl') {
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','nl')->get();
+        } elseif ($this->locale === 'en') {
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','en')->get();
+        }
         return view('livewire.pricelist.uploadPricelist');
     }
 
@@ -40,8 +47,8 @@ class UploadPricelist extends Component
     public function messages(): array
     {
         return [
-            'files.required' => 'Het is verplicht om een bestand te uploaden.',
-            'files.*.mimes' => 'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
+            'files.required' => __('messages.Het is verplicht om een bestand te uploaden.'),
+            'files.*.mimes' => __('messages.Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.'),
         ];
     }
 
@@ -69,13 +76,14 @@ class UploadPricelist extends Component
                 \App\Models\Pricelist::create([
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
-                    'order_id' => $orderId
+                    'order_id' => $orderId,
+                    'lang' => $this->locale,
                 ]);
             }
-            session()->flash('success', 'De bestanden zijn geupload.');
+            session()->flash('success', __('messages.De bestanden zijn geupload.'));
             return $this->redirect('/pricelist/upload', navigate: true);
         } else {
-            session()->flash('error', 'Upload één of meerdere bestanden.');
+            session()->flash('error', __('messages.Upload één of meerdere bestanden.'));
         }
 
     }
@@ -85,7 +93,7 @@ class UploadPricelist extends Component
         $file = \App\Models\Pricelist::where('id', $id)->first();
         Storage::disk('public')->delete('pricelist/'.$file->file_name);
         \App\Models\Pricelist::where('id', $id)->delete();
-        session()->flash('success', 'Het bestand is verwijderd.');
+        session()->flash('success', __('messages.Het bestand is verwijderd.'));
     }
 
     public function updateFileName($fileId)
@@ -94,10 +102,10 @@ class UploadPricelist extends Component
             \App\Models\Pricelist::where('id', $fileId)->update([
                 'friendly_name' => $this->friendly_name[$fileId]
             ]);
-            session()->flash('success', 'De bestandsnaam is aangepast.');
+            session()->flash('success', __('messages.De bestandsnaam is aangepast.'));
 
         } else {
-            session()->flash('error', 'Vul de naam van het bestand in.');
+            session()->flash('error', __('messages.Vul de naam van het bestand in.'));
         }
     }
 }

@@ -12,7 +12,7 @@ class Offerte extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['offerte_id', 'marge', 'discount', 'rietkleur','requested_delivery_date', 'comment', 'status', 'toepassing', 'merk_paneel','kerndikte', 'project_naam', 'is_order', 'klantnaam', 'referentie','aflever_straat', 'aflever_postcode', 'aflever_plaats', 'aflever_land', 'intaker', 'user_id', 'status'];
+   protected $fillable = ['offerte_id', 'marge', 'discount', 'lang', 'rietkleur','requested_delivery_date', 'comment', 'status', 'toepassing', 'merk_paneel','kerndikte', 'project_naam', 'is_order', 'klantnaam', 'referentie','aflever_straat', 'aflever_postcode', 'aflever_plaats', 'aflever_land', 'intaker', 'user_id', 'status'];
 
    protected $table = 'offerte';
    public function offerteLines() {

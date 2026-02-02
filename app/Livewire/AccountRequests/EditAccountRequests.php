@@ -17,6 +17,8 @@ class EditAccountRequests extends Component
 {
     public $users;
 
+    public $lang;
+
     public $company_id;
 
     public $user;
@@ -41,6 +43,7 @@ class EditAccountRequests extends Component
         $this->user = User::where('id', $this->user_id)->first();
 
 
+        $this->lang = $this->user->lang;
         $this->company_id = $this->user->bedrijf_id;
         $this->gebruikersnaam = $this->user->name;
         $this->email = $this->user->email;
@@ -107,6 +110,7 @@ class EditAccountRequests extends Component
             'email' => $this->email,
             'is_active' => $this->status,
             'is_architect' => $this->architect,
+            'lang' => $this->lang,
         ]);
 
          if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {

@@ -35,9 +35,9 @@ class UploadOffertes extends Component
     public function messages(): array
     {
         return [
-            'orderForm.required' => 'Het is verplicht om een bestand te uploaden.',
-            'orderForm.mimes' => 'Het bestand moet een pdf bestand zijn.',
-            'orderForm.max' => 'Het bestand mag niet groter dan 2MB zijn.',
+            'orderForm.required' => __('messages.Het is verplicht om een bestand te uploaden.'),
+            'orderForm.mimes' => __('messages.Het bestand moet een pdf bestand zijn.'),
+            'orderForm.max' => __('messages.Het bestand mag niet groter dan 2MB zijn.'),
         ];
     }
 
@@ -46,7 +46,7 @@ class UploadOffertes extends Component
         Storage::delete('rietpanel-order-formulier.pdf');
         $this->orderForm->storeAs(path: 'uploads', name: 'rietpanel-order-formulier.pdf', options: 'public');
 
-        session()->flash('success','Het nieuwe inmeet formulier is geupload');
+        session()->flash('success',__('messages.Het nieuwe inmeet formulier is geupload'));
         return $this->redirect('/offertes', navigate: true);
     }
 

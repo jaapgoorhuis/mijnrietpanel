@@ -27,9 +27,19 @@ class sendOrder extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Order ontvangen #order-'.$this->order_id.' van mijn.rietpanel.nl',
-        );
+
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Envelope(
+                subject: 'Order ontvangen #order-'.$this->order_id.' van mijn.rietpanel.nl',
+            );
+        } else {
+            return new Envelope(
+                subject: 'Order ontvangen #order-'.$this->order_id.' van my.rietpanel.com',
+            );
+        }
+
     }
 
     /**
@@ -37,9 +47,19 @@ class sendOrder extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.sendOrder',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Content(
+                view: 'mail.sendOrder',
+            );
+        } else {
+            return new Content(
+                view: 'mail.sendOrderEn',
+            );
+        }
+
+
     }
 
     /**

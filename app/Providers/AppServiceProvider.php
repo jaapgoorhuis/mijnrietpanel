@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,5 +43,19 @@ class AppServiceProvider extends ServiceProvider
             return $user && $user->is_architect;
         });
 
+        Lang::handleMissingKeysUsing(function (
+            string $key,
+            array $replace,
+            string $locale
+        ) {
+            // Alleen voor NL
+            if ($locale === 'nl') {
+                // messages.variable → variable
+                return last(explode('.', $key));
+            }
+
+            // Default Laravel gedrag
+            return $key;
+        });
     }
 }

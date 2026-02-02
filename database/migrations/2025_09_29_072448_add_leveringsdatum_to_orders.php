@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->string('requested_delivery_date')->nullable();;
             $table->string('delivery_date')->nullable();
-            $table->longText('comment');
+            $table->longText('comment')->nullable();
         });
     }
 

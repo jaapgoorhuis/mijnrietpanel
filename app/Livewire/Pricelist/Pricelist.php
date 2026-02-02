@@ -16,6 +16,9 @@ Pricelist extends Component
 
     public array $selectedDownloads = [];
 
+    public $locale;
+
+
 
     public function mount() {
         if(Auth::user()->is_admin || !Auth::user()->is_architect) {
@@ -28,7 +31,14 @@ Pricelist extends Component
 
     public function render()
     {
-        $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->get();
+
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if ($this->locale === 'nl') {
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','nl')->get();
+        } elseif ($this->locale === 'en') {
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','en')->get();
+        }
         return view('livewire.pricelist.pricelist');
     }
 

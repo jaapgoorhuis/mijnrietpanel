@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Documentation;
 
+use App\Models\Detail;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -13,10 +14,19 @@ Documentation extends Component
 {
     public $documentation;
     public array $selectedDownloads = [];
+    public $locale;
 
     public function render()
     {
-        $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->get();
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if ($this->locale === 'nl') {
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','nl')->get();
+        } elseif ($this->locale === 'en') {
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->get();
+        }
+
+
         return view('livewire.documentation.documentation');
     }
 

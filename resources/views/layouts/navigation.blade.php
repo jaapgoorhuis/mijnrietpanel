@@ -34,37 +34,37 @@
                         </x-dropdown-link>
 
                         <x-dropdown-link :href="route('mycompany')">
-                            {{ __('Mijn bedrijf') }}
+                            {{ __('messages.Mijn bedrijf') }}
                         </x-dropdown-link>
 
                         @admin
                         <x-dropdown-link :href="route('companys')">
-                            {{ __('Bedrijven') }}
+                            {{ __('messages.Bedrijven') }}
                         </x-dropdown-link>
                         @endadmin
 
 
                         @admin
                         <x-dropdown-link :href="route('surcharges')">
-                            {{ __('Toeslagen') }}
+                            {{ __('messages.Toeslagen') }}
                         </x-dropdown-link>
                         @endadmin
 
                         @admin
                         <x-dropdown-link :href="route('supliers')">
-                            {{ __('Leveranciers') }}
+                            {{ __('messages.Leveranciers') }}
                         </x-dropdown-link>
                         @endadmin
 
                         @admin
                         <x-dropdown-link :href="route('statistics')">
-                            {{ __('Statistieken') }}
+                            {{ __('messages.Statistieken') }}
                         </x-dropdown-link>
                         @endadmin
 
                         @admin
                         <x-dropdown-link :href="route('companys/pricerules')">
-                            {{ __('Prijsregels') }}
+                            {{ __('messages.Prijsregels') }}
                         </x-dropdown-link>
                         @endadmin
 
@@ -72,7 +72,7 @@
 
                         <x-dropdown-link :href="route('accountrequests')">
                             <div class="flex items-center gap-2">
-                                {{ __('Account verzoeken') }}
+                                {{ __('messages.Account verzoeken') }}
                                 @if(count($accountRequests))
                                     <span class="block h-[20px] w-[20px] text-[12px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
                                 @endif
@@ -126,43 +126,43 @@
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('mycompany')">
-                    {{ __('Mijn bedrijf') }}
+                    {{ __('messages.Mijn bedrijf') }}
                 </x-responsive-nav-link>
 
                 @admin
                 <x-responsive-nav-link  :href="route('companys')">
-                    {{ __('Bedrijven') }}
+                    {{ __('messages.Bedrijven') }}
                 </x-responsive-nav-link>
                 @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('surcharges')">
-                    {{ __('Toeslagen') }}
+                    {{ __('messages.Toeslagen') }}
                 </x-responsive-nav-link>
                 @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('supliers')">
-                    {{ __('Leveranciers') }}
+                    {{ __('messages.Leveranciers') }}
                 </x-responsive-nav-link>
                 @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('statistics')">
-                    {{ __('Statistieken') }}
+                    {{ __('messages.Statistieken') }}
                 </x-responsive-nav-link>
                 @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('companys/pricerules')">
-                    {{ __('Prijsregels') }}
+                    {{ __('messages.Prijsregels') }}
                 </x-responsive-nav-link>
                 @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('accountrequests')">
                     <div class="flex items-center gap-2">
-                        {{ __('Account verzoeken') }}
+                        {{ __('messages.Account verzoeken') }}
                         @if(count($accountRequests))
                             <span class="block h-[20px] w-[20px] text-[12px] text-white rounded-full border border-orange-500 flex bg-orange-500 items-center justify-center">{{count($accountRequests)}}</span>
                         @endif

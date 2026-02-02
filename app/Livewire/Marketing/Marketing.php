@@ -12,9 +12,17 @@ Marketing extends Component
 {
     public $marketing;
     public array $selectedDownloads = [];
+    public $locale;
     public function render()
     {
-        $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->get();
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if ($this->locale === 'nl') {
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','nl')->get();
+        } elseif ($this->locale === 'en') {
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->get();
+        }
+
         return view('livewire.marketing.marketing');
     }
 
@@ -35,7 +43,7 @@ Marketing extends Component
     public function downloadSelected()
     {
         if (empty($this->selectedDownloads)) {
-            session()->flash('error','Geen bestand geselecteerd.');
+            session()->flash('error',__('messages.Geen bestand geselecteerd.'));
             return;
         }
 

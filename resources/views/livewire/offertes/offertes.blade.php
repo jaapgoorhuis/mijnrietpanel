@@ -4,13 +4,13 @@
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    Mijn rietpanel
+                    {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Offertes</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">{{ __('messages.Offertes') }}</p>
                 </div>
             </li>
         </ol>
@@ -62,18 +62,18 @@
 
                 <div class="relative">
                     <button type="button" class="w-full ] mb-[20px] sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> Download inmeet formulier
+                        <a target="_blank" href="{{asset('/storage/uploads/rietpanel-order-formulier.pdf')}}"> <i class="fa-solid fa-download"></i> {{ __('messages.Download inmeet formulier') }}
 
                         </a>
                     </button>
                     <div class="relative md:absolute right-0 top-[-9px]">
                         @admin
                         <button wire:click="uploadOrderForm()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
-                            <i class="fa-solid fa-upload"></i> Inmeetformulier uploaden
+                            <i class="fa-solid fa-upload"></i> {{ __('messages.Inmeetformulier uploaden') }}
                         </button>
                         @endadmin
                         <button wire:click="newOfferte()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
-                            <i class="fa fa-plus hover:cursor-pointer"></i> Offerte aanmaken
+                            <i class="fa fa-plus hover:cursor-pointer"></i> {{ __('messages.Offerte aanmaken') }}
                         </button>
                     </div>
 
@@ -86,14 +86,15 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                         <tr>
                             <th scope="col" class="px-4 py-3">Offerte ID</th>
-                            <th scope="col" class="px-4 py-3">Klantnaam</th>
-                            <th scope="col" class="px-4 py-3">Geplaatst door:</th>
-                            <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
-                            <th scope="col" class="px-4 py-3">Gewenste leverdatum</th>
-                            <th scope="col" class="px-4 py-3">Aantal m²</th>
-                            <th scope="col" class="px-4 py-3">Omgezet tot order</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Geplaatst door') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Bedrijfsnaam') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Gewenste leverdatum') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Leverdatum rietpanel') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Aantal') }} m²</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Land') }}</th>
+                            <th scope="col" class="px-4 py-3">{{ __('messages.Omgezet tot order') }}</th>
                             <th scope="col" class="px-4 py-3 text-right">
-                                <span>Actie's</span>
+                                <span> {{ __('messages.acties') }}</span>
                             </th>
                         </tr>
                         </thead>
@@ -112,11 +113,20 @@
                                     @endforeach
                                     {{$totalM2}} m²
                                 </td>
+                                @admin
+                                <td class="px-4 py-3">
+                                    @if($offerte->lang === 'nl')
+                                        NL
+                                    @else
+                                        {{ __('messages.Buitenland')}}
+                                    @endif
+                                </td>
+                                @endadmin
                                 <td class="px-4 py-3">
                                     @if($offerte->is_order)
-                                        Ja
+                                        <span> {{ __('messages.Ja') }}</span>
                                     @else
-                                        Nee
+                                        <span> {{ __('messages.Nee') }}</span>
                                     @endif
                                 </td>
 
@@ -131,25 +141,25 @@
 
                                             <li>
                                                 <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-offerte/offerte-'.$offerte->offerte_id)}}" target="_blank">
-                                                    <i class="fa-solid fa-download"></i> Offerte downloaden
+                                                    <i class="fa-solid fa-download"></i> {{ __('messages.Offerte downloaden') }}
                                                 </a>
                                             </li>
 
                                             <li>
                                                 <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="createOfferteOrder({{$offerte->id}})" @if($offerte->is_order)disabled @endif>
-                                                    <i class="fa-solid fa-circle-check" ></i> Order maken
+                                                    <i class="fa-solid fa-circle-check" ></i> {{ __('messages.Order maken') }}
                                                 </button>
                                             </li>
 
                                             <li>
                                                 <button @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOfferte({{$offerte->id}})">
-                                                    <i class="fas fa-edit"></i> Offerte bewerken
+                                                    <i class="fas fa-edit"></i> {{ __('messages.Offerte bewerken') }}
                                                 </button>
                                             </li>
 
                                             <li>
                                                 <button  @if($offerte->is_order == 1) disabled  @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOfferte({{$offerte->id}})">
-                                                    <i class="fa-solid fa-circle-check" ></i> Offerte verwijderen
+                                                    <i class="fa-solid fa-circle-check" ></i> {{ __('messages.Offerte verwijderen') }}
                                                 </button>
                                             </li>
 
@@ -187,7 +197,7 @@
         layout: {
             topEnd: {
                 search: {
-                    placeholder: 'Zoeken'
+                    placeholder: '{{ __('messages.Zoeken') }}'
                 }
             }
         }

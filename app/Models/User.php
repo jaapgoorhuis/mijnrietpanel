@@ -28,7 +28,8 @@ class User extends Authenticatable
         'bedrijfsnaam',
         'phone',
         'is_architect',
-        'bedrijf_id'
+        'bedrijf_id',
+        'lang',
     ];
 
     public function companys() {

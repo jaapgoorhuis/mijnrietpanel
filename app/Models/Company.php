@@ -18,6 +18,7 @@ class Company extends Authenticatable
         'postcode',
         'plaats',
         'logo',
+        'lang',
 
     ];
 

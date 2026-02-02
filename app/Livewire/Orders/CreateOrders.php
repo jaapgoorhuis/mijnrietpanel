@@ -80,6 +80,7 @@ class CreateOrders extends Component
 
     public $marge;
 
+    public $locale;
     public $comment;
 
     public function mount() {
@@ -89,6 +90,8 @@ class CreateOrders extends Component
 
         $this->merk_paneel = $this->dakSupliers->first()->name;
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
+
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         $this->company = Company::where('id', Auth::user()->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
@@ -230,27 +233,27 @@ class CreateOrders extends Component
     public function messages(): array
     {
         return [
-            'klant_naam.required' => 'De klantnaam is een verplicht veld.',
-            'project_naam.required' => 'De projectnaam is een verplicht veld.',
-            'referentie.required' => 'De referentie is een verplicht veld.',
-            'aflever_straat.required' => 'De straat is een verplicht veld.',
-            'aflever_postcode.required' => 'De postcode is een verplicht veld.',
-            'aflever_plaats.required' => 'De plaats is een verplicht veld.',
-            'aflever_land.required' => 'Het land is een verplicht veld.',
-            'discount.required' => 'Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.',
-            'discount.min' => 'De korting kan niet lager dan 0 procent zijn',
-            'intaker.required' => 'Vul aub uw naam in.',
-            'totaleLengte.*.min' => 'De lengte moet mimimaal 500mm zijn.',
-            'totaleLengte.*.max' => 'De lengte mag maximaal 14500mm zijn.',
-            'totaleLengte.*.required' => 'De lengte is een verplicht veld.',
-            'aantal.*.min' => 'Dit moet mimimaal 1 paneel zijn.',
-            'aantal.*.required' => 'Het aantal panelen is een verplicht veld.',
-            'cb.*.max' => 'De CB mag maximaal 200mm zijn.',
-            'cb.*.min' => 'De CB moet minimaal 20mm zijn.',
-            'lb.*.min' => 'De LB moet minimaal 20mm zijn.',
-            'lb.*.max' => 'De LB mag maximaal 210mm zijn.',
-            'kerndikte' => 'De kerndikte is een verplicht veld',
-            'requested_delivery_date.required' => 'Dit is een verplicht veld.',
+            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld.'),
+            'project_naam.required' => __('messages.De projectnaam is een verplicht veld.'),
+            'referentie.required' => __('messages.De referentie is een verplicht veld.'),
+            'aflever_straat.required' => __('messages.De straat is een verplicht veld.'),
+            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld.'),
+            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld.'),
+            'aflever_land.required' => __('messages.Het land is een verplicht veld.'),
+            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.'),
+            'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
+            'intaker.required' => __('messages.Vul aub uw naam in.'),
+            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
+            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
+            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
+            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
+            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
+            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
+            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
+            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
+            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
+            'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
+            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
         ];
     }
 
@@ -294,6 +297,7 @@ class CreateOrders extends Component
             'marge' => $this->marge,
             'requested_delivery_date' => $this->requested_delivery_date,
             'comment' => $this->comment,
+            'lang' => $this->locale,
         ]);
 
         $order = Order::orderBy('id', 'desc')->first();

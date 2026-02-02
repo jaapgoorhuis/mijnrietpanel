@@ -30,11 +30,11 @@
             <tr>
                 <td class="w-half">
                     <div>Offerte #: {{$offerte->offerte_id}}</div>
-                    <div>Offerte datum: {{date("d-m-Y", strtotime($offerte->created_at))}}</div><br/>
-                    <div>Project naam: {{$offerte->project_naam}}</div>
-                    <div>Referentie: {{$offerte->referentie}}</div>
-                    <div>Verkoper: {{$offerte->intaker}}</div>
-                    <div>Leverdatum: {{$offerte->requested_delivery_date}}</div>
+                    <div>{{ __('messages.Offerte datum') }}: {{date("d-m-Y", strtotime($offerte->created_at))}}</div><br/>
+                    <div>{{ __('messages.Project naam') }}: {{$offerte->project_naam}}</div>
+                    <div>{{ __('messages.Referentie') }}: {{$offerte->referentie}}</div>
+                    <div>{{ __('messages.Verkoper') }}: {{$offerte->intaker}}</div>
+                    <div>{{ __('messages.Afleverdatum') }}: {{$offerte->requested_delivery_date}}</div>
                 </td>
                 <td class="w-half">
                     <div>{{$company->straat}}</div>
@@ -52,11 +52,11 @@
             <tr>
                 <td class="w-half">
                     <div><strong>Aan:</strong></div>
-                    <div>Klant naam: {{$offerte->klantnaam}}</div>
-                    <div>Adres: {{$offerte->aflever_straat}}</div>
-                    <div>Postcode: {{$offerte->aflever_postcode}}</div>
-                    <div>Plaats: {{$offerte->aflever_plaats}}</div>
-                    <div>Land: {{$offerte->aflever_land}}</div>
+                    <div>{{ __('messages.Klant naam') }}: {{$offerte->klantnaam}}</div>
+                    <div>{{ __('messages.Adres') }}: {{$offerte->aflever_straat}}</div>
+                    <div>{{ __('messages.Postcode') }}: {{$offerte->aflever_postcode}}</div>
+                    <div>{{ __('messages.Plaats') }}: {{$offerte->aflever_plaats}}</div>
+                    <div>{{ __('messages.Land') }}: {{$offerte->aflever_land}}</div>
                 </td>
             </tr>
         </table>
@@ -65,16 +65,16 @@
     <div class="margin-top">
         <table class="products">
             <tr>
-                <th>Rietkleur</th>
-                <th>Toepassing</th>
-                <th>Merk</th>
-                <th>Kerndikte</th>
-                <th>Lengte</th>
-                <th>CB</th>
+                <th>{{ __('messages.Rietkleur') }}</th>
+                <th>{{ __('messages.Toepassing') }}</th>
+                <th>{{ __('messages.Merk') }}</th>
+                <th>{{ __('messages.Kerndikte') }}</th>
+                <th>{{ __('messages.Lengte') }}</th>
+                <th>{{ __('messages.CB') }}</th>
                 <th>m²</th>
-                <th>Aantal</th>
-                <th>M2 prijs</th>
-                <th>Totale prijs</th>
+                <th>{{ __('messages.Aantal') }}</th>
+                <th>{{ __('messages.Prijs') }}</th>
+                <th>{{ __('messages.Totale prijs') }}</th>
             </tr>
 
             <?php $totalPrice= 0 ?>
@@ -152,10 +152,10 @@
         @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
             <table class="products toeslagen">
                 <tr class="items">
-                    <td><strong>Toeslag</strong></td>
-                    <td><strong>Stuks</strong></td>
-                    <td><strong>Stukprijs</strong></td>
-                    <td><strong>Totaal</strong></td>
+                    <td><strong>{{ __('messages.Toeslag') }}</strong></td>
+                    <td><strong>{{ __('messages.Stuks') }}</strong></td>
+                    <td><strong>{{ __('messages.Stuksprijs') }}</strong></td>
+                    <td><strong>{{ __('messages.Totaal') }}</strong></td>
                 </tr>
 
                 @foreach($toeslagen as $toeslag)
@@ -163,7 +163,7 @@
                         @if($toeslag->rule == 'vierkantemeter')
                             <tr class="items">
                                 @if($totalM2 < $toeslag->number)
-                                    <td>{{$toeslag->name}}</td>
+                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
                                     <td>1</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
@@ -177,7 +177,7 @@
                             @if($zaaglengtes > 0)
                                 <tr class="items">
                                         <?php $zaagprijs = $zaaglengtes * $toeslag->price ?>
-                                    <td>{{$toeslag->name}}</td>
+                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
                                     <td>{{$zaaglengtes}}</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
                                     <td>{!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</td>
@@ -194,7 +194,7 @@
         @if($offerte->comment)
             <table class="products toeslagen">
                 <tr class="items">
-                    <td><strong>Klant opmerking</strong></td>
+                    <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
                 </tr>
                 <tr class="items">
                     <td>{{$offerte->comment}}</td>
@@ -209,26 +209,27 @@
     <div class="total" style="width: 100%; margin-left:auto; margin-top:50px;">
         <table class="total-table">
             <tr>
-                <th style="text-align: left;">Totaal m²:</th>
+                <th style="text-align: left;">{{ __('messages.Totaal') }} m²:</th>
                 <th style="text-align: left;"> m² {{$totalM2}}</th>
             </tr>
             <tr>
-                <th style="text-align: left;">Subtotaal:</th>
+                <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
             </tr>
             <tr>
                 <th style="text-align: left;">21% BTW:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
+
             @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
                 <tr>
-                    <th style="text-align: left;">Toeslagen:</th>
+                    <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
                     <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
                 </tr>
             @endif
             <tr>
                 <th style="text-align: left; border-top:1px solid black">
-                    <strong>Totaal incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )incl. toeslagen:@endif</strong>
+                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )incl. {{ __('messages.toeslagen') }}:@endif</strong>
                 </th>
                 <th style="text-align: left; border-top:1px solid black">
                     € {{number_format($allInPrice + $totalToeslagPrice, 2, ',', '.')}}
@@ -239,12 +240,10 @@
 
     <!-- Footer altijd onderaan pagina -->
     <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
-        <p><strong>Betalingsconditie:</strong> 14 dagen netto</p>
+        <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
         <p>
-            Op al onze offertes, adviezen, leveringen, opdrachten en op alle met ons gesloten overeenkomsten zijn onze voorwaarden van toepassing.<br>
-            Deze voorwaarden worden op verzoek kosteloos toegezonden en zijn te lezen via uw portaal op
-            <a href="https://mijn.rietpanel.nl/" target="_blank">https://mijn.rietpanel.nl/</a>.<br>
-            Genoemde levertijden zijn verwachte levertijden en hieraan kunnen geen rechten worden ontleend.
+            {!!  __('messages.Op al onze offertes, adviezen, leveringen, opdrachten en op alle met ons gesloten overeenkomsten zijn onze voorwaarden van toepassing.<br> Deze voorwaarden worden op verzoek kosteloos toegezonden en zijn te lezen via uw portaal op <a href="https://my.rietpanel.com/" target="_blank">https://my.rietpanel.com/</a>.<br> Genoemde levertijden zijn verwachte levertijden en hieraan kunnen geen rechten worden ontleend.') !!}
+
         </p>
     </div>
 </div>

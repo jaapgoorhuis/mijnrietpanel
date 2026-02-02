@@ -12,7 +12,7 @@ class Order extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'klantnaam', 'marge','requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
+   protected $fillable = ['order_id', 'klantnaam', 'marge','lang', 'requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
    public function orderLines()
    {
        return $this->hasMany(OrderLines::class);

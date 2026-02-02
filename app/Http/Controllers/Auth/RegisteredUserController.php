@@ -32,6 +32,9 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -46,7 +49,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'bedrijfsnaam' => $request->bedrijfsnaam,
             'phone' => $request->phone,
-            'is_active' => false
+            'is_active' => false,
+            'lang' => $locale,
         ]);
 
         event(new Registered($user));

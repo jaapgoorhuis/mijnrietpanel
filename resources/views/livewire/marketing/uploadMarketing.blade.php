@@ -4,7 +4,7 @@
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
                 <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    Mijn rietpanel
+                    {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
 
@@ -12,7 +12,7 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        Marketing
+                        {{ __('messages.Marketing') }}
                     </a>
                 </div>
             </li>
@@ -79,7 +79,7 @@
                 <div class="grid">
 
                     @if(!count($this->marketing))
-                        Er zijn geen bestanden gevonden
+                        {{ __('messages.Er zijn geen bestanden gevonden') }}
                     @else
                         <div id="accordion-collapse" data-accordion="collapse">
                             <ul wire:sortable="updateMarketingOrder">
@@ -108,7 +108,7 @@
                                                             <div class="text-right">
                                                                 <i wire:click="removeMarketing({{$marketing->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
                                                             </div>
-                                                            <label for="project_name" class="text-gray-400">Bestandsnaam</label>
+                                                            <label for="project_name" class="text-gray-400">   {{ __('messages.Bestandsnaam') }}</label>
                                                             <input placeholder="{{$marketing->friendly_name}}" type="text" wire:model="friendly_name.{{$marketing->id}}"  name="friendly_name.{{$marketing->id}}" id="friendly_name.{{$marketing->id}}" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"  required />
                                                             <div class="text-red-500">@error('friendly_name.'.$marketing->id) {{ $message }} @enderror</div>
 

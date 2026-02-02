@@ -118,7 +118,8 @@ class Offertes extends Component
             'order_id' => $orderId,
             'discount' => $offerte->discount,
             'requested_delivery_date' => $offerte->requested_delivery_date,
-            'comment'=> $offerte->comment
+            'comment'=> $offerte->comment,
+            'lang' => $offerte->lang,
         ]);
 
         $orderAfterCreate = Order::orderBy('id', 'desc')->first();

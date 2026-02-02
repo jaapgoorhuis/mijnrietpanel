@@ -27,9 +27,22 @@ class sendNewCustomer extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Nieuwe accountaanvraag mijn.rietpanel.nl',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+
+
+            return new Envelope(
+                subject: 'Nieuwe accountaanvraag mijn.rietpanel.nl',
+            );
+        } else {
+
+
+            return new Envelope(
+                subject: 'Nieuwe accountaanvraag my.rietpanel.com',
+            );
+        }
+
     }
 
     /**
@@ -37,9 +50,20 @@ class sendNewCustomer extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.sendNewCustomer',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+
+            return new Content(
+                view: 'mail.sendNewCustomer',
+            );
+        } else {
+
+            return new Content(
+                view: 'mail.sendNewCustomerEn',
+            );
+        }
+
     }
 
     /**

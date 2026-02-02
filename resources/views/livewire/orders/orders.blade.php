@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">@admin Alle orders @endadmin @user Mijn orders @enduser</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">@admin {{ __('messages.Alle orders') }}  @endadmin @user {{ __('messages.Mijn orders') }} @enduser</p>
                 </div>
             </li>
         </ol>
@@ -65,7 +65,7 @@
                     <div class="relative md:absolute right-0 top-0 ">
 
                         <button wire:click="newOrder()" type="button" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                            <i class="fa fa-plus hover:cursor-pointer"></i> Order aanmaken
+                            <i class="fa fa-plus hover:cursor-pointer"></i> {{ __('messages.Order aanmaken') }}
                         </button>
                     </div>
                 </div>
@@ -76,17 +76,21 @@
                         <tr>
                             <th scope="col" class="px-4 py-3">ORDER ID</th>
                             <th scope="col" class="px-4 py-3">Project</th>
-                            <th scope="col" class="px-4 py-3">Geplaatst door:</th>
-                            <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
-                            <th scope="col" class="px-4 py-3">Gewenste leverdatum</th>
-                            <th scope="col" class="px-4 py-3">Leverdatum Rietpanel</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Geplaatst door') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Bedrijfsnaam') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Gewenste leverdatum') }}</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Leverdatum rietpanel') }}</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             @admin
-                                <th scope="col" class="px-4 py-3">Order besteld</th>
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.land') }}</th>
                             @endadmin
-                            <th scope="col" class="px-4 py-3">Aantal m²</th>
+
+                            @admin
+                                <th scope="col" class="px-4 py-3"> {{ __('messages.Order besteld') }}</th>
+                            @endadmin
+                            <th scope="col" class="px-4 py-3"> {{ __('messages.Aantal') }} m²</th>
                             <th scope="col" class="px-4 py-3 text-right">
-                                <span>Actie's</span>
+                                <span> {{ __('messages.acties') }}</span>
                             </th>
                         </tr>
                         </thead>
@@ -97,15 +101,23 @@
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
                                 <td class="px-4 py-3">{{$order->user->company->bedrijfsnaam}}</td>
-                                <td class="px-4 py-3">@if($order->requested_delivery_date) {{$order->requested_delivery_date}} @else Geen datum @endif</td>
-                                <td class="px-4 py-3">@if($order->delivery_date) {{$order->delivery_date}} @else Geen datum @endif</td>
-                                <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500 @endif whitespace-nowrap">
-                                    {{$order->status}}
+                                <td class="px-4 py-3">@if($order->requested_delivery_date) {{$order->requested_delivery_date}} @else  {{ __('messages.Geen datum') }} @endif</td>
+                                <td class="px-4 py-3">@if($order->delivery_date) {{$order->delivery_date}} @else {{ __('messages.Geen datum') }} @endif</td>
+                                <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500  @endif whitespace-nowrap">
+                                    {{ __('messages.'.$order->status) }}
                                 </td>
+
                                 @admin
                                 <td class="px-4 py-3">
+                                    @if($order->lang === 'nl')
+                                        NL
+                                    @else
+                                        {{ __('messages.Buitenland')}}
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
                                     @if($order->order_ordered == '')
-                                        Nee
+                                        {{ __('messages.Nee')}}
                                     @else
                                         {{$order->order_ordered}}
                                     @endif
@@ -136,7 +148,7 @@
                                             @endadmin
                                             <li>
                                                 <a class="block py-2 px-4 hover:bg-gray-100" href="{{asset('/download-order/order-'.$order->order_id)}}" target="_blank">
-                                                    <i class="fa-solid fa-download"></i> Order downloaden
+                                                    <i class="fa-solid fa-download"></i>{{ __('messages.Order downloaden') }}
                                                 </a>
                                             </li>
                                             @admin
@@ -193,16 +205,16 @@
                                             </li>
                                             @endadmin
                                             @admin
-                                            <li>
-                                                <button @if($order->status == "Bevestigd") disabled @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
-                                                    <i class="fas fa-edit"></i> Order bewerken
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOrder({{$order->id}})">
-                                                    <i class="fa-solid fa-circle-check" ></i> Order verwijderen
-                                                </button>
-                                            </li>
+                                                <li>
+                                                    <button @if($order->status == "Bevestigd") disabled @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
+                                                        <i class="fas fa-edit"></i>{{ __('messages.Order bewerken') }}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="removeOrder({{$order->id}})">
+                                                        <i class="fa-solid fa-circle-check" ></i> {{ __('messages.Order verwijderen') }}
+                                                    </button>
+                                                </li>
                                             @endadmin
                                         </ul>
 
@@ -237,7 +249,7 @@
          layout: {
              topEnd: {
                  search: {
-                     placeholder: 'Zoeken'
+                     placeholder: '{{ __('messages.Zoeken') }}'
                  }
              }
          }

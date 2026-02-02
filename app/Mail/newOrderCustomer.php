@@ -37,9 +37,17 @@ class newOrderCustomer extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.newOrderCustomer',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Content(
+                view: 'mail.newOrderCustomer',
+            );
+        } else {
+            return new Content(
+                view: 'mail.newOrderCustomerEn',
+            );
+        }
     }
 
     /**

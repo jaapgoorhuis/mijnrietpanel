@@ -19,10 +19,20 @@ Details extends Component
     public array $selectedDownloads = [];
     public array $allDownloads = [];
 
+    public $locale;
+
     public function render()
     {
 
-        $this->details = Detail::orderBy('order_id', 'asc')->get();
+
+        $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if ($this->locale === 'nl') {
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->get();
+        } elseif ($this->locale === 'en') {
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->get();
+        }
+
 
 
         foreach($this->details as $detail) {
