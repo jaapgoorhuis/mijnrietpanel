@@ -35,11 +35,18 @@ class RegisteredUserController extends Controller
     {
 
         $geoDetect = new GeoDetect();
-        $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
 
-        dd($country);
+        if($_SERVER['REMOTE_ADDR'] != '127.0.0.1' || $_SERVER['REMOTE_ADDR'] != 'localhost') {
+            $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
+            if($country->getIsoCode() != 'NL') {
+                $locale = 'EN';
+            } else {
+                $locale = 'NL';
+            }
+        } else {
+            $locale = config('app.locale'); // leest APP_LOCALE uit .env
+        }
 
-        $locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
