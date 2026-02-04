@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
         $geoDetect = new GeoDetect();
         $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
 
-        dd($country);
+        dd($country->getName());
 
         $locale = config('app.locale'); // leest APP_LOCALE uit .env
 
