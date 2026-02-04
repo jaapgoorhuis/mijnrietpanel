@@ -47,12 +47,5 @@ class orderUpdated extends Mailable
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function attachments(): array
-    {
-        return [
-            Attachment::fromPath(public_path('/storage/orders/order-'.$this->order_id.'.pdf'))
-                ->as('order-'.$this->order_id.'.pdf')
-                ->withMime('application/pdf'),
-        ];
-    }
+
 }
