@@ -9,7 +9,7 @@
         <tr>
             <td>
                 <h2>Order bevestigd</h2><br/>
-                De order #{{$order->order_id}} is bevestigd<br>
+                Uw order #{{$order->order_id}} is bevestigd<br>
                 De order zit als PDF bijgevoegd in de mail.
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>

@@ -10,7 +10,7 @@
             <td>
                 <h2>Order verwijderd</h2><br/>
                 Er is een order verwijderd.<br>
-                De order zit nog een keer bijgevoegd als PDF bijgevoegd in de mail.<br/>
+                De order zit nog een keer bijgevoegd als PDF in de mail.<br/>
 
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>

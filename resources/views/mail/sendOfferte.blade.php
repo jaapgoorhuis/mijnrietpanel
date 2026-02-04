@@ -11,7 +11,7 @@
                 <h2>Offerte</h2><br/>
                 Geachte heer/mevrouw,
                 <br/>
-                Hierbij ontvangt u een copy van de aangemaakte offerte op https://mijn.rietpanel.nl<br/>
+                Hierbij ontvangt u een kopie van de aangemaakte offerte op https://mijn.rietpanel.nl<br/>
                 De offerte zit als bijlage toegevoegd.<br/>
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>

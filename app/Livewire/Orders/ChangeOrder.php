@@ -323,7 +323,11 @@ class ChangeOrder extends Component
 
         Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
 
-        Mail::to($user->email)->send(new orderUpdated($order));
+        // dees krijgen we latijd natuurlijk
+
+        if(Auth::user()->is_admin == 1 && $order->user_id != Auth::user()->id) {
+            Mail::to($user->email)->send(new orderUpdated($order));
+        }
 
         session()->flash('success','De order is bewerkt.');
         return $this->redirect('/orders', navigate: true);

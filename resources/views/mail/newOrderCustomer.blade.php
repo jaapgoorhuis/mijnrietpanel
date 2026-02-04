@@ -10,7 +10,6 @@
             <td>
                 <h2>Nieuwe order</h2><br/>
                 U heeft een order geplaatst op mijn.rietpanel.nl<br>
-                De order zit als PDF bijgevoegd in de mail.<br/>
                 Wij bevestigen de order zo spoedig mogelijk.<br/>
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>
