@@ -18,6 +18,10 @@ class Order extends Authenticatable
        return $this->hasMany(OrderLines::class);
    }
 
+
+   public function Suplier() {
+       return $this->hasOne(Supliers::class,'suplier_name', 'merk_paneel');
+   }
     public function orderRules()
     {
         return $this->hasOne(OrderRules::class);

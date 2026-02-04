@@ -5,10 +5,12 @@ namespace App\Livewire\Orders;
 use App\Mail\sendNewCustomer;
 use App\Mail\sendOrder;
 use App\Mail\sendOrderConfirmed;
+use App\Mail\sendOrderList;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderRules;
 use App\Models\OrderTemplate;
+use App\Models\Supliers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -25,8 +27,14 @@ class EditOrders extends Component
     public $price;
     public $rule;
     public $show_orderlist = false;
-
+    public $currentModal = 'first';
     public $delivery_date;
+
+    public $send_copy = false;
+
+    public $existing_purchage_order_email;
+    public $existing_purchage_order_suplier;
+    public $new_purchage_order_email;
 
     public function mount() {
 
@@ -35,6 +43,13 @@ class EditOrders extends Component
             $this->orderId = Route::current()->parameter('id');
 
             $this->order = Order::where('id', $this->orderId)->first();
+
+            $this->existing_purchage_order_email = $this->order->Suplier->suplier_email;
+            $this->existing_purchage_order_suplier = $this->order->Suplier->suplier_name;
+            $this->new_purchage_order_email = $this->order->Suplier->suplier_email;
+
+
+
             return view('livewire.orders.editOrder');
 
         } else {
@@ -82,36 +97,66 @@ class EditOrders extends Component
         ];
     }
 
-   public function updateOrder($id) {
-
+ public function NextModal($id)
+    {
         if($this->rule || $this->price) {
             $this->validate($this->rules());
-
-
-            OrderRules::create(
-                [
-                    'order_id' => $this->orderId,
-                    'rule' => $this->rule,
-                    'price' => $this->price,
-                    'show_orderlist' => $this->show_orderlist,
-                ]
-            );
         }
 
         $this->validate($this->rules2());
 
+        // Open de volgende modal
+        $this->currentModal = 'next';
+    }
 
-        Order::where('id', $id)->update([
-            'status' => 'Bevestigd',
-            'delivery_date' => $this->delivery_date,
-        ]);
+    public function cancelNextModal() {
+        $this->currentModal = 'first';
+    }
+
+    public function closeModal()
+    {
+        $this->currentModal = null;
+    }
 
 
+   public function updateOrder($id) {
 
+
+       if($this->rule || $this->price) {
+           OrderRules::create(
+               [
+                   'order_id' => $this->orderId,
+                   'rule' => $this->rule,
+                   'price' => $this->price,
+                   'show_orderlist' => $this->show_orderlist,
+               ]
+           );
+       }
+
+       \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
+
+       try {
+           Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
+
+       } catch (\Exception $e) {
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
+       }
+
+       Order::where('id', $id)->update([
+           'status' => 'Bevestigd',
+           'delivery_date' => $this->delivery_date,
+           'order_ordered' => date('d-m-Y')
+       ]);
+
+       if($this->send_copy) {
+           //send confirmation mail to administratie@rietpanel.nl
+           Mail::to(strtolower('administratie@rietpanel.nl'))->send(new sendOrderList(['order' => $this->order, 'suplier_email' => $this->new_purchage_order_email]));
+       }
+       //send mail to customer
        Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
 
 
-       session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email);
+       session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'. De inkooporder is verstuurd naar '.$this->new_purchage_order_email);
 
        return $this->redirect('/orders', navigate: true);
    }

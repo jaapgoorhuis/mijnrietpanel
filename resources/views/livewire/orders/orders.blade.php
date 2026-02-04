@@ -188,13 +188,6 @@
 
                                             </li>
                                             <li>
-                                                <button @if($order->status == 'In behandeling') disabled @endif @if($order->order_ordered) disabled @endif class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:bg-[#e9eaeb] disabled:text-[#b5aeae]" wire:click="SendOrderList({{$order->id}})">
-                                                    <i class="fa-solid fa-download"></i> Bestellijst versturen
-                                                </button>
-
-                                            </li>
-
-                                            <li>
                                                 <a
                                                     @if($order->status == 'In behandeling')
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
