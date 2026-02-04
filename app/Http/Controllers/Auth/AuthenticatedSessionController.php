@@ -27,11 +27,25 @@ class AuthenticatedSessionController extends Controller
     {
        $user = User::where('email', $request->email)->first();
 
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+
        if($user) {
-           if($user->is_active == 0) {
-               session()->flash('error','Uw account is nog niet actief. Duurt dit langer dan gewenst? Neem dan contact met ons op!');
+           if ($user->is_active == 0) {
+               session()->flash('error', 'Uw account is nog niet actief. Duurt dit langer dan gewenst? Neem dan contact met ons op!');
                return redirect(route('login', absolute: false));
-           } else {
+           }
+           else if ($user->lang !== $locale && $user->is_admin == '0') {
+               if($user->lang == 'en') {
+                   session()->flash('error', 'You have a foreign account. You cannot log in at https://mijn.rietpanel.nl. You need to log in at https://my.rietpanel.com');
+               }
+               else {
+                   session()->flash('error', 'U heeft een nederlands account. Je kunt niet inloggen op de buitenlandse versie. Log in op de nederlandse versie. https://mijn.rietpanel.nl');
+               }
+
+                return redirect(route('login', absolute: false));
+           }
+           else {
                $request->authenticate();
 
                $request->session()->regenerate();

@@ -164,5 +164,14 @@ return [
     'Het bestand mag niet groter dan 2MB zijn.' => 'The file cannot be bigger than 2MB',
     'profiel' => 'Profile',
     'Log uit' => 'Log out',
-
+    'email_exists' =>'Email already exists',
+    'name_required' => 'Your name is required',
+    'phone_required' => 'Your phonenumber is required',
+    'Password_required' => 'your password is required',
+    'not_confirmed' => 'The passwords do not match',
+    'password_not_longenaugh' => 'The password needs to be at least 8 characters',
+    'Wachtwoord' => 'Password',
+    'Onthoud mij' => 'Remember me',
+    'Wachtwoord vergeten' => 'Forgot your password?',
+    'Stuur reset email' => 'Send reset mail',
 ];

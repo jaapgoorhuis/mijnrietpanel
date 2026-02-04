@@ -31,12 +31,15 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+
+
+
     public function store(Request $request): RedirectResponse
     {
 
         $geoDetect = new GeoDetect();
 
-        if($_SERVER['REMOTE_ADDR'] != '127.0.0.1' || $_SERVER['REMOTE_ADDR'] != 'localhost') {
+        if($_SERVER['REMOTE_ADDR'] !== '127.0.0.1') {
             $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
             if($country->getIsoCode() != 'NL') {
                 $locale = 'EN';
@@ -47,14 +50,8 @@ class RegisteredUserController extends Controller
             $locale = config('app.locale'); // leest APP_LOCALE uit .env
         }
 
+        $request->validate($this->rules(), $this->messages());
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'bedrijfsnaam' => ['required'],
-            'phone' => ['required']
-        ]);
 
         $user = User::create([
             'name' => $request->name,
@@ -73,5 +70,29 @@ class RegisteredUserController extends Controller
 
         session()->flash('success','Uw aanvraag is succesvol doorgekomen. U krijgt een mail zodra uw account actief is');
         return redirect(route('login', absolute: false));
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'bedrijfsnaam' => ['required'],
+            'phone' => ['required'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.unique' => __('messages.email_exists'),
+            'name.required' => __('messages.name_required'),
+            'password.required' => __('messages.password_required'),
+            'bedrijfsnaam.required' => __('messages.company_name_required'),
+            'phone.required' => __('messages.phone_required'),
+            'confirmed' => __('messages.not_confirmed'),
+            'password.min' => __('messages.password_not_longenaugh'),
+        ];
     }
 }
