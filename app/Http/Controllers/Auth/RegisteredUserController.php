@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Hibit\GeoDetect;
 
 class RegisteredUserController extends Controller
 {
@@ -32,6 +33,11 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
+        $geoDetect = new GeoDetect();
+        $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
+
+        dd($country);
 
         $locale = config('app.locale'); // leest APP_LOCALE uit .env
 
