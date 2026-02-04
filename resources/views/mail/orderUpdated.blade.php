@@ -10,7 +10,7 @@
             <td>
                 <h2>Order bewerkt</h2><br/>
                 Uw order is door Rietpanel bewerkt.<br>
-                De bewerkte order zit als PDF bijgevoegd in de mail.<br/>
+                U kunt de bewerkte order vinden in uw Rietpanel.<br/>
                 <br/><br/>
                 Met vriendelijke groet,<br/><br/>
                 Team Rietpanel<br/><br/>
