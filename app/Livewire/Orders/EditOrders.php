@@ -6,6 +6,7 @@ use App\Mail\sendNewCustomer;
 use App\Mail\sendOrder;
 use App\Mail\sendOrderConfirmed;
 use App\Mail\sendOrderList;
+use App\Mail\sendOrderListConfirmation;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderRules;
@@ -152,7 +153,7 @@ class EditOrders extends Component
 
        if($this->send_copy) {
            //send confirmation mail to administratie@rietpanel.nl
-           Mail::to(strtolower($this->admin_email))->send(new sendOrderList(['order' => $this->order, 'suplier_email' => $this->new_purchage_order_email]));
+           Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation(['order' => $this->order, 'suplier_email' => $this->new_purchage_order_email]));
        }
        //send mail to customer
        Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
