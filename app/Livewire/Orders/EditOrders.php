@@ -36,6 +36,8 @@ class EditOrders extends Component
     public $existing_purchage_order_suplier;
     public $new_purchage_order_email;
 
+    public $admin_email = 'administratie@rietpanel.nl';
+
     public function mount() {
 
 
@@ -150,7 +152,7 @@ class EditOrders extends Component
 
        if($this->send_copy) {
            //send confirmation mail to administratie@rietpanel.nl
-           Mail::to(strtolower('administratie@rietpanel.nl'))->send(new sendOrderList(['order' => $this->order, 'suplier_email' => $this->new_purchage_order_email]));
+           Mail::to(strtolower($this->admin_email))->send(new sendOrderList(['order' => $this->order, 'suplier_email' => $this->new_purchage_order_email]));
        }
        //send mail to customer
        Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
