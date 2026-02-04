@@ -95,7 +95,7 @@
             t.a.v. Verkoop<br>
            {{$leverancier->suplier_straat}}<br>
             {{$leverancier->suplier_postcode}}<br>
-            {{$leverancier->suplier_plaats}}<br><br>
+            {{$leverancier->suplier_plaats}}<br>
             {{$leverancier->suplier_land}}<br><br>
 
             <table class="order-details">
