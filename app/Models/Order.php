@@ -20,7 +20,7 @@ class Order extends Authenticatable
 
 
    public function Suplier() {
-       return $this->hasOne(Supliers::class,'suplier_name', 'merk_paneel');
+       return $this->hasOne(Supliers::class,'name', 'merk_paneel');
    }
     public function orderRules()
     {
