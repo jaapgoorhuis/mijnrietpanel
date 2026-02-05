@@ -29,5 +29,6 @@ return [
     'Al een account?', 'Already registered?',
     'Onthoud mij' => 'Remember me',
     'Wachtwoord vergeten?' => 'Forgot your password?',
+    'stuur reset email' => 'Send reset email',
 
 ];
