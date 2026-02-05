@@ -27,5 +27,7 @@ return [
     'Wachtwoord' => 'Password',
     'Wachtwoord herhalen', 'Confirm password',
     'Al een account?', 'Already registered?',
+    'Onthoud mij' => 'Remember me',
+    'Wachtwoord vergeten' => 'Forgot your password?',
 
 ];
