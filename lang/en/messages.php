@@ -162,7 +162,7 @@ return [
     'Het nieuwe inmeet formulier is geupload' => 'The new measurement form has been uploaded',
     'Het bestand moet een pdf bestand zijn.' => 'The file has to be an PDF',
     'Het bestand mag niet groter dan 2MB zijn.' => 'The file cannot be bigger than 2MB',
-    'profiel' => 'Profile',
+    'Profiel' => 'Profile',
     'Log uit' => 'Log out',
     'email_exists' =>'Email already exists',
     'name_required' => 'Your name is required',
