@@ -28,6 +28,6 @@ return [
     'Wachtwoord herhalen', 'Confirm password',
     'Al een account?', 'Already registered?',
     'Onthoud mij' => 'Remember me',
-    'Wachtwoord vergeten' => 'Forgot your password?',
+    'Wachtwoord vergeten?' => 'Forgot your password?',
 
 ];
