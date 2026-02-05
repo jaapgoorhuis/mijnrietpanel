@@ -328,7 +328,7 @@ class CreateOrders extends Component
 
         Mail::to(Auth::user()->email)->send(new newOrderCustomer($order));
 
-        session()->flash('success','De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen');
+        session()->flash('success',__('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen'));
         return $this->redirect('/orders', navigate: true);
     }
 

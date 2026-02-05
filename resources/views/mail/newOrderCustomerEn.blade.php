@@ -10,7 +10,6 @@
             <td>
                 <h2>New order</h2><br/>
                 U have placed a new order on my.rietpanel.com<br>
-                The order is attached by this email.<br/>
                 We will confirm the order as soon as possible.<br/>
                 <br/><br/>
                 Kind regards,<br/><br/>

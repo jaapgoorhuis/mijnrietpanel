@@ -27,9 +27,20 @@ class newOrderCustomer extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'Order geplaatst #order-'.$this->order_id.' op mijn.rietpanel.nl',
-        );
+        $locale = config('app.locale'); // leest APP_LOCALE uit .env
+
+        if($locale === 'nl') {
+            return new Envelope(
+                subject: 'Order geplaatst #order-'.$this->order_id.' op mijn.rietpanel.nl',
+            );
+
+        } else {
+            return new Envelope(
+                subject: 'New order #order-'.$this->order_id.' on my.rietpanel.com',
+            );
+        }
+
+
     }
 
     /**
