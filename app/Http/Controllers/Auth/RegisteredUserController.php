@@ -42,9 +42,9 @@ class RegisteredUserController extends Controller
         if($_SERVER['REMOTE_ADDR'] !== '127.0.0.1') {
             $country = $geoDetect->getCountry($_SERVER['REMOTE_ADDR']);
             if($country->getIsoCode() != 'NL') {
-                $locale = 'EN';
+                $locale = 'en';
             } else {
-                $locale = 'NL';
+                $locale = 'nl';
             }
         } else {
             $locale = config('app.locale'); // leest APP_LOCALE uit .env
