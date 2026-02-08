@@ -36,10 +36,10 @@ class AuthenticatedSessionController extends Controller
                return redirect(route('login', absolute: false));
            }
            else if ($user->lang !== $locale && $user->is_admin == '0') {
-               if($user->lang == 'en') {
+               if($user->lang == 'en' && $locale == 'nl') {
                    session()->flash('error', 'You have a foreign account. You cannot log in at https://mijn.rietpanel.nl. You need to log in at https://my.rietpanel.com');
                }
-               else {
+               else if($user->lang == 'nl' && $locale == 'en') {
                    session()->flash('error', 'U heeft een nederlands account. Je kunt niet inloggen op de buitenlandse versie. Log in op de nederlandse versie. https://mijn.rietpanel.nl');
                }
 
