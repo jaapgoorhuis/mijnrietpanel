@@ -15,7 +15,7 @@ use function Spatie\LaravelPdf\Support\pdf;
 class EditCompanyUsers extends Component
 {
     public $users;
-
+    public $lang;
     public $company_id;
 
     public $user;
@@ -55,6 +55,7 @@ class EditCompanyUsers extends Component
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
         $this->architect = $this->user->is_architect;
+        $this->lang = $this->user->lang;
     }
      public function render()
      {
@@ -100,6 +101,7 @@ class EditCompanyUsers extends Component
             'phone' => $this->phone,
             'is_admin' => $this->is_admin,
             'is_architect' => $this->architect,
+            'lang' => $this->lang,
         ]);
 
         if($this->oldStatus != $this->status) {
