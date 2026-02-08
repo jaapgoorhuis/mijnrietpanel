@@ -84,6 +84,14 @@
                                 <td class="px-4 py-3">{{$user->email}} </td>
                                 <td class="px-4 py-3">{{$user->phone}} </td>
                                 <td class="px-4 py-3">{{$company->bedrijfsnaam}} </td>
+
+                                <td class="px-4 py-3">
+                                    @if($user->lang == 'nl')
+                                        Nederlands
+                                    @else
+                                        Buitenlands
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3">
                                     @if($user->is_active)
                                         Actief
@@ -92,13 +100,6 @@
                                     @endif
                                 </td>
 
-                                <td class="px-4 py-3">
-                                        @if($user->lang == 'nl')
-                                            Nederlands
-                                    @else
-                                    Buitenlands
-                                            @endif
-                                </td>
                                 <td class="px-4 py-3">
                                     @if($user->is_admin)
                                         Admin
