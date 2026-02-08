@@ -68,6 +68,7 @@
                             <th scope="col" class="px-4 py-3">Email</th>
                             <th scope="col" class="px-4 py-3">Telefoonnummer</th>
                             <th scope="col" class="px-4 py-3">Bedrijf</th>
+                            <th scope="col" class="px-4 py-3">Land</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3">Rol</th>
                             <th scope="col" class="px-4 py-3 text-right">
@@ -91,6 +92,13 @@
                                     @endif
                                 </td>
 
+                                <td class="px-4 py-3">
+                                        @if($user->lang == 'nl')
+                                            Nederlands
+                                    @else
+                                    Buitenlands
+                                            @endif
+                                </td>
                                 <td class="px-4 py-3">
                                     @if($user->is_admin)
                                         Admin
