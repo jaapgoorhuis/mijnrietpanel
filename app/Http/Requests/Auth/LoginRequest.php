@@ -45,7 +45,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('Auth.Deze combinatie van e-mail en wachtwoord is niet geldig.'),
+                'email' => __('auth.invalid_credentials')
             ]);
         }
 

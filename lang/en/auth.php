@@ -30,5 +30,6 @@ return [
     'Onthoud mij' => 'Remember me',
     'Wachtwoord vergeten?' => 'Forgot your password?',
     'Stuur reset email' => 'Send reset email',
+    'invalid_credentials' => 'The credentials do not match',
 
 ];

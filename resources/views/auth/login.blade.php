@@ -26,6 +26,15 @@
         </div>
     @endif
 
+    @error('email')
+    <div class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <div class="ms-3 text-sm font-medium">
+            {{ $message }}
+        </div>
+    </div>
+    @enderror
+
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
