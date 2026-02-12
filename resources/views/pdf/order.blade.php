@@ -189,15 +189,17 @@
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
+                </tr>
+                <tr class="items">
+                    <td>{{$order->comment}}</td>
                     @if($order->status == 'Bevestigd')
-                            @if($order->orderRules)
-                                <td>
-                                    {!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}
-                                </td>
-                            @endif
+                        @if($order->orderRules)
+                            <td>
+                                {!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}
+                            </td>
+                        @endif
                     @endif
                 </tr>
-
             </table>
 
         @endif
