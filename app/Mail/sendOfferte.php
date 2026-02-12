@@ -19,6 +19,7 @@ class sendOfferte extends Mailable
      */
     public function __construct($offerte)
     {
+        $this->offerte = $offerte;
         $this->offerte_id = $offerte->offerte_id;
     }
 
@@ -69,9 +70,9 @@ class sendOfferte extends Mailable
      */
     public function attachments(): array
     {
-        if($this->order->lang === 'en') {
+        if($this->offerte->lang === 'en') {
             return [
-                Attachment::fromPath('https://my.rietpanel.com/storage/offertes/offerte-'.$this->offerte_id.'.pdf')
+                Attachment::fromPath('https://my.rietpanel.com/public/storage/offertes/offerte-'.$this->offerte_id.'.pdf')
                     ->as('offerte-'.$this->offerte_id.'.pdf')
                     ->withMime('application/pdf'),
 
