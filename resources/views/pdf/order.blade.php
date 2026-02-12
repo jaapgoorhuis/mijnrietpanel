@@ -192,7 +192,7 @@
                 </tr>
                 <tr class="items">
                     <td>{{$order->comment}}</td>
-                    @if($order->status == 'Bevestigd')
+                    @if($order->status === 'Bevestigd')
                         test
                         @if($order->orderRules)
                             <td>
