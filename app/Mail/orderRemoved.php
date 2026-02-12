@@ -19,6 +19,7 @@ class orderRemoved extends Mailable
      */
     public function __construct($order)
     {
+        $this->order = $order;
         $this->order_id = $order->order_id;
     }
 
