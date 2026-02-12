@@ -138,8 +138,7 @@
                                     <label for="marge" class="text-gray-400">Marge (%)</label>
                                     <div class="tooltip">
                                         <div class="tooltip-content">
-                                            {{ __('messages.Vul hier een percentage marge in. Marge is het percentage winst wat je bovenop de inkoopprijs kunt plaatsen.') }}
-
+                                            {{ __('messages.percentage_marge') }}
                                         </div>
                                         <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
                                     </div> *
