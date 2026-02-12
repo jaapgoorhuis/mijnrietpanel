@@ -142,7 +142,7 @@ class EditOrders extends Component
            Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
 
        } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de leverancier.' . $e);
        }
 
        Order::where('id', $id)->update([
@@ -158,14 +158,14 @@ class EditOrders extends Component
            }
 
        } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);
        }
 
        try {
            Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
 
        } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de klant.' . $e);
        }
 
 
