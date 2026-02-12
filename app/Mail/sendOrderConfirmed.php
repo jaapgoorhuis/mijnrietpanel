@@ -48,12 +48,11 @@ class sendOrderConfirmed extends Mailable
      */
     public function content(): Content
     {
-        if($this->order->lang) {
+        if($this->order->lang === 'nl') {
             return new Content(
                 view: 'mail.sendOrderConfirmation',
             );
         } else {
-
             return new Content(
                 view: 'mail.sendOrderConfirmationEn',
             );
