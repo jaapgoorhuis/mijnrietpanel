@@ -175,5 +175,7 @@ return [
     'Onthoud mij' => 'Remember me',
     'Wachtwoord vergeten' => 'Forgot your password?',
     'Stuur reset email' => 'Send reset mail',
+    'Jouw prijs' => 'Your price',
+    'Selecteer kerndikte' => 'Select a core thickness',
     'De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen' => 'The order is created. We will check your order and will confirm it as soon as possible.'
 ];
