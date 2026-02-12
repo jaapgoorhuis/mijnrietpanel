@@ -18,4 +18,5 @@ return [
     'Password_required' => 'Het wachtwoord is verplicht',
     'not_confirmed' => 'De wachtwoorden komen niet overeen',
     'password_not_longenaugh' => 'Het wachtwoord moet minimaal 8 tekens bevatten',
+    'percentage_marge' => 'Vul hier een percentage marge. in Marge is het percentage winst wat je bovenop de inkoopprijs kunt plaatsen.',
     ];
