@@ -36,9 +36,12 @@ class sendOrderConfirmed extends Mailable
                 subject: 'Order #'.$this->order->order_id.' bevestigd',
             );
         } else {
+
             return new Envelope(
                 subject: 'Order #'.$this->order->order_id.' confirmed',
             );
+
+
         }
 
     }
@@ -56,6 +59,7 @@ class sendOrderConfirmed extends Mailable
             return new Content(
                 view: 'mail.sendOrderConfirmationEn',
             );
+
         }
 
     }

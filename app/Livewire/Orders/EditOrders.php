@@ -74,7 +74,7 @@ class EditOrders extends Component
         $rules = [
             'rule' => 'required',
             'price' => 'required',
-         ];
+        ];
 
         return $rules;
     }
@@ -100,7 +100,7 @@ class EditOrders extends Component
         ];
     }
 
- public function NextModal($id)
+    public function NextModal($id)
     {
         if($this->rule || $this->price) {
             $this->validate($this->rules());
@@ -122,63 +122,65 @@ class EditOrders extends Component
     }
 
 
-   public function updateOrder($id) {
+    public function updateOrder($id) {
 
 
-       if($this->rule || $this->price) {
-           OrderRules::create(
-               [
-                   'order_id' => $this->orderId,
-                   'rule' => $this->rule,
-                   'price' => $this->price,
-                   'show_orderlist' => $this->show_orderlist,
-               ]
-           );
-       }
+        if($this->rule || $this->price) {
+            OrderRules::create(
+                [
+                    'order_id' => $this->orderId,
+                    'rule' => $this->rule,
+                    'price' => $this->price,
+                    'show_orderlist' => $this->show_orderlist,
+                ]
+            );
+        }
 
-       \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
-       try {
-           Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
+        try {
+            Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
 
-       } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de leverancier.' . $e);
-       }
-
-       Order::where('id', $id)->update([
-           'status' => 'Bevestigd',
-           'delivery_date' => $this->delivery_date,
-           'order_ordered' => date('d-m-Y')
-       ]);
-
-       try {
-           if($this->send_copy) {
-               //send confirmation mail to administratie@rietpanel.nl
-               Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
-           }
-
-       } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);
-       }
-
-       try {
-           Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
-
-       } catch (\Exception $e) {
-           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de klant.' . $e);
-       }
-
-
-       //send mail to customer
+        } catch (\Exception $e) {
+            return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de leverancier.' . $e);
+        }
 
 
 
-       session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'. De inkooporder is verstuurd naar '.$this->new_purchage_order_email);
+        try {
+            if($this->send_copy) {
+                //send confirmation mail to administratie@rietpanel.nl
+                Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
+            }
 
-       return $this->redirect('/orders', navigate: true);
-   }
+        } catch (\Exception $e) {
+            return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);
+        }
 
-   public function cancelUpdateOrder() {
+        try {
+            Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
+
+        } catch (\Exception $e) {
+            return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de klant.' . $e);
+        }
+
+
+        Order::where('id', $id)->update([
+            'status' => 'Bevestigd',
+            'delivery_date' => $this->delivery_date,
+            'order_ordered' => date('d-m-Y')
+        ]);
+
+        //send mail to customer
+
+
+
+        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'. De inkooporder is verstuurd naar '.$this->new_purchage_order_email);
+
+        return $this->redirect('/orders', navigate: true);
+    }
+
+    public function cancelUpdateOrder() {
         return $this->redirect('/orders', navigate: true);
     }
 }
