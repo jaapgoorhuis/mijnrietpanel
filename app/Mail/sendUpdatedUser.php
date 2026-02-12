@@ -14,12 +14,14 @@ class sendUpdatedUser extends Mailable
     use Queueable, SerializesModels;
 
     public $status;
+    public $lang;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($status)
+    public function __construct($status,$lang)
     {
+        $this->lang = $lang;
         $this->status = $status;
     }
 
@@ -28,9 +30,15 @@ class sendUpdatedUser extends Mailable
      */
     public function envelope(): Envelope
     {
+
+        if($this->lang == 'nl') {
         return new Envelope(
             subject: 'Uw account op mijn.rietpanel.nl is geupdate',
-        );
+        );} else {
+            return new Envelope(
+                subject: 'Your account on my.rietpanel.com has been updated!',
+            );
+        }
     }
 
     /**
@@ -38,9 +46,15 @@ class sendUpdatedUser extends Mailable
      */
     public function content(): Content
     {
+        if($this->lang == 'nl') {
         return new Content(
             view: 'mail.sendUpdatedUser',
         );
+        } else {
+            return new Content(
+                view: 'mail.sendUpdatedUserEn',
+            );
+        }
     }
 
     /**
