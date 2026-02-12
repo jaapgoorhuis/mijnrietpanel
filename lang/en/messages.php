@@ -67,6 +67,7 @@ return [
     'Weet je zeker dat je de order #order_id wilt verwijderen?' => 'Are you sure you want to delete order #:order_id?',
     'Order datum' => 'Order date',
     'Afleverdatum' => 'Deliverydate',
+    'Gewenste afleverdatum' => 'Requested deliverydate',
     'Adres' => 'Adress',
     'Postcode'=> 'Zipcode',
     'Plaats' => 'Town',
