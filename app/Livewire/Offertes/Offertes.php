@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Offertes;
 
+use App\Mail\sendOfferteToOrder;
 use App\Mail\sendOrder;
 use App\Models\Offerte;
 use App\Models\OfferteLines;
