@@ -193,11 +193,11 @@
                 <tr class="items">
                     <td>{{$order->comment}}</td>
                     @if($order->status === 'Bevestigd')
-
+                        @if($order->orderRules)
                             <td>
                                 {!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}
                             </td>
-
+                        @endif
                     @endif
                 </tr>
             </table>
