@@ -105,7 +105,7 @@ class EditCompanyUsers extends Component
         ]);
 
         if($this->oldStatus != $this->status) {
-            Mail::to($this->email)->send(new sendUpdatedUser($this->status));
+            Mail::to($this->email)->send(new sendUpdatedUser($this->status,$this->lang));
             session()->flash('success','De gebruiker is aangepast. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate');
         } else {
             session()->flash('success','De gebruiker is aangepast');
