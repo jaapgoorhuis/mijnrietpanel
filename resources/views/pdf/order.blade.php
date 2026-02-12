@@ -189,6 +189,11 @@
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
+                    @if($order->orderRules)
+                        <td>
+                            <strong>Invloed op prijs</strong>
+                        </td>
+                    @endif
                 </tr>
                 <tr class="items">
                     <td>{{$order->comment}}</td>
