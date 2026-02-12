@@ -151,12 +151,26 @@ class EditOrders extends Component
            'order_ordered' => date('d-m-Y')
        ]);
 
-       if($this->send_copy) {
-           //send confirmation mail to administratie@rietpanel.nl
-           Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
+       try {
+           if($this->send_copy) {
+               //send confirmation mail to administratie@rietpanel.nl
+               Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
+           }
+
+       } catch (\Exception $e) {
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
        }
+
+       try {
+           Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
+
+       } catch (\Exception $e) {
+           return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail.' . $e);
+       }
+
+
        //send mail to customer
-       Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
+
 
 
        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'. De inkooporder is verstuurd naar '.$this->new_purchage_order_email);
