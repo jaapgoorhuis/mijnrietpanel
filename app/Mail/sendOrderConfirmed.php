@@ -28,9 +28,9 @@ class sendOrderConfirmed extends Mailable
      */
     public function envelope(): Envelope
     {
-        $locale = config('app.locale'); // leest APP_LOCALE uit .env
 
-        if($locale === 'nl') {
+
+        if($this->order->lang === 'nl') {
 
             return new Envelope(
                 subject: 'Order #'.$this->order->order_id.' bevestigd',
@@ -48,11 +48,7 @@ class sendOrderConfirmed extends Mailable
      */
     public function content(): Content
     {
-        $locale = config('app.locale'); // leest APP_LOCALE uit .env
-
-        if($locale === 'nl') {
-
-
+        if($this->order->lang) {
             return new Content(
                 view: 'mail.sendOrderConfirmation',
             );
