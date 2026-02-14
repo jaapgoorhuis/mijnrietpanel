@@ -134,17 +134,15 @@ class EditOrders extends Component
             );
         }
 
-        Order::where('id', $id)->update([
-            'status' => 'Bevestigd',
-            'delivery_date' => $this->delivery_date,
-            'order_ordered' => date('d-m-Y')
-        ]);
+        $this->order->status = 'Bevestigd';
+        $this->order->delivery_date = $this->delivery_date;
+        $this->order->order_ordered = now(); // Carbon date
+        $this->order->save();
 
-        $newOrder = Order::where('id',$id)->first();
-
+        $this->order->load('Suplier');
 
 
-        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $newOrder, 'leverancier'=> $newOrder->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
 
         try {
