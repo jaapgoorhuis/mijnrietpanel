@@ -25,7 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('orders', \App\Livewire\Orders\Orders::class)->name('orders');
-    Route::get('testmail', \App\Livewire\Orders\sendTestMail::class)->name('orders');
     Route::get('orders/create', \App\Livewire\Orders\CreateOrders::class);
     Route::get('orders/confirm/{id}', \App\Livewire\Orders\EditOrders::class);
     Route::get('orders/remove/{id}', \App\Livewire\Orders\RemoveOrders::class);
