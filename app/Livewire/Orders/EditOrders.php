@@ -123,15 +123,16 @@ class EditOrders extends Component
     public function updateOrder($id) {
 
 
-        if($this->rule || $this->price) {
-            OrderRules::create(
-                [
-                    'order_id' => $this->orderId,
-                    'rule' => $this->rule,
-                    'price' => $this->price,
-                    'show_orderlist' => $this->show_orderlist,
-                ]
-            );
+        if ($this->rule || $this->price) {
+            $orderRule = new OrderRules();
+            $orderRule->order_id = $this->orderId;
+            $orderRule->rule = $this->rule;
+            $orderRule->price = $this->price;
+            $orderRule->show_orderlist = $this->show_orderlist;
+            $orderRule->save();
+
+            // Als je een relatie in Order wilt updaten
+            $this->order->load('rules'); // of hoe de relatie heet
         }
 
         $this->order->status = 'Bevestigd';
