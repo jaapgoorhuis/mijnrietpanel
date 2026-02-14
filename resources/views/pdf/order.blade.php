@@ -32,6 +32,7 @@
                     <div>{{ __('messages.Verkoper') }}: {{$order->intaker}}</div>
                     @if($order->status == 'In behandeling')
                     <div>{{ __('messages.Gewenste afleverdatum') }}: {{$order->requested_delivery_date}}</div>
+                    <div>{{$order->status}}</div>
                     @else
                         <div>{{ __('messages.Afleverdatum') }}: {{$order->delivery_date}}</div>
                     @endif
