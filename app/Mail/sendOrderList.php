@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -29,16 +30,16 @@ class sendOrderList extends Mailable
     /**
      * Get the message envelope.
      */
+
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nieuwe inkooporder #order-'.$this->order_id.' van mijn.rietpanel.nl',
+            new Address('inkoop@rietpanel.nl', 'Inkoop Rietpanel'),
+            new Address('inkoop@rietpanel.nl', 'Inkoop Rietpanel'),
+            'Nieuwe inkooporder #order-'.$this->order_id.' van mijn.rietpanel.nl',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
