@@ -178,5 +178,6 @@ return [
     'percentage_marge' => 'Enter a price margin percentage here. The margin is the percentage of profit you add on top of the purchase price.',
     'Jouw prijs' => 'Your price',
     'Selecteer kerndikte' => 'Select a core thickness',
+    'Klantnummer'=> 'Customer number',
     'De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen' => 'The order is created. We will check your order and will confirm it as soon as possible.'
 ];

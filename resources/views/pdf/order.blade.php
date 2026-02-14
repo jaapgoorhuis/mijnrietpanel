@@ -27,8 +27,8 @@
                 <td class="w-half">
                     <div>Order #: {{$order->order_id}}</div>
                     <div>{{ __('messages.Order datum') }}: {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
-                    @if($order->status == 'Bevestingd')
-                        <div>{{ __('messages.Project naam') }}: {{$order->user->id}}</div>
+                    @if($order->status == 'Bevestigd')
+                        <div>{{ __('messages.Klantnummer') }}: {{$order->user->id}}</div>
                     @else
                         <div>{{ __('messages.Project naam') }}: {{$order->project_naam}}</div>
                     @endif
