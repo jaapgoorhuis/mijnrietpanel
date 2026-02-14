@@ -43,7 +43,6 @@ class RemoveCompanys extends Component
 
         foreach($users as $user) {
             User::where('id', $user->id)->update([
-                'bedrijf_id' => '0',
                 'is_active' => '0',
             ]);
         }

@@ -100,10 +100,10 @@
                                 <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$order->order_id}}</th>
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
-                                <td class="px-4 py-3">@if($order->user)
-                                        {{$order->user->company->bedrijfsnaam}}
+                                <td class="px-4 py-3">@if($order->user->is_active)
+                                        {{$order->user->company->name}}
                                     @else
-                                Gebruiker is verwijderd
+                                        Gebruiker niet meer actief
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">@if($order->requested_delivery_date) {{$order->requested_delivery_date}} @else  {{ __('messages.Geen datum') }} @endif</td>
