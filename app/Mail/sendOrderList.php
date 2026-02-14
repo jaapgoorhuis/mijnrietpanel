@@ -34,9 +34,8 @@ class sendOrderList extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            new Address('inkoop@rietpanel.nl', 'Inkoop Rietpanel'),
-            new Address('inkoop@rietpanel.nl', 'Inkoop Rietpanel'),
-            'Nieuwe inkooporder #order-'.$this->order_id.' van mijn.rietpanel.nl',
+            from: new Address('inkoop@rietpanel.nl', 'Inkoop Rietpanel'),
+            subject: 'Nieuwe inkooporder #order-'.$this->order_id.' van mijn.rietpanel.nl',
         );
     }
 
