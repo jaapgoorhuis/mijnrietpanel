@@ -143,10 +143,15 @@ class EditOrders extends Component
             $this->order->save();
         });
 
+        $orderLines = $this->order->orderLines;
 
 // 🔥 HAAL HIERNA EEN NIEUWE INSTANCE OP (belangrijk)
         $order = Order::with(['Suplier', 'orderRules', 'user'])->find($this->order->id);
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $order->Suplier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
+
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
+
+
         try {
 
             Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($order));
