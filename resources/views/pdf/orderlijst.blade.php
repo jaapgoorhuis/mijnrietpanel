@@ -142,7 +142,7 @@
         <th>Aantal</th>
         <th>Lengte in MM</th>
         <th>Merk</th>
-        <td>Leverdatum</td>
+        <th>Leverdatum</th>
     </tr>
     </thead>
     <tbody>
