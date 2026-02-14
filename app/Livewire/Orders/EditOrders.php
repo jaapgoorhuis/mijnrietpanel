@@ -164,7 +164,7 @@ class EditOrders extends Component
         }
 
         try {
-            Mail::to($this->order->user->email)->send(new sendOrderConfirmed($order));
+            Mail::to($order->user->email)->send(new sendOrderConfirmed($order));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de klant.' . $e);
