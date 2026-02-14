@@ -124,10 +124,10 @@
         <td class="right">
             <div style="height: 35px;"></div>
             <span class="orange">Afleveradres</span><br>
-            {{$order->klantnaam}}<br>
-            {{$order->aflever_straat}}<br>
-            {{$order->aflever_postcode}} {{$order->aflever_plaats}}<br>
-            {{$order->aflever_land}}<br><br>
+            Rietpanel<br>
+            Nijverheidsweg 59<br>
+            3771 ME Barneveld<br>
+            Nederland<br><br>
         </td>
     </tr>
 </table>
@@ -141,6 +141,8 @@
         <th>Pos</th>
         <th>Aantal</th>
         <th>Lengte in MM</th>
+        <th>Merk</th>
+        <td>Leverdatum</td>
     </tr>
     </thead>
     <tbody>
@@ -154,6 +156,16 @@
         </td>
         <td>
             {{$orderLines->fillTotaleLengte}} mm
+        </td>
+        <td>
+            {{$order->merk_paneel}}
+        </td>
+        <td>
+            @if($order->delivery_date)
+                {{$order->delivery_date}}
+            @else
+                Nog geen datum bekend
+            @endif
         </td>
     </tr>
     @endforeach
