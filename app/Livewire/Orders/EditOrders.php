@@ -136,6 +136,13 @@ class EditOrders extends Component
 
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
+
+        Order::where('id', $id)->update([
+            'status' => 'Bevestigd',
+            'delivery_date' => $this->delivery_date,
+            'order_ordered' => date('d-m-Y')
+        ]);
+
         try {
 
             Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
@@ -160,17 +167,12 @@ class EditOrders extends Component
         }
 
 
-        Order::where('id', $id)->update([
-            'status' => 'Bevestigd',
-            'delivery_date' => $this->delivery_date,
-            'order_ordered' => date('d-m-Y')
-        ]);
 
         //send mail to customer
 
 
 
-        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
+        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
 
         return $this->redirect('/orders', navigate: true);
     }
