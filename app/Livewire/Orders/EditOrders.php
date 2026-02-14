@@ -123,14 +123,6 @@ class EditOrders extends Component
     public function updateOrder($id) {
 
 
-
-        $this->order->status = 'Bevestigd';
-        $this->order->delivery_date = $this->delivery_date;
-        $this->order->order_ordered = now(); // Carbon date
-        $this->order->save();
-
-        $this->order->load('Suplier');
-
         if ($this->rule || $this->price) {
             $orderRule = new OrderRules();
             $orderRule->order_id = $this->orderId;
@@ -143,6 +135,14 @@ class EditOrders extends Component
             $this->order->refresh(); // vernieuwt alle attributes
             $this->order->load('orderRules'); // laad de nieuwste rules
         }
+
+        $this->order->status = 'Bevestigd';
+        $this->order->delivery_date = $this->delivery_date;
+        $this->order->order_ordered = now(); // Carbon date
+        $this->order->save();
+
+        $this->order->load('Suplier');
+
 
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
