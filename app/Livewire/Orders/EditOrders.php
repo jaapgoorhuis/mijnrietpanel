@@ -123,17 +123,6 @@ class EditOrders extends Component
     public function updateOrder($id) {
 
 
-        if ($this->rule || $this->price) {
-            $orderRule = new OrderRules();
-            $orderRule->order_id = $this->orderId;
-            $orderRule->rule = $this->rule;
-            $orderRule->price = $this->price;
-            $orderRule->show_orderlist = $this->show_orderlist;
-            $orderRule->save();
-
-            // Als je een relatie in Order wilt updaten
-            $this->order->load('orderRules'); // of hoe de relatie heet
-        }
 
         $this->order->status = 'Bevestigd';
         $this->order->delivery_date = $this->delivery_date;
@@ -142,6 +131,18 @@ class EditOrders extends Component
 
         $this->order->load('Suplier');
 
+        if ($this->rule || $this->price) {
+            $orderRule = new OrderRules();
+            $orderRule->order_id = $this->orderId;
+            $orderRule->rule = $this->rule;
+            $orderRule->price = $this->price;
+            $orderRule->show_orderlist = $this->show_orderlist;
+            $orderRule->save();
+
+            // Refresht het hele order model, inclusief relaties
+            $this->order->refresh(); // vernieuwt alle attributes
+            $this->order->load('orderRules'); // laad de nieuwste rules
+        }
 
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
