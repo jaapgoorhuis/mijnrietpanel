@@ -132,7 +132,7 @@ class EditOrders extends Component
             $orderRule->save();
 
             // Als je een relatie in Order wilt updaten
-            $this->order->load('order'); // of hoe de relatie heet
+            $this->order->load('orderRules'); // of hoe de relatie heet
         }
 
         $this->order->status = 'Bevestigd';
