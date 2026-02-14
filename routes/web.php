@@ -142,7 +142,7 @@ Route::middleware('auth')->group(function () {
 //        return response()->file($url);
 //    });
 
-    Route::get('/download-orderlist/bestellijst-{id}', function($id) {
+    Route::get('/download-orderlist/inkooporder-{id}', function($id) {
         $order = Order::where('order_id', $id)->first();
         $leverancier = Supliers::where('name', $order->merk_paneel)->first();
         Pdf::loadView('pdf.orderlijst',['order' => $order,'leverancier'=> $leverancier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));

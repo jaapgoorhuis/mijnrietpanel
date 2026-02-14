@@ -193,12 +193,12 @@
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
                                                     href="javascript:void(0)"
                                                     @else
-                                                        href="{{ asset('/download-orderlist/bestellijst-'.$order->order_id) }}"
+                                                        href="{{ asset('/download-orderlist/inkooporder-'.$order->order_id) }}"
                                                     target="_blank"
                                                     @endif
                                                     class="block py-2 px-4 hover:bg-gray-100"
                                                 >
-                                                    <i class="fa-solid fa-download"></i> Bestellijst downloaden
+                                                    <i class="fa-solid fa-download"></i> Inkooporder downloaden
                                                 </a>
                                             </li>
                                             @endadmin

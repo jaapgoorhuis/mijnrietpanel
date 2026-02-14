@@ -144,8 +144,6 @@ class EditOrders extends Component
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de leverancier.' . $e);
         }
 
-
-
         try {
                 //send confirmation mail to administratie@rietpanel.nl
                 Mail::to(['inkoop@rietpanel.nl','administratie@rietpanel.nl'])->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
