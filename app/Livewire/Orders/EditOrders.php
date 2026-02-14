@@ -13,6 +13,7 @@ use App\Models\OrderRules;
 use App\Models\OrderTemplate;
 use App\Models\Supliers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -123,33 +124,34 @@ class EditOrders extends Component
     public function updateOrder($id) {
 
 
-        if ($this->rule || $this->price) {
-            $orderRule = new OrderRules();
-            $orderRule->order_id = $this->orderId;
-            $orderRule->rule = $this->rule;
-            $orderRule->price = $this->price;
-            $orderRule->show_orderlist = $this->show_orderlist;
-            $orderRule->save();
 
-            // Refresht het hele order model, inclusief relaties
-            $this->order->refresh(); // vernieuwt alle attributes
-            $this->order->load('orderRules'); // laad de nieuwste rules
-        }
+        DB::transaction(function () {
 
-        $this->order->status = 'Bevestigd';
-        $this->order->delivery_date = $this->delivery_date;
-        $this->order->order_ordered = now(); // Carbon date
-        $this->order->save();
+            if ($this->rule || $this->price) {
+                $orderRule = new OrderRules();
+                $orderRule->order_id = $this->order->id;
+                $orderRule->rule = $this->rule;
+                $orderRule->price = $this->price;
+                $orderRule->show_orderlist = $this->show_orderlist;
+                $orderRule->save();
+            }
 
-        $this->order->load('Suplier');
+            $this->order->status = 'Bevestigd';
+            $this->order->delivery_date = $this->delivery_date;
+            $this->order->order_ordered = now();
+            $this->order->save();
+        });
 
 
-        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
+// 🔥 HAAL HIERNA EEN NIEUWE INSTANCE OP (belangrijk)
+        $order = Order::with(['Suplier', 'orderRules', 'user'])->find($this->order->id);
+
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $order->Suplier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
 
         try {
 
-            Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
+            Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($order));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de leverancier.' . $e);
@@ -164,7 +166,7 @@ class EditOrders extends Component
         }
 
         try {
-            Mail::to($this->order->user->email)->send(new sendOrderConfirmed($this->order));
+            Mail::to($this->order->user->email)->send(new sendOrderConfirmed($order));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de klant.' . $e);
@@ -176,7 +178,7 @@ class EditOrders extends Component
 
 
 
-        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
+        session()->flash('success','De order #'.$order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
 
         return $this->redirect('/orders', navigate: true);
     }
