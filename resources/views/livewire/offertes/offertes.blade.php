@@ -107,10 +107,12 @@
                                 <td class="px-4 py-3">{{$offerte->klantnaam}}</td>
                                 <td class="px-4 py-3">{{$offerte->intaker}}</td>
                                 <td class="px-4 py-3">
-                                    @if($offerte->user->is_active)
-                                        {{$offerte->user->company->bedrijfsnaam}}
-                                    @else
-                                       Gebruiker is niet actief
+                                    @if($offerte->user)
+                                        @if($offerte->user->is_active)
+                                            {{$offerte->user->company->bedrijfsnaam}}
+                                        @else
+                                           Gebruiker is niet actief
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">@if($offerte->requested_delivery_date) {{$offerte->requested_delivery_date}} @else Geen datum @endif</td>
