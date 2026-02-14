@@ -143,6 +143,7 @@ class EditOrders extends Component
             'order_ordered' => date('d-m-Y')
         ]);
 
+
         try {
 
             Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($this->order));
