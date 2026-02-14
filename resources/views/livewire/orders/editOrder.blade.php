@@ -91,19 +91,6 @@
                                 <div class="text-red-500">@error('new_purchage_order_email') {{ $message }} @enderror</div>
                             </div>
 
-                                <br/>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="send-copy" class="text-gray-400">Kopie van inkooporder verzenden</label>
-                                <input id="send-copy" wire:model="send_copy" type="checkbox" value="" class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft">
-                            </div>
-
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="admin_email" class="text-gray-400">Kopie E-mail:</label><br/>
-                                <input type="text"  wire:model="admin_email" name="admin_email" id="admin_email" class="text-center w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('admin_email') {{ $message }} @enderror</div>
-                            </div>
-
-
                             <button wire:click="updateOrder({{$order->id}})" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                                 Order versturen & bevestigen
                             </button>

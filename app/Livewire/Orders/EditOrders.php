@@ -31,13 +31,11 @@ class EditOrders extends Component
     public $currentModal = 'first';
     public $delivery_date;
 
-    public $send_copy = false;
 
     public $existing_purchage_order_email;
     public $existing_purchage_order_suplier;
     public $new_purchage_order_email;
 
-    public $admin_email = 'administratie@rietpanel.nl';
 
     public function mount() {
 
@@ -149,10 +147,8 @@ class EditOrders extends Component
 
 
         try {
-            if($this->send_copy) {
                 //send confirmation mail to administratie@rietpanel.nl
-                Mail::to(strtolower($this->admin_email))->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
-            }
+                Mail::to(['inkoop@rietpanel.nl','administratie@rietpanel.nl'])->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);
