@@ -199,11 +199,9 @@
                 </tr>
                 <tr class="items">
                     <td>{{$order->comment}}</td>
-                    @php($rule = $order?->orderRules?->first())
-
-                    @if($order?->status === 'Bevestigd' && $rule)
+                    @if($order?->status === 'Bevestigd' && $order?->orderRule)
                         <td>
-                            &euro;&nbsp;{{ number_format($rule->price, 2, ',', '.') }}
+                            &euro;&nbsp;{{ number_format($order->orderRule->price, 2, ',', '.') }}
                         </td>
                     @endif
                 </tr>
