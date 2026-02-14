@@ -35,8 +35,9 @@ class RemoveCompanys extends Component
     public function deleteCompany($id) {
         session()->flash('success','Het bedrijf is verwijderd. Alle onderliggende gebruikers zijn verplaatst naar account aanvragen. Alle prijsregels zijn verwijderd.' );
 
-        Company::where('id', $id)->delete();
-        PriceRules::where('company_id', $id)->delete();
+        Company::where('id', $id)->update(['is_active'=> false]);
+
+        PriceRules::where('company_id', $id)->update(['is_active' => false]);
 
         $users = User::where('bedrijf_id', $id)->get();
 
@@ -50,7 +51,7 @@ class RemoveCompanys extends Component
         $priceRules = PriceRules::where('company_id', $id)->get();
 
         foreach($priceRules as $rules) {
-            PriceRules::where('id', $rules->id)->delete();
+            PriceRules::where('id', $rules->id)->update('is_active', false);
         }
 
         return $this->redirect('/companys/', navigate: true);

@@ -84,6 +84,8 @@ class ChangeOfferte extends Component
     public $requested_delivery_date;
     public $comment;
 
+
+
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen offertes plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');

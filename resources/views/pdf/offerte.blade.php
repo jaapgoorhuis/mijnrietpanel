@@ -12,8 +12,12 @@
     <table class="w-full">
         <tr>
             <td class="w-half">
-                @if($offerte->user->companys->logo)
-                    <img src="{{ public_path("storage/companylogos/".$offerte->user->companys->logo)}}" alt="" style="width: 200px;"/>
+                @if($offerte->user->company)
+                    @if($offerte->user->companys->logo )
+                        <img src="{{ public_path("storage/companylogos/".$offerte->user->companys->logo)}}" alt="" style="width: 200px;"/>
+                    @else
+                        <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+                    @endif
                 @else
                     <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
                 @endif

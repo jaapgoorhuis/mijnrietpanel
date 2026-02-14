@@ -107,7 +107,7 @@
                                 <td class="px-4 py-3">{{$offerte->klantnaam}}</td>
                                 <td class="px-4 py-3">{{$offerte->intaker}}</td>
                                 <td class="px-4 py-3">
-                                    @if($offerte->user)
+                                    @if($offerte->user->company)
                                         {{$offerte->user->company->bedrijfsnaam}}
                                     @else
                                         Gebruiker is verwijderd

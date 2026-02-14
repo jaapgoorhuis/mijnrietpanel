@@ -204,7 +204,7 @@
                                             @endadmin
                                             @admin
                                                 <li>
-                                                    <button @if($order->status == "Bevestigd") disabled @endif class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
+                                                    <button class="disabled:cursor-not-allowed disabled:text-[#00000038] block py-2  px-4 text-left w-full hover:bg-gray-100" wire:click="changeOrder({{$order->id}})">
                                                         <i class="fas fa-edit"></i>{{ __('messages.Order bewerken') }}
                                                     </button>
                                                 </li>

@@ -15,7 +15,7 @@ class Companys extends Component
     public function render()
     {
         if(Auth::user()->is_admin) {
-            $this->companys = Company::get();
+            $this->companys = Company::where('is_active', true)->get();
             return view('livewire.companys.companys');
         } else {
             return $this->redirect('/dashboard', navigate: true);

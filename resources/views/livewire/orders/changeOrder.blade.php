@@ -25,12 +25,33 @@
         </ol>
     </nav>
 </x-slot>
-
 <div class="py-12">
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="grid">
+
+                    <div x-data="{ showConfirmModal: @entangle('showConfirmModal') }" x-init="@if($order->status == 'Bevestigd') showConfirmModal = true @endif">
+                        <!-- Je content / form hier -->
+
+                        <!-- Modal -->
+                        <div x-show="showConfirmModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="display: none;">
+                            <div class="border-2 border-[#C0A16E] bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+                                <h3 class="text-lg font-bold mb-4">{{ __('Let op!') }}</h3>
+                                <p class="mb-6">
+
+                                    De inkooporder is al verstuurd naar de leverancier. Neemt eerst contact op met de leverancier om te kijken of deze de inkooporder al heeft verwerkt en voorkom verkeerde leveringen</p>
+                                <div class="flex justify-center gap-4">
+                                    <button @click="showConfirmModal = false" wire:click="cancelChangeOrder()"  class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                                      Annuleren
+                                    </button>
+                                    <button @click="showConfirmModal = false" class="px-4 py-2 bg-[#C0A16E] text-white rounded hover:bg-[#d1b079]">
+                                        Toch bewerken
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form>
                         <div class="relative">
                             <i wire:click="cancelChangeOrder()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>

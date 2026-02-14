@@ -84,7 +84,7 @@ class ChangeOrder extends Component
     public $saved = FALSE;
     public $requested_delivery_date;
     public $comment;
-
+    public $confirmedOrder = false;
 
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
@@ -138,6 +138,11 @@ class ChangeOrder extends Component
             $this->totaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
 
         }
+
+        if($this->order->status == 'Bevestigd') {
+            $this->confirmedOrder = true;
+        }
+
 
         if(Auth::user()->is_admin || !Auth::user()->is_architect) {
             return view('livewire.orders.orders');
