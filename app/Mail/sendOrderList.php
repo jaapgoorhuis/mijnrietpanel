@@ -39,12 +39,15 @@ class sendOrderList extends Mailable
         );
     }
 
+
     public function content(): Content
     {
-        return new Content(
-            view: 'mail.test',
-        );
+            return new Content(
+                view: 'mail.test',
+            );
+
     }
+
 
     /**
      * Get the attachments for the message.
