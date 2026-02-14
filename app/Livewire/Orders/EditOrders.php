@@ -134,14 +134,16 @@ class EditOrders extends Component
             );
         }
 
-        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
-
-
         Order::where('id', $id)->update([
             'status' => 'Bevestigd',
             'delivery_date' => $this->delivery_date,
             'order_ordered' => date('d-m-Y')
         ]);
+
+
+
+
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $this->order, 'leverancier'=> $this->order->Suplier])->save(public_path('/storage/orderlijst/order-'.$this->order->order_id.'.pdf'));
 
 
         try {
