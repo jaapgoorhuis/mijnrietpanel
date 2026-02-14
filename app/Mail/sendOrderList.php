@@ -42,7 +42,7 @@ class sendOrderList extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.sendInkoopOrder',
+            view: 'mail.test',
         );
     }
 
