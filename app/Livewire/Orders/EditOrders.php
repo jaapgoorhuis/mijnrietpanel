@@ -145,10 +145,7 @@ class EditOrders extends Component
 
 // 🔥 HAAL HIERNA EEN NIEUWE INSTANCE OP (belangrijk)
         $order = Order::with(['Suplier', 'orderRules', 'user'])->find($this->order->id);
-
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $order->Suplier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
-
-
         try {
 
             Mail::to(strtolower($this->new_purchage_order_email))->send(new sendOrderList($order));

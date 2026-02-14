@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="show-orderlist" class="text-gray-400">Laat opmerking op de bestellijst zien:</label>
+                            <label for="show-orderlist" class="text-gray-400">Laat opmerking op de inkooporder zien:</label>
                             <input id="show-orderlist" wire:model="show_orderlist" type="checkbox" value="" class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft">
                         </div>
 
