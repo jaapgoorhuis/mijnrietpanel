@@ -140,7 +140,7 @@ class EditOrders extends Component
             'order_ordered' => date('d-m-Y')
         ]);
 
-        $newOrder = Orders::where('id',$id)->first();
+        $newOrder = Order::where('id',$id)->first();
 
 
 
