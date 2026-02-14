@@ -47,7 +47,9 @@
                             @admin
                                 <!-- Rechsboven icoontje -->
                                 @if(count($openOrders))
-                                    <span class="absolute pl-[6px] top-3 right-3 h-[20px] w-[20px] text-[12px] text-white rounded-full border border-orange-500  bg-red-500 items-center justify-center">{{count($openOrders)}}</span>
+                                <span class="absolute top-3 right-3 h-[20px] w-[20px] flex items-center justify-center text-[12px] text-white rounded-full border border-orange-500 bg-red-500">
+                                    {{ count($openOrders) }}
+                                </span>
                                 @endif
                             @endadmin
 
