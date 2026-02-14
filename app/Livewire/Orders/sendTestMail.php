@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\sendTestMail;
+namespace App\Livewire\Orders;
 
 use App\Mail\sendOrder;
 use App\Mail\sendOrderList;
