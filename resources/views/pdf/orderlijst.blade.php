@@ -112,6 +112,7 @@
                     <td>Leverdatum:</td><td>{{$order->updated_at->addDays(14)->format('d-m-Y')}}</td>
                 </tr>
                 @if($order->orderRules)
+                    {{$order->orderRules->show_orderlist}}
                     @if($order->orderRules->show_orderlist)
                         <tr>
                             <td><strong>Opmerking(en):</strong></td>

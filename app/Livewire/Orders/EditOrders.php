@@ -132,6 +132,7 @@ class EditOrders extends Component
                 $orderRule->order_id = $this->order->id;
                 $orderRule->rule = $this->rule;
                 $orderRule->price = $this->price;
+
                 $orderRule->show_orderlist = $this->show_orderlist;
                 $orderRule->save();
             }
