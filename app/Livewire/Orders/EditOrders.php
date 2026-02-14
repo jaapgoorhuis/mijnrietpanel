@@ -170,7 +170,7 @@ class EditOrders extends Component
 
 
 
-        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'. De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl ';
+        session()->flash('success','De order #'.$this->order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$this->order->user->email.'De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
 
         return $this->redirect('/orders', navigate: true);
     }
