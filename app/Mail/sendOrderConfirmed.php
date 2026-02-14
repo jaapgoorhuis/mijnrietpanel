@@ -84,7 +84,7 @@ class sendOrderConfirmed extends Mailable
         } else {
             return [
                 Attachment::fromPath(public_path('/storage/orders/order-' . $this->order->order_id . '.pdf'))
-                    ->as('order-' . $this->order->order_id . '.pdf')
+                    ->as('orderbevestiging-' . $this->order->order_id . '.pdf')
                     ->withMime('application/pdf'),
                 Attachment::fromPath(public_path('/storage/Riet Panel B.V. Algemene Voorwaarden.pdf'))
                     ->as('Riet Panel B.V. Algemene Voorwaarden.pdf')
