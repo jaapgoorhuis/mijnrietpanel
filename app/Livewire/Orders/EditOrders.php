@@ -37,6 +37,7 @@ class EditOrders extends Component
     public $existing_purchage_order_suplier;
     public $new_purchage_order_email;
 
+    public $rietpanel_comment;
 
     public function mount() {
 
@@ -138,6 +139,7 @@ class EditOrders extends Component
             }
 
             $this->order->status = 'Bevestigd';
+            $this->order->rietpanel_comment = $this->rietpanel_comment;
             $this->order->delivery_date = $this->delivery_date;
             $this->order->order_ordered = now();
             $this->order->save();

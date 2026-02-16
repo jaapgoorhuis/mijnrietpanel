@@ -106,7 +106,7 @@
                     <td>Projectnaam:</td><td>{{$order->project_naam}}</td>
                 </tr>
                 <tr>
-                    <td style="padding-right: 30px;">Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
+                    <td style="padding-right: 60px;">Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
                 </tr>
                 <tr>
                     <td>Leverdatum:</td><td>{{$order->updated_at->addDays(14)->format('d-m-Y')}}</td>
@@ -119,6 +119,14 @@
                             <td>{{$order->orderRules->rule}}</td>
                         </tr>
                    @endif
+                @endif
+
+                @if($order->rietpanel_comment)
+                    <br/>
+                    <tr>
+                        <td style="padding-right: 30px;"><strong>Opmerking vanuit Rietpanel:</strong></td>
+                        <td>{{$order->rietpanel_comment}}</td>
+                    </tr>
                 @endif
             </table>
         </td>
@@ -143,6 +151,7 @@
         <th>Aantal</th>
         <th>Lengte in MM</th>
         <th>Merk</th>
+        <th>Kerndikte</th>
         <th>Leverdatum</th>
     </tr>
     </thead>
@@ -160,6 +169,9 @@
         </td>
         <td>
             {{$order->merk_paneel}}
+        </td>
+        <td>
+            {{$order->kerndikte}}
         </td>
         <td>
             @if($order->delivery_date)

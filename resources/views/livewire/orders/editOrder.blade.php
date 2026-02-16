@@ -91,6 +91,13 @@
                                 <div class="text-red-500">@error('new_purchage_order_email') {{ $message }} @enderror</div>
                             </div>
 
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="rietpanel_comment" class="text-gray-400">Opmerking vanuit Rietpanel:</label><br/>
+                                <small>Deze opmerking is alleen op de inkooporder te zien.</small>
+                                <textarea wire:model="rietpanel_comment" name="rietpanel_comment" id="rietpanel_comment" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" "></textarea>
+                            <div class="text-red-500">@error('rietpanel_comment') {{ $message }} @enderror</div>
+                            </div>
+
                             <button wire:click="updateOrder({{$order->id}})" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                                 Order versturen & bevestigen
                             </button>
