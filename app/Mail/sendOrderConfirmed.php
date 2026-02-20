@@ -75,7 +75,7 @@ class sendOrderConfirmed extends Mailable
         if($this->order->lang === 'en') {
             return [
                 Attachment::fromPath('https://my.rietpanel.com/public/storage/orders/order-' . $this->order->order_id . '.pdf')
-                    ->as('order-' . $this->order->order_id . '.pdf')
+                    ->as('orderconfirmation-' . $this->order->order_id . '.pdf')
                     ->withMime('application/pdf'),
                 Attachment::fromPath(public_path('/storage/Riet Panel B.V. Algemene Voorwaarden.pdf'))
                     ->as('Riet Panel B.V. Algemene Voorwaarden.pdf')

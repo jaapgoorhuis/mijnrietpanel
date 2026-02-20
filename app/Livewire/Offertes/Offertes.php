@@ -154,7 +154,7 @@ class Offertes extends Component
 
         Mail::to(Auth::user()->email)->send(new sendOfferteToOrder($order));
 
-        session()->flash('success', 'Er is een order aangemaakt van deze offerte.');
+        session()->flash('success', __('Er is een order aangemaakt van deze offerte'));
         return $this->redirect('/offertes', navigate: true);
     }
 }

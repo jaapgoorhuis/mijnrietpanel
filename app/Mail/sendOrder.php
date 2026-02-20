@@ -36,7 +36,7 @@ class sendOrder extends Mailable
             );
         } else {
             return new Envelope(
-                subject: 'Order ontvangen #order-'.$this->order_id.' van my.rietpanel.com',
+                subject: 'Order recieved #order-'.$this->order_id.' van my.rietpanel.com',
             );
         }
 

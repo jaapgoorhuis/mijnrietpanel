@@ -179,5 +179,7 @@ return [
     'Jouw prijs' => 'Your price',
     'Selecteer kerndikte' => 'Select a core thickness',
     'Klantnummer'=> 'Customer number',
-    'De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen' => 'The order is created. We will check your order and will confirm it as soon as possible.'
+    'De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen' => 'The order is created. We will check your order and will confirm it as soon as possible.',
+    'De offerte is aangemaakt' => 'The quotation has been created',
+    'Er is een order aangemaakt van deze offerte' => 'We have created an order from this quotation',
 ];

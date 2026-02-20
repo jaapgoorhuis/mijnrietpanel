@@ -322,6 +322,8 @@ class CreateOffertes extends Component
 
         Mail::to(Auth::user()->email)->send(new sendOfferte($offerte));
 
+        session()->flash('success',__('messages.De offerte is aangemaakt'));
+
         session()->flash('success','De offerte is aangemaakt.');
         return $this->redirect('/offertes', navigate: true);
     }
