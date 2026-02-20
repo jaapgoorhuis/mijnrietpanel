@@ -31,7 +31,7 @@
             <div class="p-6 text-gray-900">
                 <div class="grid">
 
-                    <div x-data="{ showConfirmModal: @entangle('showConfirmModal') }" x-init="@if($order->status == 'Bevestigd') showConfirmModal = true @endif">
+                    <div x-data="{ showConfirmModal: @entangle('showConfirmModal') }">
                         <!-- Je content / form hier -->
 
                         <!-- Modal -->

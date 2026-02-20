@@ -85,8 +85,13 @@ class ChangeOrder extends Component
     public $requested_delivery_date;
     public $comment;
     public $confirmedOrder = false;
+    public $showConfirmModal = false;
 
     public function mount($id) {
+        if ($this->order->status == 'Bevestigd') {
+            $this->showConfirmModal = true;
+        }
+
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen orderss plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
             return $this->redirect('/orders', navigate: true);
