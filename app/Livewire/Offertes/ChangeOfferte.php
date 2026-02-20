@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Livewire\Offertes;
+namespace App\Livewire\Orders;
 
-use App\Mail\sendOfferte;
+use App\Mail\orderUpdated;
 use App\Mail\sendOrder;
 use App\Models\Application;
 use App\Models\Company;
-use App\Models\Offerte;
-use App\Models\OfferteLines;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderTemplate;
@@ -23,7 +21,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class ChangeOfferte extends Component
+class ChangeOrder extends Component
 {
 
     public $klant_naam;
@@ -63,84 +61,98 @@ class ChangeOfferte extends Component
     public $brands = [];
 
 
-    public $offerteLines = [];
+    public $orderLines = [];
     public $wandSupliers;
     public $dakSupliers;
 
     public $werkendeBreedte;
-    public $offerteLineValues = [];
+    public $orderLineValues = [];
     public $company;
     public $companyDiscount;
     public $priceRule;
-    public $offerte;
+    public $order;
 
-    public $marge;
-    public $offerte_id;
+    public $marge = 0;
+    public $order_id;
+
     public $creator_user_id;
+
+    public $exsistingOrderLines;
     public $creator_user;
-    public $exsistingOfferteLines;
-    public $saved = FALSE;
+
     public $priceRulePrice;
+    public $saved = FALSE;
     public $requested_delivery_date;
     public $comment;
-
-
+    public $confirmedOrder = false;
+    public $showConfirmModal = false;
 
     public function mount($id) {
+
+
         if(Auth::user()->bedrijf_id == 0) {
-            session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen offertes plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
-            return $this->redirect('/offertes', navigate: true);
+            session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen orderss plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
+            return $this->redirect('/orders', navigate: true);
         }
-        $this->offerte_id = $id;
+        $this->order_id = $id;
+
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
-        $this->offerte = Offerte::where('id', $id)->first();
-        $this->creator_user_id = $this->offerte->user_id;
+        $this->order = Order::where('id', $id)->first();
+        $this->creator_user_id = $this->order->user_id;
 
         $this->creator_user = User::where('id', $this->creator_user_id)->first();
-
         $this->company = Company::where('id', $this->creator_user->bedrijf_id)->first();
         $this->companyDiscount = $this->company->discount;
 
-        $this->exsistingOfferteLines = OfferteLines::where('offerte_id', $id)->get();
+        $this->exsistingOrderLines = OrderLines::where('order_id', $id)->get();
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
 
-        $this->klant_naam = $this->offerte->klantnaam;
-        $this->referentie = $this->offerte->referentie;
-        $this->aflever_straat = $this->offerte->aflever_straat;
-        $this->aflever_postcode = $this->offerte->aflever_postcode;
-        $this->aflever_land = $this->offerte->aflever_land;
-        $this->aflever_plaats = $this->offerte->aflever_plaats;
-        $this->intaker = $this->offerte->intaker;
-        $this->rietkleur = $this->offerte->rietkleur;
-        $this->toepassing = $this->offerte->toepassing;
-        $this->merk_paneel = $this->offerte->merk_paneel;
-        $this->kerndikte = $this->offerte->kerndikte;
-        $this->discount = $this->offerte->discount;
-        $this->project_naam = $this->offerte->project_naam;
-        $this->marge = $this->offerte->marge;
-        $this->comment = $this->offerte->comment;
+        $this->klant_naam = $this->order->klantnaam;
+        $this->referentie = $this->order->referentie;
+        $this->aflever_straat = $this->order->aflever_straat;
+        $this->aflever_postcode = $this->order->aflever_postcode;
+        $this->aflever_land = $this->order->aflever_land;
+        $this->aflever_plaats = $this->order->aflever_plaats;
+        $this->intaker = $this->order->intaker;
+        $this->rietkleur = $this->order->rietkleur;
+        $this->toepassing = $this->order->toepassing;
+        $this->merk_paneel = $this->order->merk_paneel;
+        $this->kerndikte = $this->order->kerndikte;
+        $this->discount = $this->order->discount;
+        $this->project_naam = $this->order->project_naam;
+        $this->marge = $this->order->marge;
+        $this->requested_delivery_date = $this->order->requested_delivery_date;
+        $this->comment = $this->order->comment;
 
         $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
         $this->priceRulePrice = $this->priceRule->price;
-        $this->requested_delivery_date = $this->offerte->requested_delivery_date;
 
-        foreach($this->exsistingOfferteLines as $key => $exsistingOfferteLine) {
-            $this->offerteLines[] = $key;
-            $this->fillCb[$key] = $exsistingOfferteLine->fillCb;
-            $this->fillTotaleLengte[$key] = $exsistingOfferteLine->fillTotaleLengte;
-            $this->aantal[$key] = $exsistingOfferteLine->aantal;
-            $this->m2[$key] = $exsistingOfferteLine->m2;
-            $this->cb[$key] = $exsistingOfferteLine->fillCb;
-            $this->totaleLengte[$key] = $exsistingOfferteLine->fillTotaleLengte;
+        foreach($this->exsistingOrderLines as $key => $exsistingOrderLine) {
+            $this->orderLines[] = $key;
+            $this->fillCb[$key] = $exsistingOrderLine->fillCb;
+            $this->fillTotaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
+            $this->aantal[$key] = $exsistingOrderLine->aantal;
+            $this->m2[$key] = $exsistingOrderLine->m2;
+            $this->cb[$key] = $exsistingOrderLine->fillCb;
+            $this->totaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
 
         }
 
+        if ($this->order->status == 'Bevestigd') {
+            $this->showConfirmModal = true;
+        }
+
+        if($this->order->status == 'Bevestigd') {
+            $this->confirmedOrder = true;
+        }
+
+
         if(Auth::user()->is_admin || !Auth::user()->is_architect) {
-            return view('livewire.offertes.offertes');
+            return view('livewire.orders.orders');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
             return $this->redirect('/dashboard', navigate: true);
@@ -149,11 +161,11 @@ class ChangeOfferte extends Component
 
     public function render()
     {
-        return view('livewire.offertes.changeOfferte');
+        return view('livewire.orders.changeOrder');
     }
 
     public function showLines() {
-        dd($this->offerteLines);
+        dd($this->orderLines);
     }
 
     public function updatePrice() {
@@ -161,6 +173,7 @@ class ChangeOfferte extends Component
         $this->priceRulePrice = $this->priceRule->price;
         $this->kerndikte = $this->kerndikte;
     }
+
 
 
     public function updateCb($index) {
@@ -195,28 +208,29 @@ class ChangeOfferte extends Component
         }
     }
 
-    public function addOfferteLine() {
-        $this->offerteLines[] = '';
-        $this->fillCb[] = '0';
-        $this->cb[] = '0';
-        $this->m2[] = '0';
-        $this->lb[] = '0';
-        $this->fillLb[] = '0';
-        $this->totaleLengte[] = '0';
-        $this->fillTotaleLengte[] = '0';
-        $this->aantal[] = '1';
+    public function addOrderLine()
+    {
+        $index = count($this->orderLines);
 
-
-
+        $this->orderLines[$index] = $index;
+        $this->fillCb[$index] = 0;
+        $this->cb[$index] = 0;
+        $this->m2[$index] = 0;
+        $this->lb[$index] = 0;
+        $this->fillLb[$index] = 0;
+        $this->totaleLengte[$index] = 0;
+        $this->fillTotaleLengte[$index] = 0;
+        $this->aantal[$index] = 1;
     }
 
-    public function removeOfferteLine($index) {
-        unset($this->offerteLines[$index]);
+
+
+    public function removeOrderLine($index) {
+        unset($this->orderLines[$index]);
         unset($this->totaleLengte[$index]);
         unset($this->aantal[$index]);
         unset($this->lb[$index]);
         unset($this->cb[$index]);
-        $this->offerteLines = array_values($this->offerteLines);
         $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
         $this->lb = array_values($this->lb);
@@ -234,18 +248,11 @@ class ChangeOfferte extends Component
             'aflever_plaats' => 'required',
             'aflever_land' => 'required',
             'intaker' => 'required',
-            'discount' => 'required|min:0',
             'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
             'requested_delivery_date' => 'required',
 
-            'fillCb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
-                if ($value != 0 && $value < 20) {
-                    $fail("De CB moet 0 zijn (geen CB) of minimaal 20mm.");
-                }
-            },
-                ],
-            ];
+        ];
     }
 
 
@@ -277,10 +284,11 @@ class ChangeOfferte extends Component
         ];
     }
 
-    public function saveOfferte() {
+    public function saveOrder() {
+
         $this->validate();
 
-        Offerte::where('id', $this->offerte_id)->update([
+        Order::where('id', $this->order_id)->update([
             'klantnaam' => $this->klant_naam,
             'referentie' => $this->referentie,
             'aflever_straat' => $this->aflever_straat,
@@ -294,47 +302,52 @@ class ChangeOfferte extends Component
             'toepassing' => $this->toepassing,
             'kerndikte' => $this->kerndikte,
             'project_naam' => $this->project_naam,
-            'user_id' => $this->creator_user_id,
             'marge' => $this->marge,
+            'user_id' => $this->creator_user_id,
             'status' => 'In behandeling',
             'requested_delivery_date' => $this->requested_delivery_date,
             'comment' => $this->comment,
         ]);
 
-        $offerte = Offerte::orderBy('id', 'desc')->first();
-        OfferteLines::where('offerte_id', $this->offerte_id)->delete();
+        $order = Order::find($this->order_id);
+        OrderLines::where('order_id', $this->order_id)->delete();
 
-        foreach($this->offerteLines as $index => $key) {
+        foreach($this->orderLines as $index => $key) {
 
-                $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
-                $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-                $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
-                $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
-                $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
+            $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
+            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
+            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
+            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
+            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
 
-                OfferteLines::create([
-                    'offerte_id' => $offerte->id,
-                    'fillCb' => $fillCb,
-                    'fillLb' => $fillLb,
-                    'fillTotaleLengte' => $fillTotaleLengte,
-                    'aantal' => $aantal,
-                    'user_id' => $this->creator_user_id,
-                    'm2' => $m2
-                ]);
-            }
+            OrderLines::create([
+                'order_id' => $order->id,
+                'fillCb' => $fillCb,
+                'fillLb' => $fillLb,
+                'fillTotaleLengte' => $fillTotaleLengte,
+                'aantal' => $aantal,
+                'user_id' => $this->creator_user_id,
+                'm2' => $m2
+            ]);
+        }
 
-        $offerteLines = OfferteLines::where('offerte_id', $offerte->id)->get();
+        $orderLines = OrderLines::where('order_id', $order->id)->get();
+        $user = User::where('id', $order->user_id)->first();
 
-        Pdf::loadView('pdf.offerte',['offerte' => $offerte, 'offerteLines' => $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf'));
+        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
 
-//        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
+        // dees krijgen we latijd natuurlijk
 
-        session()->flash('success', __('messages.De offerte is bewerkt.'));
-        return $this->redirect('/offertes', navigate: true);
+        if(Auth::user()->is_admin == 1 && $order->user_id != Auth::user()->id) {
+            Mail::to($user->email)->send(new orderUpdated($order));
+        }
+
+        session()->flash('success','De order is bewerkt.');
+        return $this->redirect('/orders', navigate: true);
     }
 
-    public function cancelChangeOfferte() {
-        return $this->redirect('/offertes', navigate: true);
+    public function cancelChangeOrder() {
+        return $this->redirect('/orders', navigate: true);
     }
 
     public function updateM2($index) {
@@ -343,14 +356,14 @@ class ChangeOfferte extends Component
                 $this->werkendeBreedte = $brands->werkende_breedte;
             }
         }
-           $lengtePaneel = (int)$this->fillTotaleLengte[$index];
-           $werkendeBreedteM = $this->werkendeBreedte / 1000;
-           $lengtePaneelM = $lengtePaneel / 1000;
-           if($lengtePaneel == '0' || $this->werkendeBreedte == '0') {
-               $this->m2[$index] = 0;
-           }
-           else {
-               $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
-           }
+        $lengtePaneel = (int)$this->fillTotaleLengte[$index];
+        $werkendeBreedteM = $this->werkendeBreedte / 1000;
+        $lengtePaneelM = $lengtePaneel / 1000;
+        if($lengtePaneel == '0' || $this->werkendeBreedte == '0') {
+            $this->m2[$index] = 0;
+        }
+        else {
+            $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
+        }
     }
 }
