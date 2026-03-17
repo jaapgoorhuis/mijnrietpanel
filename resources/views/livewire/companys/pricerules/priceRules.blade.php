@@ -81,7 +81,7 @@
                                     <tr class="border-b ">
                                         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$rule->id}}</th>
                                             <td class="px-4 py-3">{{$rule->rule_name}}</td>
-                                            <td class="px-4 py-3">{{$rule->PanelType->name}} </td>
+                                            <td class="px-4 py-3">@if($rule->PanelType) {{$rule->PanelType->name}} @else niet van toepassing @endif </td>
                                         <td class="px-4 py-3">   {!! '&euro;&nbsp;' . number_format($rule->price, 2, ',', '.') !!} excl. BTW </td>
 
                                         @admin

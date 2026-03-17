@@ -177,7 +177,7 @@
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
                                                     href="javascript:void(0)"
                                                     @else
-                                                        href="{{ asset('/download-zaaglijst/fabrieklijst-'.$order->order_id) }}"
+                                                        href="{{ asset('/download-fabriekslijst/fabrieklijst-'.$order->order_id) }}"
                                                     target="_blank"
                                                     @endif
                                                     class="block py-2 px-4 hover:bg-gray-100"

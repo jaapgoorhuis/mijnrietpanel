@@ -17,7 +17,7 @@ class CreateSurcharges extends Component
 {
 
 
-    public $condition = 'onder';
+    public $condition = '0';
     public $rule = 'vierkantemeter';
     public $number;
     public $price;
@@ -37,7 +37,6 @@ class CreateSurcharges extends Component
     {
         return [
             'condition' => 'required',
-            'number' => 'required',
             'rule' => 'required|unique:surcharges,rule',
             'price' => 'required',
             'name' => 'required|unique:surcharges,name'
@@ -59,6 +58,9 @@ class CreateSurcharges extends Component
     public function createSurcharge() {
         $this->validate($this->rules());
 
+        if(!$this->number) {
+            $this->number = 0;
+        }
         \App\Models\Surcharges::create([
             'condition' => $this->condition,
             'number' => $this->number,

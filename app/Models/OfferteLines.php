@@ -9,5 +9,5 @@ use Illuminate\Notifications\Notifiable;
 
 class OfferteLines extends Authenticatable
 {
-    protected $fillable = ['offerte_id', 'fillCb', 'fillLb', 'fillTotaleLengte', 'aantal', 'user_id','m2'];
+    protected $fillable = ['offerte_id', 'fillCb', 'fillLb', 'lb','nokafschuining', 'vrije_ruimte_1', 'vrije_ruimte_2', 'fillTotaleLengte', 'aantal', 'user_id','m2'];
 }

@@ -36,7 +36,7 @@ class RemovePriceRules extends Component
         $pricerule = \App\Models\PriceRules::where('id', $id)->first();
 
 
-        \App\Models\PriceRules::where('panel_type', $pricerule->panel_type)->delete();
+        \App\Models\PriceRules::where('id', $pricerule->id)->delete();
 
         $pricerule->delete();
 

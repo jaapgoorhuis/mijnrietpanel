@@ -3,7 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 button.datatable-pagination-list-item-link {
     border: 1px solid #d1d5db;
     padding: 10px;
@@ -11,6 +10,7 @@ button.datatable-pagination-list-item-link {
 .datatable-container {
     overflow:auto;
 }
+
 
 @media(max-width:700px) {
     .datatable-container {
@@ -77,3 +77,30 @@ label[for="dt-search-0"]
 .tooltip-content {
     margin-left: 40px !important;
 }
+.fc-header-toolbar.fc-toolbar {
+    padding: 10px;
+}
+
+.fc-event {
+    cursor: grab;
+    user-select: none;
+}
+
+h2.fc-toolbar-title {
+    font-size: 23px;
+}
+.fc-daygrid-event {
+white-space: normal !important;
+align-items: flex-start !important;
+}
+
+.fc-daygrid-event .fc-event-title {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    word-break: break-word;
+}
+
+/* Voor de dagcellen in maandweergave */
+
+

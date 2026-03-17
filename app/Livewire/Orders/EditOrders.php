@@ -147,11 +147,18 @@ class EditOrders extends Component
 
         $orderLines = $this->order->orderLines;
 
-// 🔥 HAAL HIERNA EEN NIEUWE INSTANCE OP (belangrijk)
         $order = Order::with(['Suplier', 'orderRules', 'user'])->find($this->order->id);
+
+        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+
+
         \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.orderlijst',['order' => $order, 'leverancier'=> $order->Suplier])->save(public_path('/storage/orderlijst/order-'.$order->order_id.'.pdf'));
 
-        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
+        \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
+
 
 
         try {
@@ -185,7 +192,7 @@ class EditOrders extends Component
 
         session()->flash('success','De order #'.$order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
 
-        return $this->redirect('/orders', navigate: true);
+        return $this->redirect('/productPlanning', navigate: true);
     }
 
     public function cancelUpdateOrder() {

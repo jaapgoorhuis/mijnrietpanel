@@ -25,7 +25,7 @@ class CreatePriceRules extends Component
     public $panel_applications;
 
     public $panel_brand = 1;
-    public $panel_type = 1;
+    public $panel_type = 0;
     public $panel_look = 1;
     public $toepassing = 1;
     public $panel_price;
@@ -64,32 +64,36 @@ class CreatePriceRules extends Component
     }
 
     public function createPriceRule() {
-        $this->validate($this->rules());
 
-        \App\Models\PriceRules::create([
-            'rule_name' => $this->rule_name,
-            'panel_type' => $this->panel_type,
-            'price' => $this->panel_price,
-        ]);
+        if($this->panel_type ==0) {
+            \App\Models\PriceRules::create([
+                'rule_name' => $this->rule_name,
+                'panel_type' => $this->panel_type,
+                'price' => $this->panel_price,
+                'company_id' => 0,
+                'reseller' => 0
+            ]);
 
-        $companyPriceRules = \App\Models\PriceRules::where('company_id', '!=', 0)->get();
+        } else {
+            $this->validate($this->rules());
+            $companyPriceRules = \App\Models\PriceRules::where('company_id', '!=', 0)->get();
 
-        foreach($companyPriceRules as $companyPriceRule) {
-            $exists = \App\Models\PriceRules::where('company_id', $companyPriceRule->company_id)
-                ->where('panel_type', $this->panel_type)
-                ->exists();
+            foreach ($companyPriceRules as $companyPriceRule) {
+                $exists = \App\Models\PriceRules::where('company_id', $companyPriceRule->company_id)
+                    ->where('panel_type', $this->panel_type)
+                    ->exists();
 
-            if (!$exists) {
-                \App\Models\PriceRules::create([
-                    'rule_name' => $this->rule_name,
-                    'panel_type' => $this->panel_type,
-                    'price' => $this->panel_price,
-                    'company_id' => $companyPriceRule->company_id,
-                    'reseller' => $companyPriceRule->reseller
-                ]);
+                if (!$exists) {
+                    \App\Models\PriceRules::create([
+                        'rule_name' => $this->rule_name,
+                        'panel_type' => $this->panel_type,
+                        'price' => $this->panel_price,
+                        'company_id' => $companyPriceRule->company_id,
+                        'reseller' => $companyPriceRule->reseller
+                    ]);
+                }
             }
         }
-
 
         return $this->redirect('/companys/pricerules', navigate: true);
     }

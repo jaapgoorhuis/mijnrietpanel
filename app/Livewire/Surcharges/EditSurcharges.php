@@ -57,7 +57,6 @@ class EditSurcharges extends Component
             'price' => 'required',
             'condition' => 'required',
             'rule' => 'required',
-            'number' => 'required',
 
         ];
     }
@@ -77,7 +76,6 @@ class EditSurcharges extends Component
     public function updateSurcharge() {
 
         $this->validate($this->rules());
-
 
         \App\Models\Surcharges::where('id', $this->surchargeId)->update([
             'condition' => $this->condition,

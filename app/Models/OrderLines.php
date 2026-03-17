@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class OrderLines extends Authenticatable
 {
-    protected $fillable = ['order_id',  'fillCb', 'fillLb',  'fillTotaleLengte', 'aantal', 'user_id','m2'];
+    protected $fillable = ['order_id',  'fillCb', 'fillLb', 'lb','nokafschuining', 'vrije_ruimte_1', 'vrije_ruimte_2',  'fillTotaleLengte', 'aantal', 'user_id','m2'];
     public function order()
     {
         return $this->belongsTo(Order::class);

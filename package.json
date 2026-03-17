@@ -23,7 +23,12 @@
     },
     "dependencies": {
         "@floating-ui/dom": "^1.7.3",
+        "@fullcalendar/core": "^6.1.20",
+        "@fullcalendar/daygrid": "^6.1.20",
+        "@fullcalendar/interaction": "^6.1.20",
+        "@fullcalendar/timegrid": "^6.1.20",
         "@preline/tooltip": "^3.2.3",
+        "bootstrap": "^5.3.8",
         "flowbite": "^3.1.2",
         "preline": "^3.2.3",
         "simple-datatables": "^10.0.0"

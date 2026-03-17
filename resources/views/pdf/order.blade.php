@@ -65,55 +65,102 @@
     </div>
 
     <div class="margin-top">
+        <h3>Order</h3>
         <table class="products">
             <tr>
                 <th>{{ __('messages.Rietkleur') }}</th>
                 <th>{{ __('messages.Toepassing') }}</th>
                 <th>{{ __('messages.Merk') }}</th>
                 <th>{{ __('messages.Kerndikte') }}</th>
-                <th>{{ __('messages.Lengte') }}</th>
-                <th>{{ __('messages.CB') }}</th>
-                <th>m²</th>
-                <th>{{ __('messages.Aantal') }}</th>
-                <th>{{ __('messages.Prijs') }}</th>
-            </tr>
-
-            <?php $totalPrice= 0 ?>
-            <!--            zaaglengtes zijn de panelen die onder de 2500mm zijn-->
-            <?php $zaaglengtes = 0 ?>
-            <?php $count = 0; ?>
-            <?php $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first(); ?>
-
-
-            @foreach($orderLines as $key =>  $orderLine)
-                {{$count++}}
                 <tr class="items">
                     <td>{{$order->rietkleur}}</td>
                     <td>{{$order->toepassing}}</td>
                     <td>{{$order->merk_paneel}}</td>
                     <td>{{$order->kerndikte}}</td>
-                    <td>{{$orderLine->fillTotaleLengte}} mm</td>
-                    <td>{{$orderLine->fillCb}} mm</td>
-                    <td>{{$orderLine->m2}} m²</td>
-                    <td>{{$orderLine->aantal}}</td>
+                </tr>
+        </table>
+
+        <h3>Panelen</h3>
+        <table class="products">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>{{ __('messages.Lengte') }}</th>
+                @if($showCb)
+                <th>{{ __('messages.CB') }}</th>
+                @endif
+                @if($showLb)
+                    <th>{{ __('messages.LB') }}</th>
+                @endif
+                @if($showNokafschuining)
+                    <th>{{ __('messages.Nokafschuining') }}</th>
+                @endif
+                @if($showVrijeRuimte)
+                    <th>{{ __('messages.Vrije ruimte') }}</th>
+                @endif
+                <th>m²</th>
+                <th>{{ __('messages.Aantal') }}</th>
+                <th>{{ __('messages.Prijs') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $totalPrice = 0;
+            $zaaglengtes = 0;
+            $laybacks = 0;
+            $nokafschuining = 0;
+            $vrijeruimte = 0;
+            $count = 0;
+            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
+            ?>
+
+            @foreach($orderLines as $orderLine)
+                    <?php $count++; ?>
+                <tr class="items">
+                    <td>{{ $count }}</td>
+                    <td>{{ $orderLine->fillTotaleLengte }} mm</td>
+                    @if($showCb)
+                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>
+                    @endif
+                    @if($showLb)
+                        <?php if($orderLine->lb > 0)  $laybacks += $orderLine->aantal?>
+                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>
+                    @endif
+                    @if($showNokafschuining)
+                        <?php if($orderLine->nokafschuining > 0)  $nokafschuining += $orderLine->aantal?>
+                        <td>{{ $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' mm' : '' }}</td>
+                    @endif
+
+                    @if($showVrijeRuimte)
+                        <?php if($orderLine->vrije_ruimte_2 > 0)  $vrijeruimte += $orderLine->aantal?>
+                        <td>
+                            {{ $orderLine->vrije_ruimte_2 > 0
+                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.vanaf boven') . ')'
+                                : ''
+                            }}
+                        </td>                    @endif
+
+                    <td>{{ $orderLine->m2 }} m²</td>
+                    <td>{{ $orderLine->aantal }}</td>
                     <td>
                             <?php
-                            $panelType = \App\Models\PanelType::where('name', $order->kerndikte)->first();
+                            $panelTypeModel = \App\Models\PanelType::where('name', $order->kerndikte)->first();
                             if($company->is_reseller) {
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->where('company_id', $company->id)->first();
+                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)
+                                    ->where('company_id', $company->id)->first();
                                 $discount = 0;
                             } else {
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelType->id)->first();
-                                $discount = $priceRule->price/100*$company->discount;
+                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();
+                                $discount = $priceRule->price / 100 * $company->discount;
                             }
 
                             $m2priceBeforeDiscount = $priceRule->price - $discount;
-                            $orderDiscount = $m2priceBeforeDiscount/100*$order->discount;
-                            $orderMarge = $m2priceBeforeDiscount/100*$order->marge;
+                            $orderDiscount = $m2priceBeforeDiscount / 100 * $order->discount;
+                            $orderMarge = $m2priceBeforeDiscount / 100 * $order->marge;
 
                             if($company->is_reseller) {
                                 $m2price = $m2priceBeforeDiscount - $orderDiscount;
-                            } else if($order->marge != 0) {
+                            } elseif($order->marge != 0) {
                                 $m2price = $m2priceBeforeDiscount + $orderMarge;
                             } else {
                                 $m2price = $m2priceBeforeDiscount;
@@ -121,10 +168,8 @@
 
                             $totalPrice += $orderLine->m2 * $m2price;
 
-                            if($zaaglengteToeslag) {
-                                if($orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {
-                                    $zaaglengtes += $orderLine->aantal;
-                                }
+                            if($zaaglengteToeslag && $orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {
+                                $zaaglengtes += $orderLine->aantal;
                             }
                             ?>
 
@@ -132,7 +177,9 @@
                     </td>
                 </tr>
             @endforeach
+            </tbody>
         </table>
+
 
         <?php $btw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
@@ -182,6 +229,48 @@
                             </tr>
                             @endif
                         @endif
+
+                            @if($toeslag->rule == 'Layback')
+                                @if($showLb)
+                                    <tr class="items">
+                                            <?php $totalPrice = $laybacks * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$laybacks}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
+
+                                    </tr>
+                                @endif
+                            @endif
+
+                            @if($toeslag->rule == 'Nokafschuining')
+                                @if($showNokafschuining)
+                                    <tr class="items">
+                                            <?php $totalPrice = $nokafschuining * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$nokafschuining}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
+
+                                    </tr>
+                                @endif
+                            @endif
+
+                            @if($toeslag->rule == 'Vrije ruimte')
+                                @if($showVrijeRuimte)
+                                    <tr class="items">
+                                            <?php $totalPrice = $vrijeruimte * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$vrijeruimte}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
+
+                                    </tr>
+                                @endif
+                            @endif
                     @endif
                 @endforeach
             </table>
@@ -193,7 +282,7 @@
                     <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
                     @if($order->orderRules)
                         <td>
-                            <strong>Invloed op prijs</strong>
+                            <strong>{{__('messages.Invloed op prijs')}}</strong>
                         </td>
                     @endif
                 </tr>
@@ -262,7 +351,7 @@
     <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
         <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
         <p>
-            {!!  __('messages.Op al onze offertes, adviezen, leveringen, opdrachten en op alle met ons gesloten overeenkomsten zijn onze voorwaarden van toepassing.<br> Deze voorwaarden worden op verzoek kosteloos toegezonden en zijn te lezen via uw portaal op <a href="https://my.rietpanel.com/" target="_blank">https://my.rietpanel.com/</a>.<br> Genoemde levertijden zijn verwachte levertijden en hieraan kunnen geen rechten worden ontleend.') !!}
+            {!!  __('messages.orderConditions') !!}
 
         </p>
     </div>
@@ -273,7 +362,7 @@
         margin: 0;
         padding: 0;
         font-family: Arial, sans-serif;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
 
     .w-full { width: 100%; }
@@ -283,7 +372,7 @@
     /* Producten tabel */
     table.products {
         width: 100%;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         border-collapse: collapse;
         margin-top: 20px;
     }

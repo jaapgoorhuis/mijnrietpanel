@@ -62,6 +62,7 @@
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="panel_type" class="text-gray-400">Dikte paneel *</label>
                                 <select id="panel_type" wire:model="panel_type" @if(Auth::user()->is_admin != 1) disabled @endif class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                    <option value="0">Niet van toepassing</option>
                                     @foreach($this->panel_types as $panel_types)
                                         <option value="{{$panel_types->id}}">{{$panel_types->name}}</option>
                                     @endforeach

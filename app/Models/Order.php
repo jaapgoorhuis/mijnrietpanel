@@ -12,11 +12,16 @@ class Order extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'klantnaam', 'rietpanel_comment', 'marge','lang', 'requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
+   protected $fillable = ['order_id', 'klantnaam', 'split_m2', 'planned_m2_today','rietpanel_comment', 'marge','lang', 'requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
    public function orderLines()
    {
        return $this->hasMany(OrderLines::class);
    }
+
+    public function getTotalM2Attribute()
+    {
+        return $this->orderLines()->sum('m2');
+    }
 
 
    public function Suplier() {
@@ -31,5 +36,20 @@ class Order extends Authenticatable
        return $this->belongsTo(User::class);
    }
 
+    public function getKerndikteColorAttribute()
+    {
+        $kc = \App\Models\KerndikteColor::where('kerndikte', $this->kerndikte)->first();
+        return $kc ? $kc->color : 'purple'; // fallback
+    }
+
+    public function planning()
+    {
+        return $this->hasMany(OrderPlanning::class);
+    }
+
+    public function getTotalM2PlannedAttribute()
+    {
+        return $this->planning()->sum('planned_m2');
+    }
 
 }

@@ -19,4 +19,6 @@ return [
     'not_confirmed' => 'De wachtwoorden komen niet overeen',
     'password_not_longenaugh' => 'Het wachtwoord moet minimaal 8 tekens bevatten',
     'percentage_marge' => 'Vul hier een percentage marge. in Marge is het percentage winst wat je bovenop de inkoopprijs kunt plaatsen.',
+    'orderConditions' => 'Op al onze offertes, adviezen, leveringen, opdrachten en op alle met ons gesloten overeenkomsten zijn onze voorwaarden van toepassing.<br> Deze voorwaarden worden op verzoek kosteloos toegezonden en zijn te lezen via uw portaal op <a href="https://my.rietpanel.nl/" target="_blank">https://my.rietpanel.nl/</a>.<br> Genoemde levertijden zijn verwachte levertijden en hieraan kunnen geen rechten worden ontleend.',
+
     ];

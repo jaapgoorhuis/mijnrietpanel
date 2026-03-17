@@ -32,6 +32,8 @@ class EditPriceRules extends Component
 
     public $priceRule;
     public $priceRuleId;
+    public $originalRuleName;
+    public $originalPanelType;
 
 
     public function mount($id) {
@@ -42,7 +44,8 @@ class EditPriceRules extends Component
         $this->panel_type = $this->priceRule->panel_type;
         $this->panel_price = $this->priceRule->price;
         $this->rule_name = $this->priceRule->rule_name;
-
+        $this->originalRuleName = $this->rule_name;
+        $this->originalPanelType = $this->panel_type;
 
     }
     public function render()
@@ -55,27 +58,32 @@ class EditPriceRules extends Component
         }
     }
 
-    public function rules(): array
+
+    public function rules()
     {
         return [
-            'rule_name' => [
-                'required',
-                Rule::unique('price_rules', 'rule_name')  ->where(fn($query) => $query
-                    ->where('company_id', 0)
-                )
-                    ->ignore($this->priceRuleId, 'id')
-            ],
-            'panel_type' => [
-                'required',
-                Rule::unique('price_rules')
-                    ->where(fn($query) => $query
-                        ->where('company_id', 0)
-                        ->where('panel_type', $this->panel_type)
+            'rule_name' => $this->rule_name === $this->originalRuleName
+                ? ['required'] // niet uniek checken als niet veranderd
+                : [
+                    'required',
+                    Rule::unique('price_rules', 'rule_name')
+                        ->where(fn($query) => $query->where('company_id', 0))
+                        ->ignore($this->priceRuleId)
+                ],
 
-                    )
-                    ->ignore($this->priceRuleId)
-            ],
-            'panel_price' => 'required'
+            'panel_type' => $this->panel_type === $this->originalPanelType || $this->panel_type == 0
+                ? ['required'] // geen unique check als niet veranderd of type 0
+                : [
+                    'required',
+                    Rule::unique('price_rules')
+                        ->where(fn($query) => $query
+                            ->where('company_id', 0)
+                            ->where('panel_type', $this->panel_type)
+                        )
+                        ->ignore($this->priceRuleId)
+                ],
+
+            'panel_price' => 'required',
         ];
     }
 
@@ -91,21 +99,32 @@ class EditPriceRules extends Component
 
     public function updatePriceRule() {
 
+
         $this->validate($this->rules());
 
-
-        \App\Models\PriceRules::where('id', $this->priceRuleId)->update([
-            'rule_name' => $this->rule_name,
-            'panel_type' => $this->panel_type,
-            'price' => $this->panel_price,
-        ]);
-
-        $companyPriceRules = \App\Models\PriceRules::where('panel_type', $this->panel_type)->get();
-
-        foreach($companyPriceRules as $companyPriceRule) {
-            $companyPriceRule->update([
-                'rule_name' => $this->rule_name
+        if($this->panel_type == 0) {
+            \App\Models\PriceRules::where('id', $this->priceRuleId)->update([
+                'rule_name' => $this->rule_name,
+                'panel_type' => $this->panel_type,
+                'price' => $this->panel_price,
             ]);
+        }
+
+        else {
+
+            \App\Models\PriceRules::where('id', $this->priceRuleId)->update([
+                'rule_name' => $this->rule_name,
+                'panel_type' => $this->panel_type,
+                'price' => $this->panel_price,
+            ]);
+
+            $companyPriceRules = \App\Models\PriceRules::where('panel_type', $this->panel_type)->get();
+
+            foreach ($companyPriceRules as $companyPriceRule) {
+                $companyPriceRule->update([
+                    'rule_name' => $this->rule_name
+                ]);
+            }
         }
 
 

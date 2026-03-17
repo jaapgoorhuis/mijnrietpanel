@@ -74,6 +74,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/companys/edit/{id}', \App\Livewire\Companys\EditCompanys::class);
     Route::get('/companys/remove/{id}', \App\Livewire\Companys\RemoveCompanys::class);
 
+    Route::get('/productPlanning', \App\Livewire\ProductPlanning\ProductPlanning::class)->name('productPlanning');
+    Route::get('/api/orders', [\App\Livewire\ProductPlanning\ProductPlanning::class, 'getOrders']);
+
+    Route::get('/product-planning/events', [\App\Livewire\ProductPlanning\ProductPlanning::class, 'events'])
+        ->name('livewire.product-planning.events');
+
+
+    Route::post('/api/orders/{id}/move', function ($id) {
+        $order = Order::findOrFail($id);
+        $order->planned_start = request('start');
+        $order->save();
+
+        return response()->json(['success' => true]);
+    });
+
     Route::get('/accountrequests', \App\Livewire\AccountRequests\AccountRequests::class)->name('accountrequests');
     Route::get('/accountrequests/edit/{id}', \App\Livewire\AccountRequests\EditAccountRequests::class);
     Route::get('/accountrequests/remove/{id}', \App\Livewire\AccountRequests\RemoveAccountRequests::class);
@@ -100,11 +115,30 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/download-order/order-{id}', function($id) {
-        $order = Order::where('order_id', $id)->first();
+        $order = Order::where('order_id', $id)->firstOrFail();
         $orderLines = OrderLines::where('order_id', $order->id)->get();
-        Pdf::loadView('pdf.order',['order' => $order,'orderLines'=> $orderLines])->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
 
-        $url = public_path('storage/orders/order-'.$order->order_id.'.pdf');
+        // Bepaal of kolommen überhaupt getoond moeten worden
+        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+
+        $company = $order->company; // Als je een relatie hebt
+        $kerndikte = $order->kerndikte;
+
+        Pdf::loadView('pdf.order', [
+            'order' => $order,
+            'orderLines' => $orderLines,
+            'showNokafschuining' => $showNokafschuining,
+            'showVrijeRuimte' => $showVrijeRuimte,
+            'showLb' => $showLb,
+            'showCb' => $showCb,
+            'company' => $company,
+            'kerndikte' => $kerndikte
+        ])->save(public_path("/storage/orders/order-{$order->order_id}.pdf"));
+
+        $url = public_path("storage/orders/order-{$order->order_id}.pdf");
 
         return response()->file($url);
     });
@@ -120,12 +154,12 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::get('/download-zaaglijst/fabrieklijst-{id}', function($id) {
+    Route::get('/download-fabriekslijst/fabrieklijst-{id}', function($id) {
         $order = Order::where('order_id', $id)->first();
 
-        Pdf::loadView('pdf.zaaglijst',['order' => $order])->save(public_path('/storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf'));
+        Pdf::loadView('pdf.fabriekslijst',['order' => $order])->save(public_path('/storage/fabriekslijst/fabriekslijst-'.$order->order_id.'.pdf'));
 
-        $url = public_path('storage/zaaglijst/zaaglijst-'.$order->order_id.'.pdf');
+        $url = public_path('storage/fabriekslijst/fabriekslijst-'.$order->order_id.'.pdf');
 
         return response()->file($url);
     });

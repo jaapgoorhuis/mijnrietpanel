@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Orders;
 
+use App\Livewire\Surcharges\Surcharges;
 use App\Mail\newOrderCustomer;
 use App\Mail\sendOrder;
 use App\Models\Application;
@@ -78,10 +79,21 @@ class CreateOrders extends Component
 
     public $requested_delivery_date;
 
+
     public $marge = 0;
 
     public $locale;
     public $comment;
+
+    //deze 6 opties gebruiken voor nieuwe optie panelen
+    public $selectedPanelOption =[];
+    public $panelValues =[];
+
+    public $vrijeruimtePrice;
+    public $laybackPrice;
+    public $nokafschuiningPrice;
+
+    public $panelImages = [];
 
     public function mount() {
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
@@ -117,10 +129,48 @@ class CreateOrders extends Component
 
     }
 
+
+
     public function render()
     {
+        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
+        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
+        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
+
         return view('livewire.orders.createOrder');
     }
+
+
+
+
+
+    //deze opties nodig voor nieuwe paneltype
+    public function updatePanelOption($index)
+    {
+        $options = $this->selectedPanelOption[$index] ?? [];
+
+        if (empty($options)) {
+            $this->panelImages[$index] = '/storage/images/rietpanel_panel.png';
+            return;
+        }
+
+        sort($options);
+        $key = implode('-', $options);
+
+        $this->panelImages[$index] = "/storage/images/rietpanel_$key.png";
+    }
+
+
+    public function updatePanelValues($key,$index)
+    {
+        $this->panelValues[$key][$index] = $this->panelValues[$key][$index];
+    }
+
+    //tot hier
+
+
+
+
 
     public function updatePrice() {
         if($this->kerndikte != '') {
@@ -180,6 +230,14 @@ class CreateOrders extends Component
         $this->totaleLengte[] = '';
         $this->fillTotaleLengte[] = '';
         $this->aantal[] = '';
+        $this->panelValues[] = [
+            1 => 0,
+            2 => 0,
+            '3_1' => 0,
+            '3_2' => 0
+        ];
+        $this->panelImages[] = '/storage/images/rietpanel_panel.png';
+        $this->selectedPanelOption[] = [];
     }
 
     public function removeOrderLine($index) {
@@ -188,6 +246,7 @@ class CreateOrders extends Component
         unset($this->aantal[$index]);
         unset($this->lb[$index]);
         unset($this->cb[$index]);
+        unset($this->panelValues[$index]);
         $this->orderLines = array_values($this->orderLines);
         $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
@@ -227,33 +286,52 @@ class CreateOrders extends Component
             $rules['marge'] = 'required';
         }
 
+        // Conditionele validatie voor panelValues
+        if (in_array(1, $this->selectedPanelOption)) {
+            $rules['panelValues.1'] = 'required|numeric'; // voorbeeld range
+        }
+
+        if (in_array(2, $this->selectedPanelOption)) {
+            $rules['panelValues.2'] = 'required|numeric';
+        }
+
+        if (in_array(3, $this->selectedPanelOption)) {
+            $rules['panelValues.3_1'] = 'required|numeric';
+            $rules['panelValues.3_2'] = 'required|numeric';
+        }
+
         return $rules;
     }
 
     public function messages(): array
     {
         return [
-            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld.'),
-            'project_naam.required' => __('messages.De projectnaam is een verplicht veld.'),
-            'referentie.required' => __('messages.De referentie is een verplicht veld.'),
-            'aflever_straat.required' => __('messages.De straat is een verplicht veld.'),
-            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld.'),
-            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld.'),
-            'aflever_land.required' => __('messages.Het land is een verplicht veld.'),
-            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.'),
+            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld'),
+            'project_naam.required' => __('messages.De projectnaam is een verplicht veld'),
+            'referentie.required' => __('messages.De referentie is een verplicht veld'),
+            'aflever_straat.required' => __('messages.De straat is een verplicht veld'),
+            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld'),
+            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld'),
+            'aflever_land.required' => __('messages.Het land is een verplicht veld'),
+            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
-            'intaker.required' => __('messages.Vul aub uw naam in.'),
-            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
-            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
-            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
-            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
-            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
-            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
-            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
-            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
-            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
+            'intaker.required' => __('messages.Vul aub uw naam in'),
+            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
+            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn'),
+            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
+            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
+            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
+            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn'),
+            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
+            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
+            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
-            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
+
+            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld'),
+            'panelValues.*.1.required' => __('messages.Vul een waarde in voor Layback'),
+            'panelValues.*.2.required' => __('messages.Vul een waarde in voor Nok afschuining'),
+            'panelValues.*.3_1.required' => __('messages.Vul een waarde in voor Vrije ruimte 0-x1'),
+            'panelValues.*.3_2.required' => __('messages.Vul een waarde in voor Vrije ruimte x1-x2'),
         ];
     }
 
@@ -303,11 +381,14 @@ class CreateOrders extends Component
         $order = Order::orderBy('id', 'desc')->first();
 
         foreach($this->orderLines as $index => $key) {
-            $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
-            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
-            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
-            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
+            $fillCb = $this->fillCb[$index] ?? '0';
+            $fillLb = $this->fillLb[$index] ?? '0';
+            $fillTotaleLengte = $this->fillTotaleLengte[$index] ?? '0';
+            $aantal = $this->aantal[$index] ?? '0';
+            $m2 = $this->m2[$index] ?? '0';
+
+            // bepaal per optie of deze geselecteerd is
+            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
 
             OrderLines::create([
                 'order_id' => $order->id,
@@ -316,13 +397,24 @@ class CreateOrders extends Component
                 'fillTotaleLengte' => $fillTotaleLengte,
                 'aantal' => $aantal,
                 'user_id' => Auth::user()->id,
-                'm2' => $m2
+                'm2' => $m2,
+
+                // als optie niet geselecteerd is -> 0
+                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                'nokafschuining' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+                'vrije_ruimte_1' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_1'] ?? 0) : 0,
+                'vrije_ruimte_2' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_2'] ?? 0) : 0,
             ]);
         }
 
         $orderLines = OrderLines::where('order_id', $order->id)->get();
 
-        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
+        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+
+        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
 
         Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
 

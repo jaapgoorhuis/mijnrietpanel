@@ -38,6 +38,12 @@
                         </x-dropdown-link>
 
                         @admin
+                        <x-dropdown-link :href="route('productPlanning')">
+                            {{ __('messages.Productplanning') }}
+                        </x-dropdown-link>
+                        @endadmin
+
+                        @admin
                         <x-dropdown-link :href="route('companys')">
                             {{ __('messages.Bedrijven') }}
                         </x-dropdown-link>
@@ -128,6 +134,13 @@
                 <x-responsive-nav-link :href="route('mycompany')">
                     {{ __('messages.Mijn bedrijf') }}
                 </x-responsive-nav-link>
+
+
+                @admin
+                <x-responsive-nav-link  :href="route('productPlanning')">
+                    {{ __('messages.Productplanning') }}
+                </x-responsive-nav-link>
+                @endadmin
 
                 @admin
                 <x-responsive-nav-link  :href="route('companys')">

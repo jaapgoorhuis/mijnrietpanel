@@ -43,10 +43,10 @@
                 <div class="grid">
                     <form>
                         <div class="relative">
-                            <i wire:click="cancelEditSurcharge()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
+                            <i wire:click="cancelCreateSurcharge()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
                         </div>
 
-                        Toeslag bewerken
+                        Toeslag aanmaken
                         <br/><br/>
 
                         <div class="relative z-0 w-full mb-5 group">
@@ -58,6 +58,7 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="condition" class="text-gray-400">Onder/Boven *</label>
                             <select id="condition" wire:model="condition" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <option value="0">Niet van toepassing</option>
                                 <option value="onder">Onder</option>
                                 <option value="boven">Boven</option>
 
@@ -66,7 +67,7 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="project_name" class="text-gray-400">Aantal *</label>
+                            <label for="project_name" class="text-gray-400">Aantal (leeg laten indien niet van toepassing)</label>
                             <input type="number"  wire:model="number" name="number" id="number" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                             <div class="text-red-500">@error('number') {{ $message }} @enderror</div>
                         </div>
@@ -76,6 +77,9 @@
                             <select id="rule" wire:model="rule" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                 <option value="vierkantemeter">m²</option>
                                 <option value="zaaglengte">Zaaglengte</option>
+                                <option value="Layback">Layback</option>
+                                <option value="Nokafschuining">Nokafschuining</option>
+                                <option value="Vrije ruimte">Vrije ruimte</option>
 
                             </select>
                             <div class="text-red-500">@error('rule') {{ $message }} @enderror</div>
