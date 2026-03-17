@@ -124,7 +124,8 @@
                     <br/><br/>
                     <h3>Blokkeer dag</h3>
                     <div id="blocked-days-list" data-outside="true">
-                        <div class="fc-event bg-red-500 text-white cursor-move"
+                        <div class="fc-event p-2 mb-2 cursor-pointer"
+                             style="background-color: #dc3545; color: white; border: 2px solid rgba(0,0,0,0.6); border-radius: 4px;"
                              data-id="block-{{ time() }}"
                              data-title="Blokkeer dag"
                              data-type="manual-block">
