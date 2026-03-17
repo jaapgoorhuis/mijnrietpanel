@@ -104,11 +104,6 @@
                                 Updaten
                             </button>
 
-                            <button wire:click="selectFolder({{ $folder->id }})"
-                                    class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                                Open
-                            </button>
-
                             <button wire:click="deleteFolder({{ $folder->id }})"
                                     class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
                                 Verwijderen
