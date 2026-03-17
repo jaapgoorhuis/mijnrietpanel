@@ -257,12 +257,12 @@
             <div class="flex justify-end gap-3 border-t px-6 py-4">
 
                 <button onclick="document.getElementById('settingModal').classList.add('hidden')"
-                        class="px-4 py-2 border rounded-lg hover:bg-gray-100">
+                        class="w-full sm:w-auto mt-[10px] text-black bg-white hover:bg-white border border-black focus:outline-none focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5">
                     Annuleren
                 </button>
 
                 <button wire:click="saveSettings"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                     Opslaan
                 </button>
 
