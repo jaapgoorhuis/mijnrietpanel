@@ -201,8 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         locale: nlLocale,
         events: initialEvents,
 
-
-
         // --- Drag & drop binnen kalender ---
 
         eventDrop: info => {
@@ -409,18 +407,20 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         // --- Styling van dagcellen ---
         dayCellDidMount: info => {
+
+            const dayName = info.date.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
+
             const d = info.date;
+            const dateStr = d.getFullYear() + '-' +
+                String(d.getMonth()+1).padStart(2,'0') + '-' +
+                String(d.getDate()).padStart(2,'0');
 
-            // --- Datum in dag-maand formaat ---
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const dateStr = `${day}-${month}`; // dit gebruiken we voor display
-            const fullDateISO = d.getFullYear() + '-' + month + '-' + day; // voor interne checks
-
-            // --- Voeg laadindicator toe ---
-            const load = getDayLoad(calendar, fullDateISO);
+            const load = getDayLoad(calendar, dateStr);
             let percent = (load / maxM2PerDay) * 100;
+
             percent = Math.round(percent);
+
+
 
             const indicator = document.createElement('div');
             indicator.style.position = 'absolute';
@@ -429,29 +429,24 @@ document.addEventListener('DOMContentLoaded', () => {
             indicator.style.fontSize = '11px';
             indicator.style.fontWeight = '600';
             indicator.classList.add('day-load-indicator');
-            indicator.innerText = `${percent}%`;
+            indicator.innerText = `${load}/${maxM2PerDay} m²`;
 
             info.el.style.position = 'relative';
 
-            // --- Achtergrond rood als geblokkeerde weekdag ---
-            const dayName = d.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
+
+
+            // Achtergrond rood als blocked
             if (blockedWeekDays.includes(dayName)) {
                 info.el.style.backgroundColor = '#dc3545';
             }
 
-            // --- Datum toevoegen bovenaan cel ---
-            const dateLabel = document.createElement('div');
-            dateLabel.style.position = 'absolute';
-            dateLabel.style.top = '4px';
-            dateLabel.style.right = '4px';
-            dateLabel.style.fontSize = '12px';
-            dateLabel.style.fontWeight = '600';
-            dateLabel.innerText = dateStr;
-            info.el.appendChild(dateLabel);
-
-            // --- Voeg laadindicator toe ---
             info.el.appendChild(indicator);
-            indicator.style.color = getLoadColor(percent);
+
+            indicator.style.color = getLoadColor(percent); // dynamische kleur
+            indicator.innerText = percent + '%';
+
+            // Dynamische kleur
+            const bgColor = window.getComputedStyle(info.el).backgroundColor;
         },
 
         // --- Event click (manual-block) ---
@@ -465,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Event styling ---
         eventDidMount: info => {
 
-            // --- Achtergrondkleur ---
+            // --- Achtergrondkleur instellen ---
             const bgColor = window.getComputedStyle(info.el).backgroundColor;
             const textColor = getContrastColor(bgColor);
 
@@ -478,37 +473,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setEventTextContrast(info.el, textColor);
 
-            // --- TYPE ---
-            const type = info.event.extendedProps?.type || 'order';
-
-            // =========================
-            // 🟥 MANUAL BLOCK
-            // =========================
-            if (type === 'manual-block') {
+            // --- Manual-block cursor pointer ---
+            if (info.event.extendedProps.type === 'manual-block') {
                 info.el.style.cursor = 'pointer';
-                info.el.style.border = '2px solid #dc3545'; // zelfde rood
-                info.el.style.borderRadius = '4px';
-                return; // stop hier
             }
-
-            // =========================
-            // 🟦 ORDERS (BORDER LOGIC)
-            // =========================
-            const plannedM2 = parseFloat(info.event.extendedProps?.planned_m2) || 0;
-            const totalM2 = parseFloat(info.event.extendedProps?.total_m2) || plannedM2;
-
-            let borderStyle = 'none';
-
-            if (plannedM2 > 0 && plannedM2 < totalM2) {
-                // gedeeltelijk gepland
-                borderStyle = '2px dashed rgba(0,0,0,0.6)';
-            } else if (plannedM2 >= totalM2) {
-                // volledig gepland
-                borderStyle = '2px solid rgba(0,0,0,0.6)';
-            }
-
-            info.el.style.border = borderStyle;
-            info.el.style.borderRadius = '4px';
         },
         eventAdd: () => updateDayIndicators(calendar),
         eventChange: () => updateDayIndicators(calendar),
