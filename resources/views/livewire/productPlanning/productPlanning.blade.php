@@ -143,9 +143,166 @@
             </div>
         </div>
     </div>
+    <!-- Limiet overschreden modal -->
+    <div id="limitModal" wire:ignore.self class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full hidden" aria-modal="true" role="dialog">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative bg-white rounded-lg shadow-sm">
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500">
+                        Het daglimiet van <strong>{{ $settings->max_m2_per_day }} m²</strong> wordt met
+                        <strong>{{ $limitExceededAmount ?? 0 }} m²</strong> overschreden.
+
+                    </h3>
+
+                    <p class="mb-5">Wat wil je doen?</p>
+                    <button type="button" wire:click="confirmPlanOrder('nextDay')"
+                            class="py-2.5 px-5 mb-2 w-full text-sm font-medium text-white bg-black rounded-lg border border-black hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Splits op en verplaats naar eerstvolgende beschikbare dag
+                    </button>
+
+                    <button type="button" wire:click="confirmPlanOrder('sameDay')"
+                            class="py-2.5 px-5 mb-2 w-full text-sm font-medium text-black bg-white rounded-lg border border-black hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Doorgaan op dezelfde dag (overschrijdt het limiet)
+                    </button>
+
+                    <button type="button" wire:click="confirmPlanOrder('split')"
+                            class="py-2.5 px-5 w-full text-sm font-medium text-white bg-gray-700 rounded-lg border border-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Splitsen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingModal" wire:ignore.self class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+
+        ```
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-xl">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b px-6 py-4">
+                <h2 class="text-lg font-semibold">Productplanning instellingen</h2>
+
+                <button onclick="document.getElementById('settingModal').classList.add('hidden')"
+                        class="text-gray-400 hover:text-gray-600">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-6">
+
+                <!-- Geblokkeerde dagen -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">
+                        Geblokkeerde dagen
+                    </label>
+
+                    <select wire:model="blockedDays" multiple class="w-full border rounded-lg p-2">
+                        <option value="zaterdag">Zaterdag</option>
+                        <option value="zondag">Zondag</option>
+                    </select>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                        Houd CTRL / CMD ingedrukt om meerdere dagen te selecteren
+                    </p>
+                </div>
+
+
+                <!-- Limiet -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">
+                        Limiet m² per dag
+                    </label>
+
+                    <input type="number"
+                           wire:model="max_m2_per_day"
+                           class="w-full border rounded-lg p-2"
+                           placeholder="Bijv. 120">
+                </div>
+
+
+                <!-- Kerndikte kleuren -->
+                <div>
+                    <label class="block text-sm font-medium mb-3">
+                        Kleur per kerndikte
+                    </label>
+
+                    <div class="grid grid-cols-2 gap-4">
+
+                        @foreach($this->coreThickness as $kerndikte)
+
+                            <div class="flex items-center justify-between border rounded-lg p-3">
+                                <span>{{ $kerndikte->kerndikte }}</span>
+
+                                <input
+                                    type="color"
+                                    wire:model="coreThicknessColors.{{ $kerndikte->id }}"
+                                    class="w-10 h-10 p-0 border-0"
+                                >
+                            </div>
+                        @endforeach
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="flex justify-end gap-3 border-t px-6 py-4">
+
+                <button onclick="document.getElementById('settingModal').classList.add('hidden')"
+                        class="w-full sm:w-auto mt-[10px] text-black bg-white hover:bg-white border border-black focus:outline-none focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5">
+                    Annuleren
+                </button>
+
+                <button wire:click="saveSettings"
+                        class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    Opslaan
+                </button>
+
+            </div>
+
+        </div>
+        ```
+
+    </div>
+
+    <div wire:ignore x-data="{ open: @entangle('showBlockedModal') }">
+        <div x-show="open" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity">
+            <div class="bg-white p-4 rounded w-96">
+                <h2 class="text-lg font-bold mb-2">Pas titel aan</h2>
+                <input type="text" wire:model="editingBlockedTitle" class="w-full border px-2 py-1 rounded mb-4">
+                <div class="flex justify-end gap-2">
+                    <button @click="open = false" class="w-full sm:w-auto mt-[10px] text-black bg-white hover:bg-white border border-black focus:outline-none focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5">Annuleren</button>
+                    <button wire:click="updateBlockedTitle"
+                            class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        Opslaan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="limitDecisionModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-4 rounded shadow">
+            <p class="modal-message mb-4"></p>
+            <button class="btn-override bg-green-500 text-white px-4 py-2 mr-2 rounded">Overschrijven</button>
+            <button class="btn-split bg-yellow-500 text-white px-4 py-2 rounded">Splitsen</button>
+        </div>
+    </div>
+
 </div>
 
+
+
+
+
 <script>
-    window.blockedDays = @json($settings->blocked_days);
-    window.blockedDates = @json($blockedDates ?? []);
+    window.blockedDays = @json($settings->blocked_days); // vaste dagen blokkeren
+    window.blockedDates = @json($blockedDates ?? []);     // losse datums
 </script>
