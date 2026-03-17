@@ -279,8 +279,11 @@
                 <h2 class="text-lg font-bold mb-2">Pas titel aan</h2>
                 <input type="text" wire:model="editingBlockedTitle" class="w-full border px-2 py-1 rounded mb-4">
                 <div class="flex justify-end gap-2">
-                    <button @click="open = false" class="px-4 py-2 border rounded">Annuleren</button>
-                    <button wire:click="updateBlockedTitle" class="px-4 py-2 bg-blue-600 text-white rounded">Opslaan</button>
+                    <button @click="open = false" class="w-full sm:w-auto mt-[10px] text-black bg-white hover:bg-white border border-black focus:outline-none focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5">Annuleren</button>
+                    <button wire:click="updateBlockedTitle"
+                            class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        Opslaan
+                    </button>
                 </div>
             </div>
         </div>
