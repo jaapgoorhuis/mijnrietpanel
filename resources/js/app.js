@@ -121,37 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarEl = document.getElementById('calendar');
     const maxM2PerDay = parseFloat(calendarEl.dataset.maxM2 || 50);
 
-    function splitOrderOverDays(order, startDate, maxPerDay) {
-        const totalM2 = order.extendedProps.planned_m2 || 0;
-        if (totalM2 <= maxPerDay) {
-            // Geen splitsing nodig
-            return [{
-                ...order,
-                start: startDate,
-                extendedProps: { ...order.extendedProps, planned_m2: totalM2 }
-            }];
-        }
-
-        const daysNeeded = Math.ceil(totalM2 / maxPerDay);
-        const events = [];
-
-        for (let i = 0; i < daysNeeded; i++) {
-            const m2ForDay = (i === daysNeeded - 1)
-                ? totalM2 - maxPerDay * (daysNeeded - 1)
-                : maxPerDay;
-
-            const date = new Date(startDate);
-            date.setDate(date.getDate() + i);
-
-            events.push({
-                ...order,
-                start: date.toISOString().split('T')[0],
-                extendedProps: { ...order.extendedProps, planned_m2: m2ForDay }
-            });
-        }
-
-        return events;
-    }
     if (!calendarEl || calendarInitialized) return;
 
     let manualBlockedDates = [];
@@ -217,14 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const oldDate = info.event.extendedProps.oldDate || info.oldEvent?.startStr || info.event.startStr;
                 const newDate = info.event.startStr;
 
-                // Alleen updaten als datum veranderd is
                 if (oldDate !== newDate) {
-                    Livewire.dispatch('moveBlockedDay', { oldDate, newDate });
-                    // Update oldDate voor volgende drag
+                    // Update oldDate lokaal
                     info.event.setExtendedProp('oldDate', newDate);
+
+                    // Update manualBlockedDates array
+                    manualBlockedDates = manualBlockedDates.filter(d => d !== oldDate);
+                    manualBlockedDates.push(newDate);
+
+                    // Stuur naar Livewire
+                    Livewire.dispatch('moveBlockedDay', { oldDate, newDate });
+
+                    // Update ID zodat FullCalendar het event niet verwijderd bij next re-render
+                    info.event.setProp('id', 'block-' + newDate);
                 }
 
-                return; // stop verdere order-logica
+                return;
             }
 
             // --- ORDERS logic blijft hetzelfde ---
@@ -238,32 +215,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Ontvang externe draggables / drops van buiten kalender ---
         eventReceive: info => {
-
-
             const dateStr = info.event.startStr;
-
-            // 🔑 echte type bepalen
             const type =
                 info.draggedEl?.dataset?.type ||
                 info.event.extendedProps?.type ||
                 'order';
-
             const originalId =
                 info.draggedEl?.dataset?.id ||
                 info.event.extendedProps?.originalId ||
                 info.event.id;
+            const eventTitle = info.event.title || 'Geblokkeerd';
 
-            console.log('receive type:', type);
-            // 🟥 BLOCKED DAY
+            // -----------------------------
+            // MANUAL BLOCK
+            // -----------------------------
             if (type === 'manual-block') {
-
                 const blockId = 'block-' + dateStr;
 
+                // Check of block al bestaat
                 if (!calendar.getEventById(blockId)) {
-
-                    calendar.addEvent({
+                    // Voeg event toe in FullCalendar
+                    const newEvent = calendar.addEvent({
                         id: blockId,
-                        title: info.event.title || 'Geblokkeerd',
+                        title: eventTitle,
                         start: dateStr,
                         allDay: true,
                         backgroundColor: '#dc3545',
@@ -271,45 +245,48 @@ document.addEventListener('DOMContentLoaded', () => {
                         textColor: 'white',
                         extendedProps: {
                             type: 'manual-block',
-                            originalId: blockId
+                            originalId: originalId,
+                            oldDate: dateStr
                         }
                     });
 
+                    // Update lokale array
                     manualBlockedDates.push(dateStr);
 
-                    // ✅ alleen deze functie
+                    // Stuur naar Livewire DB update
                     Livewire.dispatch('addBlockedDay', {
                         date: dateStr,
-                        title: info.event.title || 'Geblokkeerd'
+                        title: eventTitle
                     });
                 }
 
-                // placeholder verwijderen
+                // Verwijder placeholder uit externe container
                 info.event.remove();
 
-                // ⛔ STOP hier zodat plan-order nooit wordt uitgevoerd
-                return;
+                return; // stop verdere order-logica
             }
 
-            // 🟦 ORDERS
+            // -----------------------------
+            // ORDERS
+            // -----------------------------
             calendar.addEvent({
                 id: originalId,
                 title: info.event.title,
                 start: dateStr,
                 extendedProps: {
                     ...info.event.extendedProps,
-                    originalId,
-                    groupId: info.event.extendedProps.groupId || originalId,
+                    originalId: originalId,
+                    groupId: info.event.extendedProps?.groupId || originalId,
                     planned_m2: info.event.extendedProps?.planned_m2 || 0
                 }
             });
 
-            // alleen voor orders
             Livewire.dispatch('plan-order', {
                 orderId: originalId,
                 date: dateStr
             });
 
+            // Verwijder originele DOM placeholder
             if (info.draggedEl && info.draggedEl.parentNode) {
                 info.draggedEl.parentNode.removeChild(info.draggedEl);
             }
@@ -683,6 +660,38 @@ document.addEventListener('DOMContentLoaded', () => {
         modalEl.classList.add('hidden');
         modalEl.classList.remove('flex');
     });
+
+    Livewire.on('blockedDatesUpdated', (blockedDates) => {
+        if (!calendar) return;
+
+        // forceer array
+        blockedDates = Array.isArray(blockedDates) ? blockedDates : [blockedDates];
+
+        // Verwijder oude blocked events
+
+
+        // Voeg nieuwe blockedDates toe
+        blockedDates.forEach(b => {
+            const blockId = 'block-' + b.date;
+
+            // check dat event nog niet bestaat
+            if (!calendar.getEventById(blockId)) {
+                calendar.addEvent({
+                    id: blockId,
+                    title: b.title,
+                    start: b.date,
+                    allDay: true,
+                    backgroundColor: '#dc3545',
+                    borderColor: '#dc3545',
+                    extendedProps: { type: 'manual-block', originalId: blockId }
+                });
+            }
+        });
+
+        // update manualBlockedDates voor eventAllow
+        manualBlockedDates = blockedDates.map(b => b.date);
+    });
+
 
 
     Livewire.on('updateBlockedTitleLive', (payload) => {

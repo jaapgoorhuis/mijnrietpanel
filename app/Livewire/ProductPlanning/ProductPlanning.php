@@ -761,7 +761,6 @@ class ProductPlanning extends Component
 
     public function moveBlockedDay($oldDate, $newDate)
     {
-
         foreach ($this->blockedDates as &$block) {
             if ($block['date'] === $oldDate) {
                 $block['date'] = $newDate;
@@ -772,11 +771,11 @@ class ProductPlanning extends Component
         $this->settings->blocked_dates = $this->blockedDates;
         $this->settings->save();
 
+        // Update kalender live
         $this->dispatch('blockedDatesUpdated', [
             'blockedDates' => $this->blockedDates
         ]);
     }
-
 
     public function downloadOrders()
     {
@@ -795,43 +794,41 @@ class ProductPlanning extends Component
 
     private function downloadZip(string $typeKey, string $zipNamePlural, string $zipNameSingular)
     {
-        // --- Check of datums zijn ingevuld ---
-        if (empty($this->printStartDate) || empty($this->printEndDate)) {
-            session()->flash('error', 'Vul eerst een start- en einddatum in.');
-            return;
-        }
+        // Haal alle geplande orders op
+        $plannings = OrderPlanning::with('order')
+            ->orderBy('planned_date', 'asc') // zodat het eerste record altijd bovenaan staat
+            ->when($this->printStartDate, fn($q) => $q->whereDate('planned_date', '>=', $this->printStartDate))
+            ->when($this->printEndDate, fn($q) => $q->whereDate('planned_date', '<=', $this->printEndDate))
+            ->get();
 
-        // --- Orders ophalen op basis van geplande datum ---
-        $orderPlannings = OrderPlanning::with('order')
-            ->whereDate('planned_date', '>=', $this->printStartDate)
-            ->whereDate('planned_date', '<=', $this->printEndDate)
-            ->get()
-            ->groupBy('order_id');
-
-        if ($orderPlannings->isEmpty()) {
+        if ($plannings->isEmpty()) {
             session()->flash('error', "Geen {$zipNamePlural} binnen dit tijdsbestek");
             return;
         }
 
-        $tmpDir = storage_path("app/temp_{$zipNameSingular}_" . time());
+        // Groepeer per order_id zodat we enkel het eerste planningrecord per order pakken
+        $ordersGrouped = $plannings->groupBy(fn($planning) => $planning->order_id);
+
+        $tmpDir = storage_path("app/temp_{$zipNamePlural}_" . time());
         if (!file_exists($tmpDir)) mkdir($tmpDir, 0777, true);
 
-        // --- Gebruik van datum bereik in ZIP bestandsnaam ---
-        $startDateFormatted = \Carbon\Carbon::parse($this->printStartDate)->format('d-m-Y');
-        $endDateFormatted   = \Carbon\Carbon::parse($this->printEndDate)->format('d-m-Y');
-        $zipFilePath        = storage_path("app/{$startDateFormatted}_tot_{$endDateFormatted}_{$zipNamePlural}.zip");
-
         $zip = new \ZipArchive();
+        $zipFilePath = storage_path("app/{$zipNamePlural}_" . now()->format('d-m-Y') . ".zip");
 
         if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
-            foreach ($orderPlannings as $orderId => $plannings) {
-                $order = $plannings->first()->order;
-                $plannedDate = \Carbon\Carbon::parse($plannings->first()->planned_date)->format('d-m-Y');
+            foreach ($ordersGrouped as $orderId => $plannings) {
+                // Pak het eerste planningrecord
+                $firstPlanning = $plannings->first();
+                $order = $firstPlanning->order;
 
+                // PDF genereren via je service
                 $pdfContent = OrderPdfService::generatePdf($order, $typeKey);
-                $fileName = "{$plannedDate}-{$zipNameSingular}-{$order->order_id}.pdf";
-                $pdfPath = $tmpDir . '/' . $fileName;
 
+                // Gebruik planned_date van het eerste record voor bestandsnaam
+                $plannedDate = \Carbon\Carbon::parse($firstPlanning->planned_date)->format('d-m-Y');
+                $fileName = "{$plannedDate}-{$zipNameSingular}-{$order->order_id}.pdf";
+
+                $pdfPath = $tmpDir . '/' . $fileName;
                 file_put_contents($pdfPath, $pdfContent);
                 $zip->addFile($pdfPath, $fileName);
             }
