@@ -92,7 +92,7 @@
             <label for="endDate" class="font-medium">Tot:</label>
             <input type="date" id="endDate" wire:model="printEndDate" class="border rounded px-2 py-1">
 
-            <button wire:click="downloadOrdersZip" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            <button wire:click="downloadOrdersZip" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 Download orders
             </button>
         </div>
