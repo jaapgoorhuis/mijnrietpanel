@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('detailFolders', function (Blueprint $table) {
+        Schema::table('detailsFolders', function (Blueprint $table) {
             $table->integer('detailsFolder_id');
         });
 
@@ -30,8 +30,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('detailFolders', function (Blueprint $table) {
-            $table->dropColumn('detailFolder_id');
+        Schema::table('detailsFolders', function (Blueprint $table) {
+            $table->dropColumn('detailsFolder_id');
         });
 
         Schema::table('marketing', function (Blueprint $table) {
