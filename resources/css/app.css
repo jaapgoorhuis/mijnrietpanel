@@ -101,6 +101,13 @@ align-items: flex-start !important;
     word-break: break-word;
 }
 
+#external-orders-list {
+    position: sticky;
+    top: 0; /* afstand vanaf de top van de viewport */
+    max-height: calc(100vh - 2rem); /* maximaal hoog: viewport minus wat padding */
+    overflow-y: auto; /* scroll binnen de sidebar als content te lang is */
+}
+
 /* Voor de dagcellen in maandweergave */
 
 
