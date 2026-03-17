@@ -202,12 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         events: initialEvents,
 
 
-        // --- Voeg dit toe ---
-        dayCellContent: function(info) {
-            const day = String(info.date.getDate()).padStart(2, '0');
-            const month = String(info.date.getMonth() + 1).padStart(2, '0'); // Maand is 0-indexed
-            info.dayNumberText = `${day}-${month}`;
-        },
+
         // --- Drag & drop binnen kalender ---
 
         eventDrop: info => {
@@ -419,56 +414,46 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Datum in dag-maand formaat ---
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
-            const dateStr = `${day}-${month}`;
-            const fullDateISO = `${d.getFullYear()}-${month}-${day}`;
+            const dateStr = `${day}-${month}`; // dit gebruiken we voor display
+            const fullDateISO = d.getFullYear() + '-' + month + '-' + day; // voor interne checks
 
-            // --- Bereken load ---
+            // --- Voeg laadindicator toe ---
             const load = getDayLoad(calendar, fullDateISO);
-            const percent = Math.round((load / maxM2PerDay) * 100);
+            let percent = (load / maxM2PerDay) * 100;
+            percent = Math.round(percent);
 
-            // --- Achtergrond rood voor geblokkeerde weekdagen ---
+            const indicator = document.createElement('div');
+            indicator.style.position = 'absolute';
+            indicator.style.top = '4px';
+            indicator.style.left = '4px';
+            indicator.style.fontSize = '11px';
+            indicator.style.fontWeight = '600';
+            indicator.classList.add('day-load-indicator');
+            indicator.innerText = `${percent}%`;
+
+            info.el.style.position = 'relative';
+
+            // --- Achtergrond rood als geblokkeerde weekdag ---
             const dayName = d.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
             if (blockedWeekDays.includes(dayName)) {
                 info.el.style.backgroundColor = '#dc3545';
             }
 
-            // --- Zorg dat position relative staat zodat overlay kan ---
-            info.el.style.position = 'relative';
-
-            // --- Voeg padding-top toe zodat events niet over datum/m2 heen staan ---
-            info.el.style.paddingTop = '15px'; // <-- hier de ruimte tussen datum/m² en events
-
-            // --- Datum label overlay ---
-            let dateLabel = info.el.querySelector('.day-date-label');
-            if (!dateLabel) {
-                dateLabel = document.createElement('div');
-                dateLabel.classList.add('day-date-label');
-                dateLabel.style.position = 'absolute';
-                dateLabel.style.top = '2px';
-                dateLabel.style.left = '2px';
-                dateLabel.style.fontSize = '12px';
-                dateLabel.style.fontWeight = '600';
-                dateLabel.style.zIndex = '2'; // boven events
-                info.el.appendChild(dateLabel);
-            }
+            // --- Datum toevoegen bovenaan cel ---
+            const dateLabel = document.createElement('div');
+            dateLabel.style.position = 'absolute';
+            dateLabel.style.top = '4px';
+            dateLabel.style.right = '4px';
+            dateLabel.style.fontSize = '12px';
+            dateLabel.style.fontWeight = '600';
             dateLabel.innerText = dateStr;
+            info.el.appendChild(dateLabel);
 
-            // --- Load indicator overlay ---
-            let indicator = info.el.querySelector('.day-load-indicator');
-            if (!indicator) {
-                indicator = document.createElement('div');
-                indicator.classList.add('day-load-indicator');
-                indicator.style.position = 'absolute';
-                indicator.style.top = '2px';
-                indicator.style.right = '2px';
-                indicator.style.fontSize = '11px';
-                indicator.style.fontWeight = '600';
-                indicator.style.zIndex = '2'; // boven events
-                info.el.appendChild(indicator);
-            }
-            indicator.innerText = `${percent}%`;
+            // --- Voeg laadindicator toe ---
+            info.el.appendChild(indicator);
             indicator.style.color = getLoadColor(percent);
         },
+
         // --- Event click (manual-block) ---
         eventClick: info => {
             if (info.event.extendedProps.type === 'manual-block') {
