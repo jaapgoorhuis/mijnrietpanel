@@ -109,7 +109,12 @@
                             $textColor = getContrastColor($bgColor);
                         @endphp
                         <div class="fc-event p-2 mb-2 cursor-pointer"
-                             style="background-color: {{ $bgColor }}; color: {{ $textColor }};"
+                             style="
+                             background-color: {{ $bgColor }};
+                             color: {{ $textColor }};
+                             border:1px solid rgba(0,0,0,0.6);
+                             box-shadow: 0 0 0 1px rgba(255,255,255,0.6) inset;
+                             "
                              data-id="{{ $order->id }}"
                              data-title="{{ $order->klantnaam . ' ' . $order->project_naam . ' (' . $order->total_m2 . ' m²)' }}"
                              data-color="{{ $bgColor }}">

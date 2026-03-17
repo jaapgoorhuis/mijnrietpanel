@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Event styling ---
         eventDidMount: info => {
 
-            // --- Achtergrondkleur instellen ---
+            // --- Achtergrondkleur ---
             const bgColor = window.getComputedStyle(info.el).backgroundColor;
             const textColor = getContrastColor(bgColor);
 
@@ -473,10 +473,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setEventTextContrast(info.el, textColor);
 
-            // --- Manual-block cursor pointer ---
-            if (info.event.extendedProps.type === 'manual-block') {
+            // --- TYPE ---
+            const type = info.event.extendedProps?.type || 'order';
+
+            // =========================
+            // 🟥 MANUAL BLOCK
+            // =========================
+            if (type === 'manual-block') {
                 info.el.style.cursor = 'pointer';
+                info.el.style.border = '2px solid #dc3545'; // zelfde rood
+                info.el.style.borderRadius = '4px';
+                return; // stop hier
             }
+
+            // =========================
+            // 🟦 ORDERS (BORDER LOGIC)
+            // =========================
+            const plannedM2 = parseFloat(info.event.extendedProps?.planned_m2) || 0;
+            const totalM2 = parseFloat(info.event.extendedProps?.total_m2) || plannedM2;
+
+            let borderStyle = 'none';
+
+            if (plannedM2 > 0 && plannedM2 < totalM2) {
+                // gedeeltelijk gepland
+                borderStyle = '2px dashed rgba(0,0,0,0.6)';
+            } else if (plannedM2 >= totalM2) {
+                // volledig gepland
+                borderStyle = '2px solid rgba(0,0,0,0.6)';
+            }
+
+            info.el.style.border = borderStyle;
+            info.el.style.borderRadius = '4px';
         },
         eventAdd: () => updateDayIndicators(calendar),
         eventChange: () => updateDayIndicators(calendar),
