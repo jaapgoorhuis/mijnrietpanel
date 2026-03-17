@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderPlanning;
 use App\Models\ProductPlanningSetting;
+use App\Services\OrderPdfService;
 use Barryvdh\DomPDF\PDF;
 use Livewire\Component;
 
@@ -777,67 +778,64 @@ class ProductPlanning extends Component
     }
 
 
-    public function downloadOrdersZip()
+    public function downloadOrders()
     {
-        $this->validate([
-            'printStartDate' => 'required|date',
-            'printEndDate' => 'required|date|after_or_equal:printStartDate',
-        ]);
-
-        $orders = \App\Models\Order::whereDate('planned_start', '>=', $this->printStartDate)
-            ->whereDate('planned_start', '<=', $this->printEndDate)
-            ->get();
-
-        if(count($orders)) {
-
-            $tmpDir = storage_path('app/temp_orders_' . time());
-            if (!file_exists($tmpDir)) mkdir($tmpDir, 0777, true);
-
-            $zip = new \ZipArchive();
-            $zipFileName = 'orders_' . now()->format('d-m-Y') . '.zip';
-            $zipFilePath = storage_path('app/' . $zipFileName);
-
-            if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
-                foreach ($orders as $order) {
-                    $orderLines = OrderLines::where('order_id', $order->id)->get();
-
-                    $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
-                    $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
-                    $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
-                    $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
-
-                    $company = $order->company;
-                    $kerndikte = $order->kerndikte;
-
-                    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order', [
-                        'order' => $order,
-                        'orderLines' => $orderLines,
-                        'showNokafschuining' => $showNokafschuining,
-                        'showVrijeRuimte' => $showVrijeRuimte,
-                        'showLb' => $showLb,
-                        'showCb' => $showCb,
-                        'company' => $company,
-                        'kerndikte' => $kerndikte,
-                    ]);
-
-                    $date = \Carbon\Carbon::parse($order->planned_start)->format('d-m-Y');
-
-                    $fileName = $date . '-order-' . $order->order_id . '.pdf';
-
-                    $pdfPath = $tmpDir . '/' . $fileName;
-                    file_put_contents($pdfPath, $pdf->output());
-
-                    $zip->addFile($pdfPath, $fileName);
-                }
-                $zip->close();
-            }
-
-            return response()->download($zipFilePath)->deleteFileAfterSend(true);
-        }
-        else {
-            session()->flash('error', 'Er zijn geen orders binnen dit tijdsbestek');
-        }
+        return $this->downloadZip('order', 'orders','order');
     }
 
+    public function downloadPakketlijst()
+    {
+        return $this->downloadZip('pakketlijst', 'pakketlijsten','pakketlijst');
+    }
 
+    public function downloadFabriekslijst()
+    {
+        return $this->downloadZip('fabriekslijst', 'fabriekslijsten','fabriekslijst');
+    }
+
+    private function downloadZip(string $typeKey, string $zipNamePlural, string $zipNameSingular)
+    {
+        // --- Check of datums zijn ingevuld ---
+        if (empty($this->printStartDate) || empty($this->printEndDate)) {
+            session()->flash('error', 'Vul eerst een start- en einddatum in.');
+            return;
+        }
+
+        // --- Orders ophalen op basis van geplande datum ---
+        $orderPlannings = OrderPlanning::with('order')
+            ->whereDate('planned_date', '>=', $this->printStartDate)
+            ->whereDate('planned_date', '<=', $this->printEndDate)
+            ->get()
+            ->groupBy('order_id'); // Groepeer per order zodat gesplitste orders samen blijven
+
+        if ($orderPlannings->isEmpty()) {
+            session()->flash('error', "Geen {$zipNamePlural} binnen dit tijdsbestek");
+            return;
+        }
+
+        $tmpDir = storage_path("app/temp_{$zipNameSingular}_" . time());
+        if (!file_exists($tmpDir)) mkdir($tmpDir, 0777, true);
+
+        $zipFilePath = storage_path("app/{$zipNamePlural}_" . now()->format('d-m-Y') . ".zip");
+        $zip = new \ZipArchive();
+
+        if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
+            foreach ($orderPlannings as $orderId => $plannings) {
+                $order = $plannings->first()->order; // Pak de order van het eerste planning record
+                $plannedDate = \Carbon\Carbon::parse($plannings->first()->planned_date)->format('d-m-Y');
+
+                // --- PDF genereren via service ---
+                $pdfContent = OrderPdfService::generatePdf($order, $typeKey);
+
+                $fileName = "{$plannedDate}-{$zipNameSingular}-{$order->order_id}.pdf";
+                $pdfPath = $tmpDir . '/' . $fileName;
+
+                file_put_contents($pdfPath, $pdfContent);
+                $zip->addFile($pdfPath, $fileName);
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipFilePath)->deleteFileAfterSend(true);
+    }
 }

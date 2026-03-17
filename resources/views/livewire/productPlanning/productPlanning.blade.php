@@ -92,10 +92,18 @@
             <label for="endDate" class="font-medium">Tot:</label>
             <input type="date" id="endDate" wire:model="printEndDate" class="border rounded px-2 py-1">
 
-            <button wire:click="downloadOrdersZip" class="w-full sm:w-auto mt-[10px] text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+            <button wire:click="downloadOrders" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
                 Download orders
             </button>
+            <button wire:click="downloadPakketlijst" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
+                Download pakketlijsten
+            </button>
+            <button wire:click="downloadFabriekslijst" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
+                Download fabriekslijsten
+            </button>
         </div>
+
+
 
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="flex">
