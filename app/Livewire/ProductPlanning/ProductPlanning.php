@@ -794,11 +794,17 @@ class ProductPlanning extends Component
 
     private function downloadZip(string $typeKey, string $zipNamePlural, string $zipNameSingular)
     {
-        // Haal alle geplande orders op
+        // ✅ Controleer of datums zijn ingevuld
+        if (empty($this->printStartDate) || empty($this->printEndDate)) {
+            session()->flash('error', "Vul zowel de start- als einddatum in om {$zipNamePlural} te downloaden.");
+            return;
+        }
+
+        // Haal alle geplande orders op binnen de opgegeven datums
         $plannings = OrderPlanning::with('order')
-            ->orderBy('planned_date', 'asc') // zodat het eerste record altijd bovenaan staat
-            ->when($this->printStartDate, fn($q) => $q->whereDate('planned_date', '>=', $this->printStartDate))
-            ->when($this->printEndDate, fn($q) => $q->whereDate('planned_date', '<=', $this->printEndDate))
+            ->orderBy('planned_date', 'asc')
+            ->whereDate('planned_date', '>=', $this->printStartDate)
+            ->whereDate('planned_date', '<=', $this->printEndDate)
             ->get();
 
         if ($plannings->isEmpty()) {
@@ -813,18 +819,19 @@ class ProductPlanning extends Component
         if (!file_exists($tmpDir)) mkdir($tmpDir, 0777, true);
 
         $zip = new \ZipArchive();
-        $zipFilePath = storage_path("app/{$zipNamePlural}_" . now()->format('d-m-Y') . ".zip");
+
+        // ✅ Maak bestandsnaam op basis van start en eind datum
+        $start = \Carbon\Carbon::parse($this->printStartDate)->format('d-m-Y');
+        $end   = \Carbon\Carbon::parse($this->printEndDate)->format('d-m-Y');
+        $zipFilePath = storage_path("app/{$zipNamePlural}_{$start}_tot_{$end}.zip");
 
         if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
             foreach ($ordersGrouped as $orderId => $plannings) {
-                // Pak het eerste planningrecord
                 $firstPlanning = $plannings->first();
                 $order = $firstPlanning->order;
 
-                // PDF genereren via je service
                 $pdfContent = OrderPdfService::generatePdf($order, $typeKey);
 
-                // Gebruik planned_date van het eerste record voor bestandsnaam
                 $plannedDate = \Carbon\Carbon::parse($firstPlanning->planned_date)->format('d-m-Y');
                 $fileName = "{$plannedDate}-{$zipNameSingular}-{$order->order_id}.pdf";
 
@@ -832,9 +839,11 @@ class ProductPlanning extends Component
                 file_put_contents($pdfPath, $pdfContent);
                 $zip->addFile($pdfPath, $fileName);
             }
+
             $zip->close();
         }
 
         return response()->download($zipFilePath)->deleteFileAfterSend(true);
     }
+
 }
