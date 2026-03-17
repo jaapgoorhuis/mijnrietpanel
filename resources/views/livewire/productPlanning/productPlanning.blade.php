@@ -55,6 +55,24 @@
             </div>
         @endif
 
+        <div class="mb-4 flex items-center gap-3">
+            <label for="startDate" class="font-medium">Van:</label>
+            <input type="date" id="startDate" wire:model="printStartDate" class="border rounded px-2 py-1">
+
+            <label for="endDate" class="font-medium">Tot:</label>
+            <input type="date" id="endDate" wire:model="printEndDate" class="border rounded px-2 py-1">
+
+            <button wire:click="downloadOrders" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
+                Download orders
+            </button>
+            <button wire:click="downloadPakketlijst" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
+                Download pakketlijsten
+            </button>
+            <button wire:click="downloadFabriekslijst" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2">
+                Download fabriekslijsten
+            </button>
+        </div>
+
         <div class="flex relative bg-white">
             {{-- Linker sidebar: fixed / sticky --}}
             <div id="external-orders-list"

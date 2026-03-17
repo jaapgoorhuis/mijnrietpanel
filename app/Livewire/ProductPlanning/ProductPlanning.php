@@ -806,7 +806,7 @@ class ProductPlanning extends Component
             ->whereDate('planned_date', '>=', $this->printStartDate)
             ->whereDate('planned_date', '<=', $this->printEndDate)
             ->get()
-            ->groupBy('order_id'); // Groepeer per order zodat gesplitste orders samen blijven
+            ->groupBy('order_id');
 
         if ($orderPlannings->isEmpty()) {
             session()->flash('error', "Geen {$zipNamePlural} binnen dit tijdsbestek");
@@ -816,17 +816,19 @@ class ProductPlanning extends Component
         $tmpDir = storage_path("app/temp_{$zipNameSingular}_" . time());
         if (!file_exists($tmpDir)) mkdir($tmpDir, 0777, true);
 
-        $zipFilePath = storage_path("app/{$zipNamePlural}_" . now()->format('d-m-Y') . ".zip");
+        // --- Gebruik van datum bereik in ZIP bestandsnaam ---
+        $startDateFormatted = \Carbon\Carbon::parse($this->printStartDate)->format('d-m-Y');
+        $endDateFormatted   = \Carbon\Carbon::parse($this->printEndDate)->format('d-m-Y');
+        $zipFilePath        = storage_path("app/{$startDateFormatted}_tot_{$endDateFormatted}_{$zipNamePlural}.zip");
+
         $zip = new \ZipArchive();
 
         if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
             foreach ($orderPlannings as $orderId => $plannings) {
-                $order = $plannings->first()->order; // Pak de order van het eerste planning record
+                $order = $plannings->first()->order;
                 $plannedDate = \Carbon\Carbon::parse($plannings->first()->planned_date)->format('d-m-Y');
 
-                // --- PDF genereren via service ---
                 $pdfContent = OrderPdfService::generatePdf($order, $typeKey);
-
                 $fileName = "{$plannedDate}-{$zipNameSingular}-{$order->order_id}.pdf";
                 $pdfPath = $tmpDir . '/' . $fileName;
 
