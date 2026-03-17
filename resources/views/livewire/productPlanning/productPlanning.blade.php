@@ -57,6 +57,33 @@
             </div>
         @endif
 
+        @php
+            function getContrastColor($hexColor) {
+                if (!$hexColor) return 'black';
+
+                // verwijder #
+                $color = ltrim($hexColor, '#');
+
+                // short hex (#fff)
+                if (strlen($color) === 3) {
+                    $r = hexdec($color[0].$color[0]);
+                    $g = hexdec($color[1].$color[1]);
+                    $b = hexdec($color[2].$color[2]);
+                } elseif (strlen($color) === 6) {
+                    $r = hexdec(substr($color, 0, 2));
+                    $g = hexdec(substr($color, 2, 2));
+                    $b = hexdec(substr($color, 4, 2));
+                } else {
+                    return 'black'; // fallback
+                }
+
+                // brightness formule
+                $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+                return $brightness > 155 ? 'black' : 'white';
+            }
+        @endphp
+
         {{-- 📅 Datumreeks selector + print button --}}
         <div class="mb-4 flex items-center gap-3">
             <label for="startDate" class="font-medium">Van:</label>
@@ -78,8 +105,8 @@
                     <h2 class="fc-toolbar-title">Ongeplande Orders</h2>
                     @foreach($unplannedOrders as $order)
                         @php
-                            $bgColor = $order->kerndikte_color ?? 'purple';
-                            $textColor = in_array($bgColor, ['black', 'gray', 'grey']) ? 'white' : 'black';
+                            $bgColor = $order->kerndikte_color ?? '#6b7280'; // fallback (grijs)
+                            $textColor = getContrastColor($bgColor);
                         @endphp
                         <div class="fc-event p-2 mb-2 cursor-pointer"
                              style="background-color: {{ $bgColor }}; color: {{ $textColor }};"
