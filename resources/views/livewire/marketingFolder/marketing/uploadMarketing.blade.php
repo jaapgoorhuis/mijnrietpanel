@@ -7,13 +7,21 @@
                     {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
+            <li class="inline-flex items-center">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/marketing-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        {{ __('messages.Marketing mappen') }}
+                    </a>
+                </div>
+            </li>
 
             <li class="inline-flex items-center">
                 <div class="flex items-center">
-                <i class="fa-solid fa-angle-right"></i>
-                <a href="/details" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    {{ __('messages.Details') }}
-                </a>
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/marketing-maps/{{$this->folderId}}/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        {{ __('messages.Marketing') }}
+                    </a>
                 </div>
             </li>
             <li>
@@ -77,15 +85,15 @@
                 <br/>
                 <div class="grid">
 
-                    @if(!count($this->details))
+                    @if(!count($this->marketing))
                         {{ __('messages.Er zijn geen bestanden gevonden') }}
                     @else
                         <div id="accordion-collapse" data-accordion="collapse">
-                            <ul wire:sortable="updateDetailsOrder">
+                            <ul wire:sortable="updateMarketingOrder">
 
-                                @foreach($this->details as $key => $detail)
+                                @foreach($this->marketing as $key => $marketing)
 
-                                    <li wire:sortable.item="{{$detail->id}}" wire:key="{{$key}}" >
+                                    <li wire:sortable.item="{{$marketing->id}}" wire:key="{{$key}}" >
                                         <div class="grid grid-cols-10">
                                             <div class="col-span-1 text-center pt-[15px]">
                                                 <i wire:sortable.handle class="fa-solid fa-sort hover:cursor-pointer"></i>
@@ -94,7 +102,7 @@
                                                 <h2 id="accordion-{{$key}}-heading">
                                                     <button type="button" class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#accordion-{{$key}}-body" aria-expanded="false" aria-controls="accordion-{{$key}}-body">
                                                             <span class="flex items-center">
-                                                                {{$detail->friendly_name}}
+                                                                {{$marketing->friendly_name}}
                                                             </span>
                                                         <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
@@ -105,15 +113,15 @@
                                                     <div class="p-5 border border-gray-200 dark:border-gray-700">
                                                         <div class="relative z-0 w-full mb-5 group">
                                                             <div class="text-right">
-                                                                <i wire:click="removeDetail({{$detail->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
+                                                                <i wire:click="removeMarketing({{$marketing->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
                                                             </div>
-                                                            <label for="project_name" class="text-gray-400">  {{ __('messages.Bestandsnaam') }}</label>
-                                                            <input placeholder="{{$detail->friendly_name}}" type="text" wire:model="friendly_name.{{$detail->id}}"  name="friendly_name.{{$detail->id}}" id="friendly_name.{{$detail->id}}" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"  required />
-                                                            <div class="text-red-500">@error('friendly_name.'.$detail->id) {{ $message }} @enderror</div>
+                                                            <label for="project_name" class="text-gray-400">   {{ __('messages.Bestandsnaam') }}</label>
+                                                            <input placeholder="{{$marketing->friendly_name}}" type="text" wire:model="friendly_name.{{$marketing->id}}"  name="friendly_name.{{$marketing->id}}" id="friendly_name.{{$marketing->id}}" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"  required />
+                                                            <div class="text-red-500">@error('friendly_name.'.$marketing->id) {{ $message }} @enderror</div>
 
                                                             <div class="text-right">
                                                                 <br/>
-                                                                <button wire:click="updateFileName({{$detail->id}})" type="button" class="disabled:cursor-not-allowed w-[100%] md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                                                                <button wire:click="updateFileName({{$marketing->id}})" type="button" class="disabled:cursor-not-allowed w-[100%] md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                                                                     Updaten
                                                                 </button>
                                                             </div>

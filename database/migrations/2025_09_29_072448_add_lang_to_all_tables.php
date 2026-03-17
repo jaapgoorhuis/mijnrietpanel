@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $tables = ['offerte', 'orders', 'details', 'marketing', 'pricelist', 'documentation', 'companys', 'users'];
+        $tables = ['offerte', 'orders', 'detailFolders', 'marketing', 'pricelist', 'documentation', 'companys', 'users'];
 
         foreach ($tables as $table) {
             if (!Schema::hasColumn($table, 'lang')) {
@@ -22,7 +22,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        $tables = ['offerte', 'orders', 'details', 'marketing', 'pricelist', 'documentation', 'companys', 'users'];
+        $tables = ['offerte', 'orders', 'detailFolders', 'marketing', 'pricelist', 'documentation', 'companys', 'users'];
 
         foreach ($tables as $table) {
             if (Schema::hasColumn($table, 'lang')) {

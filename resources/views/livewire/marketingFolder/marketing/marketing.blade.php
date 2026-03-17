@@ -10,7 +10,16 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Details') }}</p>
+                    <a href="/marketing-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{ __('messages.Marketing mappen') }}
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{$folder->name}}</p>
                 </div>
             </li>
         </ol>
@@ -18,14 +27,14 @@
 </x-slot>
 
 <div class="py-12">
-
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 relative">
                 @admin
                 <div class="text-right">
-                    <button wire:click="uploadDetails()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                    <button wire:click="uploadMarketing()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                         <i class="fa-solid fa-upload"></i>    {{ __('messages.Bestanden toevoegen') }}
+
                     </button>
                 </div>
                 <br/>
@@ -36,7 +45,7 @@
                         wire:loading.attr="disabled"
                         wire:target="downloadAll"
                         type="button"
-                        class=" absolute top-[25px] disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                        class="absolute top-[25px] disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                     >
                         <!-- Spinner verschijnt alleen tijdens downloadAll() -->
                         <span wire:loading wire:target="downloadAll">
@@ -49,21 +58,19 @@
                     </button>
                 </div>
                 <br/>
-
-
                 <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 text-left">
-                    @if(!count($this->details))
+                    @if(!count($this->marketing))
                         {{ __('messages.Er zijn geen bestanden gevonden') }}
                     @else
-                        @foreach($this->details as $detail)
-                                <div class="relative border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
-                                <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$detail->friendly_name}}</h2>
-                                <a target="_blank" href="{{asset('/storage/details/'.$detail->file_name)}}">
+                        @foreach($this->marketing as $marketing)
+                            <div class="relative border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
+                                <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$marketing->friendly_name}}</h2>
+                                <a target="_blank" href="{{asset('/storage/marketing/'.$marketing->file_name)}}">
                                     <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                         <i class="fa-solid fa-download"></i> Downloaden
                                     </button>
                                     <div class="absolute right-[10px] bottom-[10px]">
-                                        <input wire:click="updateDownload" wire:model="selectedDownloads" value="{{ $detail->file_name }}" type="checkbox"/>
+                                        <input wire:click="updateDownload" wire:model="selectedDownloads" value="{{ $marketing->file_name }}" type="checkbox"/>
                                     </div>
                                 </a>
                             </div>
@@ -100,4 +107,3 @@
         });
     });
 </script>
-

@@ -33,7 +33,7 @@ return [
     'Mijn Rietpanel' => 'My Rietpanel',
     'Mijn orders ' => 'My orders',
     'Nieuwe order aanmaken' => 'Create new order',
-    'Project gegevens' => 'Project details',
+    'Project gegevens' => 'Project detailFolders',
     'Klant naam' => 'Customer name',
     'Project naam' => 'Project name',
     'Referentie' => 'Reference',
@@ -134,7 +134,7 @@ return [
     'Transportkosten (onder 50m²)' => 'Transport costs (under 50m²)',
     'Lengte toeslag per zaaglengte (onder 2500mm)' => 'Length allowance per saw length (under 2500mm)',
     'Offerte tool' => 'Quotation tool',
-    'Voorbeeld details' => 'Detail examples',
+    'Voorbeeld detailFolders' => 'Detail examples',
     'Mijn marketing' => 'My marketing',
     'Documentatie' => 'Documentation',
     'Voorwaarden / Prijslijst' => 'Condtions / Pricelist',
@@ -194,5 +194,11 @@ return [
     'Vul een waarde in voor Vrije ruimte 0-x1' => 'Enter a value for Free space 0-x1',
     'Vul een waarde in voor Vrije ruimte x1-x2' => 'Enter a value for Free space x1-x2',
     'vanaf boven' => 'from top',
-    'Invloed op prijs' => 'Price influence'
+    'Invloed op prijs' => 'Price influence',
+    'Detail mappen' => 'Detail maps',
+    'Map aanmaken' => 'Create map',
+    'Marketing mappen' => 'Marketing maps',
+    'Documentatie mappen' => 'Documentation maps',
+    'Prijstlijst mappen' => 'Pricelist maps',
+
 ];

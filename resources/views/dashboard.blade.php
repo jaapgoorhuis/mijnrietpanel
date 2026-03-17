@@ -71,7 +71,7 @@
 
                     @endif
                     <!-- Card -->
-                    <a href="/details" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                    <a href="/detail-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                         <!-- Icon: Magnifying Glass -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"/>
@@ -81,7 +81,7 @@
                     </a>
 
                     <!-- Card -->
-                    <a href="/marketing" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                    <a href="/marketing-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                         <!-- Icon: Chart Bar -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 19.5h18M6 16.5V9.75M12 16.5V6.75M18 16.5v-5.25"/>
@@ -91,7 +91,7 @@
                     </a>
 
                     <!-- Card -->
-                    <a href="/documentation" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                    <a href="/documentation-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                         <!-- Icon: Folder -->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V7.5A2.25 2.25 0 014.5 5.25h3.879a2.25 2.25 0 011.591.659l1.121 1.121a2.25 2.25 0 001.591.659H19.5A2.25 2.25 0 0121.75 9.75v7.5A2.25 2.25 0 0119.5 19.5H4.5A2.25 2.25 0 012.25 17.25v-4.5z"/>
@@ -101,7 +101,7 @@
                     </a>
                     @if(!\Illuminate\Support\Facades\Auth::user()->is_architect || \Illuminate\Support\Facades\Auth::user()->is_admin)
                         <!-- Card -->
-                        <a href="/pricelist" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                        <a href="/pricelijst-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                             <!-- Icon: Document Exclamation -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9.75v3.75m0 3.75h.008M6.75 3.75h6.75L18 8.25v12a.75.75 0 01-.75.75h-9a.75.75 0 01-.75-.75v-16.5a.75.75 0 01.75-.75z"/>

@@ -12,7 +12,11 @@ class Documentation extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'friendly_name', 'file_name','lang'];
+   protected $fillable = ['order_id', 'friendly_name', 'file_name','lang','documentationFolder_id'];
     protected $table = 'documentation';
+    public function documentationFolder()
+    {
+        return $this->belongsTo(DocumentationFolder::class);
+    }
 
 }

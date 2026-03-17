@@ -1,55 +1,67 @@
 <?php
 
-namespace App\Livewire\Marketing;
+namespace App\Livewire\PricelistFolder;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use ZipStream\ZipStream;
-use function Spatie\LaravelPdf\Support\pdf;
 
 class
-Marketing extends Component
+PricelistFolder extends Component
 {
-    public $marketing;
+    public $pricelist;
+
     public array $selectedDownloads = [];
+
     public $locale;
+
+
+
+    public function mount() {
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.pricelist.pricelist');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
+
     public function render()
     {
+
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','nl')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','nl')->get();
         } elseif ($this->locale === 'en') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','en')->get();
         }
-
-        return view('livewire.marketing.marketing');
+        return view('livewire.pricelist.pricelist');
     }
 
-    public function uploadMarketing() {
-        if(Auth::user()->is_admin) {
-            return $this->redirect('/marketing/upload', navigate: true);
-        }
-        else {
-            return $this->redirect('/marketing', navigate: true);
-        }
-    }
 
     public function updateDownload() {
         $this->selectedDownloads = $this->selectedDownloads;
     }
-
+    public function uploadPricelist() {
+        if(Auth::user()->is_admin) {
+            return $this->redirect('/pricelist/upload', navigate: true);
+        }
+        else {
+            return $this->redirect('/pricelist', navigate: true);
+        }
+    }
 
     public function downloadSelected()
     {
         if (empty($this->selectedDownloads)) {
-            session()->flash('error',__('messages.Geen bestand geselecteerd.'));
+            session()->flash('error','Geen bestand geselecteerd.');
             return;
         }
 
         $params = [
             'files' => $this->selectedDownloads,
-            'route' => 'marketing',
+            'route' => 'pricelist',
         ];
 
         $query = http_build_query($params);
@@ -65,10 +77,10 @@ Marketing extends Component
 
             $zip = new ZipStream();
 
-            foreach ($this->marketing as $marketing) {
+            foreach ($this->pricelist as $pricelist) {
 
                 // pad in storage/app/public
-                $filePath = public_path('/storage/marketing/' . $marketing->file_name);
+                $filePath = public_path('/storage/pricelist/' . $pricelist->file_name);
 
                 $filePath = str_replace(['%20'], ' ', $filePath);
 
@@ -82,6 +94,8 @@ Marketing extends Component
 
             $zip->finish();
 
-        }, 'marketing.zip');
+        }, 'prijslijst.zip');
     }
+
+
 }

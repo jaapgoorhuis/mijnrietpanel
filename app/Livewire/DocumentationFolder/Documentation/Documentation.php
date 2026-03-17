@@ -1,53 +1,38 @@
 <?php
 
-namespace App\Livewire\Details;
+namespace App\Livewire\DocumentationFolder\Documentation;
 
-use App\Models\Detail;
-use App\Models\Order;
-use App\Models\Regulation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use STS\ZipStream\Facades\Zip;
-use ZipArchive;
 use ZipStream\ZipStream;
-use function Spatie\LaravelPdf\Support\pdf;
 
 class
-Details extends Component
+Documentation extends Component
 {
-    public $details;
+    public $documentation;
     public array $selectedDownloads = [];
-    public array $allDownloads = [];
-
     public $locale;
 
     public function render()
     {
-
-
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->get();
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','nl')->get();
         } elseif ($this->locale === 'en') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->get();
         }
 
 
-
-        foreach($this->details as $detail) {
-            array_push($this->allDownloads,$detail->file_name);
-        }
-
-        return view('livewire.details.details');
+        return view('livewire.documentation.documentation');
     }
 
-    public function uploadDetails() {
+    public function uploadDocumentation() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/details/upload', navigate: true);
+            return $this->redirect('/documentation/upload', navigate: true);
         }
         else {
-            return $this->redirect('/details', navigate: true);
+            return $this->redirect('/documentation', navigate: true);
         }
     }
 
@@ -64,9 +49,8 @@ Details extends Component
 
         $params = [
             'files' => $this->selectedDownloads,
-            'route' => 'details',
+            'route' => 'documentation',
         ];
-
 
         $query = http_build_query($params);
         $url = route('download.bulk.zip') . '?' . $query;
@@ -81,10 +65,10 @@ Details extends Component
 
             $zip = new ZipStream();
 
-            foreach ($this->details as $detail) {
+            foreach ($this->documentation as $documentation) {
 
                 // pad in storage/app/public
-                $filePath = public_path('/storage/details/' . $detail->file_name);
+                $filePath = public_path('/storage/documentation/' . $documentation->file_name);
 
                 $filePath = str_replace(['%20'], ' ', $filePath);
 
@@ -98,6 +82,6 @@ Details extends Component
 
             $zip->finish();
 
-        }, 'details.zip');
+        }, 'documentatie.zip');
     }
 }

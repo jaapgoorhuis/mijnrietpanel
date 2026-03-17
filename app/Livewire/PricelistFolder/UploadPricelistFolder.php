@@ -1,33 +1,43 @@
 <?php
 
-namespace App\Livewire\Marketing;
+namespace App\Livewire\PricelistFolder;
 
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class UploadMarketing extends Component
+class UploadPricelistFolder extends Component
 {
     use WithFileUploads;
 
     public $files = [];
-    public $marketing;
-    public $locale;
+    public $pricelist;
+
     public $friendly_name = [];
+    public $locale;
+
+
+    public function mount() {
+        if(Auth::user()->is_admin) {
+            return view('livewire.pricelist.uploadPricelist');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
 
     public function render()
     {
-
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','nl')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','nl')->get();
         } elseif ($this->locale === 'en') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','en')->get();
         }
-
-        return view('livewire.marketing.uploadMarketing');
+        return view('livewire.pricelist.uploadPricelist');
     }
 
     protected $rules = [
@@ -42,10 +52,10 @@ class UploadMarketing extends Component
         ];
     }
 
-    public function updateMarketingOrder($orderList)
+    public function updatePricelistOrder($orderList)
     {
         foreach ($orderList as $item) {
-            \App\Models\Marketing::where('id', $item['value'])->update(['order_id' => $item['order']]);
+            \App\Models\Pricelist::where('id', $item['value'])->update(['order_id' => $item['order']]);
         }
         $this->dispatch('updated');
     }
@@ -55,15 +65,15 @@ class UploadMarketing extends Component
         $this->validate();
         if ($this->files) {
             foreach ($this->files as $file) {
-                $file->storeAs(path: 'marketing', name: $file->getClientOriginalName(), options: 'public');
-                $latestMarketing = \App\Models\Marketing::orderBy('order_id', 'desc')->first();
+                $file->storeAs(path: 'pricelist', name: $file->getClientOriginalName(), options: 'public');
+                $latestPricelist = \App\Models\Pricelist::orderBy('order_id', 'desc')->first();
 
-                if ($latestMarketing) {
-                    $orderId = $latestMarketing->order_id + 1;
+                if ($latestPricelist) {
+                    $orderId = $latestPricelist->order_id + 1;
                 } else {
                     $orderId = 1;
                 }
-                \App\Models\Marketing::create([
+                \App\Models\Pricelist::create([
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
@@ -71,25 +81,25 @@ class UploadMarketing extends Component
                 ]);
             }
             session()->flash('success', __('messages.De bestanden zijn geupload.'));
-            return $this->redirect('/marketing/upload', navigate: true);
+            return $this->redirect('/pricelist/upload', navigate: true);
         } else {
             session()->flash('error', __('messages.Upload één of meerdere bestanden.'));
         }
 
     }
 
-    public function removeMarketing($id)
+    public function removePricelist($id)
     {
-        $file =  \App\Models\Marketing::where('id', $id)->first();
-        Storage::disk('public')->delete('marketing/'.$file->file_name);
-        \App\Models\Marketing::where('id', $id)->delete();
+        $file = \App\Models\Pricelist::where('id', $id)->first();
+        Storage::disk('public')->delete('pricelist/'.$file->file_name);
+        \App\Models\Pricelist::where('id', $id)->delete();
         session()->flash('success', __('messages.Het bestand is verwijderd.'));
     }
 
     public function updateFileName($fileId)
     {
         if ($this->friendly_name) {
-            \App\Models\Marketing::where('id', $fileId)->update([
+            \App\Models\Pricelist::where('id', $fileId)->update([
                 'friendly_name' => $this->friendly_name[$fileId]
             ]);
             session()->flash('success', __('messages.De bestandsnaam is aangepast.'));

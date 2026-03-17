@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Livewire\Details;
+namespace App\Livewire\DetailFolder\Detail;
 
 
 use App\Models\Detail;
-use App\Models\Regulation;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -19,18 +18,23 @@ class UploadDetails extends Component
     public $friendly_name = [];
 
     public $locale;
+    public $folderId;
 
+
+    public function mount($id) {
+        $this->folderId = $id;
+    }
     public function render()
     {
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detailsFolder_id', $this->folderId)->get();
         } elseif ($this->locale === 'en') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->where('detailsFolder_id', $this->folderId)->get();
         }
 
-        return view('livewire.details.uploadDetails');
+        return view('livewire.detailFolders.details.uploadDetails');
     }
 
     protected $rules = [
@@ -40,8 +44,8 @@ class UploadDetails extends Component
     public function messages(): array
     {
         return [
-            'files.required' =>  __('messages.Het is verplicht om een bestand te uploaden.'),
-            'files.*.mimes' =>  __('messages.Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.'),
+            'files.required' =>  'Het is verplicht om een bestand te uploaden.',
+            'files.*.mimes' =>  'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
         ];
     }
 
@@ -72,13 +76,15 @@ class UploadDetails extends Component
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
+                    'detailsFolder_id' => $this->folderId,
                     'lang' => $this->locale,
                 ]);
             }
-            session()->flash('success', __('messages.De bestanden zijn geupload.'));
-            return $this->redirect('/details/upload', navigate: true);
+            session()->flash('success','De bestanden zijn geupload.');
+
+            return $this->redirect('/detail-maps/'.$this->folderId.'/details/upload', navigate: true);
         } else {
-            session()->flash('error',  __('messages.Upload één of meerdere bestanden.'));
+            session()->flash('error',  'Upload één of meerdere bestanden.');
         }
 
     }

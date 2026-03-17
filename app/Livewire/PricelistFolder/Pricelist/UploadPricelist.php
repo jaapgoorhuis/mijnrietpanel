@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pricelist;
+namespace App\Livewire\PricelistFolder\Pricelist;
 
 
 use Illuminate\Support\Facades\Auth;

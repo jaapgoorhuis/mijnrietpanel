@@ -5,10 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\Supliers;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
-use STS\ZipStream\Facades\Zip;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -40,17 +38,27 @@ Route::middleware('auth')->group(function () {
     Route::get('regulations', \App\Livewire\Regulations\Regulations::class)->name('regulations');
     Route::get('regulations/upload', \App\Livewire\Regulations\UploadRegulations::class);
 
-    Route::get('details', \App\Livewire\Details\Details::class)->name('details');
-    Route::get('details/upload', \App\Livewire\Details\UploadDetails::class);
+    Route::get('detail-maps', \App\Livewire\DetailFolder\DetailFolders::class)->name('detailFolders');
+    Route::get('detail-maps/upload', \App\Livewire\DetailFolder\UploadDetailFolders::class)->name('detailFolders');
+    Route::get('detail-maps/{id}/details', \App\Livewire\DetailFolder\Detail\Details::class)->name('detailFolders');
+    Route::get('detail-maps/{id}/details/upload', \App\Livewire\DetailFolder\Detail\UploadDetails::class);
 
-    Route::get('marketing', \App\Livewire\Marketing\Marketing::class)->name('marketing');
-    Route::get('marketing/upload', \App\Livewire\Marketing\UploadMarketing::class);
+    Route::get('marketing-maps', \App\Livewire\MarketingFolder\MarketingFolder::class)->name('marketing');
+    Route::get('marketing-maps/upload', \App\Livewire\MarketingFolder\UploadMarketingFolder::class)->name('marketing');
+    Route::get('marketing-maps/{id}/marketing', \App\Livewire\MarketingFolder\Marketing\Marketing::class)->name('marketing');
+    Route::get('marketing-maps/{id}/marketing/upload', \App\Livewire\MarketingFolder\Marketing\UploadMarketing::class);
 
-    Route::get('documentation', \App\Livewire\Documentation\Documentation::class)->name('documentation');
-    Route::get('documentation/upload', \App\Livewire\Documentation\UploadDocumentation::class);
+    Route::get('documentation-maps', \App\Livewire\DocumentationFolder\DocumentationFolder::class)->name('documentation');
+    Route::get('documentation-maps/upload', \App\Livewire\DocumentationFolder\UploadDocumentationFolder::class)->name('documentation');
+    Route::get('documentation-maps/{id}/documentation', \App\Livewire\DocumentationFolder\Documentation\Documentation::class)->name('documentation');
+    Route::get('documentation-maps/{id}/documentation/upload', \App\Livewire\DocumentationFolder\Documentation\UploadDocumentation::class);
 
-    Route::get('pricelist', \App\Livewire\Pricelist\Pricelist::class)->name('pricelist');
-    Route::get('pricelist/upload', \App\Livewire\Pricelist\UploadPricelist::class);
+    Route::get('pricelist-maps/pricelist', \App\Livewire\PricelistFolder\PricelistFolder::class)->name('pricelist');
+    Route::get('pricelist-maps/upload', \App\Livewire\PricelistFolder\UploadPricelistFolder::class)->name('pricelist');
+    Route::get('pricelist-maps/{id}/pricelist', \App\Livewire\PricelistFolder\Pricelist\Pricelist::class)->name('pricelist');
+    Route::get('pricelist-maps/{id}/pricelist/upload', \App\Livewire\PricelistFolder\Pricelist\UploadPricelist::class);
+
+
     Route::get('/companys/{slug}/users/edit/{id}', \App\Livewire\Companys\EditCompanyUsers::class);
     Route::get('/companys/{id}/users', \App\Livewire\Companys\CompanyUsers::class);
     Route::get('/companys/pricerules', \App\Livewire\Companys\PriceRules\PriceRules::class)->name('companys/pricerules');

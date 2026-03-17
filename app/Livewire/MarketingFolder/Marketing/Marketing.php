@@ -1,41 +1,50 @@
 <?php
 
-namespace App\Livewire\Documentation;
+namespace App\Livewire\MarketingFolder\Marketing;
 
-use App\Models\Detail;
-use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use ZipStream\ZipStream;
-use function Spatie\LaravelPdf\Support\pdf;
 
 class
-Documentation extends Component
+Marketing extends Component
 {
-    public $documentation;
+    public $marketing;
     public array $selectedDownloads = [];
-    public $locale;
+    public array $allDownloads = [];
 
-    public function render()
-    {
+    public $locale;
+    public $folderId;
+    public $folder;
+
+    public function mount($id) {
+
+        $this->folder = \App\Models\MarketingFolder::find($id);
+        $this->folderId = $id;
+
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','nl')->get();
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang', 'nl')->where('marketingFolder_id', $id)->get();
         } elseif ($this->locale === 'en') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->where('marketingFolder_id', $id)->get();
+        }
+    }
+    public function render()
+    {
+        foreach($this->marketing as $marketing) {
+            array_push($this->allDownloads,$marketing->file_name);
         }
 
-
-        return view('livewire.documentation.documentation');
+        return view('livewire.marketingFolder.marketing.marketing');
     }
 
-    public function uploadDocumentation() {
+    public function uploadMarketing() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/documentation/upload', navigate: true);
+            return $this->redirect('/marketing-maps/'.$this->folderId.'/marketing/upload', navigate: true);
         }
         else {
-            return $this->redirect('/documentation', navigate: true);
+            return $this->redirect('/marketing-maps', navigate: true);
         }
     }
 
@@ -52,8 +61,9 @@ Documentation extends Component
 
         $params = [
             'files' => $this->selectedDownloads,
-            'route' => 'documentation',
+            'route' => 'marketing',
         ];
+
 
         $query = http_build_query($params);
         $url = route('download.bulk.zip') . '?' . $query;
@@ -68,10 +78,10 @@ Documentation extends Component
 
             $zip = new ZipStream();
 
-            foreach ($this->documentation as $documentation) {
+            foreach ($this->marketing as $marketing) {
 
                 // pad in storage/app/public
-                $filePath = public_path('/storage/documentation/' . $documentation->file_name);
+                $filePath = public_path('/storage/marketing/' . $marketing->file_name);
 
                 $filePath = str_replace(['%20'], ' ', $filePath);
 
@@ -85,6 +95,6 @@ Documentation extends Component
 
             $zip->finish();
 
-        }, 'documentatie.zip');
+        }, $this->folder->name.'.zip');
     }
 }

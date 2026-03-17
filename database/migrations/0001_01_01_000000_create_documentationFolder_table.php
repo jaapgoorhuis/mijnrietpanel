@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detailFolders', function (Blueprint $table) {
+        Schema::create('documentationFolder', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
-            $table->string('friendly_name');
-            $table->string('file_name');
+            $table->string('name');
+            $table->string('lang');
+            $table->longText('cropimage');
             $table->timestamps();
         });
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detailFolders');
+        Schema::dropIfExists('documentationFolder');
     }
 };

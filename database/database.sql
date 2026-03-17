@@ -65,7 +65,7 @@ LOCK TABLES `cache_locks` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `details`
+-- Table structure for table `detailFolders`
 --
 
 DROP TABLE IF EXISTS `details`;
@@ -83,12 +83,12 @@ CREATE TABLE `details` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `details`
+-- Dumping data for table `detailFolders`
 --
 
 LOCK TABLES `details` WRITE;
-/*!40000 ALTER TABLE `details` DISABLE KEYS */;
-/*!40000 ALTER TABLE `details` ENABLE KEYS */;
+/*!40000 ALTER TABLE `detailFolders` DISABLE KEYS */;
+/*!40000 ALTER TABLE `detailFolders` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

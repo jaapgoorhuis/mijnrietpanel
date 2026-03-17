@@ -8,17 +8,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 
-class Marketing extends Authenticatable
+class PricelistFolder extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'friendly_name', 'file_name', 'lang','marketingFolder_id'];
+   protected $fillable = ['order_id', 'name','lang','cropimage'];
+    protected $table = 'pricelistFolder';
 
-   protected $table = 'marketing';
-
-    public function marketingFolder()
+    public function pricelists()
     {
-        return $this->belongsTo(MarketingFolder::class);
+        return $this->hasMany(Pricelist::class,'pricelistFolder_id', 'id');
     }
 
 }
