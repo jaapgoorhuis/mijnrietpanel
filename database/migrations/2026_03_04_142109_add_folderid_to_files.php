@@ -31,7 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('detailFolders', function (Blueprint $table) {
-            $table->dropColumn('detailsFolder_id');
+            $table->dropColumn('detailFolder_id');
         });
 
         Schema::table('marketing', function (Blueprint $table) {
