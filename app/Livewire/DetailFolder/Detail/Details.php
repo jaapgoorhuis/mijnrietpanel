@@ -46,7 +46,7 @@ Details extends Component
             return $this->redirect('/detail-maps/'.$this->folderId.'/details/upload', navigate: true);
         }
         else {
-            return $this->redirect('/detailFolders', navigate: true);
+            return $this->redirect('/detail-maps', navigate: true);
         }
     }
 
@@ -63,7 +63,7 @@ Details extends Component
 
         $params = [
             'files' => $this->selectedDownloads,
-            'route' => 'detailFolders',
+            'route' => 'details',
         ];
 
 
