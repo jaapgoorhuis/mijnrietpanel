@@ -99,7 +99,7 @@
 
                             {{-- Titel --}}
                             <input type="text"
-                                   wire:model.defer="editingCategoryTitle.{{ $folder->id }}"
+                                   wire:model.defer="editingFolderTitle.{{ $folder->id }}"
                                    class="border p-1 rounded"/>
                         </div>
 
