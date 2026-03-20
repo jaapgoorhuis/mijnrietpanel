@@ -201,5 +201,10 @@ return [
     'Documentatie mappen' => 'Documentation maps',
     'Prijstlijst mappen' => 'Pricelist maps',
     'Categorieën' => 'Categories',
+    'Voorbeeld details' => 'Detail examples',
+    'Detail categorieën' => 'Detail categories',
+    'Er zijn geen mappen gevonden' => 'There are no maps found',
+    'Mappen toevoegen' => 'Mappen toevoegen',
+
 
 ];
