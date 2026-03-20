@@ -105,10 +105,10 @@ class UploadMarketing extends Component
             Marketing::where('id', $fileId)->update([
                 'friendly_name' => $this->friendly_name[$fileId]
             ]);
-            session()->flash('success',  __('messages.De bestandsnaam is aangepast.'));
+            session()->flash('success',  'De bestandsnaam is aangepast.');
 
         } else {
-            session()->flash('error',  __('messages.Vul de naam van het bestand in.'));
+            session()->flash('error',  'Vul de naam van het bestand in.');
         }
     }
 }
