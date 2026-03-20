@@ -399,11 +399,11 @@ class CreateOrders extends Component
                 'user_id' => Auth::user()->id,
                 'm2' => $m2,
 
-                // als optie niet geselecteerd is -> 0
-                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-                'nokafschuining' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-                'vrije_ruimte_1' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_1'] ?? 0) : 0,
-                'vrije_ruimte_2' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_2'] ?? 0) : 0,
+//                // als optie niet geselecteerd is -> 0
+//                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+//                'nokafschuining' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+//                'vrije_ruimte_1' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_1'] ?? 0) : 0,
+//                'vrije_ruimte_2' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_2'] ?? 0) : 0,
             ]);
         }
 
