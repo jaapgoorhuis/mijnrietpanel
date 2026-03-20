@@ -14,7 +14,7 @@ class MarketingFolder extends Authenticatable
 
    protected $fillable = ['order_id', 'name', 'lang','cropimage'];
 
-   protected $table = 'marketingFolder';
+   protected $table = 'marketingFolders';
 
     public function marketing()
     {
