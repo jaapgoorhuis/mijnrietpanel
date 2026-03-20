@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detailFolders', function (Blueprint $table) {
+        Schema::create('detailCategories', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
+            $table->integer('detail_folder_id');
             $table->string('name');
             $table->string('lang');
             $table->longText('cropimage');
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detailsFolder');
+        Schema::dropIfExists('detailCategories');
     }
 };

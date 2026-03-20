@@ -20,9 +20,22 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{$folder->name}}</p>
+                    <a href="/detail-maps/{{$folderId}}/categories" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{$folder->name}}
+                    </a>
                 </div>
             </li>
+
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/detail-maps/{{$folderId}}/categories/{{$categoryId}}/details" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{$category->name}}
+                    </a>
+                </div>
+            </li>
+
         </ol>
     </nav>
 </x-slot>

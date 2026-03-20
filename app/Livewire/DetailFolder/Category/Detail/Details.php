@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\DetailFolder\Detail;
+namespace App\Livewire\DetailFolder\Category\Detail;
 
 use App\Models\Detail;
+use App\Models\DetailCategory;
 use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -18,18 +19,24 @@ Details extends Component
     public $locale;
     public $folderId;
     public $folder;
+    public $category;
+    public $categoryId;
 
-    public function mount($id) {
+    public function mount($id,$category) {
+
+
+        $this->categoryId = $category;
 
         $this->folder = DetailFolder::find($id);
+        $this->category = DetailCategory::find($category);
         $this->folderId = $id;
 
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detailsFolder_id', $id)->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detail_category_id', $category)->get();
         } elseif ($this->locale === 'en') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->where('detailsFolder_id', $id)->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->where('detail_category_id', $category)->get();
         }
     }
     public function render()
@@ -43,7 +50,7 @@ Details extends Component
 
     public function uploadDetails() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/detail-maps/'.$this->folderId.'/details/upload', navigate: true);
+            return $this->redirect('/detail-maps/'.$this->folderId.'/categories/'.$this->categoryId.'/details/upload', navigate: true);
         }
         else {
             return $this->redirect('/detail-maps', navigate: true);

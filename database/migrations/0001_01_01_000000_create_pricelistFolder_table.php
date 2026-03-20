@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pricelistFolder', function (Blueprint $table) {
+        Schema::create('pricelistFolders', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
             $table->string('name');

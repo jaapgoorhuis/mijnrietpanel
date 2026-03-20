@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DetailFolder\Detail;
+namespace App\Livewire\DetailFolder\Category\Detail;
 
 
 use App\Models\Detail;

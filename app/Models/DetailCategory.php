@@ -8,15 +8,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 
-class DetailFolder extends Authenticatable
+class DetailCategory extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'name', 'lang','cropimage'];
-   protected $table = 'detailFolders';
+   protected $fillable = ['order_id', 'name', 'lang','cropimage','detail_folder_id'];
+   protected $table = 'detailCategories';
 
-    public function detailCategories()
+    public function details()
     {
-        return $this->hasMany(DetailCategory::class, 'detail_folder_id', 'id');
+        return $this->hasMany(Detail::class, 'detail_category_id', 'id');
     }
 }

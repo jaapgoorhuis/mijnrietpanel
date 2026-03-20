@@ -38,10 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::get('regulations', \App\Livewire\Regulations\Regulations::class)->name('regulations');
     Route::get('regulations/upload', \App\Livewire\Regulations\UploadRegulations::class);
 
-    Route::get('detail-maps', \App\Livewire\DetailFolder\DetailFolders::class)->name('detailFolders');
-    Route::get('detail-maps/upload', \App\Livewire\DetailFolder\UploadDetailFolders::class)->name('detailFolders');
-    Route::get('detail-maps/{id}/details', \App\Livewire\DetailFolder\Detail\Details::class)->name('detailFolders');
-    Route::get('detail-maps/{id}/details/upload', \App\Livewire\DetailFolder\Detail\UploadDetails::class);
+    Route::get('detail-maps', \App\Livewire\DetailFolder\DetailFolders::class);
+    Route::get('detail-maps/upload', \App\Livewire\DetailFolder\UploadDetailFolders::class);
+    Route::get('detail-maps/{id}/categories', \App\Livewire\DetailFolder\Category\DetailCategory::class);
+    Route::get('detail-maps/{id}/categories/upload', \App\Livewire\DetailFolder\Category\UploadDetailCategory::class);
+    Route::get('detail-maps/{id}/categories/{category}/details', \App\Livewire\DetailFolder\Category\Detail\Details::class)->name('detailFolders');
+    Route::get('detail-maps/{id}/categories/{category}/details/upload', \App\Livewire\DetailFolder\Category\Detail\UploadDetails::class);
 
     Route::get('marketing-maps', \App\Livewire\MarketingFolder\MarketingFolder::class)->name('marketing');
     Route::get('marketing-maps/upload', \App\Livewire\MarketingFolder\UploadMarketingFolder::class)->name('marketing');

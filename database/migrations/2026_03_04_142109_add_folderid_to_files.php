@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('details', function (Blueprint $table) {
-            $table->integer('detailsFolder_id');
+            $table->integer('detail_category_id');
         });
 
         Schema::table('marketing', function (Blueprint $table) {
-            $table->integer('marketingFolder_id');
+            $table->integer('marketing_category_id');
         });
 
         Schema::table('documentation', function (Blueprint $table) {
-            $table->integer('documentationFolder_id');
+            $table->integer('documentation_category_id');
         });
 
         Schema::table('pricelist', function (Blueprint $table) {
-            $table->integer('pricelistFolder_id');
+            $table->integer('pricelist_category_id');
         });
     }
 

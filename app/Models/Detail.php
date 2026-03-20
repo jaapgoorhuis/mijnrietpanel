@@ -12,10 +12,10 @@ class Detail extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'friendly_name', 'file_name', 'lang','detailsFolder_id'];
+   protected $fillable = ['order_id', 'friendly_name', 'file_name', 'lang','detail_category_id'];
 
-    public function detailFolder()
+    public function detailCategory()
     {
-        return $this->belongsTo(DetailFolder::class);
+        return $this->belongsTo(DetailCategory::class);
     }
 }

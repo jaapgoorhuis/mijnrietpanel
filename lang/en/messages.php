@@ -200,5 +200,6 @@ return [
     'Marketing mappen' => 'Marketing maps',
     'Documentatie mappen' => 'Documentation maps',
     'Prijstlijst mappen' => 'Pricelist maps',
+    'Categorieën' => 'Categories',
 
 ];
