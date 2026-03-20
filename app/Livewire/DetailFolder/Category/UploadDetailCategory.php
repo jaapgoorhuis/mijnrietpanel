@@ -56,6 +56,7 @@ use Livewire\WithFileUploads;
     public function loadCategories()
     {
         $this->categories = \App\Models\DetailCategory::where('lang', $this->locale)
+            ->where('detail_folder_id', $this->folderId)
             ->orderBy('order_id', 'asc')
             ->get();
         // Vul de editingFolderTitle array
