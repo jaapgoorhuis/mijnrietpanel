@@ -63,10 +63,15 @@
         </div>
 
         <div class="mt-4">
-            <button wire:click="createFolder"
-                    class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+            <button wire:loading.attr="disabled" wire:target="newFolderImage" wire:click="createFolder()" type="button"     class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+                <div wire:loading wire:target="newFolderImage">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
                 Map aanmaken
             </button>
+
+
         </div>
     </div>
 
