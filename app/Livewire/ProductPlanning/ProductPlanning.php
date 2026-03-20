@@ -127,7 +127,7 @@ class ProductPlanning extends Component
             'id' => $plan->id,
             'title' => $order->klantnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',
             'start' => $plan->planned_date,
-            'backgroundColor' => 'red',
+            'backgroundColor' => $order->kerndikte_color,
             'borderColor' => $order->kerndikte_color,
             'extendedProps' => [
                 'type' => 'order',
