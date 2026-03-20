@@ -16,12 +16,15 @@
                 </div>
             </li>
 
-            <li>
+            <li class="inline-flex items-center">
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{$folder->name}}</p>
+                    <a href="/marketing-maps/{{$folderId}}/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        {{$folder->name}}
+                    </a>
                 </div>
             </li>
+
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
