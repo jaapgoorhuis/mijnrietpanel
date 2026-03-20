@@ -205,6 +205,6 @@ return [
     'Detail categorieën' => 'Detail categories',
     'Er zijn geen mappen gevonden' => 'There are no maps found',
     'Mappen toevoegen' => 'Mappen toevoegen',
-
+    'Marketing categorieën' => 'Marketing categories',
 
 ];
