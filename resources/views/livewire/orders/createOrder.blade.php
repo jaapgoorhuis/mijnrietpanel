@@ -239,131 +239,141 @@
                                 {{ __('messages.Vierkante meters') }}: <strong>{{$this->m2[$index]}} m²</strong>
                             </div>
                             <br/><br/><br/>
-                                <div class="flex flex-col sm:flex-row w-full mb-[30px] gap-2">
+                                <br/><br/><br/>
+                                <div style="background-image: url('/public/storage/images/rietpanel_panel.png');" class="mb-[30px] relative bg-contain bg-no-repeat bg-center w-full h-[75px] sm:h-[100px] md:h-[120px] lg:h-[140px] xl:h-[160px]">
 
-                                    <!-- Linker div (checkboxes) -->
-                                    <div class="w-full sm:w-[250px] flex flex-col gap-2">
-
-                                        @php
-                                            $tooltips = [
-                                                 1 =>  __('messages.Meerprijs layback') . ' €' . $this->laybackPrice.',-',
-                                                 2 => __('messages.Meerprijs nokafschuining') . ' €' . $this->nokafschuiningPrice.',-',
-                                                 3 =>  __('messages.Meerprijs vrije ruimte') . ' €' . $this->vrijeruimtePrice.',-',
-                                            ];
-                                        @endphp
-
-                                        @foreach([
-                                            1 => __('messages.Layback'),
-                                            2 => __('messages.Nok afschuining'),
-                                            3 => __('messages.Vrije ruimte')
-                                        ] as $option => $label)
-                                            <label class="cursor-pointer flex flex-col relative">
-                                                <!-- Checkbox -->
-                                                <input type="checkbox"
-                                                       wire:model.live="selectedPanelOption.{{$index}}"
-                                                       value="{{ $option }}"
-                                                       class="hidden peer">
-
-                                                <!-- Afbeelding + label -->
-                                                <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">
-                                                    <img src="/storage/images/rietpanel_panel.png" class="w-full h-[50px] object-contain">
-                                                    <div class="text-center font-bold mt-1">{{ $label }}</div>
-
-                                                    <!-- Tooltip rechtsboven -->
-                                                    <div class="absolute top-1 right-1">
-                                                        <!-- Wrapper met group -->
-                                                        <div class="relative inline-block group">
-                                                            <!-- Icoon -->
-                                                            <i class="fa-solid fa-circle-info text-gray-600 hover:text-blue-500 cursor-pointer"></i>
-
-                                                            <!-- Tooltip -->
-                                                            <div class="absolute right-0 top-full mt-1 w-56 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
-                                                                opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto
-                                                                transition-opacity duration-200 z-50">
-                                                                {{ $tooltips[$option] }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Input velden -->
-                                                @if(in_array($option, $selectedPanelOption[$index]))
-
-                                                    @if($option == 3)
-                                                        <label><strong>{{ __('messages.Vrije ruimte van 0 tot x1') }}</strong></label>
-                                                        <input type="number"
-                                                               wire:model="panelValues.{{$index}}.3_1"
-                                                               wire:keydown="updatePanelValues({{$index}}, '3_1')"
-                                                               placeholder="Vul waarde in"
-                                                               class="border rounded px-2 py-1 w-full mt-1">
-                                                        <div class="text-red-500 text-sm mt-1">
-                                                            @error('panelValues.3_1') {{ $message }} @enderror
-                                                        </div>
-                                                        <label><strong>{{ __('messages.Vrije ruimte van x1 tot x2') }}</strong></label>
-                                                        <input type="number"
-                                                               wire:model="panelValues.{{$index}}.3_2"
-                                                               wire:keydown="updatePanelValues({{$index}}, '3_2')"
-                                                               placeholder="Vul waarde in"
-                                                               class="border rounded px-2 py-1 w-full mt-1">
-                                                        <div class="text-red-500 text-sm mt-1">
-                                                            @error('panelValues.3_2') {{ $message }} @enderror
-                                                        </div>
-                                                    @else
-                                                        <label><strong>{{ $label }} @if($option == 2) in graden @else in mm @endif</strong></label>
-                                                        <input type="number"
-                                                               wire:model="panelValues.{{$index}}.{{ $option }}"
-                                                               wire:keydown="updatePanelValues({{$index}}, {{$option}})"
-                                                               placeholder="Vul waarde in"
-                                                               class="border rounded px-2 py-1 w-full mt-1">
-                                                        <div class="text-red-500 text-sm mt-1">
-                                                            @error('panelValues.'.$option) {{ $message }} @enderror
-                                                        </div>
-                                                    @endif
-
-                                                @endif
-                                            </label>
-                                        @endforeach
-
+                                    <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px] sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px] text-[11px] md:text-[15px]">
+                                        <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
                                     </div>
-
-
-                                    <!-- Rechter div (dynamische afbeelding) -->
-                                    <div class="flex-1 relative bg-contain bg-no-repeat bg-center
-                                         min-h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] xl:h-[200px]"
-                                         wire:key="panel-image-{{ implode('-', (array) ($selectedPanelOption[$index] ?? [])) }}-{{ $panelValues[$index][1] ?? 0 }}"
-                                         style="background-image: url('{{ $panelImages[$index] ?? '/storage/images/rietpanel_panel.png' }}');">
-
-                                        <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px]
-                                            sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px]
-                                            text-[11px] md:text-[15px]">
-                                            <strong>CB:</strong> {{$cb[$index]}}
-                                            <span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
-                                        </div>
-
-                                        @if(in_array(1, $selectedPanelOption[$index]))
-                                            <div class="absolute top-[-10px] left-[22%] md:left-[22%] text-[11px] md:text-[15px]">
-                                                <strong>LB</strong>
-                                                {{ $panelValues[$index][1] }} mm
-                                            </div>
-                                        @endif
-
-                                        <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]">
-                                            <strong><- {{ __('messages.Totale maat') }}: </strong>
-                                            {{$totaleLengte[$index]}} mm ->
-                                        </div>
-
-                                        @if(in_array(3, $selectedPanelOption[$index]))
-                                            <div class="absolute top-[30px] left-[5%] md:left-[22%] text-[11px] md:text-[15px]">
-                                                <strong>{{ __('messages.Vrije ruimte 0-x1') }}: </strong>{{ $panelValues[$index]['3_1'] }} mm
-                                            </div>
-                                            <div class="absolute top-[50px] left-[5%] md:left-[22%] text-[11px] md:text-[15px]">
-                                                <strong>{{ __('messages.Vrije ruimte x1-x2') }}: </strong>{{ $panelValues[$index]['3_2'] }} mm
-                                            </div>
-                                        @endif
-
-                                    </div>
-
+                                    {{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
+                                    <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]"><strong><- {{ __('messages.Totale maat') }}: </strong>{{$this->totaleLengte[$index]}} mm -> </div>
                                 </div>
+
+{{--                                <div class="flex flex-col sm:flex-row w-full mb-[30px] gap-2">--}}
+
+{{--                                    <!-- Linker div (checkboxes) -->--}}
+{{--                                    <div class="w-full sm:w-[250px] flex flex-col gap-2">--}}
+
+{{--                                        @php--}}
+{{--                                            $tooltips = [--}}
+{{--                                                 1 =>  __('messages.Meerprijs layback') . ' €' . $this->laybackPrice.',-',--}}
+{{--                                                 2 => __('messages.Meerprijs nokafschuining') . ' €' . $this->nokafschuiningPrice.',-',--}}
+{{--                                                 3 =>  __('messages.Meerprijs vrije ruimte') . ' €' . $this->vrijeruimtePrice.',-',--}}
+{{--                                            ];--}}
+{{--                                        @endphp--}}
+
+{{--                                        @foreach([--}}
+{{--                                            1 => __('messages.Layback'),--}}
+{{--                                            2 => __('messages.Nok afschuining'),--}}
+{{--                                            3 => __('messages.Vrije ruimte')--}}
+{{--                                        ] as $option => $label)--}}
+{{--                                            <label class="cursor-pointer flex flex-col relative">--}}
+{{--                                                <!-- Checkbox -->--}}
+{{--                                                <input type="checkbox"--}}
+{{--                                                       wire:model.live="selectedPanelOption.{{$index}}"--}}
+{{--                                                       value="{{ $option }}"--}}
+{{--                                                       class="hidden peer">--}}
+
+{{--                                                <!-- Afbeelding + label -->--}}
+{{--                                                <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">--}}
+{{--                                                    <img src="/storage/images/rietpanel_panel.png" class="w-full h-[50px] object-contain">--}}
+{{--                                                    <div class="text-center font-bold mt-1">{{ $label }}</div>--}}
+
+{{--                                                    <!-- Tooltip rechtsboven -->--}}
+{{--                                                    <div class="absolute top-1 right-1">--}}
+{{--                                                        <!-- Wrapper met group -->--}}
+{{--                                                        <div class="relative inline-block group">--}}
+{{--                                                            <!-- Icoon -->--}}
+{{--                                                            <i class="fa-solid fa-circle-info text-gray-600 hover:text-blue-500 cursor-pointer"></i>--}}
+
+{{--                                                            <!-- Tooltip -->--}}
+{{--                                                            <div class="absolute right-0 top-full mt-1 w-56 bg-gray-700 text-white text-sm p-2 rounded shadow-lg--}}
+{{--                                                                opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto--}}
+{{--                                                                transition-opacity duration-200 z-50">--}}
+{{--                                                                {{ $tooltips[$option] }}--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+
+{{--                                                <!-- Input velden -->--}}
+{{--                                                @if(in_array($option, $selectedPanelOption[$index]))--}}
+
+{{--                                                    @if($option == 3)--}}
+{{--                                                        <label><strong>{{ __('messages.Vrije ruimte van 0 tot x1') }}</strong></label>--}}
+{{--                                                        <input type="number"--}}
+{{--                                                               wire:model="panelValues.{{$index}}.3_1"--}}
+{{--                                                               wire:keydown="updatePanelValues({{$index}}, '3_1')"--}}
+{{--                                                               placeholder="Vul waarde in"--}}
+{{--                                                               class="border rounded px-2 py-1 w-full mt-1">--}}
+{{--                                                        <div class="text-red-500 text-sm mt-1">--}}
+{{--                                                            @error('panelValues.3_1') {{ $message }} @enderror--}}
+{{--                                                        </div>--}}
+{{--                                                        <label><strong>{{ __('messages.Vrije ruimte van x1 tot x2') }}</strong></label>--}}
+{{--                                                        <input type="number"--}}
+{{--                                                               wire:model="panelValues.{{$index}}.3_2"--}}
+{{--                                                               wire:keydown="updatePanelValues({{$index}}, '3_2')"--}}
+{{--                                                               placeholder="Vul waarde in"--}}
+{{--                                                               class="border rounded px-2 py-1 w-full mt-1">--}}
+{{--                                                        <div class="text-red-500 text-sm mt-1">--}}
+{{--                                                            @error('panelValues.3_2') {{ $message }} @enderror--}}
+{{--                                                        </div>--}}
+{{--                                                    @else--}}
+{{--                                                        <label><strong>{{ $label }} @if($option == 2) in graden @else in mm @endif</strong></label>--}}
+{{--                                                        <input type="number"--}}
+{{--                                                               wire:model="panelValues.{{$index}}.{{ $option }}"--}}
+{{--                                                               wire:keydown="updatePanelValues({{$index}}, {{$option}})"--}}
+{{--                                                               placeholder="Vul waarde in"--}}
+{{--                                                               class="border rounded px-2 py-1 w-full mt-1">--}}
+{{--                                                        <div class="text-red-500 text-sm mt-1">--}}
+{{--                                                            @error('panelValues.'.$option) {{ $message }} @enderror--}}
+{{--                                                        </div>--}}
+{{--                                                    @endif--}}
+
+{{--                                                @endif--}}
+{{--                                            </label>--}}
+{{--                                        @endforeach--}}
+
+{{--                                    </div>--}}
+
+
+{{--                                    <!-- Rechter div (dynamische afbeelding) -->--}}
+{{--                                    <div class="flex-1 relative bg-contain bg-no-repeat bg-center--}}
+{{--                                         min-h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] xl:h-[200px]"--}}
+{{--                                         wire:key="panel-image-{{ implode('-', (array) ($selectedPanelOption[$index] ?? [])) }}-{{ $panelValues[$index][1] ?? 0 }}"--}}
+{{--                                         style="background-image: url('{{ $panelImages[$index] ?? '/storage/images/rietpanel_panel.png' }}');">--}}
+
+{{--                                        <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px]--}}
+{{--                                            sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px]--}}
+{{--                                            text-[11px] md:text-[15px]">--}}
+{{--                                            <strong>CB:</strong> {{$cb[$index]}}--}}
+{{--                                            <span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm--}}
+{{--                                        </div>--}}
+
+{{--                                        @if(in_array(1, $selectedPanelOption[$index]))--}}
+{{--                                            <div class="absolute top-[-10px] left-[22%] md:left-[22%] text-[11px] md:text-[15px]">--}}
+{{--                                                <strong>LB</strong>--}}
+{{--                                                {{ $panelValues[$index][1] }} mm--}}
+{{--                                            </div>--}}
+{{--                                        @endif--}}
+
+{{--                                        <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]">--}}
+{{--                                            <strong><- {{ __('messages.Totale maat') }}: </strong>--}}
+{{--                                            {{$totaleLengte[$index]}} mm ->--}}
+{{--                                        </div>--}}
+
+{{--                                        @if(in_array(3, $selectedPanelOption[$index]))--}}
+{{--                                            <div class="absolute top-[30px] left-[5%] md:left-[22%] text-[11px] md:text-[15px]">--}}
+{{--                                                <strong>{{ __('messages.Vrije ruimte 0-x1') }}: </strong>{{ $panelValues[$index]['3_1'] }} mm--}}
+{{--                                            </div>--}}
+{{--                                            <div class="absolute top-[50px] left-[5%] md:left-[22%] text-[11px] md:text-[15px]">--}}
+{{--                                                <strong>{{ __('messages.Vrije ruimte x1-x2') }}: </strong>{{ $panelValues[$index]['3_2'] }} mm--}}
+{{--                                            </div>--}}
+{{--                                        @endif--}}
+
+{{--                                    </div>--}}
+
+{{--                                </div>--}}
 
 
                         @endforeach
