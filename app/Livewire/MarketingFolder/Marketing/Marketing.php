@@ -25,9 +25,9 @@ Marketing extends Component
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang', 'nl')->where('marketing_folder_id', $id)->get();
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang', 'nl')->where('marketing_category_id', $id)->get();
         } elseif ($this->locale === 'en') {
-            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->where('marketing_folder_id', $id)->get();
+            $this->marketing = \App\Models\Marketing::orderBy('order_id', 'asc')->where('lang','en')->where('marketing_category_id', $id)->get();
         }
     }
     public function render()
