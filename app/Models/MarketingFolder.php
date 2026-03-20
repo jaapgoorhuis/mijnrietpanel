@@ -18,7 +18,7 @@ class MarketingFolder extends Authenticatable
 
     public function marketing()
     {
-        return $this->hasMany(Marketing::class,'marketingFolder_id', 'id');
+        return $this->hasMany(Marketing::class,'marketing_folder_id', 'id');
     }
 
 }

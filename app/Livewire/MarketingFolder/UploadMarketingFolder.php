@@ -21,6 +21,8 @@ class UploadMarketingFolder extends Component
     // Nieuwe properties voor mapbeheer
     public $newFolderTitle;
     public $newFolderImage;
+
+    public $newImages = [];
     public $croppedImage;
     public $editingFolderTitle = [];
     public $selectedFolder = null; // huidige geopende map
@@ -115,24 +117,25 @@ class UploadMarketingFolder extends Component
     {
         $folder = MarketingFolder::find($folderId);
         if ($folder) {
-            if ($folder->cropimage) {
-                Storage::disk('public')->delete($folder->cropimage);
+            // Verwijder map afbeelding
+            if ($folder->image) {
+                Storage::disk('public')->delete($folder->image);
             }
 
-            foreach ($folder->marketing as $marketingItem) {
-                Storage::disk('public')->delete('marketingFolders/' . $marketingItem->file_name);
-                $marketingItem->delete();
-            }
+
+                foreach ($folder->marketing as $marketing) {
+                    if ($marketing->file_name && Storage::disk('public')->exists('marketing/' . $marketing->file_name)) {
+                        Storage::disk('public')->delete('details/' . $marketing->file_name);
+                    }
+                    $marketing->delete();
+                }
 
             $folder->delete();
-            $this->selectedFolder = null;
-            $this->marketing = collect(); // reset marketing items
-            $this->loadFolders();
-
             session()->flash('success', 'Map is verwijderd.');
+            $this->selectedFolder = null;
+            $this->loadFolders();
         }
     }
-
     public function selectFolder($folderId)
     {
         $this->selectedFolder = MarketingFolder::find($folderId);
@@ -161,10 +164,43 @@ class UploadMarketingFolder extends Component
         ];
     }
 
+    public function updatedNewImages($value, $key)
+    {
+        $this->saveCategoryImage($key, $value);
+    }
+
+    protected function saveCategoryImage($categoryId, $image)
+    {
+        $this->validate([
+            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
+
+        $folder = \App\Models\MarketingFolder::find($categoryId);
+        if (!$folder) return;
+
+        // Optioneel: oude afbeelding verwijderen
+        if ($folder->cropimage) {
+            Storage::disk('public')->delete($folder->cropimage);
+        }
+
+        $name = time() . '_' . $image->getClientOriginalName();
+        $path = $image->storeAs('marketing/marketing-folder', $name, 'public');
+
+        $folder->update([
+            'cropimage' => $path,
+        ]);
+
+        // Live update in frontend
+        $this->newImages[$categoryId] = null; // reset file input
+        $this->loadFolders(); // herlaad de lijst
+        session()->flash('success', 'Afbeelding opgeslagen!');
+    }
+
+
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING ***/
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        return $image->storeAs('folderImages', $name, 'public');
+        return $image->storeAs('marketing/marketing-folder', $name, 'public');
     }
 }

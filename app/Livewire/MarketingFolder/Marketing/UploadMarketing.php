@@ -27,9 +27,9 @@ class UploadMarketing extends Component
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->marketing = Marketing::orderBy('order_id', 'asc')->where('lang', 'nl')->where('marketingFolder_id', $this->folderId)->get();
+            $this->marketing = Marketing::orderBy('order_id', 'asc')->where('lang', 'nl')->where('marketing_folder_id', $this->folderId)->get();
         } elseif ($this->locale === 'en') {
-            $this->marketing = Marketing::orderBy('order_id', 'asc')->where('lang','en')->where('marketingFolder_id', $this->folderId)->get();
+            $this->marketing = Marketing::orderBy('order_id', 'asc')->where('lang','en')->where('marketing_folder_id', $this->folderId)->get();
         }
 
         return view('livewire.marketingFolder.marketing.uploadMarketing');
@@ -74,7 +74,7 @@ class UploadMarketing extends Component
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
-                    'marketingFolder_id' => $this->folderId,
+                    'marketing_folder_id' => $this->folderId,
                     'lang' => $this->locale,
                 ]);
             }

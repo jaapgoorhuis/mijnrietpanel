@@ -23,6 +23,8 @@ use Livewire\WithFileUploads;
     public $newCategoryTitle;
     public $newCategoryImage;
     public $croppedImage;
+
+    public $newImages = [];
     public $editingCategoryTitle = [];
     public $selectedCategory = null; // huidige geopende map
 
@@ -138,7 +140,7 @@ use Livewire\WithFileUploads;
 
 
             foreach ($category->details as $detail) {
-                Storage::disk('public')->delete('detailCategory/' . $detail->file_name);
+                Storage::disk('public')->delete('details/' . $detail->file_name);
                 $detail->delete();
             }
 
@@ -168,14 +170,47 @@ use Livewire\WithFileUploads;
             'newCategoryImage.file' =>  'Het is verplicht om een afbeelding up te loaden.',
             'newCategoryTitle.required' =>  'De map naam is verplicht',
             'newCategoryImage.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
+            'newImages.*.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
         ];
+    }
+    public function updatedNewImages($value, $key)
+    {
+        $this->saveCategoryImage($key, $value);
+    }
+
+    protected function saveCategoryImage($categoryId, $image)
+    {
+        $this->validate([
+            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
+
+        $category = \App\Models\DetailCategory::find($categoryId);
+        if (!$category) return;
+
+        // Optioneel: oude afbeelding verwijderen
+        if ($category->cropimage) {
+            Storage::disk('public')->delete($category->cropimage);
+        }
+
+        $name = time() . '_' . $image->getClientOriginalName();
+        $path = $image->storeAs('details/detail-categories', $name, 'public');
+
+        $category->update([
+            'cropimage' => $path,
+        ]);
+
+        // Live update in frontend
+        $this->newImages[$categoryId] = null; // reset file input
+        $this->loadCategories(); // herlaad de lijst
+        session()->flash('success', 'Afbeelding opgeslagen!');
     }
 
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING **/
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('categoryImages', $name, 'public');
+        $path = $image->storeAs('details/detail-categories', $name, 'public');
+        session()->flash('success', 'Afbeelding bewerkt.');
         return $path;
     }
 }

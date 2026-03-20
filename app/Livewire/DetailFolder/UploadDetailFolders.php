@@ -23,6 +23,8 @@ class UploadDetailFolders extends Component
     public $newFolderImage;
     public $croppedImage;
     public $editingFolderTitle = [];
+
+    public $newImages = [];
     public $selectedFolder = null; // huidige geopende map
 
     public $files; // voor detail-upload
@@ -128,9 +130,18 @@ class UploadDetailFolders extends Component
             }
 
             // Verwijder alle details in de folder
-            foreach ($folder->details as $detail) {
-                Storage::disk('public')->delete('detailFolders/' . $detail->file_name);
-                $detail->delete();
+            foreach ($folder->detailCategories as $category) {
+                Storage::disk('public')->delete('details/detail-categories/' . $category->file_name);
+                $category->delete();
+            }
+
+            foreach ($folder->detailCategories as $category) {
+                foreach ($category->details as $detail) {
+                    if ($detail->file_name && Storage::disk('public')->exists('details/' . $detail->file_name)) {
+                        Storage::disk('public')->delete('details/' . $detail->file_name);
+                    }
+                    $detail->delete();
+                }
             }
 
             $folder->delete();
@@ -151,6 +162,39 @@ class UploadDetailFolders extends Component
         'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
     ];
 
+    public function updatedNewImages($value, $key)
+    {
+
+        $this->saveCategoryImage($key, $value);
+    }
+
+    protected function saveCategoryImage($categoryId, $image)
+    {
+        $this->validate([
+            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
+
+        $folder = \App\Models\DetailFolder::find($categoryId);
+        if (!$folder) return;
+
+        // Optioneel: oude afbeelding verwijderen
+        if ($folder->cropimage) {
+            Storage::disk('public')->delete($folder->cropimage);
+        }
+
+        $name = time() . '_' . $image->getClientOriginalName();
+        $path = $image->storeAs('details/detail-folder', $name, 'public');
+
+        $folder->update([
+            'cropimage' => $path,
+        ]);
+
+        // Live update in frontend
+        $this->newImages[$categoryId] = null; // reset file input
+        $this->loadFolders(); // herlaad de lijst
+        session()->flash('success', 'Afbeelding opgeslagen!');
+    }
+
 
 
     public function messages(): array
@@ -166,7 +210,7 @@ class UploadDetailFolders extends Component
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('folderImages', $name, 'public');
+        $path = $image->storeAs('details/detail-folder', $name, 'public');
         return $path;
     }
 }
