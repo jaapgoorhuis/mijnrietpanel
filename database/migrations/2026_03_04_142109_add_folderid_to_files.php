@@ -19,31 +19,19 @@ return new class extends Migration
             $table->integer('marketing_category_id');
         });
 
-        Schema::table('documentation', function (Blueprint $table) {
-            $table->integer('documentation_category_id');
-        });
 
-        Schema::table('pricelist', function (Blueprint $table) {
-            $table->integer('pricelist_category_id');
-        });
     }
 
     public function down(): void
     {
         Schema::table('details', function (Blueprint $table) {
-            $table->dropColumn('detailsFolder_id');
+            $table->dropColumn('detail_category_id');
         });
 
         Schema::table('marketing', function (Blueprint $table) {
-            $table->dropColumn('marketingFolder_id');
+            $table->dropColumn('marketing_folder_id');
         });
 
-        Schema::table('documentation', function (Blueprint $table) {
-            $table->dropColumn('documentationFolder_id');
-        });
 
-        Schema::table('pricelist', function (Blueprint $table) {
-            $table->dropColumn('pricelistFolder_id');
-        });
     }
 };

@@ -12,7 +12,7 @@ class Marketing extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'friendly_name', 'file_name', 'lang','marketing_folder_id'];
+   protected $fillable = ['order_id', 'friendly_name', 'file_name', 'lang','marketing_category_id'];
 
    protected $table = 'marketing';
 

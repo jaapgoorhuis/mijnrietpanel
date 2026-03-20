@@ -29,8 +29,11 @@ class UploadMarketingFolder extends Component
 
     public $files; // voor detail-upload
 
-    public function mount()
+    public $folder;
+
+    public function mount($id)
     {
+        $this->folder = Marketing::find($id);
         $this->locale = config('app.locale');
         $this->marketing = collect(); // altijd een lege collectie
         $this->loadFolders();

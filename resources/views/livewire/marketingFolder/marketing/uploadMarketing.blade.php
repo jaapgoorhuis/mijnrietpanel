@@ -11,17 +11,15 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/marketing-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Marketing mappen') }}
+                        {{ __('messages.Marketing categorieën') }}
                     </a>
                 </div>
             </li>
 
-            <li class="inline-flex items-center">
+            <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/marketing-maps/{{$this->folderId}}/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Marketing') }}
-                    </a>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{$folder->name}}</p>
                 </div>
             </li>
             <li>

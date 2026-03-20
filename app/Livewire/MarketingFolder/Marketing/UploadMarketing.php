@@ -2,6 +2,7 @@
 
 namespace App\Livewire\MarketingFolder\Marketing;
 use App\Models\Marketing;
+use App\Models\MarketingFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -18,9 +19,12 @@ class UploadMarketing extends Component
     public $locale;
     public $folderId;
 
+    public $folder;
+
 
     public function mount($id) {
         $this->folderId = $id;
+        $this->folder = MarketingFolder::find($id);
     }
     public function render()
     {
