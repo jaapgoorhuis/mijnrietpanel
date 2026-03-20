@@ -111,7 +111,7 @@
                                                     <div class="p-5 border border-gray-200 dark:border-gray-700">
                                                         <div class="relative z-0 w-full mb-5 group">
                                                             <div class="text-right">
-                                                                <i wire:click="removeMarketing({{$marketing->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
+                                                                <i wire:click="remove({{$marketing->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
                                                             </div>
                                                             <label for="project_name" class="text-gray-400">   {{ __('messages.Bestandsnaam') }}</label>
                                                             <input placeholder="{{$marketing->friendly_name}}" type="text" wire:model="friendly_name.{{$marketing->id}}"  name="friendly_name.{{$marketing->id}}" id="friendly_name.{{$marketing->id}}" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"  required />
