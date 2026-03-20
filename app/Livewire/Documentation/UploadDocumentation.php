@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DocumentationFolder\Documentation;
+namespace App\Livewire\Documentation;
 
 
 use Illuminate\Support\Facades\Storage;

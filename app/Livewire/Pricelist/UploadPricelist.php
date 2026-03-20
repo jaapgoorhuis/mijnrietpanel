@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\PricelistFolder;
+namespace App\Livewire\Pricelist;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class UploadPricelistFolder extends Component
+class UploadPricelist extends Component
 {
     use WithFileUploads;
 
