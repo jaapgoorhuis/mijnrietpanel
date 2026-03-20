@@ -38,8 +38,11 @@ class Order extends Authenticatable
 
     public function getKerndikteColorAttribute()
     {
+        // Zoek de kleur in kerndikte_colors waar de kerndikte matcht
         $kc = \App\Models\KerndikteColor::where('kerndikte', $this->kerndikte)->first();
-        return $kc ? $kc->color : 'purple'; // fallback
+
+        // Als er geen match is, fallback naar zwart (of wat je wilt)
+        return $kc ? $kc->color : '#000000';
     }
 
     public function planning()
