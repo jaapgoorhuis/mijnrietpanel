@@ -109,7 +109,7 @@
 
                 @foreach($unplannedOrders as $order)
                     @php
-                        $bgColor = $order->kerndikte_color ?? '#6b7280';
+                        $bgColor = $order->getKerndikteColorAttribute ?? '#6b7280';
                         $textColor = getContrastColor($bgColor);
                     @endphp
                     <div class="fc-event p-2 mb-2 cursor-pointer"
