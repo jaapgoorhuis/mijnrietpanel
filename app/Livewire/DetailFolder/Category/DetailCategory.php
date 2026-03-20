@@ -34,9 +34,9 @@ DetailCategory extends Component
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->detailCategories = \App\Models\DetailCategory::orderBy('order_id', 'asc')->where('lang', 'nl')->get();
+            $this->detailCategories = \App\Models\DetailCategory::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detail_folder_id', $this->folderId)->get();
         } elseif ($this->locale === 'en') {
-            $this->detailCategories = \App\Models\DetailCategory::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->detailCategories = \App\Models\DetailCategory::orderBy('order_id', 'asc')->where('lang','en')->where('detail_folder_id', $this->folderId)->get();
         }
 
         $this->folder = \App\Models\DetailFolder::find($this->folderId);
