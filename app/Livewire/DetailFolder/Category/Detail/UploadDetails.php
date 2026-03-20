@@ -4,6 +4,8 @@ namespace App\Livewire\DetailFolder\Category\Detail;
 
 
 use App\Models\Detail;
+use App\Models\DetailCategory;
+use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -18,20 +20,28 @@ class UploadDetails extends Component
     public $friendly_name = [];
 
     public $locale;
+    public $categoryId;
     public $folderId;
+    public $category;
+    public $folder;
 
 
-    public function mount($id) {
+    public function mount($id,$category) {
+        $this->categoryId = $category;
         $this->folderId = $id;
+
+        $this->folder = DetailFolder::find($id);
+
+        $this->category = DetailCategory::find($category);
     }
     public function render()
     {
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detailsFolder_id', $this->folderId)->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang', 'nl')->where('detail_category_id', $this->categoryId)->get();
         } elseif ($this->locale === 'en') {
-            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->where('detailsFolder_id', $this->folderId)->get();
+            $this->details = Detail::orderBy('order_id', 'asc')->where('lang','en')->where('detail_category_id', $this->categoryId)->get();
         }
 
         return view('livewire.detailFolders.details.uploadDetails');
@@ -76,13 +86,13 @@ class UploadDetails extends Component
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
-                    'detailsFolder_id' => $this->folderId,
+                    'detail_category_id' => $this->categoryId,
                     'lang' => $this->locale,
                 ]);
             }
             session()->flash('success','De bestanden zijn geupload.');
 
-            return $this->redirect('/detail-maps/'.$this->folderId.'/details/upload', navigate: true);
+            return $this->redirect('/detail-maps/'.$this->folderId.'/categories/'.$this->categoryId.'/details/upload', navigate: true);
         } else {
             session()->flash('error',  'Upload één of meerdere bestanden.');
         }
@@ -95,7 +105,7 @@ class UploadDetails extends Component
         Storage::disk('public')->delete('details/'.$detail->file_name);
 
         Detail::where('id', $id)->delete();
-        session()->flash('success', __('messages.Het bestand is verwijderd.'));
+        session()->flash('success', 'Het bestand is verwijderd.');
     }
 
     public function updateFileName($fileId)
@@ -104,10 +114,10 @@ class UploadDetails extends Component
             Detail::where('id', $fileId)->update([
                 'friendly_name' => $this->friendly_name[$fileId]
             ]);
-            session()->flash('success',  __('messages.De bestandsnaam is aangepast.'));
+            session()->flash('success', 'De bestandsnaam is aangepast.');
 
         } else {
-            session()->flash('error',  __('messages.Vul de naam van het bestand in.'));
+            session()->flash('error',  'Vul de naam van het bestand in.');
         }
     }
 }

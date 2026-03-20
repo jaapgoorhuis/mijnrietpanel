@@ -11,7 +11,7 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/detail-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Detail mappen') }}
+                        {{ __('messages.Detail categorieën') }}
                     </a>
                 </div>
             </li>
@@ -19,9 +19,17 @@
             <li class="inline-flex items-center">
                 <div class="flex items-center">
                 <i class="fa-solid fa-angle-right"></i>
-                <a href="/detail-maps/{{$this->folderId}}/details" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                    {{ __('messages.Details') }}
+                <a href="/detail-maps/{{$this->folderId}}/categories" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                    {{$this->folder->name}}
                 </a>
+                </div>
+            </li>
+            <li class="inline-flex items-center">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/detail-maps/{{$this->folderId}}/categories/{{$this->categoryId}}/details" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        {{$this->category->name}}
+                    </a>
                 </div>
             </li>
             <li>

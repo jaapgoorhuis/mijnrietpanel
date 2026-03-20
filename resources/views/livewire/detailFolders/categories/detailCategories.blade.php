@@ -7,11 +7,12 @@
                     {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
+
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/detail-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{ __('messages.Detail mappen') }}
+                        {{ __('messages.Detail categorieën') }}
                     </a>
                 </div>
             </li>
@@ -19,7 +20,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{ __('messages.Categorieën') }}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">{{$this->folder->name}}</p>
                 </div>
             </li>
 
@@ -36,7 +37,7 @@
             <div class="flex items-center justify-between mb-6">
                 {{-- Titel altijd zichtbaar --}}
                 <h1 class="text-lg font-semibold text-gray-800">
-                    {{ __('messages.Categorieën') }}
+                    {{ __('messages.Details') }}
                 </h1>
 
                 {{-- Knop alleen voor admins --}}
@@ -53,7 +54,7 @@
             @else
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 justify-items-center">
                     @foreach($detailCategories as $category)
-                        <a href="{{ url('/detail-maps/'.$this->categoryId.'/categories/' . $category->id . '/details') }}"
+                        <a href="{{ url('/detail-maps/'.$this->folderId.'/categories/' . $category->id . '/details') }}"
                            class="group w-48 border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3">
 
                             {{-- Afbeelding bovenaan --}}

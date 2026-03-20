@@ -8,11 +8,12 @@
                 </a>
             </li>
 
+
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/detail-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{ __('messages.Details mappen') }}
+                        {{ __('messages.Details categorieën') }}
                     </a>
                 </div>
             </li>

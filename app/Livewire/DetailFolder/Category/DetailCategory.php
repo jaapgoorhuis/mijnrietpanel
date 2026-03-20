@@ -15,12 +15,12 @@ DetailCategory extends Component
 
     public $locale;
 
-    public $categoryId;
+    public $folderId;
 
-    public $category;
+    public $folder;
 
     public function mount($id) {
-        $this->categoryId = $id;
+        $this->folderId = $id;
     }
 
 
@@ -39,17 +39,17 @@ DetailCategory extends Component
             $this->detailCategories = \App\Models\DetailCategory::orderBy('order_id', 'asc')->where('lang','en')->get();
         }
 
-        $this->category = \App\Models\DetailCategory::find($this->categoryId);
+        $this->folder = \App\Models\DetailFolder::find($this->folderId);
 
         return view('livewire.detailFolders.categories.detailCategories');
     }
 
     public function uploadDetailCategory() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/detail-maps/'.$this->categoryId.'/categories/upload', navigate: true);
+            return $this->redirect('/detail-maps/'.$this->folderId.'/categories/upload', navigate: true);
         }
         else {
-            return $this->redirect('/detail-maps/'.$this->categoryId, navigate: true);
+            return $this->redirect('/detail-maps/'.$this->folderId, navigate: true);
         }
     }
 
