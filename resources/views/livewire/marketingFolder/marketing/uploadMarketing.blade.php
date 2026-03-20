@@ -11,7 +11,7 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/marketing-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Marketing mappen') }}
+                        {{ __('messages.Marketing categorieën') }}
                     </a>
                 </div>
             </li>
@@ -20,7 +20,7 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/marketing-maps/{{$this->folderId}}/marketing" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Marketing') }}
+                        {{$folder->name}}
                     </a>
                 </div>
             </li>

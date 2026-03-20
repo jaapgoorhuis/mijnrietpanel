@@ -24,11 +24,15 @@ use Livewire\WithFileUploads;
     public $newCategoryImage;
     public $croppedImage;
     public $editingCategoryTitle = [];
+
+    public $newImages = [];
     public $selectedCategory = null; // huidige geopende map
 
     public $files; // voor detail-upload
 
     public $folderId;
+
+    protected $listeners = ['setCroppedImage'];
 
     public function mount($id)
     {
@@ -135,7 +139,7 @@ use Livewire\WithFileUploads;
 
 
             foreach ($category->details as $detail) {
-                Storage::disk('public')->delete('detailCategory/' . $detail->file_name);
+                Storage::disk('public')->delete('images/detail-maps/detail-categories/' . $detail->file_name);
                 $detail->delete();
             }
 
@@ -155,6 +159,7 @@ use Livewire\WithFileUploads;
     /*** DETAIL LOGICA ***/
     protected $rules = [
         'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
+        'newImages.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
     ];
 
 
@@ -165,6 +170,7 @@ use Livewire\WithFileUploads;
             'newCategoryImage.file' =>  'Het is verplicht om een afbeelding up te loaden.',
             'newCategoryTitle.required' =>  'De map naam is verplicht',
             'newCategoryImage.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
+            'newImages.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
         ];
     }
 
@@ -172,7 +178,32 @@ use Livewire\WithFileUploads;
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('categoryImages', $name, 'public');
+        $path = $image->storeAs('images/detail-maps/detail-categories', $name, 'public');
         return $path;
+    }
+
+    public function setCroppedImage($data)
+    {
+        $this->croppedImage = $data['image'];
+    }
+
+    public function updatedNewImages($value, $key)
+    {
+        $this->validate();
+
+        // $key = categoryId
+        $categoryId = $key;
+
+        $file = $this->newImages[$categoryId];
+
+        if (!$file) return;
+
+        $path = $file->store('images/detail-maps/detail-categories', 'public');
+
+        $category = \App\Models\DetailCategory::find($categoryId);
+        $category->cropimage = $path;
+        $category->save();
+        $this->loadCategories();
+        session()->flash('success', 'Afbeelding geüpdatet!');
     }
 }

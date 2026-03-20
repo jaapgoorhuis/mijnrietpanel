@@ -14,11 +14,11 @@ class MarketingFolder extends Authenticatable
 
    protected $fillable = ['order_id', 'name', 'lang','cropimage'];
 
-   protected $table = 'marketingFolder';
+   protected $table = 'marketingFolders';
 
     public function marketing()
     {
-        return $this->hasMany(Marketing::class,'marketingFolder_id', 'id');
+        return $this->hasMany(Marketing::class,'marketing_folder_id', 'id');
     }
 
 }

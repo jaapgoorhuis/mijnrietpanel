@@ -26,6 +26,9 @@ class UploadDetailFolders extends Component
     public $selectedFolder = null; // huidige geopende map
 
     public $files; // voor detail-upload
+    public $newImages = [];
+    protected $listeners = ['setCroppedImage'];
+
 
     public function mount()
     {
@@ -129,7 +132,7 @@ class UploadDetailFolders extends Component
 
             // Verwijder alle details in de folder
             foreach ($folder->details as $detail) {
-                Storage::disk('public')->delete('detailFolders/' . $detail->file_name);
+                Storage::disk('public')->delete('images/detail-maps/' . $detail->file_name);
                 $detail->delete();
             }
 
@@ -149,6 +152,7 @@ class UploadDetailFolders extends Component
     /*** DETAIL LOGICA ***/
     protected $rules = [
         'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
+        'newImages.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
     ];
 
 
@@ -159,6 +163,7 @@ class UploadDetailFolders extends Component
             'newFolderImage.file' =>  'Het is verplicht om een afbeelding up te loaden.',
             'newFolderTitle.required' =>  'De map naam is verplicht',
             'newFolderImage.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
+            'newImages.*.mimes' =>  'Alle bestanden moeten een afbeelding bestand zijn.',
         ];
     }
 
@@ -166,7 +171,33 @@ class UploadDetailFolders extends Component
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('folderImages', $name, 'public');
+        $path = $image->storeAs('images/detail-maps', $name, 'public');
         return $path;
+    }
+
+    public function setCroppedImage($data)
+    {
+        $this->croppedImage = $data['image'];
+    }
+
+    public function updatedNewImages($value, $key)
+    {
+
+        $this->validate();
+
+        // $key = categoryId
+        $folderId = $key;
+
+        $file = $this->newImages[$folderId];
+
+        if (!$file) return;
+
+        $path = $file->store('images/detail-maps', 'public');
+
+        $folder = \App\Models\DetailFolder::find($folderId);
+        $folder->cropimage = $path;
+        $folder->save();
+        $this->loadFolders();
+        session()->flash('success', 'Afbeelding geüpdatet!');
     }
 }

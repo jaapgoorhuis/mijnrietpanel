@@ -120,7 +120,7 @@ class UploadMarketingFolder extends Component
             }
 
             foreach ($folder->marketing as $marketingItem) {
-                Storage::disk('public')->delete('marketingFolders/' . $marketingItem->file_name);
+                Storage::disk('public')->delete('marketing/marketing-maps/' . $marketingItem->file_name);
                 $marketingItem->delete();
             }
 
@@ -165,6 +165,6 @@ class UploadMarketingFolder extends Component
     protected function storeCroppedImage($image)
     {
         $name = time() . '.' . $image->getClientOriginalExtension();
-        return $image->storeAs('folderImages', $name, 'public');
+        return $image->storeAs('marketing/marketing-maps', $name, 'public');
     }
 }

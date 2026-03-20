@@ -1,43 +1,55 @@
 <?php
 
-namespace App\Livewire\DocumentationFolder;
+namespace App\Livewire\Pricelist;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use ZipStream\ZipStream;
 
 class
-DocumentationFolder extends Component
+Pricelist extends Component
 {
-    public $documentation;
+    public $pricelist;
+
     public array $selectedDownloads = [];
+
     public $locale;
+
+
+
+    public function mount() {
+        if(Auth::user()->is_admin || !Auth::user()->is_architect) {
+            return view('livewire.pricelist.pricelist');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
+    }
 
     public function render()
     {
+
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','nl')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','nl')->get();
         } elseif ($this->locale === 'en') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->pricelist = \App\Models\Pricelist::orderBy('order_id', 'asc')->where('lang','en')->get();
         }
-
-
-        return view('livewire.documentation.documentation');
+        return view('livewire.pricelist.pricelist');
     }
 
-    public function uploadDocumentation() {
-        if(Auth::user()->is_admin) {
-            return $this->redirect('/documentation/upload', navigate: true);
-        }
-        else {
-            return $this->redirect('/documentation', navigate: true);
-        }
-    }
 
     public function updateDownload() {
         $this->selectedDownloads = $this->selectedDownloads;
+    }
+    public function uploadPricelist() {
+        if(Auth::user()->is_admin) {
+            return $this->redirect('/pricelist/upload', navigate: true);
+        }
+        else {
+            return $this->redirect('/pricelist', navigate: true);
+        }
     }
 
     public function downloadSelected()
@@ -49,7 +61,7 @@ DocumentationFolder extends Component
 
         $params = [
             'files' => $this->selectedDownloads,
-            'route' => 'documentation',
+            'route' => 'pricelist',
         ];
 
         $query = http_build_query($params);
@@ -65,10 +77,10 @@ DocumentationFolder extends Component
 
             $zip = new ZipStream();
 
-            foreach ($this->documentation as $documentation) {
+            foreach ($this->pricelist as $pricelist) {
 
                 // pad in storage/app/public
-                $filePath = public_path('/storage/documentation/' . $documentation->file_name);
+                $filePath = public_path('/storage/pricelist/' . $pricelist->file_name);
 
                 $filePath = str_replace(['%20'], ' ', $filePath);
 
@@ -82,6 +94,8 @@ DocumentationFolder extends Component
 
             $zip->finish();
 
-        }, 'documentatie.zip');
+        }, 'prijslijst.zip');
     }
+
+
 }

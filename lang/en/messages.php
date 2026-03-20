@@ -195,11 +195,10 @@ return [
     'Vul een waarde in voor Vrije ruimte x1-x2' => 'Enter a value for Free space x1-x2',
     'vanaf boven' => 'from top',
     'Invloed op prijs' => 'Price influence',
-    'Detail mappen' => 'Detail maps',
     'Map aanmaken' => 'Create map',
-    'Marketing mappen' => 'Marketing maps',
-    'Documentatie mappen' => 'Documentation maps',
-    'Prijstlijst mappen' => 'Pricelist maps',
     'Categorieën' => 'Categories',
+    'Marketing categorieën' => 'Marketing categories',
+    'Detail categorieën' => 'Detail categories',
+
 
 ];

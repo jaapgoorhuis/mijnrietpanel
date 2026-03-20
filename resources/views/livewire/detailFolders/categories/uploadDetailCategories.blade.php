@@ -95,17 +95,23 @@
 
                         <div class="flex items-center gap-4">
                             {{-- Afbeelding --}}
-                            @if($category->cropimage)
-                                <img src="{{ asset('storage/'.$category->cropimage) }}" class="w-16 h-16 rounded object-cover" />
-                            @else
-                                <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400">
-                                    Geen afbeelding
-                                </div>
-                            @endif
+                            <div>
+                                @if($category->cropimage)
+                                    <img src="{{ asset('storage/'.$category->cropimage) }}"
+                                         class="w-16 h-16 object-cover rounded"/>
+                                @endif
 
-                            {{-- Titel bewerken --}}
-                            <input type="text" wire:model.defer="editingCategoryTitle.{{ $category->id }}"
-                                   class="border border-gray-300 rounded p-1" placeholder="Titel">
+                                {{-- NIEUWE AFBEELDING --}}
+                                    <input type="file"
+                                           wire:model="newImages.{{ $category->id }}"
+                                           class="mt-2 text-sm" />
+                                    @error('newImages') <span class="text-red-500">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- Titel --}}
+                            <input type="text"
+                                   wire:model.defer="editingCategoryTitle.{{ $category->id }}"
+                                   class="border p-1 rounded"/>
                         </div>
 
                         <div class="flex gap-2">
@@ -133,6 +139,6 @@
 
         @endif
     </div>
-</div>
 
+</div>
 
