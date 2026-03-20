@@ -21,7 +21,7 @@
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
                     <a href="/detail-maps/{{$folderId}}/categories" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Categorieën') }}
+                        {{$this->folder->name}}
                     </a>
                 </div>
             </li>

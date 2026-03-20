@@ -28,12 +28,14 @@ use Livewire\WithFileUploads;
 
     public $files; // voor detail-upload
 
+    public $folder;
     public $folderId;
 
     public function mount($id)
     {
         $this->locale = config('app.locale');
 
+        $this->folder = DetailFolder::find($id);
         $this->folderId = $id;
 
 
