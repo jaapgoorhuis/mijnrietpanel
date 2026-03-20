@@ -101,7 +101,7 @@
                     </a>
                     @if(!\Illuminate\Support\Facades\Auth::user()->is_architect || \Illuminate\Support\Facades\Auth::user()->is_admin)
                         <!-- Card -->
-                        <a href="/pricelijst-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                        <a href="/pricelist-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
                             <!-- Icon: Document Exclamation -->
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9.75v3.75m0 3.75h.008M6.75 3.75h6.75L18 8.25v12a.75.75 0 01-.75.75h-9a.75.75 0 01-.75-.75v-16.5a.75.75 0 01.75-.75z"/>
