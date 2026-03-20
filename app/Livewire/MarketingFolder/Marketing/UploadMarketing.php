@@ -96,7 +96,7 @@ class UploadMarketing extends Component
         Storage::disk('public')->delete('marketing/'.$marketing->file_name);
 
         Marketing::where('id', $id)->delete();
-        session()->flash('success', __('messages.Het bestand is verwijderd.'));
+        session()->flash('success', 'messages.Het bestand is verwijderd.');
     }
 
     public function updateFileName($fileId)
