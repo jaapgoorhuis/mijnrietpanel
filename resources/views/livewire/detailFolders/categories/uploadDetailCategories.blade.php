@@ -102,9 +102,20 @@
                                 @endif
 
                                 {{-- NIEUWE AFBEELDING --}}
-                                <input type="file"
-                                       wire:model="newImages.{{ $category->id }}"
-                                       class="mt-2 text-sm" />
+                                    <div>
+                                        {{-- Bestand upload input zichtbaar **alleen als er niet wordt geüpload** --}}
+                                        <div wire:loading.remove wire:target="newImages.{{ $folder->id }}">
+                                            <input type="file"
+                                                   wire:model="newImages.{{ $folder->id }}"
+                                                   class="mt-2 text-sm" />
+                                        </div>
+
+                                        {{-- Spinner zichtbaar tijdens upload --}}
+                                        <div wire:loading wire:target="newImages.{{ $folder->id }}" class="mt-2 flex items-center">
+                                            <i class="fa-solid fa-spinner fa-spin me-2"></i>
+                                            Uploaden...
+                                        </div>
+                                    </div>
                             </div>
 
                             {{-- Titel --}}
