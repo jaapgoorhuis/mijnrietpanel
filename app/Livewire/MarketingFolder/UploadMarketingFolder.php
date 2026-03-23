@@ -70,7 +70,7 @@ class UploadMarketingFolder extends Component
     {
         $this->validate([
             'newFolderTitle' => 'required|string|max:255',
-            'newFolderImage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
+            'newFolderImage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg',
         ]);
 
         $imagePath = null;
