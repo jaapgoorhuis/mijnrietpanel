@@ -35,7 +35,7 @@
             @admin
             <div class="bg-white p-6 rounded-lg shadow mb-6">
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 
                     {{-- 📄 Bestanden upload --}}
                     <div class="flex flex-col">
@@ -50,25 +50,25 @@
                     </div>
 
                     {{-- 🖼 Thumbnail upload --}}
-                    <div class="flex flex-col">
-                        <label class="text-sm font-medium text-gray-700 mb-1">
-                            🖼 Thumbnail *
-                        </label>
-                        <input type="file" wire:model="newCropimage"
-                               class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
+{{--                    <div class="flex flex-col">--}}
+{{--                        <label class="text-sm font-medium text-gray-700 mb-1">--}}
+{{--                            🖼 Thumbnail *--}}
+{{--                        </label>--}}
+{{--                        <input type="file" wire:model="newCropimage"--}}
+{{--                               class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">--}}
 
-                        <p class="text-xs text-gray-400 mt-1">
-                            Wordt gebruikt als preview afbeelding *
-                        </p>
+{{--                        <p class="text-xs text-gray-400 mt-1">--}}
+{{--                            Wordt gebruikt als preview afbeelding *--}}
+{{--                        </p>--}}
 
                         {{-- Preview --}}
-                        @if ($newCropimage)
-                            <div class="mt-2">
-                                <img src="{{ $newCropimage->temporaryUrl() }}"
-                                     class="h-20 w-full object-contain border rounded">
-                            </div>
-                        @endif
-                    </div>
+{{--                        @if ($newCropimage)--}}
+{{--                            <div class="mt-2">--}}
+{{--                                <img src="{{ $newCropimage->temporaryUrl() }}"--}}
+{{--                                     class="h-20 w-full object-contain border rounded">--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
+{{--                    </div>--}}
 
                     {{-- Upload knop --}}
                     <div class="flex items-end md:items-center">
@@ -136,36 +136,37 @@
                                            wire:model="friendly_name.{{ $documentation->id }}"
                                            class="w-full border-b-2 border-gray-300 focus:border-[#C0A16E] mb-4">
 
-                                    {{-- IMAGE UPLOAD --}}
-                                    <label class="text-gray-400 text-sm">Afbeelding</label>
-                                    <input type="file"
-                                           wire:model="cropimage.{{ $documentation->id }}"
-                                           class="w-full border rounded-lg p-2 bg-gray-50">
+{{--                                    --}}{{----}}{{-- IMAGE UPLOAD --}}
+{{--                                    <label class="text-gray-400 text-sm">Afbeelding</label>--}}
+{{--                                    <input type="file"--}}
+{{--                                           wire:model="cropimage.{{ $documentation->id }}"--}}
+{{--                                           class="w-full border rounded-lg p-2 bg-gray-50">--}}
 
-                                    {{-- ERROR --}}
-                                    @error('cropimage.'.$documentation->id)
-                                    <div class="text-red-500 text-sm">{{ $message }}</div>
-                                    @enderror
+{{--                                    --}}{{----}}{{-- ERROR --}}
+{{--                                    @error('cropimage.'.$documentation->id)--}}
+{{--                                    <div class="text-red-500 text-sm">{{ $message }}</div>--}}
+{{--                                    @enderror--}}
 
-                                    {{-- HUIDIGE AFBEELDING --}}
-                                    @if($documentation->cropimage)
-                                        <div class="mt-3">
-                                            <p class="text-xs text-gray-400">Huidig:</p>
-                                            <img src="{{ asset('storage/' . $documentation->cropimage) }}"
-                                                 class="h-24 object-contain border rounded">
-                                        </div>
-                                    @endif
+{{--                                    --}}{{----}}{{-- HUIDIGE AFBEELDING --}}
+{{--                                    @if($documentation->cropimage)--}}
+{{--                                        <div class="mt-3">--}}
+{{--                                            <p class="text-xs text-gray-400">Huidig:</p>--}}
+{{--                                            <img src="{{ asset('storage/' . $documentation->cropimage) }}"--}}
+{{--                                                 class="h-24 object-contain border rounded">--}}
+{{--                                        </div>--}}
+{{--                                    @endif--}}
 
-                                    {{-- NIEUWE PREVIEW --}}
-                                    @if(isset($cropimage[$documentation->id]))
-                                        <div class="mt-3">
-                                            <p class="text-xs text-gray-400">Preview:</p>
-                                            <img src="{{ $cropimage[$documentation->id]->temporaryUrl() }}"
-                                                 class="h-24 object-contain border rounded">
-                                        </div>
-                                    @endif
+{{--                                    --}}{{-- NIEUWE PREVIEW --}}
+{{--                                    @if(isset($cropimage[$documentation->id]))--}}
+{{--                                        <div class="mt-3">--}}
+{{--                                            <p class="text-xs text-gray-400">Preview:</p>--}}
+{{--                                            <img src="{{ $cropimage[$documentation->id]->temporaryUrl() }}"--}}
+{{--                                                 class="h-24 object-contain border rounded">--}}
+{{--                                        </div>--}}
+{{--                                    @endif--}}
 
                                     {{-- BUTTON --}}
+
                                     <div class="text-right mt-4">
                                         <button wire:click="updateItem({{ $documentation->id }})"
                                                 wire:loading.attr="disabled"
