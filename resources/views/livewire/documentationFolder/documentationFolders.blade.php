@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Marketing categorieën') }}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Documentatie categorieën') }}</p>
                 </div>
             </li>
         </ol>
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between mb-6">
                 {{-- Titel altijd zichtbaar --}}
                 <h1 class="text-lg font-semibold text-gray-800">
-                    {{ __('messages.Marketing') }}
+                    {{ __('messages.Documentatie') }}
                 </h1>
 
                 {{-- Knop alleen voor admins --}}
@@ -37,12 +37,12 @@
                 @endadmin
             </div>
 
-            @if($marketingFolder->isEmpty())
+            @if($documentationFolder->isEmpty())
                 <p class="text-gray-500">{{ __('messages.Er zijn geen mappen gevonden') }}</p>
             @else
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 justify-items-center">
-                    @foreach($marketingFolder as $folder)
-                        <a href="{{ url('/marketing-maps/' . $folder->id . '/marketing') }}"
+                    @foreach($documentationFolder as $folder)
+                        <a href="{{ url('/documentation-maps/' . $folder->id . '/documentation') }}"
                            class="group w-48 border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3">
 
                             {{-- Afbeelding bovenaan --}}

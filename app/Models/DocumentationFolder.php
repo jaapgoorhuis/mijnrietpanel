@@ -13,11 +13,11 @@ class DocumentationFolder extends Authenticatable
    use HasFactory;
 
    protected $fillable = ['order_id', 'name','lang','cropimage'];
-    protected $table = 'documentationFolder';
+    protected $table = 'documentationFolders';
 
     public function documentations()
     {
-        return $this->hasMany(Documentation::class,'documentationFolder_id', 'id');
+        return $this->hasMany(Documentation::class,'documentation_category_id', 'id');
     }
 
 }

@@ -48,10 +48,10 @@
 
                             {{-- Afbeelding bovenaan --}}
                             @if($folder->cropimage)
-                                <div class="w-full h-28 overflow-hidden rounded-md">
+                                <div class="w-full h-28 flex items-center justify-center bg-white rounded-md overflow-hidden">
                                     <img src="{{ asset('storage/' . $folder->cropimage) }}"
                                          alt="{{ $folder->name }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition duration-200">
+                                         class="max-h-full max-w-full object-contain">
                                 </div>
                             @else
                                 <div class="w-full h-28 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">

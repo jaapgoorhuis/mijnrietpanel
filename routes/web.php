@@ -50,8 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-maps/{id}/marketing', \App\Livewire\MarketingFolder\Marketing\Marketing::class)->name('marketing');
     Route::get('marketing-maps/{id}/marketing/upload', \App\Livewire\MarketingFolder\Marketing\UploadMarketing::class);
 
-    Route::get('documentation', \App\Livewire\Documentation\Documentation::class)->name('documentation');
-    Route::get('documentation/upload', \App\Livewire\Documentation\UploadDocumentation::class);
+    Route::get('documentation-maps', \App\Livewire\DocumentationFolder\DocumentationFolder::class)->name('documentation');
+    Route::get('documentation-maps/{id}/documentation', \App\Livewire\DocumentationFolder\Documentation\Documentation::class)->name('documentation');
+    Route::get('documentation-maps/upload', \App\Livewire\DocumentationFolder\UploadDocumentationFolder::class);
+    Route::get('documentation-maps/{id}/documentation/upload', \App\Livewire\DocumentationFolder\Documentation\UploadDocumentation::class);
 
     Route::get('pricelist', \App\Livewire\Pricelist\Pricelist::class)->name('pricelist');
     Route::get('pricelist/upload', \App\Livewire\Pricelist\UploadPricelist::class);

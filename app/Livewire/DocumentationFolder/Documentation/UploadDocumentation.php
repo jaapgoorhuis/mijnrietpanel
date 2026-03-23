@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Livewire\MarketingFolder\Marketing;
+namespace App\Livewire\DocumentationFolder\Documentation;
 
+use App\Models\DocumentationFolder;
 use App\Models\Marketing;
 use App\Models\MarketingFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class UploadMarketing extends Component
+class UploadDocumentation extends Component
 {
     use WithFileUploads;
 
     public $files = [];
-    public $marketing;
+    public $documentation;
 
     public $friendly_name = [];
 
@@ -28,7 +29,7 @@ class UploadMarketing extends Component
     public function mount($id)
     {
         $this->folderId = $id;
-        $this->folder = MarketingFolder::find($id);
+        $this->folder = DocumentationFolder::find($id);
     }
 
     public function render()
@@ -36,24 +37,24 @@ class UploadMarketing extends Component
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->marketing = Marketing::orderBy('order_id', 'asc')
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')
                 ->where('lang', 'nl')
-                ->where('marketing_category_id', $this->folderId)
+                ->where('documentation_category_id', $this->folderId)
                 ->get();
         } elseif ($this->locale === 'en') {
-            $this->marketing = Marketing::orderBy('order_id', 'asc')
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')
                 ->where('lang', 'en')
-                ->where('marketing_category_id', $this->folderId)
+                ->where('documentation_category_id', $this->folderId)
                 ->get();
         }
 
-        foreach ($this->marketing as $item) {
+        foreach ($this->documentation as $item) {
             if (!isset($this->friendly_name[$item->id])) {
                 $this->friendly_name[$item->id] = $item->friendly_name;
             }
         }
 
-        return view('livewire.marketingFolder.marketing.uploadMarketing');
+        return view('livewire.documentationFolder.documentation.uploadDocumentation');
     }
 
     protected $rules = [
@@ -70,14 +71,14 @@ class UploadMarketing extends Component
             'cropimage.*.mimes' => 'Het bestand moet een afbeelding zijn',
             'newCropimage.image' => 'Het nieuwe bestand moet een afbeelding zijn',
             'newCropimage.max' => 'De afbeelding mag maximaal 2MB zijn',
-            'newCropimage.required' => 'De thumbnail is verplicht',
+            'newCropimage.required' => 'De tumbnail is verplicht',
         ];
     }
 
     public function updateOrder($orderList)
     {
         foreach ($orderList as $item) {
-            Marketing::where('id', $item['value'])->update(['order_id' => $item['order']]);
+            \App\Models\Documentation::where('id', $item['value'])->update(['order_id' => $item['order']]);
         }
         $this->dispatch('updated');
     }
@@ -90,18 +91,18 @@ class UploadMarketing extends Component
             foreach ($this->files as $file) {
 
                 // opslaan bestand
-                $file->storeAs('marketing', $file->getClientOriginalName(), 'public');
+                $file->storeAs('documentation', $file->getClientOriginalName(), 'public');
 
                 // volgorde bepalen
-                $latestMarketing = Marketing::orderBy('order_id', 'desc')->first();
-                $orderId = $latestMarketing ? $latestMarketing->order_id + 1 : 1;
+                $latestDocumentation = \App\Models\Documentation::orderBy('order_id', 'desc')->first();
+                $orderId = $latestDocumentation ? $latestDocumentation->order_id + 1 : 1;
 
                 // nieuwe Marketing record
-                $marketing = Marketing::create([
+                $documentation = \App\Models\Documentation::create([
                     'friendly_name' => $file->getClientOriginalName(),
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
-                    'marketing_category_id' => $this->folderId,
+                    'documentation_category_id' => $this->folderId,
                     'lang' => $this->locale,
 
                 ]);
@@ -109,9 +110,9 @@ class UploadMarketing extends Component
 
                 // NIEUWE cropimage uploaden als aanwezig
                 if ($this->newCropimage) {
-                    $path = $this->newCropimage->store('marketing', 'public');
-                    $marketing->cropimage = $path;
-                    $marketing->save();
+                    $path = $this->newCropimage->store('documentation', 'public');
+                    $documentation->cropimage = $path;
+                    $documentation->save();
                 }
             }
 
@@ -120,7 +121,7 @@ class UploadMarketing extends Component
             // reset file inputs
             $this->reset(['files', 'newCropimage']);
 
-            return $this->redirect('/marketing-maps/'.$this->folderId.'/marketing/upload', navigate: true);
+            return $this->redirect('/documentation-maps/'.$this->folderId.'/documentation/upload', navigate: true);
         } else {
             session()->flash('error',  'Upload één of meerdere bestanden.');
         }
@@ -128,45 +129,45 @@ class UploadMarketing extends Component
 
     public function remove($id)
     {
-        $marketing = Marketing::where('id', $id)->first();
+        $documentation = \App\Models\Documentation::where('id', $id)->first();
 
         // verwijder bestand
-        Storage::disk('public')->delete('marketing/' . $marketing->file_name);
+        Storage::disk('public')->delete('documentation/' . $documentation->file_name);
 
         // verwijder cropimage indien aanwezig
-        if ($marketing->cropimage) {
-            Storage::disk('public')->delete($marketing->cropimage);
+        if ($documentation->cropimage) {
+            Storage::disk('public')->delete($documentation->cropimage);
         }
 
         // delete record
-        Marketing::where('id', $id)->delete();
+        \App\Models\Documentation::where('id', $id)->delete();
 
         session()->flash('success', 'Het bestand is verwijderd.');
     }
 
     public function updateItem($id)
     {
-        $marketing = Marketing::find($id);
+        $documentation = \App\Models\Documentation::find($id);
 
         // Naam updaten
         if(isset($this->friendly_name[$id])) {
-            $marketing->friendly_name = $this->friendly_name[$id];
+            $documentation->friendly_name = $this->friendly_name[$id];
         }
 
         // Cropimage per item updaten
         if (isset($this->cropimage[$id])) {
-            if($marketing->cropimage) {
-                Storage::disk('public')->delete($marketing->cropimage);
+            if($documentation->cropimage) {
+                Storage::disk('public')->delete($documentation->cropimage);
             }
 
-            $path = $this->cropimage[$id]->store('marketing', 'public');
-            $marketing->cropimage = $path;
+            $path = $this->cropimage[$id]->store('documentation', 'public');
+            $documentation->cropimage = $path;
 
             // reset file input van dit item
             unset($this->cropimage[$id]);
         }
 
-        $marketing->save();
+        $documentation->save();
 
         session()->flash('success', 'Item succesvol bijgewerkt');
 

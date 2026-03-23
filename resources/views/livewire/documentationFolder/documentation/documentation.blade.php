@@ -10,7 +10,16 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">   {{ __('messages.Documentatie') }}</p>
+                    <a href="/documentation-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{ __('messages.Documentatie categorieën') }}
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {{$folder->name}}</p>
                 </div>
             </li>
         </ol>
@@ -21,16 +30,15 @@
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 relative">
-
                 @admin
                 <div class="text-right">
                     <button wire:click="uploadDocumentation()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                         <i class="fa-solid fa-upload"></i>    {{ __('messages.Bestanden toevoegen') }}
+
                     </button>
                 </div>
                 <br/>
                 @endadmin
-
                 <div class="text-left">
                     <button
                         wire:click="downloadAll()"
@@ -50,27 +58,51 @@
                     </button>
                 </div>
                 <br/>
-
-                <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4  text-left">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 text-left">
                     @if(!count($this->documentation))
                         {{ __('messages.Er zijn geen bestanden gevonden') }}
                     @else
                         @foreach($this->documentation as $documentation)
-                            <div class="relative border-[1px] border-solid border-[#e5e7eb] rounded-[5px] p-5 text-left">
-                                <h2 class="text-md font-bold pb-5 break-words whitespace-normal overflow-wrap break-word">{{$documentation->friendly_name}}</h2>
-                                <a target="_blank" href="{{asset('/storage/documentation/'.$documentation->file_name)}}">
-                                    <button type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                                        <i class="fa-solid fa-download"></i> Downloaden
-                                    </button>
-                                    <div class="absolute right-[10px] bottom-[10px]">
-                                        <input wire:click="updateDownload" wire:model="selectedDownloads" value="{{ $documentation->file_name }}" type="checkbox"/>
+                            <div class="relative border border-gray-200 rounded-md p-3 flex flex-col items-center text-sm
+                        {{ !$documentation->cropimage ? 'justify-center h-40' : '' }}">
+
+                                {{-- Cropimage compact --}}
+                                @if($documentation->cropimage)
+                                    <div class="w-full h-24 mb-2 overflow-hidden rounded-md ">
+                                        <img src="{{ asset('storage/' . $documentation->cropimage) }}"
+                                             alt="{{ $documentation->friendly_name }}"
+                                             class="w-full h-full object-contain">
                                     </div>
+                                @endif
+
+                                {{-- Bestandsnaam --}}
+                                <h2 class="font-semibold pb-2 text-center truncate w-full">
+                                    {{ $documentation->friendly_name }}
+                                </h2>
+
+                                {{-- Download knop klein --}}
+                                <a target="_blank" href="{{ asset('/storage/documentation/' . $documentation->file_name) }}" class="w-full mb-[20px]">
+                                    <button type="button"
+                                            class="w-full bg-gray-800 hover:bg-gray-900 text-white rounded-md text-sm px-3 py-1.5 flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-download text-[0.7rem]"></i>
+                                        {{ __('messages.Downloaden') }}
+                                    </button>
                                 </a>
+
+                                {{-- Checkbox klein --}}
+                                <div class="absolute right-2 bottom-2">
+                                    <input wire:click="updateDownload"
+                                           wire:model="selectedDownloads"
+                                           value="{{ $documentation->file_name }}"
+                                           type="checkbox"/>
+                                </div>
+
                             </div>
                         @endforeach
                     @endif
                 </div>
-                @if($this->selectedDownloads)
+
+            @if($this->selectedDownloads)
                     <div class="fixed bottom-[20px] w-full pr-[49px]">
                         <button wire:click="downloadSelected()" type="button"
                                 class="mt-[20px] w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">

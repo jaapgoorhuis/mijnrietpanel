@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Documentation;
+namespace App\Livewire\DocumentationFolder\Documentation;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -11,28 +11,40 @@ Documentation extends Component
 {
     public $documentation;
     public array $selectedDownloads = [];
-    public $locale;
+    public array $allDownloads = [];
 
-    public function render()
-    {
+    public $locale;
+    public $folderId;
+    public $folder;
+
+    public function mount($id) {
+
+        $this->folder = \App\Models\DocumentationFolder::find($id);
+        $this->folderId = $id;
+
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','nl')->get();
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang', 'nl')->where('documentation_category_id', $id)->get();
         } elseif ($this->locale === 'en') {
-            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->get();
+            $this->documentation = \App\Models\Documentation::orderBy('order_id', 'asc')->where('lang','en')->where('documentation_category_id', $id)->get();
+        }
+    }
+    public function render()
+    {
+        foreach($this->documentation as $documentation) {
+            array_push($this->allDownloads,$documentation->file_name);
         }
 
-
-        return view('livewire.documentation.documentation');
+        return view('livewire.documentationFolder.documentation.documentation');
     }
 
     public function uploadDocumentation() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/documentation/upload', navigate: true);
+            return $this->redirect('/documentation-maps/'.$this->folderId.'/documentation/upload', navigate: true);
         }
         else {
-            return $this->redirect('/documentation', navigate: true);
+            return $this->redirect('/documentation-maps', navigate: true);
         }
     }
 
@@ -51,6 +63,7 @@ Documentation extends Component
             'files' => $this->selectedDownloads,
             'route' => 'documentation',
         ];
+
 
         $query = http_build_query($params);
         $url = route('download.bulk.zip') . '?' . $query;
@@ -82,6 +95,6 @@ Documentation extends Component
 
             $zip->finish();
 
-        }, 'documentatie.zip');
+        }, $this->folder->name.'.zip');
     }
 }
