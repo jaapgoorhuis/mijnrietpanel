@@ -1,13 +1,35 @@
 <x-slot name="header">
-    <nav class="flex">
-        <ol class="inline-flex items-center space-x-2">
-            <li><a href="/dashboard" class="text-gray-700 hover:text-[#C0A16E]">Mijn Rietpanel</a></li>
-            <li><i class="fa-solid fa-angle-right"></i></li>
-            <li><a href="/marketing-maps" class="text-gray-700 hover:text-[#C0A16E]">Marketing categorieën</a></li>
-            <li><i class="fa-solid fa-angle-right"></i></li>
-            <li><a href="/marketing-maps/{{$folderId}}/marketing" class="text-gray-700 hover:text-[#C0A16E]">{{$folder->name}}</a></li>
-            <li><i class="fa-solid fa-angle-right"></i></li>
-            <li class="text-gray-700">Uploaden</li>
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li class="inline-flex items-center">
+                <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                    {{ __('messages.Mijn Rietpanel') }}
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/marketing-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{ __('messages.Marketing categorieën') }}
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <a href="/marketing-maps/{{$folderId}}/marketing" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{$folder->name}}
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="flex items-center">
+                    <i class="fa-solid fa-angle-right"></i>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {!! __('messages.uploaden') !!}</p>
+                </div>
+            </li>
         </ol>
     </nav>
 </x-slot>
