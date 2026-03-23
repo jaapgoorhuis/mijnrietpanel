@@ -300,29 +300,41 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = dropInfo.event?.extendedProps?.type || dropInfo.draggedEl?.dataset.type || 'order';
             const draggedId = dropInfo.event?.extendedProps?.originalId || dropInfo.draggedEl?.dataset.id;
 
-            // Dagnaam voor weekend check
-            const dayName = new Date(dateStr).toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
+            const dropDate = new Date(dateStr);
+            dropDate.setHours(0, 0, 0, 0);
 
-            // --- Manual blocks ---
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // --- 1️⃣ Blokkeer planning in het verleden ---
+            if (dropDate < today) return false;
+
+            // --- 2️⃣ Check dagnaam voor weekenden ---
+            const dayName = dropDate.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
+
+            // --- 3️⃣ Manual blocks ---
             if (type === 'manual-block') {
                 // Kan niet op een dag waar al een block is
                 if (manualBlockedDates.includes(dateStr)) return false;
+
+                // Kan niet op een dag waar al orders staan
                 if (dayHasOrders(calendar, dateStr, draggedId)) return false;
-                return true;
+
+                return true; // anders mag manual block droppen
             }
 
-            // --- Orders ---
-            // Check handmatig geblokkeerde dagen
+            // --- 4️⃣ Orders ---
+            // Niet toestaan op handmatig geblokkeerde dagen
             if (manualBlockedDates.includes(dateStr)) return false;
 
-            // Check weekdagen die geblokkeerd zijn
+            // Niet toestaan op geblokkeerde weekdagen
             if (blockedWeekDays.includes(dayName)) return false;
 
-            // Check of er al een manual-block event op die dag staat
+            // Niet toestaan als er al een manual block op die dag staat
             const existingBlock = calendar.getEvents().some(ev => ev.extendedProps?.type === 'manual-block' && ev.startStr === dateStr);
             if (existingBlock) return false;
 
-            // ✅ Anders mag droppen
+            // ✅ Anders is droppen toegestaan
             return true;
         },
         // --- Sleep naar externe container / blocked ---
@@ -393,29 +405,48 @@ document.addEventListener('DOMContentLoaded', () => {
         dayCellDidMount: info => {
             const d = info.date;
 
-            // --- Datum in dag-maand formaat ---
+            // --- Bepaal datum en weeknummer ---
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const dateStr = `${day}-${month}`;
             const fullDateISO = `${d.getFullYear()}-${month}-${day}`;
-
-            // --- Bereken load ---
             const load = getDayLoad(calendar, fullDateISO);
             const percent = Math.round((load / maxM2PerDay) * 100);
 
-            // --- Achtergrond rood voor geblokkeerde weekdagen ---
+            // --- Zorg position relative voor overlays ---
+            info.el.style.position = 'relative';
+            info.el.style.paddingTop = '30px';
+
+            // --- Achtergrond voor geblokkeerde weekdagen ---
             const dayName = d.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
             if (blockedWeekDays.includes(dayName)) {
-                info.el.style.backgroundColor = '#dc3545';
+                info.el.style.backgroundColor = '#dc3545'; // rood
             }
 
-            // --- Zorg dat position relative staat zodat overlay kan ---
-            info.el.style.position = 'relative';
+            // --- Achtergrond voor verleden ---
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            if (d < today) {
+                info.el.style.backgroundColor = '#f0f0f0'; // lichtgrijs
+                info.el.style.opacity = '0.6'; // iets transparant
+            }
 
-            // --- Voeg padding-top toe zodat events niet over datum/m2 heen staan ---
-            info.el.style.paddingTop = '15px'; // <-- hier de ruimte tussen datum/m² en events
+            // --- Weeknummer label ---
+            let weekLabel = info.el.querySelector('.week-number-label');
+            if (!weekLabel) {
+                weekLabel = document.createElement('div');
+                weekLabel.classList.add('week-number-label');
+                weekLabel.style.position = 'absolute';
+                weekLabel.style.top = '2px';
+                weekLabel.style.right = '2px';
+                weekLabel.style.fontSize = '10px';
+                weekLabel.style.fontWeight = '600';
+                weekLabel.style.zIndex = '3';
+                info.el.appendChild(weekLabel);
+            }
+            weekLabel.innerText = `W${getISOWeek(d)}`;
 
-            // --- Datum label overlay ---
+            // --- Datum label ---
             let dateLabel = info.el.querySelector('.day-date-label');
             if (!dateLabel) {
                 dateLabel = document.createElement('div');
@@ -425,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateLabel.style.left = '2px';
                 dateLabel.style.fontSize = '12px';
                 dateLabel.style.fontWeight = '600';
-                dateLabel.style.zIndex = '2'; // boven events
+                dateLabel.style.zIndex = '2';
                 info.el.appendChild(dateLabel);
             }
             dateLabel.innerText = dateStr;
@@ -436,16 +467,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 indicator = document.createElement('div');
                 indicator.classList.add('day-load-indicator');
                 indicator.style.position = 'absolute';
-                indicator.style.top = '2px';
+                indicator.style.top = '25px';
                 indicator.style.right = '2px';
                 indicator.style.fontSize = '11px';
                 indicator.style.fontWeight = '600';
-                indicator.style.zIndex = '2'; // boven events
+                indicator.style.zIndex = '2';
                 info.el.appendChild(indicator);
             }
             indicator.innerText = `${percent}%`;
             indicator.style.color = getLoadColor(percent);
         },
+
         // --- Event click (manual-block) ---
         eventClick: info => {
             if (info.event.extendedProps.type === 'manual-block') {
@@ -627,7 +659,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+    function getISOWeek(date) {
+        const target = new Date(date.valueOf());
+        const dayNr = (date.getDay() + 6) % 7; // maandag = 0, zondag = 6
+        target.setDate(target.getDate() - dayNr + 3); // donderdag van deze week
+        const firstThursday = new Date(target.getFullYear(), 0, 4);
+        const diff = target - firstThursday;
+        return 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000));
+    }
 
     function getLoadColor(percent) {
         if (percent >= 100) return '#dc3545';      // rood
