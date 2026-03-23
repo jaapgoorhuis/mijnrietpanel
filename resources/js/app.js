@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- Zorg position relative voor overlays ---
             info.el.style.position = 'relative';
-            info.el.style.paddingTop = '30px';
+            info.el.style.paddingTop = '25px';
 
             // --- Achtergrond voor geblokkeerde weekdagen ---
             const dayName = d.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 indicator = document.createElement('div');
                 indicator.classList.add('day-load-indicator');
                 indicator.style.position = 'absolute';
-                indicator.style.top = '25px';
+                indicator.style.top = '15px';
                 indicator.style.right = '2px';
                 indicator.style.fontSize = '11px';
                 indicator.style.fontWeight = '600';
