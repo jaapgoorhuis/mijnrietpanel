@@ -209,8 +209,7 @@ class UploadDetailFolders extends Component
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING **/
     protected function storeCroppedImage($image)
     {
-        $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('details/detail-folder', $name, 'public');
-        return $path;
+        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
+        return $image->storeAs('documentation/documentation-folder', $name, 'public');
     }
 }

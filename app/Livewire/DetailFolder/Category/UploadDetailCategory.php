@@ -206,10 +206,13 @@ use Livewire\WithFileUploads;
     }
 
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING **/
+
+
+
     protected function storeCroppedImage($image)
     {
-        $name = time() . '.' . $image->getClientOriginalExtension();
-        $path = $image->storeAs('details/detail-categories', $name, 'public');
+        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
+        return $image->storeAs('documentation/documentation-folder', $name, 'public');
         session()->flash('success', 'Afbeelding bewerkt.');
         return $path;
     }

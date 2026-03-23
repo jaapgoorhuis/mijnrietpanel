@@ -201,7 +201,7 @@ class UploadDocumentationFolder extends Component
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING ***/
     protected function storeCroppedImage($image)
     {
-        $name = time() . 'Documentation' . $image->getClientOriginalExtension();
+        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
         return $image->storeAs('documentation/documentation-folder', $name, 'public');
     }
 }
