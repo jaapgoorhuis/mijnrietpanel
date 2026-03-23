@@ -51,7 +51,7 @@
                             <th scope="col" class="px-4 py-3">Gebruikersnaam</th>
                             <th scope="col" class="px-4 py-3">E-mail adres</th>
                             <th scope="col" class="px-4 py-3">Telefoonnummer</th>
-                            <th scope="col" class="px-4 py-3">Toevoegen aan becrijf</th>
+                            <th scope="col" class="px-4 py-3">Toevoegen aan bedrijf</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3">Land</th>
 
