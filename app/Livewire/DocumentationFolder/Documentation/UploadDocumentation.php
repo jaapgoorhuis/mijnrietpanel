@@ -59,8 +59,8 @@ class UploadDocumentation extends Component
 
     protected $rules = [
         'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
-        'cropimage.*' => 'image|max:2048', // max 2MB
-        'newCropimage' => 'required|nullable|image|max:2048', // nieuwe afbeelding bij upload
+        'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // max 2MB
+        'newCropimage' => 'required|nullable|mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // nieuwe afbeelding bij upload
     ];
 
     public function messages(): array

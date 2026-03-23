@@ -68,7 +68,7 @@ class UploadDocumentationFolder extends Component
     {
         $this->validate([
             'newFolderTitle' => 'required|string|max:255',
-            'newFolderImage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
+            'newFolderImage' => 'nullable|mimes:jpg,svg,jpeg,png,gif,webp',
         ]);
 
         $imagePath = null;
@@ -173,7 +173,7 @@ class UploadDocumentationFolder extends Component
     protected function saveCategoryImage($categoryId, $image)
     {
         $this->validate([
-            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            "newImages.$categoryId" => 'required|mimes:jpg,svg,jpeg,png,gif,webp|max:5120',
         ]);
 
         $folder = \App\Models\DocumentationFolder::find($categoryId);

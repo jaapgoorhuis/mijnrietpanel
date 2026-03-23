@@ -70,7 +70,7 @@ class UploadMarketingFolder extends Component
     {
         $this->validate([
             'newFolderTitle' => 'required|string|max:255',
-            'newFolderImage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg',
+            'newFolderImage' => 'nullable|mimes:jpg,jpeg,png,gif,webp,svg',
         ]);
 
         $imagePath = null;
@@ -175,8 +175,10 @@ class UploadMarketingFolder extends Component
     protected function saveCategoryImage($categoryId, $image)
     {
         $this->validate([
-            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
+            "newImages.$categoryId" => 'required|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
         ]);
+
+
 
         $folder = \App\Models\MarketingFolder::find($categoryId);
         if (!$folder) return;

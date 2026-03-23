@@ -74,7 +74,7 @@ use Livewire\WithFileUploads;
     {
         $this->validate([
             'newCategoryTitle' => 'required|string|max:255',
-            'newCategoryImage' => 'file|mimes:jpg,jpeg,png,gif,webp',
+            'newCategoryImage' => 'file|mimes:jpg,jpeg,png,gif,webp,svg',
         ]);
 
 
@@ -181,7 +181,7 @@ use Livewire\WithFileUploads;
     protected function saveCategoryImage($categoryId, $image)
     {
         $this->validate([
-            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,svg,webp|max:5120',
         ]);
 
         $category = \App\Models\DetailCategory::find($categoryId);

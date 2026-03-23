@@ -67,7 +67,7 @@ class UploadDetailFolders extends Component
     {
         $this->validate([
             'newFolderTitle' => 'required|string|max:255',
-            'newFolderImage' => 'file|mimes:jpg,jpeg,png,gif,webp',
+            'newFolderImage' => 'file|mimes:jpg,jpeg,png,gif,webp,svg',
         ]);
 
 
@@ -159,7 +159,7 @@ class UploadDetailFolders extends Component
 
     /*** DETAIL LOGICA ***/
     protected $rules = [
-        'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp',
+        'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,bmp,webp,svg',
     ];
 
     public function updatedNewImages($value, $key)
