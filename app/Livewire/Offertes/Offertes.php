@@ -150,7 +150,12 @@ class Offertes extends Component
 
         $orderLines = OrderLines::where('order_id', $order->id)->get();
 
-        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
+        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+
+        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
 
         Mail::to(Auth::user()->email)->send(new sendOfferteToOrder($order));
 
