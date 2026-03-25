@@ -101,7 +101,7 @@
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
                                 <td class="px-4 py-3">@if($order->user->is_active)
-                                        {{$order->user->company->name}}
+                                        {{$order->user->company->bedrijfsnaam}}
                                     @else
                                         Gebruiker niet meer actief
                                     @endif
