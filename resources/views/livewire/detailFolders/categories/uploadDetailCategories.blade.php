@@ -73,10 +73,15 @@
         </div>
 
         <div class="mt-4">
-            <button wire:click="createCategory"
-                    class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+            <button wire:loading.attr="disabled" wire:target="newCategoryImage" wire:click="createCategory()" type="button"     class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+                <div wire:loading wire:target="newCategoryImage">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
                 Map aanmaken
             </button>
+
+
         </div>
     </div>
 
