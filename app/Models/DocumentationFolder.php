@@ -15,7 +15,7 @@ class DocumentationFolder extends Authenticatable
    protected $fillable = ['order_id', 'name','lang','cropimage'];
     protected $table = 'documentationFolders';
 
-    public function documentations()
+    public function documentation()
     {
         return $this->hasMany(Documentation::class,'documentation_category_id', 'id');
     }

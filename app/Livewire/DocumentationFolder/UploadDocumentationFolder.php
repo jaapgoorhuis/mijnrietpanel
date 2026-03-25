@@ -117,6 +117,8 @@ class UploadDocumentationFolder extends Component
     public function deleteFolder($folderId)
     {
         $folder = \App\Models\DocumentationFolder::find($folderId);
+
+
         if ($folder) {
             // Verwijder map afbeelding
             if ($folder->image) {
