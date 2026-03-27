@@ -207,5 +207,8 @@ return [
     'Mappen toevoegen' => 'Mappen toevoegen',
     'Marketing categorieën' => 'Marketing categories',
     'Documentatie categorieën' => 'Documentation categories',
+    'Cutback' => 'Cutback',
+    'Cutback in mm' => 'Cutback in mm',
+    'Ruimte bovenkant tot vrije ruimte ruimte' => 'Free space top till free space',
 
 ];
