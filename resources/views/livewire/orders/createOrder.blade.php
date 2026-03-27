@@ -272,7 +272,7 @@
                                                         <label><strong>{{ __('messages.Ruimte bovenkant tot vrije ruimte') }}</strong></label>
                                                         <input type="number"
                                                                wire:model="panelValues.{{$index}}.4_1"
-                                                               wire:blur="updatePanelValues({{$index}}, '4_1')"
+                                                               wire:keydown="updatePanelValues({{$index}}, '4_1')"
                                                                placeholder="Vul waarde in"
                                                                class="border rounded px-2 py-1 w-full mt-1">
                                                         @error('panelValues.'.$index.'.4_1')
