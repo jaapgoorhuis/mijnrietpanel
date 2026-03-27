@@ -405,7 +405,11 @@ class ChangeOrder extends Component
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
-            'panelValues.*.*' => __('messages.Dit moet een getal zijn, hoger dan 0'),
+            'panelValues.*.1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.3.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
         ];
     }
