@@ -243,7 +243,7 @@
 
                                                 <!-- Afbeelding + label -->
                                                 <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">
-                                                    <img src="{{public_path("/storage/images/rietpanel/paneel-$option.png}}" class="w-full h-[50px] object-contain">
+                                                    <img src="{{public_path("/storage/images/rietpanel/paneel-$option.png")}}" class="w-full h-[50px] object-contain">
                                                     <div class="text-center font-bold mt-1">{{ $label }}</div>
 
                                                     @if(isset($tooltips[$option]))
