@@ -343,7 +343,7 @@
         top: -25px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .vrije-ruimte-1{
@@ -351,7 +351,7 @@
         top: -5px;
         left: 30%;
         transform: translateX(-50%);
-        font-size: 14px;
+        font-size: 10px;
     }
 
     .vrije-ruimte-2 {
@@ -359,7 +359,7 @@
         top: -5px;
         left: 54%;
         transform: translateX(-50%);
-        font-size: 14px;
+        font-size: 10px;
     }
 
     .lb-label {
@@ -367,7 +367,7 @@
         top: 0px;
         left: 15%;
         transform: translateX(-50%);
-        font-size: 14px;
+        font-size: 12px;
     }
     /* Algemene tekststijl */
     .panel-banner strong {
