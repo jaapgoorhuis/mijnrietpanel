@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -66,26 +67,72 @@
     @endif
 
     <table class="order-table-visual">
-    @foreach($order->orderLines->sortByDesc('fillTotaleLengte')->values() as $key => $orderLines)
-        <tr>
-            <td class="header">Order regel {{$key+1}}</td>
-            <td class="right">
-                <span class="aantal">Aantal: <span style="color: red;">{{$orderLines->aantal}}</span></span>
-            </td>
-        </tr>
+        @foreach($order->orderLines->sortByDesc('fillTotaleLengte')->values() as $key => $orderLine)
+            <tr>
+                <td class="header">Order regel {{$key+1}}</td>
+                <td class="right">
+                    <span class="aantal">Aantal: <span style="color: red;">{{$orderLine->aantal}}</span></span>
+                </td>
+            </tr>
             <tr class="bar-row">
                 <td colspan="2">
-                    <div class="panel-banner" style="background-image: url('/public/storage/images/rietpanel_panel.png');">
+                    @php
+                        // Bepaal welke opties aanwezig zijn
+                        $selectedOptions = [];
+
+                        if($orderLine->lb > 0) $selectedOptions[] = 1;
+                        if($orderLine->fillCb > 0) $selectedOptions[] = 2;
+                        if($orderLine->nokafschuining > 0) $selectedOptions[] = 3;
+                        if($orderLine->vrije_ruimte_1 > 0 || $orderLine->vrije_ruimte_2 > 0) $selectedOptions[] = 4;
+
+                        sort($selectedOptions); // belangrijk zodat key consistent is
+                        $keyString = implode('-', $selectedOptions);
+
+
+                        // Standaard afbeelding als geen optie is ingevuld
+                        $imagePath = $keyString
+                        ? public_path("storage/images/rietpanel/paneel-$keyString.png")
+                        : public_path("storage/images/rietpanel/paneel.png");
+
+                    @endphp
+
+                    <div class="panel-banner" style="background-image: url('{{ $imagePath }}');">
+
+                        @if($orderLine->fillCb)
                         <div class="cb-label">
-                            <strong>CB:</strong>{{$orderLines->fillCb}} mm
+                           <strong>{{$orderLine->fillCb}} mm</strong>
                         </div>
+                        @endif
 
-{{--                        <div class="lb-label">--}}
-{{--                            <strong>LB:</strong> {{$orderLines->fillLb}} mm--}}
-{{--                        </div>--}}
+                            @if($orderLine->nokafschuining)
+                                <div class="nok-label">
+                                    <strong>{{$orderLine->nokafschuining}} &deg;</strong>
+                                </div>
+                            @endif
+                            @if($orderLine->vrije_ruimte_1)
+                                <div class="vrije-ruimte-1">
+                                    <strong style="font-family: DejaVu Sans, sans-serif;">
+                                        &larr; {{$orderLine->vrije_ruimte_1}} mm &rarr;
+                                    </strong>
+                                </div>
 
-                        <div class="totale-maat" style="margin-bottom: 10px;">
-                            <strong><- Totale maat: </strong> {{$orderLines->fillTotaleLengte}}
+                                <div class="vrije-ruimte-2">
+                                    <strong style="font-family: DejaVu Sans, sans-serif;">
+                                        &larr; {{$orderLine->vrije_ruimte_2}} mm &rarr;
+                                    </strong>
+                                </div>
+                            @endif
+
+                            @if($orderLine->lb)
+                                <div class="lb-label">
+                                    <strong>{{$orderLine->lb}} mm</strong>
+                                </div>
+                            @endif
+
+                        <div class="totale-maat" style="margin-bottom: 30px;">
+                            <strong style="font-family: DejaVu Sans, sans-serif;">
+                                &larr; Totale lengte: {{$orderLine->fillTotaleLengte}} mm &rarr;
+                            </strong>
                         </div>
                     </div>
                 </td>
@@ -270,8 +317,16 @@
     /* Posities van de tekstlabels */
     .cb-label {
         position: absolute;
-        right: 20px;
-        bottom: 10px;
+        right: 15px;
+        bottom: 20px;
+        width:auto;
+        font-size: 12px;
+    }
+
+    .nok-label {
+        position: absolute;
+        left: 15px;
+        bottom: 0px;
         width:auto;
         font-size: 12px;
     }
@@ -285,12 +340,35 @@
 
     .totale-maat {
         position: absolute;
-        top: -5px;
+        top: -25px;
         left: 50%;
         transform: translateX(-50%);
         font-size: 14px;
     }
 
+    .vrije-ruimte-1{
+        position: absolute;
+        top: -5px;
+        left: 30%;
+        transform: translateX(-50%);
+        font-size: 14px;
+    }
+
+    .vrije-ruimte-2 {
+        position: absolute;
+        top: -5px;
+        left: 54%;
+        transform: translateX(-50%);
+        font-size: 14px;
+    }
+
+    .lb-label {
+        position: absolute;
+        top: 0px;
+        left: 15%;
+        transform: translateX(-50%);
+        font-size: 14px;
+    }
     /* Algemene tekststijl */
     .panel-banner strong {
         font-weight: bold;

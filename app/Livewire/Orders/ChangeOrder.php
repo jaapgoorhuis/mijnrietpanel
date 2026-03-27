@@ -211,6 +211,13 @@ class ChangeOrder extends Component
         sort($options);
         $key = implode('-', $options);
 
+        if (in_array(1, $options)) {
+            $this->panelValues[$index][1] = 20;
+        }
+
+        if (in_array(2, $options)) {
+            $this->panelValues[$index][2] = 20;
+        }
 
         $this->panelImages[$index] = "/storage/images/rietpanel/paneel-$key.png";
     }
