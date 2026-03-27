@@ -128,14 +128,14 @@
                     @endif
                     @if($showNokafschuining)
                             <?php if($offerteLine->nokafschuining > 0)  $nokafschuining += $offerteLine->aantal?>
-                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>
+                        <td>{!! $offerteLine->nokafschuining > 0 ? $offerteLine->nokafschuining . ' &deg;' : '' !!}</td>
                     @endif
 
                     @if($showVrijeRuimte)
                             <?php if($offerteLine->vrije_ruimte_2 > 0)  $vrijeruimte += $offerteLine->aantal?>
                         <td>
-                            {{ $orderLine->vrije_ruimte_2 > 0
-                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'
+                            {{ $offerteLine->vrije_ruimte_2 > 0
+                                ? $offerteLine->vrije_ruimte_2 . ' mm (' . $offerteLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'
                                 : ''
                             }}
                         </td>
