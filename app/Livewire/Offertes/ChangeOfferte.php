@@ -457,7 +457,7 @@ class ChangeOfferte extends Component
         $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
+        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
 
 
 //        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
