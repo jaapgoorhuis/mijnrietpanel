@@ -290,7 +290,8 @@
 
                                                 <!-- Afbeelding + label -->
                                                 <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">
-                                                    <img src="/storage/images/rietpanel/paneel-{{$option}}.png" class="w-full h-[50px] object-contain">
+                                                    <img src="{{ asset("storage/images/rietpanel/paneel-$option.png") }}" class="w-full h-[50px] object-contain">
+
                                                     <div class="text-center font-bold mt-1">{{ $label }}</div>
 
                                                     @if(isset($tooltips[$option]))
@@ -380,8 +381,7 @@
                                     <div class="flex-1 flex justify-center mt-[40px]">
                                         <div class="relative md:w-[90%] mx-auto">
                                             <!-- Afbeelding bepaalt de hoogte van de container -->
-                                            <img
-                                                src="{{ $panelImages[$index] ?? '/storage/images/rietpanel/paneel.png' }}"
+                                            <img src="{{ asset($panelImages[$index] ?? 'storage/images/rietpanel/paneel.png') }}"
                                                 class="w-full h-auto block"
                                                 alt="Panel"
                                             />
