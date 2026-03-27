@@ -296,37 +296,40 @@ class CreateOrders extends Component
         }
 
         if (in_array(3, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.3'] = 'required|numeric';
+            $rules['panelValues.*.3'] = 'required|numeric|min:1';
         }
 
         if (in_array(4, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.4_1'] = 'required|numeric';
+            // 4_1 moet > 0 zijn
+            $rules['panelValues.*.4_1'] = 'required|numeric|min:1';
+
+            // 4_2 moet > 0 zijn en mag niet de marge overschrijden
             $rules['panelValues.*.4_2'] = [
                 'required',
                 'numeric',
+                'min:1', // ✅ waarde mag niet 0 zijn
                 function ($attribute, $value, $fail) {
                     // $attribute = 'panelValues.0.4_2'
                     preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
                     $index = $matches[1];
 
                     $totaal = $this->fillTotaleLengte[$index] ?? 0;
-                    if(!$totaal) {
-                        $fail(__('messages.vul_lengte_paneel_in')); // <-- meertalig
-                    }else {
+
+                    if (!$totaal) {
+                        $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
+                    } else {
                         $marge = 300;
                         $max = $totaal - $marge;
-
                         $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
 
-                        if (!$totaal) {
-                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel')); // <-- meertalig
-                        } elseif ($sum > $max) {
+                        if ($sum > $max) {
                             $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan $max mm"));
                         }
                     }
                 },
             ];
         }
+
 
 
         return $rules;
@@ -357,6 +360,7 @@ class CreateOrders extends Component
             'panelValues.*.1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.3.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.3.min' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
