@@ -339,6 +339,8 @@ class CreateOffertes extends Component
             'panelValues.*.3.min' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_1.min' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_2.min' => 'Dit moet een getal zijn, hoger dan 0',
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),

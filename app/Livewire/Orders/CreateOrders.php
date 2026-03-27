@@ -361,6 +361,8 @@ class CreateOrders extends Component
             'panelValues.*.2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.3.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.3.min' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_1.min' => 'Dit moet een getal zijn, hoger dan 0',
+            'panelValues.*.4_2.min' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.4_2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
