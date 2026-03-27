@@ -323,7 +323,7 @@ class CreateOrders extends Component
                         $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
 
                         if ($sum > $max) {
-                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan") . $max . "mm");
+                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan ") . $max . "mm");
                         }
                     }
                 },
