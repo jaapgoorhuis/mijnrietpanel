@@ -193,7 +193,7 @@
         @endforeach
 
 
-        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
+        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $showLb || $showCb || $showNokafschuining || $showVrijeRuimte)
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Toeslag') }}</strong></td>

@@ -193,7 +193,7 @@
         @endforeach
 
 
-        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number )
+        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $showLb || $showCb || $showNokafschuining || $showVrijeRuimte)
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Toeslag') }}</strong></td>
@@ -231,47 +231,47 @@
                             @endif
                         @endif
 
-                        @if($toeslag->rule == 'Layback')
-                            @if($showLb)
-                                <tr class="items">
-                                        <?php $totalPrice = $laybacks * $toeslag->price ?>
-                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                    <td>{{$laybacks}}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
-                                        <?php $totalToeslagPrice += $totalPrice; ?>
+                            @if($toeslag->rule == 'Layback')
+                                @if($showLb)
+                                    <tr class="items">
+                                            <?php $totalPrice = $laybacks * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$laybacks}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
 
-                                </tr>
+                                    </tr>
+                                @endif
                             @endif
-                        @endif
 
-                        @if($toeslag->rule == 'Nokafschuining')
-                            @if($showNokafschuining)
-                                <tr class="items">
-                                        <?php $totalPrice = $nokafschuining * $toeslag->price ?>
-                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                    <td>{{$nokafschuining}}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
-                                        <?php $totalToeslagPrice += $totalPrice; ?>
+                            @if($toeslag->rule == 'Nokafschuining')
+                                @if($showNokafschuining)
+                                    <tr class="items">
+                                            <?php $totalPrice = $nokafschuining * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$nokafschuining}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
 
-                                </tr>
+                                    </tr>
+                                @endif
                             @endif
-                        @endif
 
-                        @if($toeslag->rule == 'Vrije ruimte')
-                            @if($showVrijeRuimte)
-                                <tr class="items">
-                                        <?php $totalPrice = $vrijeruimte * $toeslag->price ?>
-                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                    <td>{{$vrijeruimte}}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                    <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
-                                        <?php $totalToeslagPrice += $totalPrice; ?>
+                            @if($toeslag->rule == 'Vrije ruimte')
+                                @if($showVrijeRuimte)
+                                    <tr class="items">
+                                            <?php $totalPrice = $vrijeruimte * $toeslag->price ?>
+                                        <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                        <td>{{$vrijeruimte}}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalPrice; ?>
 
-                                </tr>
+                                    </tr>
+                                @endif
                             @endif
-                        @endif
                     @endif
                 @endforeach
             </table>
