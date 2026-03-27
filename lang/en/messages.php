@@ -209,7 +209,7 @@ return [
     'Documentatie categorieën' => 'Documentation categories',
     'Cutback' => 'Cutback',
     'Cutback in mm' => 'Cutback in mm',
-    'Ruimte bovenkant tot vrije ruimte ruimte' => 'Free space top till free space',
+    'Ruimte bovenkant tot vrije ruimte' => 'Free space top till free space',
     'Dit moet een getal hoger dan 0 zijn' => 'This has to be a number bigger than 0',
     "De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan " => "The sum of 'Space till free space' + 'Free space' cannot be greather than ",
     'Vul eerst de totale paneellengte in voor dit paneel' => 'Please fill in the total panel length first',
@@ -218,5 +218,6 @@ return [
     'Vrije ruimte per paneel' => 'Free space per panel',
     'LB' => 'LB',
     'Nokafschuining' => 'Ridge bevel',
-    ''
+    'De lengte mag maximaal 14500mm zijn.' => 'The length cannot be greather than 14500mm',
+    'Dit is een verplicht veld.' => 'This field is required',
 ];
