@@ -274,6 +274,11 @@ class ChangeOfferte extends Component
 
     }
 
+    public function updatePanelValues($key,$index)
+    {
+        $this->panelValues[$key][$index] = $this->panelValues[$key][$index];
+    }
+
     public function removeOfferteLine($index) {
         unset($this->offerteLines[$index]);
         unset($this->totaleLengte[$index]);
