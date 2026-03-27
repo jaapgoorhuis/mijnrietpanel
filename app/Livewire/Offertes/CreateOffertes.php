@@ -80,6 +80,15 @@ class CreateOffertes extends Component
     public $requested_delivery_date;
 
     public $comment;
+    public $selectedPanelOption =[];
+    public $panelValues =[];
+
+    public $vrijeruimtePrice;
+    public $laybackPrice;
+    public $nokafschuiningPrice;
+
+    public $panelImages = [];
+
 
     public function mount() {
         if(Auth::user()->bedrijf_id == 0) {
@@ -116,6 +125,30 @@ class CreateOffertes extends Component
 
         return view('livewire.offertes.createOfferte');
     }
+
+    public function updateSelectedPanelOption($index)
+    {
+        $options = $this->selectedPanelOption[$index] ?? [];
+
+        if (empty($options)) {
+            $this->panelImages[$index] = '/storage/images/rietpanel/paneel.png';
+            return;
+        }
+
+
+        sort($options);
+        $key = implode('-', $options);
+
+
+        $this->panelImages[$index] = "/storage/images/rietpanel/paneel-$key.png";
+    }
+
+
+    public function updatePanelValues($key,$index)
+    {
+        $this->panelValues[$key][$index] = $this->panelValues[$key][$index];
+    }
+
 
     public function updatePrice() {
         if($this->kerndikte != '') {
@@ -176,6 +209,15 @@ class CreateOffertes extends Component
         $this->totaleLengte[] = '0';
         $this->fillTotaleLengte[] = '';
         $this->aantal[] = '';
+        $this->panelValues[] = [
+            1 => 20,
+            2 => 20,
+            3=> 0,
+            '4_1' => 0,
+            '4_2' => 0
+        ];
+        $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
+        $this->selectedPanelOption[] = [];
 
     }
 
@@ -185,6 +227,7 @@ class CreateOffertes extends Component
         unset($this->aantal[$index]);
         unset($this->lb[$index]);
         unset($this->cb[$index]);
+        unset($this->selectedPanelOption[$index]);
         $this->offerteLines = array_values($this->offerteLines);
         $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
@@ -223,6 +266,47 @@ class CreateOffertes extends Component
             $rules['marge'] = 'required';
         }
 
+        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.1'] = 'required|numeric';
+        }
+
+        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.2'] = 'required|numeric';
+        }
+
+        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.3'] = 'required|numeric';
+        }
+
+        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.4_1'] = 'required|numeric';
+            $rules['panelValues.*.4_2'] = [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    // $attribute = 'panelValues.0.4_2'
+                    preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
+                    $index = $matches[1];
+
+                    $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                    if(!$totaal) {
+                        $fail(__('messages.vul_lengte_paneel_in')); // <-- meertalig
+                    }else {
+                        $marge = 300;
+                        $max = $totaal - $marge;
+
+                        $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
+
+                        if (!$totaal) {
+                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel')); // <-- meertalig
+                        } elseif ($sum > $max) {
+                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan $max mm"));
+                        }
+                    }
+                },
+            ];
+        }
+
         return $rules;
     }
 
@@ -247,6 +331,7 @@ class CreateOffertes extends Component
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
             'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
             'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
+            'panelValues.*.*' => __('messages.Dit moet een getal zijn, hoger dan 0'),
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
@@ -305,20 +390,35 @@ class CreateOffertes extends Component
                 $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
                 $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
 
+                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+
                 OfferteLines::create([
                     'offerte_id' => $offerte->id,
-                    'fillCb' => $fillCb,
                     'fillLb' => $fillLb,
                     'fillTotaleLengte' => $fillTotaleLengte,
                     'aantal' => $aantal,
                     'user_id' => Auth::user()->id,
-                    'm2' => $m2
+                    'm2' => $m2,
+
+                      // als optie niet geselecteerd is -> 0
+                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
                 ]);
             }
 
         $offerteLines = OfferteLines::where('offerte_id', $offerte->id)->get();
 
-        Pdf::loadView('pdf.offerte',['offerte' => $offerte, 'offerteLines' => $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerteId.'.pdf'));
+        $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
+
+        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
+
+
 
         Mail::to(Auth::user()->email)->send(new sendOfferte($offerte));
 

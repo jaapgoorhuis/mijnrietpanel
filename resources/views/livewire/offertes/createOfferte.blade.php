@@ -225,32 +225,7 @@
                             {{--                                </div>--}}
                             {{--                            </div>--}}
 
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="fillLb" class="text-gray-400">CB (max 200mm)
-                                    <div class="tooltip">
-                                        <div class="tooltip-content">
-                                            {{ __( 'messages.Vul hier de CB in mm in De maximale CB mag 200mm zijn Laat dit op nul staan als de CB niet van toepassing is Heeft u toch een grotere CB nodig? Neem dan contact met ons op' )}}             </div>
-                                        <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
-                                    </div>
-                                </label>
-                                <select id="fillCb" wire:model="fillCb.{{$index}}" wire:change="updateCb({{$index}})" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
-                                    <option value="0">0mm</option>
-                                    <option value="20">20mm</option>
-                                    <option value="40">40mm</option>
-                                    <option value="60">60mm</option>
-                                    <option value="80">80mm</option>
-                                    <option value="100">100mm</option>
-                                    <option value="120">120mm</option>
-                                    <option value="140">140mm</option>
-                                    <option value="160">160mm</option>
-                                    <option value="180">180mm</option>
-                                    <option value="200">200mm</option>
-
-                                </select>
-
-                                <div class="text-red-500">@error('cb.'.$index) {{ $message }} @enderror</div>
-                            </div>
 
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
@@ -281,18 +256,174 @@
                             </div>
 
 
-                            <div class="text-right">
-                                {{ __('messages.Vierkante meters') }}: <strong>{{$this->m2[$index]}} m²</strong>
-                            </div>
-                            <br/><br/><br/>
-                            <div style="background-image: url('/public/storage/images/rietpanel_panel.png');" class="mb-[30px] relative bg-contain bg-no-repeat bg-center w-full h-[75px] sm:h-[100px] md:h-[120px] lg:h-[140px] xl:h-[160px]">
-
-                                <div class="absolute right-0 bottom-[-10px] sm:bottom-[10px] md:bottom-[20px] sm:right-[10px] md:right-[10px] lg:right-[45px] xl:right-[50px] text-[11px] md:text-[15px]">
-                                    <strong>CB:</strong> {{$this->cb[$index]}}<span class="md:hidden lg:hidden xl:hidden sm:hidden"><br/></span>mm
+                                <div class="text-right">
+                                    {{ __('messages.Vierkante meters') }}: <strong>{{$this->m2[$index]}} m²</strong>
                                 </div>
-                                {{--                                <div class="absolute left-[60px] sm:left-[120px] md:left-[140px] lg:left-[230px] xl:left-[270px] text-[11px] md:text-[15px] top-[-10px]"><strong>LB:</strong> {{$this->lb[$index]}}mm</div>--}}
-                                <div class="absolute top-[-10px] left-[40%] md:left-[45%] text-[11px] md:text-[15px]"><strong><- {{ __('messages.Totale maat') }}: </strong>{{$this->totaleLengte[$index]}} mm -> </div>
-                            </div>
+                                <br/><br/><br/>
+                                <div class="flex flex-col sm:flex-row w-full mb-[30px] gap-2">
+
+                                    <!-- Linker div (checkboxes) -->
+                                    <div class="w-full sm:w-[250px] flex flex-col gap-2">
+
+                                        @php
+                                            $tooltips = [
+                                                 1 =>  __('messages.Meerprijs layback') . ' €' . $this->laybackPrice.',-',
+
+                                                 3 =>  __('messages.Meerprijs nokafschuining') . ' €' . $this->nokafschuiningPrice.',-',
+                                                 4 =>  __('messages.Meerprijs vrije ruimte') . ' €' . $this->vrijeruimtePrice.',-',
+                                            ];
+                                        @endphp
+
+                                        @foreach([
+                                            1 => __('messages.Layback'),
+                                            2 => __('messages.Cutback'),
+                                            3 => __('messages.Nok afschuining'),
+                                            4 => __('messages.Vrije ruimte')
+                                        ] as $option => $label)
+                                            <label class="cursor-pointer flex flex-col relative mt-[20px]">
+                                                <!-- Checkbox -->
+                                                <input type="checkbox"
+                                                       wire:model="selectedPanelOption.{{$index}}"
+                                                       wire:click="updateSelectedPanelOption({{$index}})"
+                                                       value="{{ $option }}"
+                                                       class="hidden peer">
+
+                                                <!-- Afbeelding + label -->
+                                                <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">
+                                                    <img src="/storage/images/rietpanel/paneel-{{$option}}.png" class="w-full h-[50px] object-contain">
+                                                    <div class="text-center font-bold mt-1">{{ $label }}</div>
+
+                                                    @if(isset($tooltips[$option]))
+                                                        <!-- Tooltip rechtsboven -->
+                                                        <div class="absolute top-1 right-1">
+                                                            <!-- Wrapper met group -->
+                                                            <div class="relative inline-block group">
+                                                                <!-- Icoon -->
+                                                                <i class="fa-solid fa-circle-info text-gray-600 hover:text-blue-500 cursor-pointer"></i>
+
+                                                                <!-- Tooltip -->
+                                                                <div class="absolute right-0 top-full mt-1 w-56 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
+                                                                    opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto
+                                                                    transition-opacity duration-200 z-50">
+                                                                    {{ $tooltips[$option] }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <!-- Input velden -->
+                                                @if(in_array($option, $selectedPanelOption[$index]))
+
+                                                    @if($option == 4)
+                                                        <label><strong>{{ __('messages.Ruimte bovenkant tot vrije ruimte') }}</strong></label>
+                                                        <input type="number"
+                                                               wire:model="panelValues.{{$index}}.4_1"
+                                                               wire:blur="updatePanelValues({{$index}}, '4_1')"
+                                                               placeholder="Vul waarde in"
+                                                               class="border rounded px-2 py-1 w-full mt-1">
+                                                        @error('panelValues.'.$index.'.4_1')
+                                                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                                                        @enderror
+                                                        <label><strong>{{ __('messages.Vrije ruimte') }}</strong></label>
+                                                        <input type="number"
+                                                               wire:model="panelValues.{{$index}}.4_2"
+                                                               wire:keydown="updatePanelValues({{$index}}, '4_2')"
+                                                               placeholder="Vul waarde in"
+                                                               class="border rounded px-2 py-1 w-full mt-1">
+                                                        <div class="text-red-500 text-sm mt-1">
+                                                            @error('panelValues.'.$index.'.4_2') {{ $message }} @enderror
+                                                        </div>
+                                                    @elseif($option == 3)
+                                                        <label><strong>{{ $label }} @if($option == 3) in graden @else in mm @endif</strong></label>
+                                                        <input type="number"
+                                                               wire:model="panelValues.{{$index}}.{{ $option }}"
+                                                               wire:keydown="updatePanelValues({{$index}}, {{$option}})"
+                                                               placeholder="Vul waarde in"
+                                                               class="border rounded px-2 py-1 w-full mt-1">
+                                                        @error('panelValues.'.$index.'.'.$option)
+                                                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                                                        @enderror
+                                                    @else
+                                                        <label><strong>{{ $label }} @if($option == 3) in graden @else in mm @endif</strong></label>
+
+                                                        <select
+                                                            wire:model="panelValues.{{$index}}.{{ $option }}"
+                                                            wire:change="updatePanelValues({{$index}}, {{$option}})"
+                                                            class="border rounded px-2 py-1 w-full mt-1"
+                                                        >
+                                                            @if($option != 3)
+                                                                @for($i = 20; $i <= 200; $i += 20)
+                                                                    <option value="{{ $i }}">{{ $i }} mm</option>
+                                                                @endfor
+                                                            @else
+                                                                @for($i = 20; $i <= 90; $i += 5) <!-- voorbeeld voor graden -->
+                                                                <option value="{{ $i }}">{{ $i }}°</option>
+                                                                @endfor
+                                                            @endif
+                                                        </select>
+
+                                                        <div class="text-red-500 text-sm mt-1">
+                                                            @error('panelValues.'.$option) {{ $message }} @enderror
+                                                        </div>
+                                                    @endif
+
+
+                                                @endif
+                                            </label>
+                                        @endforeach
+
+                                    </div>
+
+
+                                    <!-- Rechter div (dynamische afbeelding) -->
+                                    <div class="flex-1 flex justify-center mt-[40px]">
+                                        <div class="relative md:w-[90%] mx-auto">
+                                            <!-- Afbeelding bepaalt de hoogte van de container -->
+                                            <img
+                                                src="{{ $panelImages[$index] ?? '/storage/images/rietpanel/paneel.png' }}"
+                                                class="w-full h-auto block"
+                                                alt="Panel"
+                                            />
+
+                                            <!-- Totale maat bovenaan, gecentreerd -->
+                                            <div class="absolute top-[-40px] left-[57%] transform -translate-x-1/2 text-[12px] font-bold lg:text-[16px] lg:top-[-50px]">
+                                                {{ __('messages.Totale maat') }}: @if($totaleLengte[$index]) < {{$totaleLengte[$index]}}  mm > @else  < 0 mm > @endif
+                                            </div>
+
+                                            <!-- LB label links bovenin -->
+                                            @if(in_array(1, $selectedPanelOption[$index]))
+                                                <div class="absolute top-[-18px] left-[0%] text-[12px] font-bold md:left-[10%] lg:text-[16px] lg:top-[-24px]">
+                                                    {{ $this->panelValues[$index]['1'].' mm' ?? '0 mm' }}
+                                                </div>
+                                            @endif
+
+                                            @if(in_array(4, $selectedPanelOption[$index]))
+                                                <div class="absolute top-[-18px] left-[15%] text-[12px] font-bold md:left-[20%] lg:left-[22%] @if(in_array(2, $selectedPanelOption[$index])) xl:left-[25%] @else xl:left-[28%] @endif lg:top-[-24px] lg:text-[16px]">
+                                                    < {{ $this->panelValues[$index]['4_1'].' mm >' ?? ' 0 mm >' }}
+                                                </div>
+                                                <div class="absolute top-[-18px] left-[40%] text-[12px] font-bold md:left-[43%] @if(in_array(2, $selectedPanelOption[$index])) xl:left-[45%] @else xl:left-[50%] @endif lg:top-[-24px] lg:text-[16px]">
+                                                    < {{ $this->panelValues[$index]['4_2'].' mm >' ?? '0 mm >' }}
+                                                </div>
+                                            @endif
+
+                                            <!-- CB label rechts onderin -->
+                                            @if(in_array(2, $selectedPanelOption[$index]))
+                                                <div class="absolute top-[40px] right-0 mr-2 mb-2 text-[12px] font-bold sm:top-[50px] md:top-[60px] md:right-[-5px] lg:top-[75px] xl:top-[110px] lg:text-[16px] 2xl:top-[135px] 2xl:right-[25px]">
+                                                    {{ $this->panelValues[$index]['2'].' mm' ?? '0 mm' }}
+                                                </div>
+                                            @endif
+
+                                            @if(in_array(3, $selectedPanelOption[$index]))
+                                                <div class="absolute top-[40px] left-0 mr-2 mb-2 text-[12px] font-bold sm:top-[50px] md:top-[70px] lg:top-[85px] xl:top-[135px] 2xl:top-[170px] lg:text-[16px]">
+                                                    {{ $this->panelValues[$index]['3'] ?? 0 }} &deg;
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+
+                                </div>
                         @endforeach
                         <div class="text-right">
 

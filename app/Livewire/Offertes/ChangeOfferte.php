@@ -84,7 +84,12 @@ class ChangeOfferte extends Component
     public $requested_delivery_date;
     public $comment;
 
-
+    public $selectedPanelOption =[];
+    public $panelValues =[];
+    public $vrijeruimtePrice;
+    public $laybackPrice;
+    public $nokafschuiningPrice;
+    public $panelImages = [];
 
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
@@ -136,7 +141,29 @@ class ChangeOfferte extends Component
             $this->m2[$key] = $exsistingOfferteLine->m2;
             $this->cb[$key] = $exsistingOfferteLine->fillCb;
             $this->totaleLengte[$key] = $exsistingOfferteLine->fillTotaleLengte;
+            $this->panelValues[$key] = [
+                1 => $exsistingOfferteLine->lb ?? 0,
+                2 => $exsistingOfferteLine->fillCb ?? 0,
+                3 => $exsistingOfferteLine->nokafschuining ?? 0,
+                '4_1' => $exsistingOfferteLine->vrije_ruimte_1 ?? 0,
+                '4_2' => $exsistingOfferteLine->vrije_ruimte_2 ?? 0,
+            ];
 
+            // ✅ Vul selectedPanelOption op basis van welke waarden groter dan 0 zijn
+            $this->selectedPanelOption[$key] = [];
+            if($exsistingOfferteLine->lb > 0) $this->selectedPanelOption[$key][] = 1;
+            if($exsistingOfferteLine->fillCb > 0) $this->selectedPanelOption[$key][] = 2;
+            if($exsistingOfferteLine->nokafschuining > 0) $this->selectedPanelOption[$key][] = 3;
+            if($exsistingOfferteLine->vrije_ruimte_1 > 0 || $exsistingOfferteLine->vrije_ruimte_2 > 0) $this->selectedPanelOption[$key][] = 4;
+
+            if(empty($this->selectedPanelOption[$key])) {
+                $this->panelImages[$key] = '/storage/images/rietpanel/paneel.png';
+            } else {
+                $options = $this->selectedPanelOption[$key];
+                sort($options);
+                $keyString = implode('-', $options);
+                $this->panelImages[$key] = "/storage/images/rietpanel/paneel-$keyString.png";
+            }
         }
 
         if(Auth::user()->is_admin || !Auth::user()->is_architect) {
@@ -149,8 +176,29 @@ class ChangeOfferte extends Component
 
     public function render()
     {
+        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
+        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
+        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
         return view('livewire.offertes.changeOfferte');
     }
+
+    public function updateSelectedPanelOption($index)
+    {
+        $options = $this->selectedPanelOption[$index] ?? [];
+
+        if (empty($options)) {
+            $this->panelImages[$index] = '/storage/images/rietpanel/paneel.png';
+            return;
+        }
+
+
+        sort($options);
+        $key = implode('-', $options);
+
+
+        $this->panelImages[$index] = "/storage/images/rietpanel/paneel-$key.png";
+    }
+
 
     public function showLines() {
         dd($this->offerteLines);
@@ -205,7 +253,15 @@ class ChangeOfferte extends Component
         $this->totaleLengte[] = '0';
         $this->fillTotaleLengte[] = '0';
         $this->aantal[] = '1';
-
+        $this->panelValues[] = [
+            1 => 20,
+            2 => 20,
+            3=> 0,
+            '4_1' => 0,
+            '4_2' => 0
+        ];
+        $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
+        $this->selectedPanelOption[] = [];
 
 
     }
@@ -216,11 +272,16 @@ class ChangeOfferte extends Component
         unset($this->aantal[$index]);
         unset($this->lb[$index]);
         unset($this->cb[$index]);
+        unset($this->selectedPanelOption[$index]);
+        unset($this->panelImages[$index]);
+
         $this->offerteLines = array_values($this->offerteLines);
         $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
         $this->lb = array_values($this->lb);
         $this->cb = array_values($this->cb);
+        $this->selectedPanelOption = array_values($this->selectedPanelOption);
+        $this->panelImages = array_values($this->panelImages);
     }
 
     public function rules()
@@ -246,6 +307,46 @@ class ChangeOfferte extends Component
             },
                 ],
             ];
+        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.1'] = 'required|numeric';
+        }
+
+        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.2'] = 'required|numeric';
+        }
+
+        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.3'] = 'required|numeric';
+        }
+
+        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.4_1'] = 'required|numeric';
+            $rules['panelValues.*.4_2'] = [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    // $attribute = 'panelValues.0.4_2'
+                    preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
+                    $index = $matches[1];
+
+                    $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                    if(!$totaal) {
+                        $fail(__('messages.vul_lengte_paneel_in')); // <-- meertalig
+                    }else {
+                        $marge = 300;
+                        $max = $totaal - $marge;
+
+                        $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
+
+                        if (!$totaal) {
+                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel')); // <-- meertalig
+                        } elseif ($sum > $max) {
+                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan $max mm"));
+                        }
+                    }
+                },
+            ];
+        }
     }
 
 
@@ -273,6 +374,7 @@ class ChangeOfferte extends Component
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
+            'panelValues.*.*' => __('messages.Dit moet een getal zijn, hoger dan 0'),
             'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
         ];
     }
@@ -311,21 +413,33 @@ class ChangeOfferte extends Component
                 $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
                 $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
                 $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
+                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
 
                 OfferteLines::create([
                     'offerte_id' => $offerte->id,
-                    'fillCb' => $fillCb,
                     'fillLb' => $fillLb,
                     'fillTotaleLengte' => $fillTotaleLengte,
                     'aantal' => $aantal,
                     'user_id' => $this->creator_user_id,
-                    'm2' => $m2
+                    'm2' => $m2,
+
+                      // als optie niet geselecteerd is -> 0
+                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
                 ]);
             }
 
         $offerteLines = OfferteLines::where('offerte_id', $offerte->id)->get();
+        $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.offerte',['offerte' => $offerte, 'offerteLines' => $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf'));
+        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
+
 
 //        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
 

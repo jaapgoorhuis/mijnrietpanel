@@ -193,7 +193,7 @@ return [
     'Vul een waarde in voor Nok afschuining' => 'Enter a value for Ridge bevel',
     'Vul een waarde in voor Vrije ruimte 0-x1' => 'Enter a value for Free space 0-x1',
     'Vul een waarde in voor Vrije ruimte x1-x2' => 'Enter a value for Free space x1-x2',
-    'vanaf boven' => 'from top',
+    'mm vanaf boven' => 'mm from top',
     'Invloed op prijs' => 'Price influence',
     'Detail mappen' => 'Detail maps',
     'Map aanmaken' => 'Create map',

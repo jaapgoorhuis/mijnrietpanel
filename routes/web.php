@@ -144,9 +144,9 @@ Route::middleware('auth')->group(function () {
             'showCb' => $showCb,
             'company' => $company,
             'kerndikte' => $kerndikte
-        ])->save(public_path("/storage/orders/order-{$order->order_id}.pdf"));
+        ])->save(public_path("/storage/orders/order-$order->order_id.pdf"));
 
-        $url = public_path("storage/orders/order-{$order->order_id}.pdf");
+        $url = public_path("storage/orders/order-$order->order_id.pdf");
 
         return response()->file($url);
     });
@@ -154,7 +154,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-offerte/offerte-{id}', function($id) {
         $offerte = \App\Models\Offerte::where('offerte_id', $id)->first();
         $offerteLines = \App\Models\OfferteLines::where('offerte_id', $offerte->id)->get();
-        Pdf::loadView('pdf.offerte',['offerte' => $offerte,'offerteLines'=> $offerteLines])->save(public_path('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf'));
+        $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
+        $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+        $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
+        $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
+        $company = $offerte->company; // Als je een relatie hebt
+        $kerndikte = $offerte->kerndikte;
+
+        Pdf::loadView('pdf.offerte',
+            ['offerte' => $offerte,
+                'offerteLines' => $offerteLines,
+                'showNokafschuining' => $showNokafschuining,
+                'showLb' => $showLb,
+                'showCb' => $showCb,
+                'showVrijeRuimte' => $showVrijeRuimte
+            ])
+            ->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
+
 
         $url = public_path('storage/offertes/offerte-'.$offerte->offerte_id.'.pdf');
 

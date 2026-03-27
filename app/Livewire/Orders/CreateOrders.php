@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
+use function Webmozart\Assert\Tests\StaticAnalysis\inArray;
 
 class CreateOrders extends Component
 {
@@ -133,9 +134,9 @@ class CreateOrders extends Component
 
     public function render()
     {
-//        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
-//        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
-//        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
+        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
+        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
+        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
 
         return view('livewire.orders.createOrder');
     }
@@ -145,19 +146,21 @@ class CreateOrders extends Component
 
 
     //deze opties nodig voor nieuwe paneltype
-    public function updatePanelOption($index)
+    public function updateSelectedPanelOption($index)
     {
         $options = $this->selectedPanelOption[$index] ?? [];
 
         if (empty($options)) {
-            $this->panelImages[$index] = '/storage/images/rietpanel_panel.png';
+            $this->panelImages[$index] = '/storage/images/rietpanel/paneel.png';
             return;
         }
+
 
         sort($options);
         $key = implode('-', $options);
 
-        $this->panelImages[$index] = "/storage/images/rietpanel_$key.png";
+
+        $this->panelImages[$index] = "/storage/images/rietpanel/paneel-$key.png";
     }
 
 
@@ -186,7 +189,7 @@ class CreateOrders extends Component
 
         $this->cb[$index] = $this->fillCb[$index];
         if($this->fillCb[$index] == '') {
-            $this->cb[$index] = '0';
+            $this->cb[$index] = '20';
         }
     }
 
@@ -222,8 +225,8 @@ class CreateOrders extends Component
 
     public function addOrderLine() {
         $this->orderLines[] = '';
-        $this->fillCb[] = '';
-        $this->cb[] = '0';
+        $this->fillCb[] = '20';
+        $this->cb[] = '20';
         $this->m2[] = '0';
         $this->lb[] = '0';
         $this->fillLb[] = '0';
@@ -231,12 +234,13 @@ class CreateOrders extends Component
         $this->fillTotaleLengte[] = '';
         $this->aantal[] = '';
         $this->panelValues[] = [
-            1 => 0,
-            2 => 0,
-            '3_1' => 0,
-            '3_2' => 0
+            1 => 20,
+            2 => 20,
+            3=> 0,
+            '4_1' => 0,
+            '4_2' => 0
         ];
-        $this->panelImages[] = '/storage/images/rietpanel_panel.png';
+        $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
         $this->selectedPanelOption[] = [];
     }
 
@@ -247,6 +251,7 @@ class CreateOrders extends Component
         unset($this->lb[$index]);
         unset($this->cb[$index]);
         unset($this->panelValues[$index]);
+        unset($this->selectedPanelOption[$index]);
         $this->orderLines = array_values($this->orderLines);
         $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
@@ -279,26 +284,50 @@ class CreateOrders extends Component
                     }
                 },
             ],
+
         ];
 
-        // Conditioneel extra rule toevoegen op lb.*
-        if (Auth::user()->is_admin == 0 && Auth::user()->company->is_reseller == 0) {
-            $rules['marge'] = 'required';
+        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.1'] = 'required|numeric';
         }
 
-        // Conditionele validatie voor panelValues
-        if (in_array(1, $this->selectedPanelOption)) {
-            $rules['panelValues.1'] = 'required|numeric'; // voorbeeld range
+        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.2'] = 'required|numeric';
         }
 
-        if (in_array(2, $this->selectedPanelOption)) {
-            $rules['panelValues.2'] = 'required|numeric';
+        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.3'] = 'required|numeric';
         }
 
-        if (in_array(3, $this->selectedPanelOption)) {
-            $rules['panelValues.3_1'] = 'required|numeric';
-            $rules['panelValues.3_2'] = 'required|numeric';
+        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
+            $rules['panelValues.*.4_1'] = 'required|numeric';
+            $rules['panelValues.*.4_2'] = [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    // $attribute = 'panelValues.0.4_2'
+                    preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
+                    $index = $matches[1];
+
+                    $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                    if(!$totaal) {
+                        $fail(__('messages.vul_lengte_paneel_in')); // <-- meertalig
+                    }else {
+                        $marge = 300;
+                        $max = $totaal - $marge;
+
+                        $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
+
+                        if (!$totaal) {
+                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel')); // <-- meertalig
+                        } elseif ($sum > $max) {
+                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan $max mm"));
+                        }
+                    }
+                },
+            ];
         }
+
 
         return $rules;
     }
@@ -325,6 +354,7 @@ class CreateOrders extends Component
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),
+            'panelValues.*.*' => __('messages.Dit moet een getal zijn, hoger dan 0'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
 
             'requested_delivery_date.required' => __('messages.Dit is een verplicht veld'),
@@ -339,89 +369,96 @@ class CreateOrders extends Component
 
     public function saveOrder() {
 
-
         $this->validate();
 
-        $latestOrder = Order::orderBy('id', 'desc')->first();
 
-        if($latestOrder) {
-            $currentYear = date('y');
-            if(str_starts_with($latestOrder->order_id, $currentYear)) {
-                $orderId = $latestOrder->order_id + 1;
+        // 3️⃣ Als er geen fouten zijn, opslaan
+        if (! $this->getErrorBag()->any()) {
+
+
+            $latestOrder = Order::orderBy('id', 'desc')->first();
+
+            if ($latestOrder) {
+                $currentYear = date('y');
+                if (str_starts_with($latestOrder->order_id, $currentYear)) {
+                    $orderId = $latestOrder->order_id + 1;
+                } else {
+                    $orderId = $currentYear . '0600';
+                }
+
             } else {
-                $orderId = $currentYear.'0600';
+                $orderId = 250600;
+            }
+            Order::create([
+                'klantnaam' => $this->klant_naam,
+                'referentie' => $this->referentie,
+                'aflever_straat' => $this->aflever_straat,
+                'aflever_postcode' => $this->aflever_postcode,
+                'aflever_land' => $this->aflever_land,
+                'aflever_plaats' => $this->aflever_plaats,
+                'intaker' => $this->intaker,
+                'discount' => $this->discount,
+                'merk_paneel' => $this->merk_paneel,
+                'rietkleur' => $this->rietkleur,
+                'toepassing' => $this->toepassing,
+                'kerndikte' => $this->kerndikte,
+                'project_naam' => $this->project_naam,
+                'user_id' => Auth::user()->id,
+                'status' => 'In behandeling',
+                'order_id' => $orderId,
+                'marge' => $this->marge,
+                'requested_delivery_date' => $this->requested_delivery_date,
+                'comment' => $this->comment,
+                'lang' => $this->locale,
+            ]);
+
+            $order = Order::orderBy('id', 'desc')->first();
+
+            foreach ($this->orderLines as $index => $key) {
+                $fillCb = $this->fillCb[$index] ?? '0';
+                $fillLb = $this->fillLb[$index] ?? '0';
+                $fillTotaleLengte = $this->fillTotaleLengte[$index] ?? '0';
+                $aantal = $this->aantal[$index] ?? '0';
+                $m2 = $this->m2[$index] ?? '0';
+
+                // bepaal per optie of deze geselecteerd is
+                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+
+
+                OrderLines::create([
+                    'order_id' => $order->id,
+
+                    'fillLb' => $fillLb,
+                    'fillTotaleLengte' => $fillTotaleLengte,
+                    'aantal' => $aantal,
+                    'user_id' => Auth::user()->id,
+                    'm2' => $m2,
+
+                    // als optie niet geselecteerd is -> 0
+                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+                ]);
             }
 
-        } else {
-            $orderId = 250600;
+            $orderLines = OrderLines::where('order_id', $order->id)->get();
+
+            $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
+            $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
+            $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
+            $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+
+            Pdf::loadView('pdf.order', ['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
+
+            Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
+
+            Mail::to(Auth::user()->email)->send(new newOrderCustomer($order));
+
+            session()->flash('success', __('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen'));
+            return $this->redirect('/orders', navigate: true);
         }
-        Order::create([
-            'klantnaam' => $this->klant_naam,
-            'referentie' => $this->referentie,
-            'aflever_straat' => $this->aflever_straat,
-            'aflever_postcode' => $this->aflever_postcode,
-            'aflever_land' => $this->aflever_land,
-            'aflever_plaats' => $this->aflever_plaats,
-            'intaker' => $this->intaker,
-            'discount' => $this->discount,
-            'merk_paneel' => $this->merk_paneel,
-            'rietkleur' => $this->rietkleur,
-            'toepassing' => $this->toepassing,
-            'kerndikte' => $this->kerndikte,
-            'project_naam' => $this->project_naam,
-            'user_id' => Auth::user()->id,
-            'status' => 'In behandeling',
-            'order_id' => $orderId,
-            'marge' => $this->marge,
-            'requested_delivery_date' => $this->requested_delivery_date,
-            'comment' => $this->comment,
-            'lang' => $this->locale,
-        ]);
-
-        $order = Order::orderBy('id', 'desc')->first();
-
-        foreach($this->orderLines as $index => $key) {
-            $fillCb = $this->fillCb[$index] ?? '0';
-            $fillLb = $this->fillLb[$index] ?? '0';
-            $fillTotaleLengte = $this->fillTotaleLengte[$index] ?? '0';
-            $aantal = $this->aantal[$index] ?? '0';
-            $m2 = $this->m2[$index] ?? '0';
-
-            // bepaal per optie of deze geselecteerd is
-            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
-
-            OrderLines::create([
-                'order_id' => $order->id,
-                'fillCb' => $fillCb,
-                'fillLb' => $fillLb,
-                'fillTotaleLengte' => $fillTotaleLengte,
-                'aantal' => $aantal,
-                'user_id' => Auth::user()->id,
-                'm2' => $m2,
-
-//                // als optie niet geselecteerd is -> 0
-//                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-//                'nokafschuining' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-//                'vrije_ruimte_1' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_1'] ?? 0) : 0,
-//                'vrije_ruimte_2' => in_array(3, $selectedOptions) ? ($this->panelValues[$index]['3_2'] ?? 0) : 0,
-            ]);
-        }
-
-        $orderLines = OrderLines::where('order_id', $order->id)->get();
-
-        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
-        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
-        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
-        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
-
-        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
-
-        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
-
-        Mail::to(Auth::user()->email)->send(new newOrderCustomer($order));
-
-        session()->flash('success',__('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen'));
-        return $this->redirect('/orders', navigate: true);
     }
 
     public function cancelCreateOrder() {
