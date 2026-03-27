@@ -216,4 +216,7 @@ return [
     'Layback per paneel' => 'Layback per panel',
     'Nokafschuining per paneel' => 'Ridge bevel per panel',
     'Vrije ruimte per paneel' => 'Free space per panel',
+    'LB' => 'LB',
+    'Nokafschuining' => 'Ridge bevel',
+    ''
 ];
