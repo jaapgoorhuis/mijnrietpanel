@@ -357,7 +357,7 @@
     .vrije-ruimte-2 {
         position: absolute;
         top: -5px;
-        left: 54%;
+        left: 52%;
         transform: translateX(-50%);
         font-size: 10px;
     }
