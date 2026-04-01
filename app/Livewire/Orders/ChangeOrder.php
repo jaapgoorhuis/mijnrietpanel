@@ -104,6 +104,8 @@ class ChangeOrder extends Component
         }
         $this->order_id = $id;
 
+
+
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
@@ -281,7 +283,7 @@ class ChangeOrder extends Component
         $this->fillLb[] = '0';
         $this->totaleLengte[] = '';
         $this->fillTotaleLengte[] = '';
-        $this->aantal[] = '';
+        $this->aantal[] = '0';
         $this->panelValues[] = [
             1 => 20,
             2 => 20,
@@ -291,6 +293,8 @@ class ChangeOrder extends Component
         ];
         $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
         $this->selectedPanelOption[] = [];
+
+
     }
 
     public function removeOrderLine($index)
@@ -327,10 +331,9 @@ class ChangeOrder extends Component
         $this->selectedPanelOption = array_values($this->selectedPanelOption);
         $this->panelImages = array_values($this->panelImages);
     }
-
     public function rules()
     {
-        return [
+        $rules = [
             'klant_naam' => 'required',
             'referentie' => 'required',
             'project_naam' => 'required',
@@ -343,50 +346,49 @@ class ChangeOrder extends Component
             'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
             'requested_delivery_date' => 'required',
+        ];
 
-            ];
-        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
+        if (!empty($this->selectedPanelOption) && in_array(1, array_merge(...$this->selectedPanelOption))) {
             $rules['panelValues.*.1'] = 'required|numeric';
         }
 
-        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
+        if (!empty($this->selectedPanelOption) && in_array(2, array_merge(...$this->selectedPanelOption))) {
             $rules['panelValues.*.2'] = 'required|numeric';
         }
 
-        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
+        if (!empty($this->selectedPanelOption) && in_array(3, array_merge(...$this->selectedPanelOption))) {
             $rules['panelValues.*.3'] = 'required|numeric|min:1';
         }
 
-        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
-            // 4_1 moet > 0 zijn
+        if (!empty($this->selectedPanelOption) && in_array(4, array_merge(...$this->selectedPanelOption))) {
             $rules['panelValues.*.4_1'] = 'required|numeric|min:1';
 
-            // 4_2 moet > 0 zijn en mag niet de marge overschrijden
             $rules['panelValues.*.4_2'] = [
                 'required',
                 'numeric',
-                'min:1', // ✅ waarde mag niet 0 zijn
+                'min:1',
                 function ($attribute, $value, $fail) {
-                    // $attribute = 'panelValues.0.4_2'
                     preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
                     $index = $matches[1];
 
                     $totaal = $this->fillTotaleLengte[$index] ?? 0;
 
                     if (!$totaal) {
-                        $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
+                        $fail('Vul eerst de totale paneellengte in');
                     } else {
                         $marge = 300;
                         $max = $totaal - $marge;
                         $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
 
                         if ($sum > $max) {
-                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan ") . $max . "mm");
+                            $fail("Som te groot, max = $max mm");
                         }
                     }
                 },
             ];
         }
+
+        return $rules;
     }
 
 
@@ -394,36 +396,44 @@ class ChangeOrder extends Component
     public function messages(): array
     {
         return [
-            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld.'),
-            'project_naam.required' => __('messages.De projectnaam is een verplicht veld.'),
-            'referentie.required' => __('messages.De referentie is een verplicht veld.'),
-            'aflever_straat.required' => __('messages.De straat is een verplicht veld.'),
-            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld.'),
-            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld.'),
-            'aflever_land.required' => __('messages.Het land is een verplicht veld.'),
-            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.'),
+            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld'),
+            'project_naam.required' => __('messages.De projectnaam is een verplicht veld'),
+            'referentie.required' => __('messages.De referentie is een verplicht veld'),
+            'aflever_straat.required' => __('messages.De straat is een verplicht veld'),
+            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld'),
+            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld'),
+            'aflever_land.required' => __('messages.Het land is een verplicht veld'),
+            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
-            'intaker.required' => __('messages.Vul aub uw naam in.'),
-            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
-            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
-            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
-            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
-            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
-            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
-            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
-            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
-            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
+            'intaker.required' => __('messages.Vul aub uw naam in'),
+            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
+            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn'),
+            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
+            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
+            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
+            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn'),
+            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
+            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
+            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),
             'panelValues.*.3.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
             'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
             'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
 
-            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
+            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld'),
         ];
     }
 
     public function saveOrder() {
+
+
+        $this->fillTotaleLengte = array_filter($this->fillTotaleLengte, fn($v) => $v !== '');
+        $this->fillTotaleLengte = array_values($this->fillTotaleLengte);
+
+
         $this->validate();
+
+
 
         Order::where('id', $this->order_id)->update([
             'klantnaam' => $this->klant_naam,
@@ -446,10 +456,12 @@ class ChangeOrder extends Component
             'comment' => $this->comment,
         ]);
 
-        $order = Order::orderBy('id', 'desc')->first();
+        $order = Order::where('id', $this->order_id)->first();
+
 
 
         OrderLines::where('order_id', $this->order_id)->delete();
+
 
         foreach($this->orderLines as $index => $key) {
 
@@ -458,6 +470,8 @@ class ChangeOrder extends Component
             $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
             $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
             $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+
+
 
             OrderLines::create([
                 'order_id' => $order->id,
@@ -474,7 +488,7 @@ class ChangeOrder extends Component
                 'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
                 'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
             ]);
-            }
+        }
 
         $orderLines = OrderLines::where('order_id', $order->id)->get();
         $user = User::where('id', $order->user_id)->first();
@@ -505,14 +519,14 @@ class ChangeOrder extends Component
                 $this->werkendeBreedte = $brands->werkende_breedte;
             }
         }
-           $lengtePaneel = (int)$this->fillTotaleLengte[$index];
-           $werkendeBreedteM = $this->werkendeBreedte / 1000;
-           $lengtePaneelM = $lengtePaneel / 1000;
-           if($lengtePaneel == '0' || $this->werkendeBreedte == '0') {
-               $this->m2[$index] = 0;
-           }
-           else {
-               $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
-           }
+        $lengtePaneel = (int)$this->fillTotaleLengte[$index];
+        $werkendeBreedteM = $this->werkendeBreedte / 1000;
+        $lengtePaneelM = $lengtePaneel / 1000;
+        if($lengtePaneel == '0' || $this->werkendeBreedte == '0') {
+            $this->m2[$index] = 0;
+        }
+        else {
+            $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
+        }
     }
 }
