@@ -27,7 +27,7 @@
                 <td class="w-half">
                     <div>Order #: {{$order->order_id}}</div>
                     <div>{{ __('messages.Order datum') }}: {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
-                    <div>{{ __('messages.Bedrijfsid') }}: {{$company->id}}</div>
+                    <div>{{ __('messages.Bedrijfs-id') }}: {{$company->id}}</div>
 
                     <div>{{ __('messages.Referentie') }}: {{$order->referentie}}</div>
                     <div>{{ __('messages.Verkoper') }}: {{$order->intaker}}</div>
