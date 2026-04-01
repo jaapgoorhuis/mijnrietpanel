@@ -239,7 +239,7 @@
                                         </div>
                                     </label>
                                     <input type="number" value="" min="500" max="14500" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" required />
-                                    <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
+                                    <div class="text-red-500">@error('fillTotaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal panelen') }} *

@@ -379,9 +379,9 @@ class ChangeOfferte extends Component
             'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
             'intaker.required' => __('messages.Vul aub uw naam in.'),
-            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
-            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
-            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
+            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
+            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
+            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
             'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
             'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
@@ -422,7 +422,7 @@ class ChangeOfferte extends Component
             'comment' => $this->comment,
         ]);
 
-        $offerte = Offerte::orderBy('id', 'desc')->first();
+        $offerte = Offerte::where('id', $this->offerte_id)->first();
         OfferteLines::where('offerte_id', $this->offerte_id)->delete();
 
         foreach($this->offerteLines as $index => $key) {
