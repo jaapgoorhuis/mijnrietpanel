@@ -191,9 +191,29 @@
         @foreach($offerte->offerteLines as $offerteLine)
                 <?php $totalM2 += $offerteLine->m2; ?>
         @endforeach
+        <?php
+        $orderLineHeeftOversize = false;
+        $oversizeThreshold = \App\Models\Surcharges::where('rule', 'order')->value('number');
 
+        if ($oversizeThreshold) {
+            foreach ($offerte->offerteLines as $line) {
+                if ($line->fillTotaleLengte > $oversizeThreshold) {
+                    $orderLineHeeftOversize = true;
+                    break;
+                }
+            }
+        }
+        ?>
 
-        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $showLb || $showCb || $showNokafschuining || $showVrijeRuimte)
+        @if(
+            $zaaglengtes > 0 ||
+            $totalM2 < $vierkantemeterToeslag->number ||
+            ($showLb && $laybacks > 0) ||
+            ($showCb && true) ||
+            ($showNokafschuining && $nokafschuining > 0) ||
+            ($showVrijeRuimte && $vrijeruimte > 0) ||
+            $orderLineHeeftOversize
+        )
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Toeslag') }}</strong></td>
@@ -215,6 +235,26 @@
                                 @endif
 
                             </tr>
+                        @endif
+
+                        @if($toeslag->rule == 'order')
+
+                            @if($orderLineHeeftOversize)
+
+                                    <?php
+                                    $totalPrice = $toeslag->price;
+                                    $totalToeslagPrice += $totalPrice;
+                                    ?>
+
+                                <tr class="items">
+                                    <td>{{ __('messages.'.$toeslag->name) }}</td>
+                                    <td>1</td>
+                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                                    <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                </tr>
+
+                            @endif
+
                         @endif
 
                         @if($toeslag->rule == 'zaaglengte')

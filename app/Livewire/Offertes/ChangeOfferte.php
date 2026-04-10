@@ -299,7 +299,7 @@ class ChangeOfferte extends Component
 
     public function rules()
     {
-        return [
+        $rules = [
             'klant_naam' => 'required',
             'referentie' => 'required',
             'project_naam' => 'required',
@@ -309,59 +309,73 @@ class ChangeOfferte extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
+            'fillTotaleLengte.*' => 'required|numeric|min:500|max:17000',
             'aantal.*' => 'required|numeric|min:1',
             'requested_delivery_date' => 'required',
+        ];
 
-            'fillCb.*' => ['required', 'numeric', 'max:200', function ($attribute, $value, $fail) {
-                if ($value != 0 && $value < 20) {
-                    $fail("De CB moet 0 zijn (geen CB) of minimaal 20mm.");
+        if (!empty($this->selectedPanelOption)) {
+
+            foreach ($this->selectedPanelOption as $index => $options) {
+
+                if (in_array(1, $options)) {
+                    $rules["panelValues.$index.1"] = 'required|numeric';
                 }
-            },
-                ],
-            ];
-        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.1'] = 'required|numeric';
-        }
 
-        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.2'] = 'required|numeric';
-        }
+                if (in_array(2, $options)) {
+                    $rules["panelValues.$index.2"] = 'required|numeric';
+                }
 
-        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.3'] = 'required|numeric|min:1';
-        }
+                if (in_array(3, $options)) {
+                    $rules["panelValues.$index.3"] = 'required|numeric|min:1|max:60';
+                }
 
-        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
-            // 4_1 moet > 0 zijn
-            $rules['panelValues.*.4_1'] = 'required|numeric|min:1';
+                if (in_array(4, $options)) {
 
-            // 4_2 moet > 0 zijn en mag niet de marge overschrijden
-            $rules['panelValues.*.4_2'] = [
-                'required',
-                'numeric',
-                'min:1', // ✅ waarde mag niet 0 zijn
-                function ($attribute, $value, $fail) {
-                    // $attribute = 'panelValues.0.4_2'
-                    preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
-                    $index = $matches[1];
+                    $rules["panelValues.$index.4_1"] = 'required|numeric|min:300';
 
-                    $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                    $rules["panelValues.$index.4_2"] = [
+                        'required',
+                        'numeric',
+                        'min:50',
+                        function ($attribute, $value, $fail) use ($index) {
 
-                    if (!$totaal) {
-                        $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
-                    } else {
-                        $marge = 300;
-                        $max = $totaal - $marge;
-                        $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
+                            $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                            $ruimte1 = $this->panelValues[$index]['4_1'] ?? 0;
+                            $ruimte2 = $value;
 
-                        if ($sum > $max) {
-                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan ") . $max . "mm");
+                            if (!$totaal) {
+                                $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
+                                return;
+                            }
+
+                            if ($ruimte1 < 300) {
+                                $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn'));
+                                return;
+                            }
+
+                            $marge = 300;
+                            $maxRuimte2 = $totaal - $ruimte1 - $marge;
+
+                            if ($maxRuimte2 < 0) {
+                                $fail(__('messages.panelToShort'));
+                                return;
+                            }
+
+                            if ($ruimte2 > $maxRuimte2) {
+                                $fail(
+                                    __("messages.Vrije ruimte mag maximaal ") .
+                                    $maxRuimte2 .
+                                    __("mm zijn op basis van totale lengte en ruimte bovenkant tot vrije ruimte")
+                                );
+                            }
                         }
-                    }
-                },
-            ];
+                    ];
+                }
+            }
         }
+
+        return $rules;
     }
 
 
@@ -369,32 +383,32 @@ class ChangeOfferte extends Component
     public function messages(): array
     {
         return [
-            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld.'),
-            'project_naam.required' => __('messages.De projectnaam is een verplicht veld.'),
-            'referentie.required' => __('messages.De referentie is een verplicht veld.'),
-            'aflever_straat.required' => __('messages.De straat is een verplicht veld.'),
-            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld.'),
-            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld.'),
-            'aflever_land.required' => __('messages.Het land is een verplicht veld.'),
-            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in.'),
+            'klant_naam.required' => __('messages.De klantnaam is een verplicht veld'),
+            'project_naam.required' => __('messages.De projectnaam is een verplicht veld'),
+            'referentie.required' => __('messages.De referentie is een verplicht veld'),
+            'aflever_straat.required' => __('messages.De straat is een verplicht veld'),
+            'aflever_postcode.required' => __('messages.De postcode is een verplicht veld'),
+            'aflever_plaats.required' => __('messages.De plaats is een verplicht veld'),
+            'aflever_land.required' => __('messages.Het land is een verplicht veld'),
+            'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
-            'intaker.required' => __('messages.Vul aub uw naam in.'),
-            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn.'),
-            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn.'),
-            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld.'),
-            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn.'),
-            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld.'),
-            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn.'),
-            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn.'),
-            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn.'),
-            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn.'),
+            'intaker.required' => __('messages.Vul aub uw naam in'),
+            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
+            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
+            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
+            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
+            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
+            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn'),
+            'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
+            'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
+            'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),
+            'panelValues.*.3.min' =>  __('messages.De nokafschuining moet minimaal 0 graden zijn'),
+            'panelValues.*.3.max' =>  __('messages.De nokafschuining mag maximaal 60 graden zijn'),
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
-            'panelValues.*.3.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
-            'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
-            'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
-            'panelValues.*.4_1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
-            'panelValues.*.4_2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
-            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld.'),
+            'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 300 mm zijn'),
+            'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 50 mm zijn'),
+
+            'requested_delivery_date.required' => __('messages.Dit is een verplicht veld'),
         ];
     }
 
@@ -462,7 +476,7 @@ class ChangeOfferte extends Component
 
 //        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
 
-        session()->flash('success', __('messages.De offerte is bewerkt.'));
+        session()->flash('success', __('messages.De offerte is bewerkt'));
         return $this->redirect('/offertes', navigate: true);
     }
 

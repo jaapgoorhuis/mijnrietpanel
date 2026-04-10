@@ -233,8 +233,7 @@
                                     <label for="fillTotaleLengte" class="text-gray-400"> {{ __('messages.Totale paneellengte') }} (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier de totale paneel lengte in mm in, inclusief de CB in De minimale lengte moet 500mm zijn en de maximale lengte mag 14500mm zijn Wil je langere lengtes bestellen? Neem dan contact met ons op') }}
-                                            </div>
+                                                {{ __('messages.minpanellength') }}                                            </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
@@ -342,6 +341,8 @@
                                                         <input type="number"
                                                                wire:model="panelValues.{{$index}}.{{ $option }}"
                                                                wire:keydown="updatePanelValues({{$index}}, {{$option}})"
+                                                               min="0"
+                                                               max="60"
                                                                placeholder="Vul waarde in"
                                                                class="border rounded px-2 py-1 w-full mt-1">
                                                         @error('panelValues.'.$index.'.'.$option)
@@ -384,40 +385,60 @@
                                         <div class="relative md:w-[90%] mx-auto">
                                             <!-- Afbeelding bepaalt de hoogte van de container -->
                                             <img src="{{ asset($panelImages[$index] ?? 'storage/images/rietpanel/paneel.png') }}"
-                                                class="w-full h-auto block"
-                                                alt="Panel"
+                                                 class="w-full h-auto block"
+                                                 alt="Panel"
                                             />
 
                                             <!-- Totale maat bovenaan, gecentreerd -->
-                                            <div class="absolute top-[-40px] left-[57%] transform -translate-x-1/2 text-[12px] font-bold lg:text-[16px] lg:top-[-50px]">
+                                            <div class="absolute top-[-40px] left-[57%] transform -translate-x-1/2 text-[12px] font-bold 2xl:text-[14px] lg:top-[-50px] ">
                                                 {{ __('messages.Totale maat') }}: @if($totaleLengte[$index]) < {{$totaleLengte[$index]}}  mm > @else  < 0 mm > @endif
                                             </div>
 
                                             <!-- LB label links bovenin -->
                                             @if(in_array(1, $selectedPanelOption[$index]))
-                                                <div class="absolute top-[-18px] left-[0%] text-[12px] font-bold md:left-[10%] lg:text-[16px] lg:top-[-24px]">
+                                                <div class="absolute 2xl:text-[12px] @if(in_array(2, $selectedPanelOption[$index])) md:left-[12%]  top-[-11px] lg:left-[13%]  2xl:left-[13.3%] left-[11.5%] text-[8px] font-bold  lg:top-[7px] @else md:left-[13%] top-[-11px] left-[11.5%] text-[8px]  lg:left-[14.7%] font-bold  lg:top-[7px]@endif ">
                                                     {{ $this->panelValues[$index]['1'].' mm' ?? '0 mm' }}
-                                                </div>
-                                            @endif
-
-                                            @if(in_array(4, $selectedPanelOption[$index]))
-                                                <div class="absolute top-[-18px] left-[15%] text-[12px] font-bold md:left-[20%] lg:left-[22%] @if(in_array(2, $selectedPanelOption[$index])) xl:left-[25%] @else xl:left-[28%] @endif lg:top-[-24px] lg:text-[16px]">
-                                                    < {{ $this->panelValues[$index]['4_1'].' mm >' ?? ' 0 mm >' }}
-                                                </div>
-                                                <div class="absolute top-[-18px] left-[40%] text-[12px] font-bold md:left-[43%] @if(in_array(2, $selectedPanelOption[$index])) xl:left-[45%] @else xl:left-[50%] @endif lg:top-[-24px] lg:text-[16px]">
-                                                    < {{ $this->panelValues[$index]['4_2'].' mm >' ?? '0 mm >' }}
                                                 </div>
                                             @endif
 
                                             <!-- CB label rechts onderin -->
                                             @if(in_array(2, $selectedPanelOption[$index]))
-                                                <div class="absolute top-[40px] right-0 mr-2 mb-2 text-[12px] font-bold sm:top-[50px] md:top-[60px] md:right-[-5px] lg:top-[75px] xl:top-[110px] lg:text-[16px] 2xl:top-[135px] 2xl:right-[25px]">
+                                                <div class="absolute top-[50px] right-[-2px] mr-2 mb-2 text-[8px] font-bold
+                                                    sm:top-[50px] md:top-[60px] md:right-[0px]
+                                                    lg:right-[10px] lg:top-[115px]
+                                                    xl:top-[110px]
+                                                    2xl:text-[12px]
+                                                    {{ (!in_array(1, $selectedPanelOption[$index]) && !in_array(4, $selectedPanelOption[$index]))
+                                                        ? '2xl:top-[155px] 2xl:right-[40px]'
+                                                        : '2xl:top-[210px] 2xl:right-[25px]' }}
+                                                ">
                                                     {{ $this->panelValues[$index]['2'].' mm' ?? '0 mm' }}
                                                 </div>
                                             @endif
 
+
+                                            @if(in_array(4, $selectedPanelOption[$index]))
+                                                <div class="absolute 2xl:text-[12px]  @if(in_array(2, $selectedPanelOption[$index])) top-[-11px]  left-[23%] text-[8px] font-bold md:left-[25%] lg:left-[28%] xl:left-[25%]  lg:top-[7px] @else  lg:top-[7px] xl:left-[29%] top-[-11px]  left-[24%] text-[8px] font-bold md:left-[26%] lg:left-[29%] @endif ">
+                                                    {{ $this->panelValues[$index]['4_1'].' mm ' ?? ' 0 mm ' }}
+                                                </div>
+                                                <div class="absolute 2xl:text-[12px] top-[-11px] @if(in_array(2, $selectedPanelOption[$index])) xl:left-[47%]  left-[43%] text-[8px] font-bold md:left-[45%] lg:left-[47%]  lg:top-[7px] @else  lg:top-[7px] xl:left-[52%] lg:top-[15px]   left-[51%] text-[8px] font-bold md:left-[50%] lg:left-[51%] @endif  ">
+                                                    {{ $this->panelValues[$index]['4_2'].' mm ' ?? '0 mm ' }}
+                                                </div>
+                                            @endif
+
+                                            <!-- nok graden links onderin -->
                                             @if(in_array(3, $selectedPanelOption[$index]))
-                                                <div class="absolute top-[40px] left-0 mr-2 mb-2 text-[12px] font-bold sm:top-[50px] md:top-[70px] lg:top-[85px] xl:top-[135px] 2xl:top-[170px] lg:text-[16px]">
+                                                <div class="absolute 2xl:text-[12px]
+                                                    @if(in_array(2, $selectedPanelOption[$index]))
+                                                        {{ (!in_array(1, $selectedPanelOption[$index]) && !in_array(4, $selectedPanelOption[$index])) ? '2xl:top-[200px]' : '2xl:top-[245px]' }}
+                                                        top-[55px] left-[5px] mr-2 mb-2 text-[8px] font-bold
+                                                        sm:top-[50px] md:top-[70px] lg:top-[130px] lg:left-[7px] 2xl:left-[30px] xl:top-[135px]
+                                                    @else
+                                                        {{ (!in_array(1, $selectedPanelOption[$index]) && !in_array(4, $selectedPanelOption[$index])) ? '2xl:top-[200px]' : '2xl:top-[265px]' }}
+                                                        top-[62px] left-[5px] mr-2 mb-2 text-[8px] font-bold
+                                                        sm:top-[50px] md:top-[82px] lg:top-[150px] xl:top-[135px] lg:left-[7px] 2xl:left-[30px]
+                                                    @endif
+                                                ">
                                                     {{ $this->panelValues[$index]['3'] ?? 0 }} &deg;
                                                 </div>
                                             @endif

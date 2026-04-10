@@ -271,68 +271,81 @@ class CreateOrders extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'totaleLengte.*' => 'required|numeric|min:500|max:14500',
+            'totaleLengte.*' => 'required|numeric|min:500|max:17000',
             'aantal.*' => 'required|numeric|min:1',
             'kerndikte' => 'required',
             'requested_delivery_date' => 'required',
 
-            'cb.*' => [
-                'required', 'numeric', 'max:200',
-                function ($attribute, $value, $fail) {
-                    if ($value != 0 && $value < 20) {
-                        $fail("De waarde van $attribute moet 0 zijn of minimaal 20mm.");
-                    }
-                },
-            ],
+
 
         ];
 
-        if (in_array(1, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.1'] = 'required|numeric';
-        }
 
-        if (in_array(2, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.2'] = 'required|numeric';
-        }
+        foreach ($this->selectedPanelOption as $index => $options) {
 
-        if (in_array(3, array_merge(...$this->selectedPanelOption))) {
-            $rules['panelValues.*.3'] = 'required|numeric|min:1';
-        }
+            if (in_array(1, $options)) {
+                $rules["panelValues.$index.1"] = 'required|numeric';
+            }
 
-        if (in_array(4, array_merge(...$this->selectedPanelOption))) {
-            // 4_1 moet > 0 zijn
-            $rules['panelValues.*.4_1'] = 'required|numeric|min:1';
+            if (in_array(2, $options)) {
+                $rules["panelValues.$index.2"] = 'required|numeric';
+            }
 
-            // 4_2 moet > 0 zijn en mag niet de marge overschrijden
-            $rules['panelValues.*.4_2'] = [
-                'required',
-                'numeric',
-                'min:1', // ✅ waarde mag niet 0 zijn
-                function ($attribute, $value, $fail) {
-                    // $attribute = 'panelValues.0.4_2'
-                    preg_match('/panelValues\.(\d+)\.4_2/', $attribute, $matches);
-                    $index = $matches[1];
+            if (in_array(3, $options)) {
+                $rules["panelValues.$index.3"] = 'required|numeric|min:1|max:60';
+            }
 
-                    $totaal = $this->fillTotaleLengte[$index] ?? 0;
+            if (in_array(4, $options)) {
 
-                    if (!$totaal) {
-                        $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
-                    } else {
+                // 4_1 moet > 0 zijn
+                $rules["panelValues.$index.4_1"] = 'required|numeric|min:300';
+
+                // 4_2 validation
+                $rules["panelValues.$index.4_2"] = [
+                    'required',
+                    'numeric',
+                    'min:50',
+                    function ($attribute, $value, $fail) use ($index) {
+
+                        $totaal = $this->fillTotaleLengte[$index] ?? 0;
+                        $ruimte1 = $this->panelValues[$index]['4_1'] ?? 0;
+                        $ruimte2 = $value;
+
+                        if (!$totaal) {
+                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
+                            return;
+                        }
+
+                        if ($ruimte1 < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn'));
+                            return;
+                        }
+
                         $marge = 300;
-                        $max = $totaal - $marge;
-                        $sum = ($this->panelValues[$index]['4_1'] ?? 0) + $value;
+                        $maxRuimte2 = $totaal - $ruimte1 - $marge;
 
-                        if ($sum > $max) {
-                            $fail(__("messages.De som van 'Ruimte top tot vrije ruimte' + 'vrije ruimte' mag niet meer zijn dan ") . $max . "mm");
+                        if ($maxRuimte2 < 0) {
+                            $fail(__('messages.panelToShort'));
+                            return;
+                        }
+
+                        if ($ruimte2 > $maxRuimte2) {
+                            $fail(
+                                __("messages.Vrije ruimte mag maximaal ") .
+                                $maxRuimte2 .
+                                __("mm zijn op basis van totale lengte en ruimte bovenkant tot vrije ruimte")
+                            );
                         }
                     }
-                },
-            ];
+                ];
+            }
         }
+
 
 
 
         return $rules;
+
     }
 
     public function messages(): array
@@ -349,7 +362,7 @@ class CreateOrders extends Component
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
             'intaker.required' => __('messages.Vul aub uw naam in'),
             'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
-            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn'),
+            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
             'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
             'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
@@ -360,9 +373,10 @@ class CreateOrders extends Component
             'panelValues.*.1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.3.numeric' => 'Dit moet een getal zijn, hoger dan 0',
-            'panelValues.*.3.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
-            'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
-            'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 0 zijn'),
+            'panelValues.*.3.min' =>  __('messages.De nokafschuining moet minimaal 0 graden zijn'),
+            'panelValues.*.3.max' =>  __('messages.De nokafschuining mag maximaal 60 graden zijn'),
+            'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 300 mm zijn'),
+            'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 50 mm zijn'),
 
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),
 
