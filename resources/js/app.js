@@ -16,7 +16,7 @@ document.addEventListener('livewire:navigated', () => initFlowbite());
 
 // --- Flags om dubbele inits te voorkomen ---
 let calendarInitialized = false;
-let draggablesInitialized = false;
+window.draggablesInitialized = window.draggablesInitialized || false;
 
 // --- Controleer of een dag orders heeft (exclusief het gesleepte event) ---
 function dayHasOrders(calendar, dateStr, excludeEventId = null) {
@@ -215,16 +215,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Ontvang externe draggables / drops van buiten kalender ---
         eventReceive: info => {
+
             const dateStr = info.event.startStr;
-            const type =
-                info.draggedEl?.dataset?.type ||
-                info.event.extendedProps?.type ||
-                'order';
+            const type = info.draggedEl?.dataset?.type;
+
             const originalId =
                 info.draggedEl?.dataset?.id ||
                 info.event.extendedProps?.originalId ||
                 info.event.id;
             const eventTitle = info.event.title || 'Geblokkeerd';
+
+            if (type === 'note-block') {
+                Livewire.dispatch('addNote', {
+                    date: dateStr,
+                    title: eventTitle,
+                    color: info.draggedEl?.dataset?.color || '#facc15'
+                });
+
+                info.event.remove();
+                return;
+            }
 
             // -----------------------------
             // MANUAL BLOCK
@@ -312,6 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- 2️⃣ Check dagnaam voor weekenden ---
             const dayName = dropDate.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
 
+            if (type === 'note-block') {
+                return true;
+            }
             // --- 3️⃣ Manual blocks ---
             if (type === 'manual-block') {
                 // Kan niet op een dag waar al een block is
@@ -341,13 +354,32 @@ document.addEventListener('DOMContentLoaded', () => {
         eventDragStop: info => {
             const ordersContainer = document.getElementById('external-orders-list');
             const blockedContainer = document.getElementById('blocked-days-list');
+            const notesContainer = document.getElementById('notes-days-list');
             const el = document.elementFromPoint(info.jsEvent.clientX, info.jsEvent.clientY);
+            const dropTarget = el?.closest('#notes-days-list');
 
             const type = info.event.extendedProps?.type || 'order';
             const originalId = info.event.extendedProps?.order_id || info.event.extendedProps?.originalId || info.event.id;
+            const noteId = info.event.extendedProps?.note_id;
             const dateStr = info.event.startStr;
             const eventTitle = info.event.title || (type === 'manual-block' ? 'Geblokkeerd' : 'Order');
 
+            if (type === 'note-block') {
+                // alleen verwijderen als écht in notes container gedropt
+                if (dropTarget) {
+                    const id = info.event.extendedProps?.note_id;
+
+                    if (id) {
+                        Livewire.dispatch('removeNote', { id });
+                    }
+
+                    info.event.remove();
+                    return;
+                }
+
+                // ❌ nergens anders: gewoon niets doen bij misdrop
+                return;
+            }
             // --- Orders terug naar bak
             if (ordersContainer.contains(el) && type !== 'manual-block') {
                 // Voeg DOM terug naar bak
@@ -480,7 +512,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Event click (manual-block) ---
         eventClick: info => {
-            if (info.event.extendedProps.type === 'manual-block') {
+            const type = info.event.extendedProps?.type;
+
+
+            if (type === 'note-block') {
+                const noteId = info.event.extendedProps.note_id;
+
+                console.log(noteId);
+
+                Livewire.dispatch('editNote', { id: noteId });
+
+                return;
+            }
+
+            if (type === 'manual-block') {
                 const date = info.event.startStr;
                 Livewire.dispatch('editBlockedDay', date);
             }
@@ -504,6 +549,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- TYPE ---
             const type = info.event.extendedProps?.type || 'order';
+
+            if (type === 'note-block') {
+                info.el.style.border = '2px solid rgba(0,0,0,0.3)';
+                info.el.style.borderRadius = '4px';
+                info.el.style.opacity = '0.9';
+                return;
+            }
 
             // =========================
             // 🟥 MANUAL BLOCK
@@ -578,9 +630,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initExternalDraggable() {
         if (draggablesInitialized) return;
+        window.draggablesInitialized = true;
 
         const ordersContainer = document.getElementById('external-orders-list');
         const blockedContainer = document.getElementById('blocked-days-list');
+        const notesContainer = document.getElementById('notes-days-list');
 
         if (ordersContainer) {
             new Draggable(ordersContainer, {
@@ -602,6 +656,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: el.dataset.title,
                     color: el.dataset.color || 'red',
                     extendedProps: { type: 'manual-block', originalId: el.dataset.id }
+                }),
+                removeOnDrop: false
+            });
+        }
+
+        if (notesContainer) {
+            new Draggable(notesContainer, {
+                itemSelector: '.fc-event',
+                eventData: el => ({
+                    id: 'note-' + el.dataset.id,
+                    title: el.dataset.title,
+                    color: el.dataset.color || 'yellow',
+                    extendedProps: { type: 'note-block', originalId: el.dataset.id }
                 }),
                 removeOnDrop: false
             });
@@ -656,7 +723,41 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
+    Livewire.on('noteAdded', (payload) => {
+        const note = Array.isArray(payload) ? payload[0] : payload;
 
+        calendar.addEvent({
+            id: 'note-' + note.id,
+            title: note.title,
+            start: note.date,
+            allDay: true,
+            backgroundColor: note.color,
+            borderColor: note.color,
+            textColor: getContrastColor(note.color),
+            extendedProps: {
+                type: 'note-block',
+                note_id: note.id
+            }
+        });
+    });
+
+    Livewire.on('noteUpdated', (payload) => {
+        const data = Array.isArray(payload) ? payload[0] : payload;
+
+        console.log('UPDATE NOTE:', data);
+
+        const id = 'note-' + data.id;
+
+        const event = calendar.getEventById(id);
+
+        console.log('FOUND EVENT:', event);
+
+        if (!event) return;
+
+        event.setProp('title', data.title);
+        event.setProp('backgroundColor', data.color);
+        event.setProp('borderColor', data.color);
+    });
 
 
     function getISOWeek(date) {

@@ -126,10 +126,22 @@
                 <div id="blocked-days-list" data-outside="true">
                     <div class="fc-event p-2 mb-2 cursor-pointer"
                          style="background-color: #dc3545; color: white; border: 2px solid rgba(0,0,0,0.6); border-radius: 4px;"
-                         data-id="block-{{ time() }}"
+                         data-id="block-1"
                          data-title="Blokkeer dag"
                          data-type="manual-block">
                         Sleep om dag te blokkeren
+                    </div>
+                </div>
+
+
+                <h2 class="fc-toolbar-title mb-4">Notitie toevoegen</h2>
+                <div id="notes-days-list" data-outside="true">
+                    <div class="fc-event p-2 mb-2 cursor-pointer"
+                         style="background-color: orange; color: black; border: 2px solid rgba(0,0,0,0.6); border-radius: 4px;"
+                         data-id="note-{{ time() }}"
+                         data-title="Lege notitie"
+                         data-type="note-block">
+                        Sleep notitie
                     </div>
                 </div>
             </div>
@@ -271,6 +283,42 @@
         ```
 
     </div>
+
+    <div wire:ignore x-data="{ open: @entangle('showNoteModal') }">
+        <div x-show="open" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+
+            <div class="bg-white p-6 rounded-xl w-96">
+
+                <h2 class="text-lg font-bold mb-4">Notitie bewerken</h2>
+
+                <!-- Titel -->
+                <label class="block text-sm mb-1">Titel</label>
+                <input type="text"
+                       wire:model="editingNoteTitle"
+                       class="w-full border rounded px-2 py-1 mb-4">
+
+                <!-- Kleur -->
+                <label class="block text-sm mb-1">Kleur</label>
+                <input type="color"
+                       wire:model="editingNoteColor"
+                       class="w-16 h-10 p-0 border-0 mb-4">
+
+                <div class="flex justify-end gap-2">
+                    <button @click="open = false"
+                            class="border px-4 py-2 rounded">
+                        Annuleren
+                    </button>
+
+                    <button wire:click="updateNote"
+                            class="bg-black text-white px-4 py-2 rounded">
+                        Opslaan
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 
     <div wire:ignore x-data="{ open: @entangle('showBlockedModal') }">
         <div x-show="open" x-cloak class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity">

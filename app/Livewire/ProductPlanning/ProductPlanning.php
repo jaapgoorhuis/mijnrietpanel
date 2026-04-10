@@ -6,6 +6,7 @@ use App\Models\KerndikteColor;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderPlanning;
+use App\Models\PlanningNote;
 use App\Models\ProductPlanningSetting;
 use App\Services\OrderPdfService;
 use Barryvdh\DomPDF\PDF;
@@ -39,6 +40,11 @@ class ProductPlanning extends Component
     public $printStartDate;
     public $printEndDate;
 
+    public $showNoteModal = false;
+    public $editingNoteId = null;
+    public $editingNoteTitle = '';
+    public $editingNoteColor = '#f59e0b'; // default oranje
+
 
     protected $listeners = [
         'plan-order' => 'planOrder',
@@ -49,7 +55,11 @@ class ProductPlanning extends Component
         'moveBlockedDay' => 'moveBlockedDay',
         'removeBlockedDay' => 'removeBlockedDay',
         'editBlockedDay' => 'editBlockedDay',
+        'editNote' => 'editNote',
         'mergeOrderParts' => 'mergeOrderParts',
+        'addNote' => 'addNote',
+        'updateNote' => 'updateNote',
+        'removeNote' => 'removeNote',
         ];
 
     protected $actionLocked = false;
@@ -138,10 +148,87 @@ class ProductPlanning extends Component
                 'title' => $order->klantnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
             ]
         ]));
-
-    return $orders->merge($this->getBlockedDaysEvents());
+        return $orders
+            ->merge($this->getBlockedDaysEvents())
+            ->merge($this->getNotesEvents());
 }
+    public function getNotesEvents()
+    {
+        return PlanningNote::all()->map(fn($note) => [
+            'id' => 'note-'.$note->id,
+            'title' => $note->title,
+            'start' => $note->date,
+            'allDay' => true,
+            'backgroundColor' => $note->color ?? '#facc15',
+            'borderColor' => $note->color ?? '#facc15',
+            'extendedProps' => [
+                'type' => 'note-block',
+                'note_id' => $note->id,
+            ]
+        ]);
+    }
 
+    public function addNote($date, $title = 'Notitie', $color = '#facc15')
+    {
+        $exists = \App\Models\PlanningNote::where('date', $date)
+            ->where('title', $title)
+            ->where('color', $color)
+            ->exists();
+
+        if ($exists) return;
+
+        $note = \App\Models\PlanningNote::create([
+            'date' => $date,
+            'title' => $title,
+            'color' => $color
+        ]);
+
+        // 🔥 stuur direct naar frontend
+        $this->dispatch('noteAdded', [
+            'id' => $note->id,
+            'title' => $note->title,
+            'date' => $note->date,
+            'color' => $note->color
+        ]);
+    }
+
+    #[On('editNote')]
+    public function editNote($id)
+    {
+        $note = PlanningNote::find($id);
+        if (!$note) return;
+
+        $this->editingNoteId = $note->id;
+        $this->editingNoteTitle = $note->title;
+        $this->editingNoteColor = $note->color;
+
+        $this->showNoteModal = true;
+    }
+
+    public function updateNote()
+    {
+        $note = PlanningNote::find($this->editingNoteId);
+
+        $note->update([
+            'title' => $this->editingNoteTitle,
+            'color' => $this->editingNoteColor,
+        ]);
+
+        $this->showNoteModal = false;
+
+        $this->dispatch('noteUpdated', [
+            'id' => $note->id,
+            'title' => $note->title,
+            'color' => $note->color
+        ]);
+    }
+
+    public function removeNote($id)
+    {
+        \App\Models\PlanningNote::where('id', $id)->delete();
+
+        $this->dispatch('ordersUpdated');
+    }
     public function checkLimit($order)
     {
         // huidige totaal m² voor de dag
