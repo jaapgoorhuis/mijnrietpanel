@@ -60,6 +60,7 @@ class ProductPlanning extends Component
         'addNote' => 'addNote',
         'updateNote' => 'updateNote',
         'removeNote' => 'removeNote',
+        'moveNote' => 'moveNote',
         ];
 
     protected $actionLocked = false;
@@ -263,6 +264,18 @@ class ProductPlanning extends Component
                 'originalId' => 'block-'.$b['date']
             ]
         ]);
+    }
+
+    public function moveNote($id, $date)
+    {
+        $note = PlanningNote::find($id);
+        if (!$note) return;
+
+        $note->update([
+            'date' => $date
+        ]);
+
+        $this->dispatch('ordersUpdated'); // of specifieker noteUpdated event
     }
 
     public function events()

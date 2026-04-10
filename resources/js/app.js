@@ -181,6 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         eventDrop: info => {
             const type = info.event.extendedProps?.type || 'order';
+            if (type === 'note-block') {
+                const oldDate = info.oldEvent?.startStr;
+                const newDate = info.event.startStr;
+                const id = info.event.extendedProps?.note_id;
+
+                if (oldDate !== newDate && id) {
+                    Livewire.dispatch('moveNote', {
+                        id,
+                        date: newDate
+                    });
+                }
+
+                return;
+            }
 
             if (type === 'manual-block') {
                 const oldDate = info.event.extendedProps.oldDate || info.oldEvent?.startStr || info.event.startStr;
