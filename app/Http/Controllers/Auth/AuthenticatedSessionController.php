@@ -47,23 +47,16 @@ class AuthenticatedSessionController extends Controller
            }
            else {
                $request->authenticate();
+
                $request->session()->regenerate();
 
                $user = Auth::user();
 
-               if ($user->is_admin) {
-                   return redirect()->intended(route('dashboard'));
+               if ($user->is_production_employee && !$user->is_admin) {
+                   return redirect('/productPlanning');
                }
 
-               if ($user->is_production_employee) {
-                   return redirect()->intended('/productPlanning');
-               }
-
-               if ($user->is_architect) {
-                   return redirect()->intended(route('dashboard'));
-               }
-
-               return redirect()->intended(route('dashboard'));
+               return redirect()->intended(route('dashboard', absolute: false));
            }
        } else {
            session()->flash('error','De combinatie van dit email adres en wachtwoord is niet bekend bij ons!');
