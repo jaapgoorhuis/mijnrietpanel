@@ -59,6 +59,18 @@
                 <div class="relative">
                 </div>
                 <br/>
+
+                <div class="relative">
+                    <div class="relative left-0 top-0">
+                        @admin
+                        <button wire:click="newUser()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
+                            <i class="fa fa-plus hover:cursor-pointer"></i> Gebruiker aanmaken
+                        </button>
+                        @endadmin
+
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table id="user-table" class="custom-datatable w-full text-sm text-left text-gray-500  mt-[25px]">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
@@ -70,6 +82,7 @@
                             <th scope="col" class="px-4 py-3">Bedrijf</th>
                             <th scope="col" class="px-4 py-3">Land</th>
                             <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3">Admin</th>
                             <th scope="col" class="px-4 py-3">Rol</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
@@ -99,10 +112,19 @@
                                         Non actief
                                     @endif
                                 </td>
-
                                 <td class="px-4 py-3">
                                     @if($user->is_admin)
-                                        Admin
+                                        Ja
+                                    @else
+                                        Nee
+                                    @endif
+                                </td>
+
+                                <td class="px-4 py-3">
+                                    @if($user->is_architect)
+                                        Architect
+                                    @elseif($user->is_production_employee)
+                                        Productie medewerker
                                     @else
                                         Gebruiker
                                     @endif
@@ -123,6 +145,12 @@
                                                     class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
                                                     wire:click="editUser({{$user->id}})">
                                                     <i class="fa-solid fa-pen-to-square"></i> Bewerken
+                                                </button>
+
+                                                <button
+                                                    class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]"
+                                                    wire:click="removeUser({{$user->id}})">
+                                                    <i class="fa-solid fa-trash"></i> Verwijderen
                                                 </button>
                                             </li>
                                         </ul>

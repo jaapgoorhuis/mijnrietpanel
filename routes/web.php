@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/companys/{slug}/users/edit/{id}', \App\Livewire\Companys\EditCompanyUsers::class);
     Route::get('/companys/{id}/users', \App\Livewire\Companys\CompanyUsers::class);
+    Route::get('/companys/{id}/users/create', \App\Livewire\Companys\CreateCompanyUsers::class);
+    Route::get('/companys/{slug}/users/remove/{id}', \App\Livewire\Companys\RemoveCompanyUsers::class);
     Route::get('/companys/pricerules', \App\Livewire\Companys\PriceRules\PriceRules::class)->name('companys/pricerules');
     Route::get('/companys/pricerules/create', \App\Livewire\Companys\PriceRules\CreatePriceRules::class);
     Route::get('/companys/pricerules/edit/{id}', \App\Livewire\Companys\PriceRules\EditPriceRules::class);

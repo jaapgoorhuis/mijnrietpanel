@@ -29,6 +29,8 @@ class User extends Authenticatable
         'phone',
         'is_architect',
         'bedrijf_id',
+        'is_production_employee',
+        'is_removed',
         'lang',
     ];
 

@@ -145,10 +145,11 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="architect" class="text-gray-400">Architect</label>
-                            <select id="architect" wire:model="architect" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                <option value="0" @if($this->architect == 0) selected @endif>Nee</option>
-                                <option value="1" @if($this->architect) selected @endif >Ja</option>
+                            <label for="architect" class="text-gray-400">Rol</label>
+                            <select id="architect" wire:model="rol" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                                <option value="0" @if($this->rol == 0) selected @endif>Gebruiker</option>
+                                <option value="1" @if($this->rol == 1) selected @endif>Architect</option>
+                                <option value="2" @if($this->rol == 2) selected @endif >Productiemedewerker</option>
                             </select>
                         </div>
 

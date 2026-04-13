@@ -24,7 +24,7 @@ class EditAccountRequests extends Component
     public $user;
     public $user_id;
 
-    public $architect;
+    public $rol;
 
     public $bedrijfsnaam;
 
@@ -52,7 +52,14 @@ class EditAccountRequests extends Component
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
         $this->oldCompany = $this->user->bedrijf_id;
-        $this->architect = $this->user->is_architect;
+
+        if($this->user->is_architect) {
+            $this->rol = 1;
+        } elseif($this->user->is_production_employee) {
+            $this->rol = 2;
+        } else {
+            $this->rol = 0;
+        }
 
         $search = trim(mb_strtolower($this->bedrijfsnaam));
         if ($search === '') return;
@@ -102,6 +109,20 @@ class EditAccountRequests extends Component
     public function updateUser($id) {
         $this->validate($this->rules());
 
+        if ($this->rol == 0) {
+            $architect = 0;
+            $production_employee = 0;
+        }
+        elseif($this->rol == 1) {
+            $architect = 1;
+            $production_employee = 0;
+        } elseif ($this->rol == 2) {
+            $architect = 0;
+            $production_employee = 1;
+        } else {
+            $architect = 0;
+            $production_employee = 0;
+        }
 
         User::where('id', $id)->update([
             'bedrijf_id' => $this->company_id,
@@ -109,7 +130,8 @@ class EditAccountRequests extends Component
             'phone' => $this->phone,
             'email' => $this->email,
             'is_active' => $this->status,
-            'is_architect' => $this->architect,
+            'is_architect' => $architect,
+            'is_production_employee' => $production_employee,
             'lang' => $this->lang,
         ]);
 

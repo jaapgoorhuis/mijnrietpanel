@@ -2,14 +2,17 @@
 
 namespace App\Livewire\ProductPlanning;
 
+use App\Models\Company;
 use App\Models\KerndikteColor;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderPlanning;
 use App\Models\PlanningNote;
 use App\Models\ProductPlanningSetting;
+use App\Models\User;
 use App\Services\OrderPdfService;
 use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class ProductPlanning extends Component
@@ -98,11 +101,22 @@ class ProductPlanning extends Component
         foreach ($this->coreThickness as $k) {
             $this->coreThicknessColors[$k->id] = $k->color;
         }
+
+        if(Auth::user()->is_admin) {
+            return view('livewire.productPlanning.productPlanning');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
     }
 
-    public function render()
-    {
-        return view('livewire.productPlanning.productPlanning');
+    public function render() {
+        if(Auth::user()->is_admin) {
+            return view('livewire.productPlanning.productPlanning');
+        } else {
+            session()->flash('error','U heeft geen rechten voor deze pagina');
+            return $this->redirect('/dashboard', navigate: true);
+        }
     }
 
     public function saveSettings()

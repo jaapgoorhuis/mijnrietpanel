@@ -35,7 +35,7 @@ class EditCompanyUsers extends Component
 
     public $company;
 
-    public $architect;
+    public $rol;
 
     public function mount($id,$slug) {
 
@@ -54,8 +54,19 @@ class EditCompanyUsers extends Component
         $this->is_admin = $this->user->is_admin;
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
-        $this->architect = $this->user->is_architect;
+
+        if($this->user->is_architect) {
+            $this->rol = 1;
+        } elseif($this->user->is_production_employee) {
+            $this->rol = 2;
+        } else {
+            $this->rol = 0;
+        }
+
+
         $this->lang = $this->user->lang;
+
+
     }
      public function render()
      {
@@ -92,6 +103,20 @@ class EditCompanyUsers extends Component
     public function updateUser() {
         $this->validate($this->rules());
 
+        if ($this->rol == 0) {
+            $architect = 0;
+            $production_employee = 0;
+        }
+        elseif($this->rol == 1) {
+            $architect = 1;
+            $production_employee = 0;
+        } elseif ($this->rol == 2) {
+            $architect = 0;
+            $production_employee = 1;
+        } else {
+            $architect = 0;
+            $production_employee = 0;
+        }
 
         User::where('id', $this->user_id)->update([
             'name' => $this->gebruikersnaam,
@@ -100,7 +125,8 @@ class EditCompanyUsers extends Component
             'is_active' => $this->status,
             'phone' => $this->phone,
             'is_admin' => $this->is_admin,
-            'is_architect' => $this->architect,
+            'is_architect' => $architect,
+            'is_production_employee' => $production_employee,
             'lang' => $this->lang,
         ]);
 

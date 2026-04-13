@@ -50,6 +50,12 @@ class AuthenticatedSessionController extends Controller
 
                $request->session()->regenerate();
 
+               $user = Auth::user();
+
+               if ($user->is_production_employee && !$user->is_admin) {
+                   return redirect('/productPlanning');
+               }
+
                return redirect()->intended(route('dashboard', absolute: false));
            }
        } else {

@@ -23,12 +23,20 @@ class CompanyUsers extends Component
     public function render()
     {
         if(Auth::user()->is_admin) {
-            $this->users = User::where('bedrijf_id', $this->company_id)->get();
+            $this->users = User::where('bedrijf_id', $this->company_id)->where('is_removed', '0')->get();
             $this->company = Company::where('id', $this->company_id)->first();
             return view('livewire.companys.companyUsers');
         } else {
             return $this->redirect('/dashboard', navigate: true);
         }
+    }
+
+    public function newUser() {
+        return $this->redirect('/companys/'.$this->company_id.'/users/create', navigate: true);
+    }
+
+    public function removeUser($id){
+        return $this->redirect('/companys/'.$this->company_id.'/users/remove/'.$id, navigate: true);
     }
 
     public function editUser($id) {

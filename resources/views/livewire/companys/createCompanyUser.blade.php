@@ -37,7 +37,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Gebruiker bewerken</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">Gebruiker toevoegen</p>
                 </div>
             </li>
         </ol>
@@ -51,10 +51,10 @@
                 <div class="grid">
                     <form>
                         <div class="relative">
-                           <i wire:click="cancelEditUser()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
+                           <i wire:click="cancelCreateUser()" class="absolute right-0 fa-solid fa-xmark text-xl hover:cursor-pointer"></i>
                         </div>
 
-                        Gebruiker bewerken
+                        Gebruiker toevoegen
                         <br/><br/>
 
 
@@ -72,39 +72,29 @@
                             </div>
                         </div>
 
-                        <div class="grid md:grid-cols-2 md:gap-6">
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="phone" class="text-gray-400">Telefoonnummer</label>
-                                <input type="text" wire:model="phone" name="phone" id="phone" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('phone') {{ $message }} @enderror</div>
-                            </div>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="bedrijfid" class="text-gray-400">Bedrijfsnaam</label>
-                                <select id="bedrijfid" wire:model="bedrijfid" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    @foreach($companys as $company)
 
-                                        <option @if($this->user->bedrijf_id == $company->id) selected @endif value="{{$company->id}}">{{$company->bedrijfsnaam}}</option>
-                                    @endforeach
-                                </select>
-
-                                <div class="text-red-500">@error('bedrijfid') {{ $message }} @enderror</div>
-                            </div>
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="phone" class="text-gray-400">Telefoonnummer</label>
+                            <input type="text" wire:model="phone" name="phone" id="phone" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('phone') {{ $message }} @enderror</div>
                         </div>
+
+
 
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="status" class="text-gray-400">Status</label>
                                 <select id="status" wire:model="status" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    <option value="0" @if($this->status == 0) selected @endif>Non actief</option>
-                                    <option value="1" @if($this->status) selected @endif >Actief</option>
+                                    <option value="0">Non actief</option>
+                                    <option value="1">Actief</option>
                                 </select>
                             </div>
                             @admin
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="is_admin" class="text-gray-400">admin</label>
                                 <select id="is_admin" wire:model="is_admin" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                    <option value="0" @if($this->status == 0) selected @endif>Nee</option>
-                                    <option value="1" @if($this->status) selected @endif >Ja</option>
+                                    <option value="0">Nee</option>
+                                    <option value="1">Ja</option>
                                 </select>
                             </div>
                             @endadmin
@@ -113,21 +103,29 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="architect" class="text-gray-400">Rol</label>
                             <select id="architect" wire:model="rol" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                <option value="0" @if($this->rol == 0) selected @endif>Gebruiker</option>
-                                <option value="1" @if($this->rol == 1) selected @endif>Architect</option>
-                                <option value="2" @if($this->rol == 2) selected @endif >Productiemedewerker</option>
+                                <option value="0" >Gebruiker</option>
+                                <option value="1" >Architect</option>
+                                <option value="2" >Productiemedewerker</option>
                             </select>
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="architect" class="text-gray-400">Land</label>
                             <select id="lang" wire:model="lang" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                <option value="nl" @if($this->lang === 'nl') selected @endif>Nederlands</option>
-                                <option value="en" @if($this->lang === 'en') selected @endif >Buitenland</option>
+                                <option value="nl">Nederlands</option>
+                                <option value="en">Buitenland</option>
                             </select>
                         </div>
 
-                        <button wire:loading.attr="disabled" wire:click.prevent="updateUser({{$this->user->id}})" class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Gebruiker updaten</button>
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="phone" class="text-gray-400">Wachtwoord</label>
+                            <input type="text" wire:model="password" name="password" id="password" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
+                            <div class="text-red-500">@error('password') {{ $message }} @enderror</div>
+                        </div>
+
+
+
+                        <button wire:loading.attr="disabled" wire:click.prevent="createUser({{$this->company->id}})" class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Gebruiker toevoegen</button>
 
                     </form>
                 </div>
