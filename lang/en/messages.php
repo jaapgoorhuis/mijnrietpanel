@@ -60,7 +60,7 @@ return [
     'Vierkante meters' => 'Square meters',
     'Vul hier de CB in mm in De maximale CB mag 200mm zijn Laat dit op nul staan als de CB niet van toepassing is Heeft u toch een grotere CB nodig? Neem dan contact met ons op' => 'Enter the CB in mm here. The maximum CB may be 200mm. Leave this at zero if the CB is not applicable. Do you need a larger CB? Please contact us.',
     'panelToShort' => 'The panel length is too short to add a free space. Please choose a panel length of at least 750 mm.',
-    'minpanellength' => 'Enter the total panel length in mm, including the CB. The minimum length is 500 mm and the maximum length is 17,000 mm. Please note: there is a surcharge of €250 for orders with panels longer than 14,500 mm. Would you like to order longer lengths? Please contact us.',
+    'minpanellength' => 'Enter the total panel length in millimeters, including the CB. The minimum length is 500 mm and the maximum length is 17,000 mm. Please note: a surcharge of €250 applies to orders with panels longer than 14,500 mm, and a surcharge of €8 per panel applies to panels shorter than 2,000 mm. Would you like to order longer lengths? Please contact us.',
     'Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken' => 'Enter the number of panels you need here, along with the specifications provided. Need multiple panels with different specifications? Click the plus sign below to create an additional row.',
     'Selecteer datum' => 'Select date',
     'Order updaten' => 'Update order',

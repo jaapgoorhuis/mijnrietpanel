@@ -37,7 +37,7 @@ class CreateSurcharges extends Component
     {
         return [
             'condition' => 'required',
-            'rule' => 'required|unique:surcharges,rule',
+            'rule' => 'required',
             'price' => 'required',
             'name' => 'required|unique:surcharges,name'
     ];}
@@ -47,7 +47,6 @@ class CreateSurcharges extends Component
         return [
             'condition.required' => 'De toepassing is een verplicht veld.',
             'number.required' => 'Het aantal is een verplicht veld.',
-            'rule.unique' => 'De regel moet uniek zijn. Er bestaat al een regel.',
             'rule.required' => 'De regel is een verplicht veld.',
             'price.required' => 'De prijs is een verplicht veld.',
             'name.required' => 'De toeslag naam is verplicht.',
