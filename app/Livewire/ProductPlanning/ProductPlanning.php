@@ -102,7 +102,7 @@ class ProductPlanning extends Component
             $this->coreThicknessColors[$k->id] = $k->color;
         }
 
-        if(Auth::user()->is_admin) {
+        if(Auth::user()->is_admin || Auth::user()->is_production_employee) {
             return view('livewire.productPlanning.productPlanning');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
@@ -111,7 +111,7 @@ class ProductPlanning extends Component
     }
 
     public function render() {
-        if(Auth::user()->is_admin) {
+        if(Auth::user()->is_admin || Auth::user()->is_production_employee) {
             return view('livewire.productPlanning.productPlanning');
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
