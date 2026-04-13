@@ -31,6 +31,7 @@ class User extends Authenticatable
         'bedrijf_id',
         'is_production_employee',
         'is_removed',
+        'is_active',
         'lang',
     ];
 
