@@ -12,10 +12,7 @@
 
 
 
-    {{-- 🔥 production employee direct redirect --}}
-    @if($user->is_production_employee && !$user->is_admin)
-        <script>window.location.href = "/productPlanning";</script>
-    @endif
+
 
     <div class="py-12">
         <main class="min-h-full flex items-center">
