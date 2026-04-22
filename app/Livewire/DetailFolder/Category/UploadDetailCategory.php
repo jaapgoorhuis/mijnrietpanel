@@ -7,7 +7,9 @@ use App\Models\Detail;
 use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
-use Livewire\WithFileUploads;
+use Livewire\WithFileUploads;use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 #[AllowDynamicProperties] class UploadDetailCategory extends Component
 {
@@ -70,6 +72,21 @@ use Livewire\WithFileUploads;
         }
     }
 
+    protected function optimizeImage($file, string $path, int $width = 1200, int $quality = 80): string
+    {
+        $manager = new ImageManager(new Driver());
+
+        $image = $manager->decodePath($file->getPathname());
+
+        $image->scale(width: $width);
+
+        $encoded = $image->encode(new JpegEncoder($quality));
+
+        Storage::disk('public')->put($path, $encoded);
+
+        return $path;
+    }
+
     public function createCategory()
     {
         $this->validate([
@@ -80,9 +97,15 @@ use Livewire\WithFileUploads;
 
 
         $imagePath = null;
+
         if ($this->newCategoryImage) {
-            // Cropped image opslaan
-            $imagePath = $this->storeCroppedImage($this->newCategoryImage);
+            $name = time() . '_' . $this->newCategoryImage->getClientOriginalName();
+
+            $imagePath = $this->optimizeImage(
+                $this->newCategoryImage,
+                'details/detail-categories/' . $name,
+                800
+            );
         }
 
         // Bepaal het hoogste order_id zodat de nieuwe map onderaan komt
@@ -140,7 +163,9 @@ use Livewire\WithFileUploads;
 
 
             foreach ($category->details as $detail) {
-                Storage::disk('public')->delete('details/' . $detail->file_name);
+                if ($detail->file_name) {
+                    Storage::disk('public')->delete($detail->file_name);
+                }
                 $detail->delete();
             }
 
@@ -193,7 +218,12 @@ use Livewire\WithFileUploads;
         }
 
         $name = time() . '_' . $image->getClientOriginalName();
-        $path = $image->storeAs('details/detail-categories', $name, 'public');
+
+        $path = $this->optimizeImage(
+            $image,
+            'details/detail-categories/' . $name,
+            800
+        );
 
         $category->update([
             'cropimage' => $path,
@@ -211,9 +241,12 @@ use Livewire\WithFileUploads;
 
     protected function storeCroppedImage($image)
     {
-        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
-        return $image->storeAs('documentation/documentation-folder', $name, 'public');
-        session()->flash('success', 'Afbeelding bewerkt.');
-        return $path;
+        $name = time() . '_' . $image->getClientOriginalName();
+
+        return $this->optimizeImage(
+            $image,
+            'details/detail-categories/' . $name,
+            800
+        );
     }
 }

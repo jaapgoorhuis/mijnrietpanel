@@ -5,7 +5,9 @@ namespace App\Livewire\DocumentationFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 class UploadDocumentationFolder extends Component
 {
     use WithFileUploads;
@@ -47,7 +49,24 @@ class UploadDocumentationFolder extends Component
                 ->get();
         }
 
+        $this->loadFolders();
+
         return view('livewire.documentationFolder.uploadDocumentationFolders');
+    }
+
+    protected function optimizeImage($file, string $path, int $width = 1200, int $quality = 80): string
+    {
+        $manager = new ImageManager(new Driver());
+
+        $image = $manager->decodePath($file->getPathname());
+
+        $image->scale(width: $width);
+
+        $encoded = $image->encode(new JpegEncoder($quality));
+
+        Storage::disk('public')->put($path, $encoded);
+
+        return $path;
     }
 
     /*** FOLDER LOGICA ***/
@@ -72,8 +91,15 @@ class UploadDocumentationFolder extends Component
         ]);
 
         $imagePath = null;
+
         if ($this->newFolderImage) {
-            $imagePath = $this->storeCroppedImage($this->newFolderImage);
+            $name = time() . '_' . $this->newFolderImage->getClientOriginalName();
+
+            $imagePath = $this->optimizeImage(
+                $this->newFolderImage,
+                'documentation/documentation-folder/' . $name,
+                800
+            );
         }
 
         $orderId = \App\Models\DocumentationFolder::max('order_id') ? \App\Models\DocumentationFolder::max('order_id') + 1 : 1;
@@ -128,7 +154,7 @@ class UploadDocumentationFolder extends Component
 
                 foreach ($folder->documentation as $documentation) {
                     if ($documentation->file_name && Storage::disk('public')->exists('documentation/' . $documentation->file_name)) {
-                        Storage::disk('public')->delete('details/' . $documentation->file_name);
+                        Storage::disk('public')->delete($documentation->file_name);
                     }
                     $documentation->delete();
                 }
@@ -187,7 +213,12 @@ class UploadDocumentationFolder extends Component
         }
 
         $name = time() . '_' . $image->getClientOriginalName();
-        $path = $image->storeAs('documentation/documentation-folder', $name, 'public');
+
+        $path = $this->optimizeImage(
+            $image,
+            'documentation/documentation-folder/' . $name,
+            800
+        );
 
         $folder->update([
             'cropimage' => $path,
@@ -203,7 +234,12 @@ class UploadDocumentationFolder extends Component
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING ***/
     protected function storeCroppedImage($image)
     {
-        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
-        return $image->storeAs('documentation/documentation-folder', $name, 'public');
+        $name = time() . '_' . $image->getClientOriginalName();
+
+        return $this->optimizeImage(
+            $image,
+            'documentation/documentation-folder/' . $name,
+            800
+        );
     }
 }

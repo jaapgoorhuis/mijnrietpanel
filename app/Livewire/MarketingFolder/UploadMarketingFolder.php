@@ -7,7 +7,9 @@ use App\Models\MarketingFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 class UploadMarketingFolder extends Component
 {
     use WithFileUploads;
@@ -74,8 +76,14 @@ class UploadMarketingFolder extends Component
         ]);
 
         $imagePath = null;
+
         if ($this->newFolderImage) {
-            $imagePath = $this->storeCroppedImage($this->newFolderImage);
+            $name = time() . '_' . $this->newFolderImage->getClientOriginalName();
+            $imagePath = $this->optimizeImage(
+                $this->newFolderImage,
+                'marketing/marketing-folder/' . $name,
+                800
+            );
         }
 
         $orderId = MarketingFolder::max('order_id') ? MarketingFolder::max('order_id') + 1 : 1;
@@ -105,6 +113,21 @@ class UploadMarketingFolder extends Component
         }
     }
 
+    protected function optimizeImage($file, string $path, int $width = 1200, int $quality = 80): string
+    {
+        $manager = new ImageManager(new Driver());
+
+        $image = $manager->decodePath($file->getPathname());
+
+        $image->scale(width: $width);
+
+        $encoded = $image->encode(new JpegEncoder($quality));
+
+        Storage::disk('public')->put($path, $encoded);
+
+        return $path;
+    }
+
     public function updateFoldersOrder($orderList)
     {
         foreach ($orderList as $item) {
@@ -128,7 +151,7 @@ class UploadMarketingFolder extends Component
 
                 foreach ($folder->marketing as $marketing) {
                     if ($marketing->file_name && Storage::disk('public')->exists('marketing/' . $marketing->file_name)) {
-                        Storage::disk('public')->delete('details/' . $marketing->file_name);
+                        Storage::disk('public')->delete($marketing->file_name);
                     }
                     $marketing->delete();
                 }
@@ -189,7 +212,12 @@ class UploadMarketingFolder extends Component
         }
 
         $name = time() . '_' . $image->getClientOriginalName();
-        $path = $image->storeAs('marketing/marketing-folder', $name, 'public');
+
+        $path = $this->optimizeImage(
+            $image,
+            'marketing/marketing-folder/' . $name,
+            800
+        );
 
         $folder->update([
             'cropimage' => $path,
@@ -205,7 +233,12 @@ class UploadMarketingFolder extends Component
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING ***/
     protected function storeCroppedImage($image)
     {
-        $name = time() . '.' . $image->getClientOriginalExtension();
-        return $image->storeAs('marketing/marketing-folder', $name, 'public');
+        $name = time() . '_' . $image->getClientOriginalName();
+
+        return $this->optimizeImage(
+            $image,
+            'marketing/marketing-folder/' . $name,
+            800
+        );
     }
 }

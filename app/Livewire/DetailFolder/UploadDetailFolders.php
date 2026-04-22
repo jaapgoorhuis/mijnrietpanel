@@ -6,8 +6,9 @@ use App\Models\Detail;
 use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
-use Livewire\WithFileUploads;
-
+use Livewire\WithFileUploads;use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 class UploadDetailFolders extends Component
 {
     use WithFileUploads;
@@ -63,6 +64,21 @@ class UploadDetailFolders extends Component
         }
     }
 
+    protected function optimizeImage($file, string $path, int $width = 1200, int $quality = 80): string
+    {
+        $manager = new ImageManager(new Driver());
+
+        $image = $manager->decodePath($file->getPathname());
+
+        $image->scale(width: $width);
+
+        $encoded = $image->encode(new JpegEncoder($quality));
+
+        Storage::disk('public')->put($path, $encoded);
+
+        return $path;
+    }
+
     public function createFolder()
     {
         $this->validate([
@@ -73,9 +89,15 @@ class UploadDetailFolders extends Component
 
 
         $imagePath = null;
+
         if ($this->newFolderImage) {
-            // Cropped image opslaan
-            $imagePath = $this->storeCroppedImage($this->newFolderImage);
+            $name = time() . '_' . $this->newFolderImage->getClientOriginalName();
+
+            $imagePath = $this->optimizeImage(
+                $this->newFolderImage,
+                'details/detail-folder/' . $name,
+                800
+            );
         }
 
         // Bepaal het hoogste order_id zodat de nieuwe map onderaan komt
@@ -131,17 +153,19 @@ class UploadDetailFolders extends Component
 
             // Verwijder alle details in de folder
             foreach ($folder->detailCategories as $category) {
-                Storage::disk('public')->delete('details/detail-categories/' . $category->file_name);
-                $category->delete();
-            }
 
-            foreach ($folder->detailCategories as $category) {
+                if ($category->file_name) {
+                    Storage::disk('public')->delete($category->file_name);
+                }
+
                 foreach ($category->details as $detail) {
-                    if ($detail->file_name && Storage::disk('public')->exists('details/' . $detail->file_name)) {
-                        Storage::disk('public')->delete('details/' . $detail->file_name);
+                    if ($detail->file_name) {
+                        Storage::disk('public')->delete($detail->file_name);
                     }
                     $detail->delete();
                 }
+
+                $category->delete();
             }
 
             $folder->delete();
@@ -171,7 +195,7 @@ class UploadDetailFolders extends Component
     protected function saveCategoryImage($categoryId, $image)
     {
         $this->validate([
-            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            "newImages.$categoryId" => 'required|image|mimes:jpg,jpeg,png,gif,webp',
         ]);
 
         $folder = \App\Models\DetailFolder::find($categoryId);
@@ -183,7 +207,12 @@ class UploadDetailFolders extends Component
         }
 
         $name = time() . '_' . $image->getClientOriginalName();
-        $path = $image->storeAs('details/detail-folder', $name, 'public');
+
+        $path = $this->optimizeImage(
+            $image,
+            'details/detail-folder/' . $name,
+            800
+        );
 
         $folder->update([
             'cropimage' => $path,
@@ -209,7 +238,12 @@ class UploadDetailFolders extends Component
     /*** HULP: OPSLAAN VAN CROPPEDE AFBEELDING **/
     protected function storeCroppedImage($image)
     {
-        $name = time() . 'Documentation.' . $image->getClientOriginalExtension();
-        return $image->storeAs('documentation/documentation-folder', $name, 'public');
+        $name = time() . '_' . $image->getClientOriginalName();
+
+        return $this->optimizeImage(
+            $image,
+            'details/detail-folder/' . $name,
+            800
+        );
     }
 }

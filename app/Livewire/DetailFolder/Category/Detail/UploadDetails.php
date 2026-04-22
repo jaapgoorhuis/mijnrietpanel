@@ -9,6 +9,9 @@ use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class UploadDetails extends Component
 {
@@ -59,6 +62,21 @@ class UploadDetails extends Component
         ];
     }
 
+    protected function optimizeImage($file, string $path, int $width = 1200, int $quality = 80): string
+    {
+        $manager = new ImageManager(new Driver());
+
+        $image = $manager->decodePath($file->getPathname());
+
+        $image->scale(width: $width);
+
+        $encoded = $image->encode(new JpegEncoder($quality));
+
+        Storage::disk('public')->put($path, $encoded);
+
+        return $path;
+    }
+
     public function updateDetailsOrder($orderList)
     {
         foreach ($orderList as $item) {
@@ -70,41 +88,64 @@ class UploadDetails extends Component
     public function uploadFiles()
     {
         $this->validate();
-        if ($this->files) {
-            foreach ($this->files as $file) {
-                $file->storeAs(path: 'details', name: $file->getClientOriginalName(), options: 'public');
-                $latestDetail = Detail::orderBy('order_id', 'desc')->first();
 
-                if ($latestDetail) {
-                    $orderId = $latestDetail->order_id + 1;
+        if ($this->files) {
+
+            foreach ($this->files as $file) {
+
+                $fileName = time() . '_' . $file->getClientOriginalName();
+
+                $extension = strtolower($file->getClientOriginalExtension());
+
+                // 📄 NON-IMAGES (PDF/DWG/etc)
+                if (!in_array($extension, ['jpg','jpeg','png','gif','webp'])) {
+
+                    $path = $file->storeAs('details', $fileName, 'public');
+
                 } else {
-                    $orderId = 1;
+
+                    // 🖼 IMAGES → OPTIMIZE
+                    $path = $this->optimizeImage(
+                        $file,
+                        'details/' . $fileName,
+                        1200
+                    );
                 }
 
+                // order bepalen
+                $latestDetail = Detail::orderBy('order_id', 'desc')->first();
+                $orderId = $latestDetail ? $latestDetail->order_id + 1 : 1;
 
                 Detail::create([
                     'friendly_name' => $file->getClientOriginalName(),
-                    'file_name' => $file->getClientOriginalName(),
+                    'file_name' => $path,
                     'order_id' => $orderId,
                     'detail_category_id' => $this->categoryId,
                     'lang' => $this->locale,
                 ]);
             }
-            session()->flash('success','De bestanden zijn geupload.');
 
-            return $this->redirect('/detail-maps/'.$this->folderId.'/categories/'.$this->categoryId.'/details/upload', navigate: true);
-        } else {
-            session()->flash('error',  'Upload één of meerdere bestanden.');
+            session()->flash('success', 'De bestanden zijn geupload.');
+
+            return $this->redirect(
+                '/detail-maps/'.$this->folderId.'/categories/'.$this->categoryId.'/details/upload',
+                navigate: true
+            );
         }
 
+        session()->flash('error', 'Upload één of meerdere bestanden.');
     }
 
     public function removeDetail($id)
     {
-        $detail = Detail::where('id', $id)->first();
-        Storage::disk('public')->delete('details/'.$detail->file_name);
+        $detail = Detail::find($id);
 
-        Detail::where('id', $id)->delete();
+        if ($detail && $detail->file_name) {
+            Storage::disk('public')->delete($detail->file_name);
+        }
+
+        $detail?->delete();
+
         session()->flash('success', 'Het bestand is verwijderd.');
     }
 

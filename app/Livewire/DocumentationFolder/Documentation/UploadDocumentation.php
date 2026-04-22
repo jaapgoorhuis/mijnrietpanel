@@ -6,6 +6,9 @@ use App\Models\DocumentationFolder;
 use App\Models\Marketing;
 use App\Models\MarketingFolder;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\ImageManager;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -13,7 +16,7 @@ class UploadDocumentation extends Component
 {
     use WithFileUploads;
 
-    public $files = [];
+    public $file;
     public $documentation;
 
     public $friendly_name = [];
@@ -58,16 +61,16 @@ class UploadDocumentation extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
-        'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // max 2MB
-        'newCropimage' => 'nullable|mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // nieuwe afbeelding bij upload
+        'file' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
+        'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp', // max 2MB
+        'newCropimage' => 'nullable|mimes:jpg,svg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
     ];
 
     public function messages(): array
     {
         return [
-            'files.required' =>  'Het is verplicht om een bestand te uploaden.',
-            'files.*.mimes' =>  'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
+            'file.required' =>  'Het is verplicht om een bestand te uploaden.',
+            'file.mimes' =>  'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
             'cropimage.*.mimes' => 'Het bestand moet een afbeelding zijn',
             'newCropimage.image' => 'Het nieuwe bestand moet een afbeelding zijn',
             'newCropimage.max' => 'De afbeelding mag maximaal 2MB zijn',
@@ -83,49 +86,71 @@ class UploadDocumentation extends Component
         $this->dispatch('updated');
     }
 
+
+
     public function uploadFiles()
     {
         $this->validate();
 
-        if ($this->files) {
-            foreach ($this->files as $file) {
+        if ($this->file) {
 
-                // opslaan bestand
-                $file->storeAs('documentation', $file->getClientOriginalName(), 'public');
+            $manager = new ImageManager(new Driver());
 
-                // volgorde bepalen
-                $latestDocumentation = \App\Models\Documentation::orderBy('order_id', 'desc')->first();
-                $orderId = $latestDocumentation ? $latestDocumentation->order_id + 1 : 1;
+            // originele naam
+            $fileName = $this->file->getClientOriginalName();
+            $path = 'documentation/' . $fileName;
 
-                // nieuwe Marketing record
-                $documentation = \App\Models\Documentation::create([
-                    'friendly_name' => $file->getClientOriginalName(),
-                    'file_name' => $file->getClientOriginalName(),
-                    'order_id' => $orderId,
-                    'documentation_category_id' => $this->folderId,
-                    'lang' => $this->locale,
+            // 🔥 MAIN IMAGE
+            $image = $manager->decodePath($this->file->getPathname());
 
-                ]);
+            $image->scale(width: 1200);
+            $encoded = $image->encode(new JpegEncoder(quality: 80));
 
+            Storage::disk('public')->put($path, $encoded);
 
-                // NIEUWE cropimage uploaden als aanwezig
-                if ($this->newCropimage) {
-                    $path = $this->newCropimage->store('documentation', 'public');
-                    $documentation->cropimage = $path;
-                    $documentation->save();
-                }
+            // volgorde bepalen
+            $latestMarketing = Marketing::orderBy('order_id', 'desc')->first();
+            $orderId = $latestMarketing ? $latestMarketing->order_id + 1 : 1;
+
+            // database record
+            $documentation = \App\Models\Documentation::create([
+                'friendly_name' => $fileName,
+                'file_name' => $fileName,
+                'order_id' => $orderId,
+                'documentation_category_id' => $this->folderId,
+                'lang' => $this->locale,
+
+            ]);
+
+            // 🖼 CROPPED IMAGE
+            if ($this->newCropimage) {
+
+                $cropName = 'crop_' . $this->newCropimage->getClientOriginalName();
+                $cropPath = 'documentation/' . $cropName;
+
+                $cropImage = $manager->decodePath($this->newCropimage->getPathname());
+
+                $cropImage->scale(width: 800);
+
+                $encoded = $image->encode(new JpegEncoder(quality: 80));
+
+                Storage::disk('public')->put($cropPath, $encoded);
+
+                $documentation->cropimage = $cropPath;
+                $documentation->save();
             }
 
             session()->flash('success', 'De bestanden zijn geupload.');
 
-            // reset file inputs
-            $this->reset(['files', 'newCropimage']);
+            $this->reset(['file', 'newCropimage']);
 
-            return $this->redirect('/documentation-maps/'.$this->folderId.'/documentation/upload', navigate: true);
-        } else {
-            session()->flash('error',  'Upload één of meerdere bestanden.');
+            return $this->redirect('/documentation-maps/' . $this->folderId . '/documentation/upload', navigate: true);
         }
+
+        session()->flash('error', 'Upload één of meerdere bestanden.');
     }
+
+
 
     public function remove($id)
     {

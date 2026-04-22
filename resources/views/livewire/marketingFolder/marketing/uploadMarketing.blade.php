@@ -64,11 +64,14 @@
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             📄 Bestand *
                         </label>
-                        <input wire:model="files" type="file"
+                        <input wire:model.defer="file" type="file"
                                class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
                         <p class="text-xs text-gray-400 mt-1">
                             Upload een bestand
                         </p>
+                        @error('file')
+                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- 🖼 Thumbnail upload --}}
@@ -83,6 +86,10 @@
                             Wordt gebruikt als preview afbeelding
                         </p>
 
+                        @error('newCropimage')
+                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                        @enderror
+
                         {{-- Preview --}}
                         @if ($newCropimage)
                             <div class="mt-2">
@@ -96,16 +103,16 @@
                     <div class="flex items-end md:items-center">
                         <button wire:click="uploadFiles"
                                 wire:loading.attr="disabled"
+                                wire:target="file,newCropimage"
                                 class="w-full md:w-100 mt-[30px] bg-gray-800 hover:bg-gray-900 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2">
 
-                <span wire:loading.remove wire:target="newCropimage">
-                    <i class="fa-solid fa-upload"></i> Uploaden
-                </span>
+                                <span wire:loading.remove wire:target="file,newCropimage">
+                                    <i class="fa-solid fa-upload"></i> Uploaden
+                                </span>
 
-                            <span wire:loading wire:target="newCropimage">
-                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-                </span>
-
+                                <span wire:loading wire:target="file,newCropimage">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
+                                </span>
                         </button>
                     </div>
 
@@ -166,6 +173,9 @@
 
                                     {{-- ERROR --}}
                                     @error('cropimage.'.$marketing->id)
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                    @enderror
+                                    @error('newCropimage.'.$marketing->id)
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                     @enderror
 
