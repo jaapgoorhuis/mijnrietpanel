@@ -228,4 +228,5 @@ return [
     'De nokafschuining mag maximaal 60 graden zijn' => 'The ridge bevel may be a maximum of 60 degrees.',
     'De nokafschuining moet minimaal 0 graden zijn' => 'The ridge bevel must not be less than 0 degrees.',
     'Ordertoeslag panelen boven de 14500mm' => 'Order surcharge for panels over 14,500 mm',
+    'Downloaden'=> 'Downloaden',
     ];
