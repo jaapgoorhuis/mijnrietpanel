@@ -183,7 +183,7 @@
                                     @if($marketing->cropimage)
                                         <div class="mt-3">
                                             <p class="text-xs text-gray-400">Huidig:</p>
-                                            <img src="{{ asset('storage/' . $marketing->cropimage) }}"
+                                            <img src="{{ asset('storage/marketing/' . $marketing->cropimage) }}"
                                                  class="h-24 object-contain border rounded">
                                         </div>
                                     @endif
