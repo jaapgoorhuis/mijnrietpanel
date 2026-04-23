@@ -80,24 +80,26 @@ Documentation extends Component
 
             foreach ($this->documentation as $documentation) {
 
-                $filePath = public_path('storage/documentation/' . $documentation->file_name);
-                $filePath = str_replace(['%20'], ' ', $filePath);
-
-                if (file_exists($filePath)) {
-
-                    // 🧼 veilige filename voor zip
-                    $safeName = basename($documentation->file_name);
-                    $safeName = str_replace(['/', '\\'], '_', $safeName);
-
-                    $zip->addFileFromPath(
-                        $safeName,
-                        $filePath
-                    );
+                if (!$documentation->file_name) {
+                    continue;
                 }
+
+                $fileName = str_replace(['/', '\\'], '_', $documentation->file_name);
+
+                $filePath = Storage::disk('public')->path('documentation/' . $documentation->file_name);
+
+                if (!file_exists($filePath)) {
+                    continue;
+                }
+
+                $zip->addFileFromPath(
+                    $fileName,
+                    $filePath
+                );
             }
 
             $zip->finish();
 
-        }, $this->folder->name . '.zip');
+        }, str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $this->folder->name) . '.zip');
     }
 }
