@@ -51,7 +51,7 @@ class UploadDetails extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
+        'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png,gif,bmp,webp,svg,dwg,rvt,rfa|mimetypes:font/otf,application/x-font-otf,application/octet-stream',
     ];
 
     public function messages(): array
@@ -87,12 +87,20 @@ class UploadDetails extends Component
 
     public function uploadFiles()
     {
-        $this->validate();
 
         if ($this->files) {
 
             foreach ($this->files as $file) {
 
+                $allowed = ['pdf','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa'];
+
+                $extension = strtolower($file->getClientOriginalExtension());
+
+                if (!in_array($extension, $allowed)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'files' => 'Bestandstype niet toegestaan.',
+                    ]);
+                }
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
                 $extension = strtolower($file->getClientOriginalExtension());
@@ -118,7 +126,7 @@ class UploadDetails extends Component
 
                 Detail::create([
                     'friendly_name' => $file->getClientOriginalName(),
-                    'file_name' => $path,
+                    'file_name' => basename($path), // 👈 HIER zit de fix
                     'order_id' => $orderId,
                     'detail_category_id' => $this->categoryId,
                     'lang' => $this->locale,

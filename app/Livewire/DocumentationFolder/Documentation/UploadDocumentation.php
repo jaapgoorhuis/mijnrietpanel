@@ -61,7 +61,6 @@ class UploadDocumentation extends Component
     }
 
     protected $rules = [
-        'file' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
         'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp', // max 2MB
         'newCropimage' => 'nullable|mimes:jpg,svg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
     ];
@@ -70,7 +69,7 @@ class UploadDocumentation extends Component
     {
         return [
             'file.required' =>  'Het is verplicht om een bestand te uploaden.',
-            'file.mimes' =>  'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
+            'file.mimes' =>  'Alle bestanden moeten een PDF, DWG, OTF, REVIT of afbeelding bestand zijn.',
             'cropimage.*.mimes' => 'Het bestand moet een afbeelding zijn',
             'newCropimage.image' => 'Het nieuwe bestand moet een afbeelding zijn',
             'newCropimage.max' => 'De afbeelding mag maximaal 2MB zijn',
@@ -94,49 +93,61 @@ class UploadDocumentation extends Component
 
         if ($this->file) {
 
+            $allowed = ['pdf','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa'];
+            $extension = strtolower($this->file->getClientOriginalExtension());
+
+            if (!in_array($extension, $allowed)) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'files' => 'Bestandstype niet toegestaan.',
+                ]);
+            }
+
             $manager = new ImageManager(new Driver());
 
-            // originele naam
-            $fileName = $this->file->getClientOriginalName();
-            $path = 'documentation/' . $fileName;
+            $safeName = uniqid() . '_' . $this->file->getClientOriginalName();
+            $path = 'documentation/' . $safeName;
 
-            // 🔥 MAIN IMAGE
-            $image = $manager->decodePath($this->file->getPathname());
+            $isImage = in_array($extension, ['jpg','jpeg','png','gif','webp','bmp']);
 
-            $image->scale(width: 1200);
-            $encoded = $image->encode(new JpegEncoder(quality: 80));
+            if ($isImage) {
 
-            Storage::disk('public')->put($path, $encoded);
+                $image = $manager->decodePath($this->file->getPathname());
+                $image->scale(width: 1200);
 
-            // volgorde bepalen
-            $latestMarketing = Marketing::orderBy('order_id', 'desc')->first();
-            $orderId = $latestMarketing ? $latestMarketing->order_id + 1 : 1;
+                $encoded = $image->encode(new JpegEncoder(quality: 80));
 
-            // database record
+                Storage::disk('public')->put($path, $encoded);
+
+            } else {
+
+                $this->file->storeAs('documentation', $safeName, 'public');
+            }
+
+            $latest = \App\Models\Documentation::orderBy('order_id', 'desc')->first();
+            $orderId = $latest ? $latest->order_id + 1 : 1;
+
             $documentation = \App\Models\Documentation::create([
-                'friendly_name' => $fileName,
-                'file_name' => $fileName,
+                'friendly_name' => $this->file->getClientOriginalName(),
+                'file_name' => $safeName,
                 'order_id' => $orderId,
                 'documentation_category_id' => $this->folderId,
                 'lang' => $this->locale,
-
             ]);
 
             // 🖼 CROPPED IMAGE
             if ($this->newCropimage) {
 
-                $cropName = 'crop_' . $this->newCropimage->getClientOriginalName();
+                $cropName = uniqid() . '_crop_' . $this->newCropimage->getClientOriginalName();
                 $cropPath = 'documentation/' . $cropName;
 
                 $cropImage = $manager->decodePath($this->newCropimage->getPathname());
-
                 $cropImage->scale(width: 800);
 
-                $encoded = $image->encode(new JpegEncoder(quality: 80));
+                $encoded = $cropImage->encode(new JpegEncoder(80));
 
                 Storage::disk('public')->put($cropPath, $encoded);
 
-                $documentation->cropimage = $cropPath;
+                $documentation->cropimage = $cropName;
                 $documentation->save();
             }
 
@@ -149,7 +160,6 @@ class UploadDocumentation extends Component
 
         session()->flash('error', 'Upload één of meerdere bestanden.');
     }
-
 
 
     public function remove($id)

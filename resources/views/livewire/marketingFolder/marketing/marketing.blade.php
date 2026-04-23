@@ -69,8 +69,8 @@
                                 {{-- Cropimage compact --}}
                                 @if($marketing->cropimage)
                                     <div class="w-full h-24 mb-2 overflow-hidden rounded-md ">
-                                        <img src="{{ asset('storage/' . $marketing->cropimage) }}"
-                                             alt="{{ $marketing->friendly_name }}"
+                                        <img src="{{ asset('storage/marketing/' . $marketing->cropimage) }}"
+                                             alt="{{ $marketing->cropimage }}"
                                              class="w-full h-full object-contain">
                                     </div>
                                 @endif

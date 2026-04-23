@@ -61,7 +61,8 @@ class UploadMarketing extends Component
     }
 
     protected $rules = [
-        'file' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
+
+
         'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // max 2MB
         'newCropimage' => 'nullable|mimes:jpg,svg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
     ];
@@ -69,8 +70,6 @@ class UploadMarketing extends Component
     public function messages(): array
     {
         return [
-            'file.required' =>  'Het is verplicht om een bestand te uploaden.',
-            'file.mimes' =>  'Alle bestanden moeten een PDF, DWG of afbeelding bestand zijn.',
             'cropimage.mimes' => 'Het bestand moet een afbeelding zijn',
             'newCropimage.image' => 'Het nieuwe bestand moet een afbeelding zijn',
             'newCropimage.max' => 'De afbeelding mag maximaal 2MB zijn',
@@ -93,61 +92,84 @@ class UploadMarketing extends Component
     {
         $this->validate();
 
-        if ($this->file) {
+        if (!$this->file) {
+            session()->flash('error', 'Upload één of meerdere bestanden');
+            return;
+        }
 
-            $manager = new ImageManager(new Driver());
+        $imageExtensions = ['jpg','jpeg','png','gif','webp','bmp'];
 
-            // originele naam
-            $fileName = $this->file->getClientOriginalName();
-            $path = 'marketing/' . $fileName;
+        $extension = strtolower($this->file->getClientOriginalExtension());
 
-            // 🔥 MAIN IMAGE
+        $allowed = ['pdf','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa'];
+
+        if (!in_array($extension, $allowed)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'files' => 'Bestandstype niet toegestaan.',
+            ]);
+        }
+
+        $manager = new ImageManager(new Driver());
+
+        // veilige bestandsnaam
+        $fileName = uniqid() . '_' . pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $extension;
+        $path = 'marketing/' . $fileName;
+
+        // volgorde bepalen
+        $latestMarketing = Marketing::orderBy('order_id', 'desc')->first();
+        $orderId = $latestMarketing ? $latestMarketing->order_id + 1 : 1;
+
+        // 🖼 IMAGE
+        if (in_array($extension, $imageExtensions)) {
+
             $image = $manager->decodePath($this->file->getPathname());
-
             $image->scale(width: 1200);
+
             $encoded = $image->encode(new JpegEncoder(quality: 80));
 
             Storage::disk('public')->put($path, $encoded);
 
-            // volgorde bepalen
-            $latestMarketing = Marketing::orderBy('order_id', 'desc')->first();
-            $orderId = $latestMarketing ? $latestMarketing->order_id + 1 : 1;
+        } else {
 
-            // database record
-            $marketing = Marketing::create([
-                'friendly_name' => $fileName,
-                'file_name' => $fileName,
-                'order_id' => $orderId,
-                'marketing_category_id' => $this->folderId,
-                'lang' => $this->locale,
-            ]);
-
-            // 🖼 CROPPED IMAGE
-            if ($this->newCropimage) {
-
-                $cropName = 'crop_' . $this->newCropimage->getClientOriginalName();
-                $cropPath = 'marketing/' . $cropName;
-
-                $cropImage = $manager->decodePath($this->newCropimage->getPathname());
-
-                $cropImage->scale(width: 800);
-
-                $encoded = $image->encode(new JpegEncoder(quality: 80));
-
-                Storage::disk('public')->put($cropPath, $encoded);
-
-                $marketing->cropimage = $cropPath;
-                $marketing->save();
-            }
-
-            session()->flash('success', 'De bestanden zijn geupload.');
-
-            $this->reset(['file', 'newCropimage']);
-
-            return $this->redirect('/marketing-maps/' . $this->folderId . '/marketing/upload', navigate: true);
+            // 📄 NON-IMAGE (pdf, otf, dwg, rvt, rfa...)
+            $this->file->storeAs('marketing', $fileName, 'public');
         }
 
-        session()->flash('error', 'Upload één of meerdere bestanden.');
+        // database record
+        $marketing = Marketing::create([
+            'friendly_name' => $this->file->getClientOriginalName(),
+            'file_name' => $fileName,
+            'order_id' => $orderId,
+            'marketing_category_id' => $this->folderId,
+            'lang' => $this->locale,
+        ]);
+
+        // 🖼 CROPPED IMAGE
+        if ($this->newCropimage) {
+
+            $cropExtension = strtolower($this->newCropimage->getClientOriginalExtension());
+            $cropName = uniqid() . '_crop.' . $cropExtension;
+            $cropPath = 'marketing/' . $cropName;
+
+            $cropImage = $manager->decodePath($this->newCropimage->getPathname());
+            $cropImage->scale(width: 800);
+
+            $encodedCrop = $cropImage->encode(new JpegEncoder(quality: 80));
+
+            Storage::disk('public')->put($cropPath, $encodedCrop);
+
+            $marketing->cropimage = $cropName;
+            $marketing->save();
+        }
+
+        session()->flash('success', 'De bestanden zijn geupload');
+
+        $this->reset(['file', 'newCropimage']);
+
+        return $this->redirect(
+            '/marketing-maps/' . $this->folderId . '/marketing/upload',
+            navigate: true
+        );
     }
 
     public function remove($id)
@@ -165,7 +187,7 @@ class UploadMarketing extends Component
         // delete record
         Marketing::where('id', $id)->delete();
 
-        session()->flash('success', 'Het bestand is verwijderd.');
+        session()->flash('success', 'Het bestand is verwijderd');
     }
 
     public function updateItem($id)
