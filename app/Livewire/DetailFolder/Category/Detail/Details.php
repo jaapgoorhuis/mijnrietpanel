@@ -6,6 +6,7 @@ use App\Models\Detail;
 use App\Models\DetailCategory;
 use App\Models\DetailFolder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use ZipStream\ZipStream;
 
@@ -81,29 +82,35 @@ Details extends Component
         $this->dispatch('download-zip', url: $url);
     }
 
-    public function downloadAll() {
-
+    public function downloadAll()
+    {
         return response()->streamDownload(function () {
 
             $zip = new ZipStream();
 
             foreach ($this->details as $detail) {
 
-                // pad in storage/app/public
-                $filePath = public_path('/storage/details/' . $detail->file_name);
-
-                $filePath = str_replace(['%20'], ' ', $filePath);
-
-                if (file_exists($filePath)) {
-                    $zip->addFileFromPath(
-                        basename($filePath), // naam in zip
-                        $filePath
-                    );
+                if (!$detail->file_name) {
+                    continue;
                 }
+
+                // veilige ZIP naam
+                $safeName = str_replace(['/', '\\'], '_', $detail->file_name);
+
+                $filePath = Storage::disk('public')->path('details/' . $detail->file_name);
+
+                if (!file_exists($filePath)) {
+                    continue;
+                }
+
+                $zip->addFileFromPath(
+                    $safeName,
+                    $filePath
+                );
             }
 
             $zip->finish();
 
-        }, $this->folder->name.'.zip');
+        }, str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $this->folder->name) . '.zip');
     }
 }

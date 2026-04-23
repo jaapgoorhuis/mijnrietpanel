@@ -3,6 +3,7 @@
 namespace App\Livewire\MarketingFolder\Marketing;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use ZipStream\ZipStream;
 
@@ -72,29 +73,36 @@ Marketing extends Component
         $this->dispatch('download-zip', url: $url);
     }
 
-    public function downloadAll() {
-
+    public function downloadAll()
+    {
         return response()->streamDownload(function () {
 
             $zip = new ZipStream();
 
             foreach ($this->marketing as $marketing) {
 
-                // pad in storage/app/public
-                $filePath = public_path('/storage/marketing/' . $marketing->file_name);
-
-                $filePath = str_replace(['%20'], ' ', $filePath);
-
-                if (file_exists($filePath)) {
-                    $zip->addFileFromPath(
-                        basename($filePath), // naam in zip
-                        $filePath
-                    );
+                if (!$marketing->file_name) {
+                    continue;
                 }
+
+                // veilige bestandsnaam voor zip
+                $safeName = str_replace(['/', '\\'], '_', $marketing->file_name);
+
+                // Laravel-safe path (beter dan public_path)
+                $filePath = Storage::disk('public')->path('marketing/' . $marketing->file_name);
+
+                if (!file_exists($filePath)) {
+                    continue;
+                }
+
+                $zip->addFileFromPath(
+                    $safeName,
+                    $filePath
+                );
             }
 
             $zip->finish();
 
-        }, $this->folder->name.'.zip');
+        }, str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $this->folder->name) . '.zip');
     }
 }
