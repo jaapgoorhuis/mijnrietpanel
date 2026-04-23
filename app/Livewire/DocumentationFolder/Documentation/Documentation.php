@@ -3,6 +3,7 @@
 namespace App\Livewire\DocumentationFolder\Documentation;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use ZipStream\ZipStream;
 
