@@ -72,22 +72,25 @@ Documentation extends Component
         $this->dispatch('download-zip', url: $url);
     }
 
-    public function downloadAll() {
-
+    public function downloadAll()
+    {
         return response()->streamDownload(function () {
 
             $zip = new ZipStream();
 
             foreach ($this->documentation as $documentation) {
 
-                // pad in storage/app/public
-                $filePath = public_path('/storage/documentation/' . $documentation->file_name);
-
+                $filePath = public_path('storage/documentation/' . $documentation->file_name);
                 $filePath = str_replace(['%20'], ' ', $filePath);
 
                 if (file_exists($filePath)) {
+
+                    // 🧼 veilige filename voor zip
+                    $safeName = basename($documentation->file_name);
+                    $safeName = str_replace(['/', '\\'], '_', $safeName);
+
                     $zip->addFileFromPath(
-                        basename($filePath), // naam in zip
+                        $safeName,
                         $filePath
                     );
                 }
@@ -95,6 +98,6 @@ Documentation extends Component
 
             $zip->finish();
 
-        }, $this->folder->name.'.zip');
+        }, $this->folder->name . '.zip');
     }
 }
