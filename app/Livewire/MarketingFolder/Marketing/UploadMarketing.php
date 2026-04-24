@@ -206,7 +206,7 @@ class UploadMarketing extends Component
             }
 
             $path = $this->cropimage[$id]->store('marketing', 'public');
-            $marketing->cropimage = $path;
+            $marketing->cropimage = basename($path);
 
             // reset file input van dit item
             unset($this->cropimage[$id]);
