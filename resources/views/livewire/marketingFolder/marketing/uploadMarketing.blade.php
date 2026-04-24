@@ -204,9 +204,19 @@
                                     <div class="text-right mt-4">
                                         <button wire:click="updateItem({{ $marketing->id }})"
                                                 wire:loading.attr="disabled"
-                                                class="bg-gray-800 text-white px-4 py-2 rounded-lg">
-                                            Opslaan
+                                                wire:target="cropimage.{{ $marketing->id }}"
+                                                class="w-full md:w-100 mt-[30px] bg-gray-800 hover:bg-gray-900 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2">
+
+                                <span wire:loading.remove wire:target="cropimage.{{ $marketing->id }}">
+                                    <i class="fa-solid fa-upload"></i> Uploaden
+                                </span>
+
+                                            <span wire:loading wire:target="cropimage.{{ $marketing->id }}">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
+                                </span>
                                         </button>
+
+
                                     </div>
 
                                 </div>
