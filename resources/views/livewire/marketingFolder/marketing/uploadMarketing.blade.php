@@ -91,7 +91,7 @@
                         @enderror
 
                         {{-- Preview --}}
-                        @if ($newCropimage)
+                        @if ($newCropimage && str_starts_with($newCropimage->getMimeType(), 'image/'))
                             <div class="mt-2">
                                 <img src="{{ $newCropimage->temporaryUrl() }}"
                                      class="h-20 w-full object-contain border rounded">
@@ -189,7 +189,10 @@
                                     @endif
 
                                     {{-- NIEUWE PREVIEW --}}
-                                    @if(isset($cropimage[$marketing->id]))
+                                    @if(
+                                            isset($cropimage[$marketing->id]) &&
+                                            str_starts_with($cropimage[$marketing->id]->getMimeType(), 'image/')
+                                        )
                                         <div class="mt-3">
                                             <p class="text-xs text-gray-400">Preview:</p>
                                             <img src="{{ $cropimage[$marketing->id]->temporaryUrl() }}"
