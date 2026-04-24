@@ -166,7 +166,7 @@
                                            class="w-full border-b-2 border-gray-300 focus:border-[#C0A16E] mb-4">
 
                                     {{-- IMAGE UPLOAD --}}
-                                    <label class="text-gray-400 text-sm">Afbeelding</label>
+                                    <label class="text-gray-400 text-sm">Tumbnail</label>
                                     <input type="file"
                                            wire:model="cropimage.{{ $marketing->id }}"
                                            class="w-full border rounded-lg p-2 bg-gray-50">

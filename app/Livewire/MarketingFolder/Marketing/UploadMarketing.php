@@ -63,7 +63,7 @@ class UploadMarketing extends Component
     protected $rules = [
 
 
-        'cropimage.*' => 'mimes:jpg,svg,jpeg,png,gif,webp|max:2048', // max 2MB
+        'cropimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp', // max 2MB
         'newCropimage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
     ];
 
