@@ -1,32 +1,27 @@
 
 <x-slot name="header">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <li class="inline-flex items-center">
-                <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+    <nav class="w-full overflow-x-auto" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 whitespace-nowrap text-sm text-gray-700">
+
+            <li class="flex items-center gap-2">
+                <a href="/dashboard" class="hover:text-[#C0A16E]">
                     {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
 
-
-            <li>
-                <div class="flex items-center">
-                    <i class="fa-solid fa-angle-right"></i>
-                    <a href="/detail-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{ __('messages.Documentatie categorieën') }}
-                    </a>
-                </div>
+            <li class="flex items-center gap-2">
+                <i class="fa-solid fa-angle-right text-gray-400"></i>
+                <a href="/detail-maps" class="hover:text-[#C0A16E]">
+                    {{ __('messages.Documentatie categorieën') }}
+                </a>
             </li>
 
-            <li>
-                <div class="flex items-center">
-                    <i class="fa-solid fa-angle-right"></i>
-                    <a href="/documentation-maps/{{$folderId}}/documentation" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{$folder->name}}
-                    </a>
-                </div>
+            <li class="flex items-center gap-2">
+                <i class="fa-solid fa-angle-right text-gray-400"></i>
+                <span class="text-gray-900 font-medium truncate max-w-[160px]">
+                {{$folder->name}}
+            </span>
             </li>
-
 
         </ol>
     </nav>
@@ -37,35 +32,39 @@
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 relative">
-                @admin
-                <div class="text-right">
-                    <button wire:click="uploadDocumentation()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <i class="fa-solid fa-upload"></i>    {{ __('messages.Bestanden toevoegen') }}
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+
+                    @admin
+                    <button wire:click="uploadDocumentation()" type="button"
+                            class="w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <i class="fa-solid fa-upload me-2"></i>
+                        {{ __('messages.Bestanden toevoegen') }}
                     </button>
-                </div>
-                <br/>
-                @endadmin
-                @if(count($documentation))
-                    <div class="text-left">
+                    @endadmin
+
+                    @if(count($documentation))
                         <button
                             wire:click="downloadAll()"
                             wire:loading.attr="disabled"
                             wire:target="downloadAll"
                             type="button"
-                            class=" absolute top-[25px] disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                            class="w-full md:w-auto disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
                         >
-                            <!-- Spinner verschijnt alleen tijdens downloadAll() -->
+                            <!-- Spinner -->
                             <span wire:loading wire:target="downloadAll">
-                            <i class="fa-solid fa-spinner fa-spin me-2"></i>
-                        </span>
+                <i class="fa-solid fa-spinner fa-spin me-2"></i>
+            </span>
 
-                            <!-- Download icon en tekst normaal -->
+                            <!-- Normale icon -->
+                            <span wire:loading.remove wire:target="downloadAll">
+                <i class="fa-solid fa-download me-2"></i>
+            </span>
 
-                            <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
                             {{ __('messages.Alle bestanden downloaden') }}
                         </button>
-                    </div>
-                @endif
+                    @endif
+
+                </div>
                 <br/>
 
 
