@@ -30,26 +30,33 @@
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 relative">
-                <div class="flex flex-col gap-3 md:flex-row md:justify-between">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 
                     @admin
-                    <div class="text-right md:text-left">
-                        <button wire:click="uploadMarketing()" type="button"
-                                class="w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                            <i class="fa-solid fa-upload"></i>
-                            {{ __('messages.Bestanden toevoegen') }}
-                        </button>
-                    </div>
+                    <button wire:click="uploadMarketing()" type="button"
+                            class="w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <i class="fa-solid fa-upload"></i>
+                        {{ __('messages.Bestanden toevoegen') }}
+                    </button>
                     @endadmin
 
-                    <div class="text-left md:text-right">
-                        <button
-                            wire:click="downloadAll()"
-                            wire:loading.attr="disabled"
-                            wire:target="downloadAll"
-                            type="button"
-                            class="w-full md:w-auto disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        >
+                    <button
+                        wire:click="downloadAll()"
+                        wire:loading.attr="disabled"
+                        wire:target="downloadAll"
+                        type="button"
+                        class="w-full md:w-auto disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                    >
+        <span wire:loading wire:target="downloadAll">
+            <i class="fa-solid fa-spinner fa-spin me-2"></i>
+        </span>
+
+                        <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
+                        {{ __('messages.Alle bestanden downloaden') }}
+                    </button>
+
+                </div>
+
             <span wire:loading wire:target="downloadAll">
                 <i class="fa-solid fa-spinner fa-spin me-2"></i>
             </span>
