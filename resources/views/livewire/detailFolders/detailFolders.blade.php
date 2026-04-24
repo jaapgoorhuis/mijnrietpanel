@@ -41,7 +41,7 @@
             @if($detailFolders->isEmpty())
                 <p class="text-gray-500">{{ __('messages.Er zijn geen mappen gevonden') }}</p>
             @else
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 justify-items-center">
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 justify-items-center">
                     @foreach($detailFolders as $folder)
                         <a href="{{ url('/detail-maps/' . $folder->id . '/categories') }}"
                            class="group w-48 border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3">
