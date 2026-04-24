@@ -1,40 +1,33 @@
 
 <x-slot name="header">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <li class="inline-flex items-center">
-                <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+    <nav class="w-full overflow-x-auto" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 whitespace-nowrap text-sm text-gray-700">
+
+            <li class="flex items-center gap-2">
+                <a href="/dashboard" class="hover:text-[#C0A16E]">
                     {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
 
-
-            <li>
-                <div class="flex items-center">
-                    <i class="fa-solid fa-angle-right"></i>
-                    <a href="/detail-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{ __('messages.Detail categorieën') }}
-                    </a>
-                </div>
+            <li class="flex items-center gap-2">
+                <i class="fa-solid fa-angle-right text-gray-400"></i>
+                <a href="/detail-maps" class="hover:text-[#C0A16E]">
+                    {{ __('messages.Detail categorieën') }}
+                </a>
             </li>
 
-            <li>
-                <div class="flex items-center">
-                    <i class="fa-solid fa-angle-right"></i>
-                    <a href="/detail-maps/{{$folderId}}/categories" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{$folder->name}}
-                    </a>
-                </div>
+            <li class="flex items-center gap-2">
+                <i class="fa-solid fa-angle-right text-gray-400"></i>
+                <a href="/detail-maps/{{$folderId}}/categories" class="hover:text-[#C0A16E]">
+                    {{$folder->name}}
+                </a>
             </li>
 
-
-            <li>
-                <div class="flex items-center">
-                    <i class="fa-solid fa-angle-right"></i>
-                    <a href="/detail-maps/{{$folderId}}/categories/{{$categoryId}}/details" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{$category->name}}
-                    </a>
-                </div>
+            <li class="flex items-center gap-2">
+                <i class="fa-solid fa-angle-right text-gray-400"></i>
+                <a href="/detail-maps/{{$folderId}}/categories/{{$categoryId}}/details" class="hover:text-[#C0A16E]">
+                    {{$category->name}}
+                </a>
             </li>
 
         </ol>
