@@ -31,31 +31,35 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 relative">
                 @admin
-                <div class="text-right">
-                    <button wire:click="uploadMarketing()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <i class="fa-solid fa-upload"></i>    {{ __('messages.Bestanden toevoegen') }}
+                <div class="flex flex-col gap-3 md:flex-row md:justify-between">
 
-                    </button>
-                </div>
-                <br/>
-                @endadmin
-                <div class="text-left">
-                    <button
-                        wire:click="downloadAll()"
-                        wire:loading.attr="disabled"
-                        wire:target="downloadAll"
-                        type="button"
-                        class="absolute top-[25px] disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-                    >
-                        <!-- Spinner verschijnt alleen tijdens downloadAll() -->
-                        <span wire:loading wire:target="downloadAll">
-                            <i class="fa-solid fa-spinner fa-spin me-2"></i>
-                        </span>
+                    @admin
+                    <div class="text-right md:text-left">
+                        <button wire:click="uploadMarketing()" type="button"
+                                class="w-full md:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fa-solid fa-upload"></i>
+                            {{ __('messages.Bestanden toevoegen') }}
+                        </button>
+                    </div>
+                    @endadmin
 
-                        <!-- Download icon en tekst normaal -->
-                        <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
-                        {{ __('messages.Alle bestanden downloaden') }}
-                    </button>
+                    <div class="text-left md:text-right">
+                        <button
+                            wire:click="downloadAll()"
+                            wire:loading.attr="disabled"
+                            wire:target="downloadAll"
+                            type="button"
+                            class="w-full md:w-auto disabled:cursor-not-allowed text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                        >
+            <span wire:loading wire:target="downloadAll">
+                <i class="fa-solid fa-spinner fa-spin me-2"></i>
+            </span>
+
+                            <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
+                            {{ __('messages.Alle bestanden downloaden') }}
+                        </button>
+                    </div>
+
                 </div>
                 <br/>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 text-left">
