@@ -56,17 +56,6 @@
                     </button>
 
                 </div>
-
-            <span wire:loading wire:target="downloadAll">
-                <i class="fa-solid fa-spinner fa-spin me-2"></i>
-            </span>
-
-                            <i wire:loading.remove wire:target="downloadAll" class="fa-solid fa-download me-2"></i>
-                            {{ __('messages.Alle bestanden downloaden') }}
-                        </button>
-                    </div>
-
-                </div>
                 <br/>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 text-left">
                     @if(!count($this->marketing))
