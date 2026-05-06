@@ -108,9 +108,7 @@
                 <tr>
                     <td style="padding-right: 60px;">Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
                 </tr>
-                <tr>
-                    <td>Leverdatum:</td><td>{{$order->updated_at->addDays(14)->format('d-m-Y')}}</td>
-                </tr>
+
                 @if($order->orderRules)
 
                     @if($order->orderRules->show_orderlist)
@@ -152,7 +150,7 @@
         <th>Lengte in MM</th>
         <th>Merk</th>
         <th>Kerndikte</th>
-        <th>Leverdatum</th>
+
     </tr>
     </thead>
     <tbody>
@@ -172,13 +170,6 @@
         </td>
         <td>
             {{$order->kerndikte}}
-        </td>
-        <td>
-            @if($order->delivery_date)
-                {{$order->delivery_date}}
-            @else
-                Nog geen datum bekend
-            @endif
         </td>
     </tr>
     @endforeach

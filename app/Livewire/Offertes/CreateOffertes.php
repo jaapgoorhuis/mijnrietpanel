@@ -45,6 +45,7 @@ class CreateOffertes extends Component
     public $m2 = [];
 
     public $fillTotaleLengte = [''];
+
     public $fillCb = ['0'];
     public $fillLb = ['0'];
 
@@ -223,13 +224,13 @@ class CreateOffertes extends Component
 
     public function removeOfferteLine($index) {
         unset($this->offerteLines[$index]);
-        unset($this->fillTotaleLengte[$index]);
+        unset($this->totaleLengte[$index]);
         unset($this->aantal[$index]);
         unset($this->lb[$index]);
         unset($this->cb[$index]);
         unset($this->selectedPanelOption[$index]);
         $this->offerteLines = array_values($this->offerteLines);
-        $this->fillTotaleLengte = array_values($this->fillTotaleLengte);
+        $this->totaleLengte = array_values($this->totaleLengte);
         $this->aantal = array_values($this->aantal);
         $this->lb = array_values($this->lb);
         $this->cb = array_values($this->cb);
@@ -246,6 +247,7 @@ class CreateOffertes extends Component
             'aflever_plaats' => 'required',
             'aflever_land' => 'required',
             'intaker' => 'required',
+            'totaleLengte.*' => 'required|numeric|min:500|max:17000',
             'aantal.*' => 'required|numeric|min:1',
             'kerndikte' => 'required',
             'requested_delivery_date' => 'required',
@@ -254,9 +256,7 @@ class CreateOffertes extends Component
 
 
         // Conditioneel extra rule toevoegen op lb.*
-        if (Auth::user()->is_admin == 0 && Auth::user()->company->is_reseller == 0) {
-            $rules['marge'] = 'required';
-        }
+
         foreach ($this->selectedPanelOption as $index => $options) {
 
             if (in_array(1, $options)) {
@@ -334,12 +334,12 @@ class CreateOffertes extends Component
             'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
             'intaker.required' => __('messages.Vul aub uw naam in'),
-            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
-            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
-            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
+            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
+            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
+            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
             'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
-            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn'),
+            'cb.*.max' => __('messages.De CB mag maximaal 140mm zijn'),
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),
@@ -393,7 +393,6 @@ class CreateOffertes extends Component
             'kerndikte' => $this->kerndikte,
             'project_naam' => $this->project_naam,
             'user_id' => Auth::user()->id,
-            'marge' => $this->marge,
             'status' => 'In behandeling',
             'offerte_id' => $offerteId,
             'requested_delivery_date' => $this->requested_delivery_date,

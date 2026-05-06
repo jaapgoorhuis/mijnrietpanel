@@ -86,7 +86,7 @@
                         </svg>
 
                         <span class="text-lg font-semibold tracking-tight text-neutral-900">
-                            {{ __('messages.Voorbeeld details') }}
+                            {{ __('messages.Principe details') }}
                         </span>
 
                     </a>

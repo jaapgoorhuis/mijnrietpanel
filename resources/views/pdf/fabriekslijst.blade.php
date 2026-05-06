@@ -13,7 +13,7 @@
     <table class="text">
         <tr>
             <td class="label">Ordernummer:</td>
-            <td>25001</td>
+            <td>{{$order->order_id}}</td>
             <td class="label">Dikte paneel:</td>
             <td style="color:red">{{$order->kerndikte}}</td>
             <td rowspan="6" class="logo">

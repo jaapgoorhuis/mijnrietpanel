@@ -432,7 +432,7 @@ class ChangeOrder extends Component
             'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
             'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
-            'cb.*.max' => __('messages.De CB mag maximaal 200mm zijn'),
+            'cb.*.max' => __('messages.De CB mag maximaal 140mm zijn'),
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),
             'lb.*.max' => __('messages.De LB mag maximaal 210mm zijn'),

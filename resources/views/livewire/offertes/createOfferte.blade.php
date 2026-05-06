@@ -128,25 +128,7 @@
                                 <div class="text-red-500">@error('intaker') {{ $message }} @enderror</div>
                             </div>
 
-                            @user
-                            @if($this->company->is_reseller == 0)
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <label for="marge" class="text-gray-400"><strong>{{ __('messages.Jouw prijs') }}:    @if($this->priceRulePrice == 0)({{ __('messages.Selecteer kerndikte') }}) @else <?php $discount = $this->companyDiscount /100 * $this->priceRulePrice?>
-                                            {!! '&euro;&nbsp;' . number_format($this->priceRulePrice - $discount, 2, ',', '.') !!} excl. BTW excl. marge @endif
-                                        </strong></label><br/>
-                                    @admin<label><small>Je ziet de marge omdat jouw bedrijf geen reseller is maar een gewoon bedrijf en je ingelogd bent als admin<br/></small></label>@endadmin
-                                    <label for="marge" class="text-gray-400">Marge (%)</label>
-                                    <div class="tooltip">
-                                        <div class="tooltip-content">
-                                            {{ __('messages.percentage_marge') }}
-                                        </div>
-                                        <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
-                                    </div> *
-                                    <input type="number" wire:model="marge" name="marge" id="marge" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                    <div class="text-red-500">@error('marge') {{ $message }} @enderror</div>
-                                </div>
-                            @endif
-                            @enduser
+
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
@@ -235,10 +217,10 @@
                                                 {{ __('messages.minpanellength') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
-                                        </div>
+                                        </div>123
                                     </label>
                                     <input type="number" value="" min="500" max="14500" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" required />
-                                    <div class="text-red-500">@error('fillTotaleLengte.'.$index) {{ $message }} @enderror</div>
+                                    <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
                                     <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal panelen') }} *
@@ -356,7 +338,7 @@
                                                             class="border rounded px-2 py-1 w-full mt-1"
                                                         >
                                                             @if($option != 3)
-                                                                @for($i = 20; $i <= 200; $i += 20)
+                                                                @for($i = 20; $i <= 140; $i += 20)
                                                                     <option value="{{ $i }}">{{ $i }} mm</option>
                                                                 @endfor
                                                             @else

@@ -325,7 +325,7 @@
                                                             class="border rounded px-2 py-1 w-full mt-1"
                                                         >
                                                             @if($option != 3)
-                                                                @for($i = 20; $i <= 200; $i += 20)
+                                                                @for($i = 20; $i <= 140; $i += 20)
                                                                     <option value="{{ $i }}">{{ $i }} mm</option>
                                                                 @endfor
                                                             @else
