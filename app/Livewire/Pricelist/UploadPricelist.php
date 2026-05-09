@@ -66,7 +66,7 @@ class UploadPricelist extends Component
         if ($this->files) {
             foreach ($this->files as $file) {
                 $file->storeAs(path: 'pricelist', name: $file->getClientOriginalName(), options: 'public');
-                $latestPricelist = \App\Models\Pricelist::orderBy('order_id', 'desc')->first();
+                $latestPricelist = \App\Models\Pricelist::orderBy('created_at', 'desc')->first();
 
                 if ($latestPricelist) {
                     $orderId = $latestPricelist->order_id + 1;
