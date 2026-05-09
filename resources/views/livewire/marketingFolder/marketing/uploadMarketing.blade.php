@@ -56,10 +56,7 @@
             {{-- UPLOAD NIEUWE BESTANDEN --}}
             @admin
             <div class="bg-white p-6 rounded-lg shadow mb-6">
-                <div x-data="{ uploading: false }"
-                     x-on:livewire-upload-start="uploading = true"
-                     x-on:livewire-upload-finish="uploading = false"
-                     x-on:livewire-upload-error="uploading = false">
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
                     {{-- 📄 Bestanden upload --}}
@@ -93,42 +90,33 @@
                         <div class="text-red-500 text-sm">{{ $message }}</div>
                         @enderror
 
-                        {{-- Preview --}}
-                        @if ($newCropimage && str_starts_with($newCropimage->getMimeType(), 'image/'))
-                            <div class="mt-2">
-                                <img src="{{ $newCropimage->temporaryUrl() }}"
-                                     class="h-20 w-full object-contain border rounded">
-                            </div>
-                        @endif
+
                     </div>
 
                     {{-- Upload knop --}}
                     <div class="flex items-end md:items-center">
                         <button wire:click="uploadFiles"
-                                :disabled="uploading"
                                 wire:loading.attr="disabled"
-                                wire:target="uploadFiles"
+                                wire:target="file,newCropimage,uploadFiles"
                                 class="w-full md:w-100 mt-[30px]
-               bg-gray-800 hover:bg-gray-900
-               disabled:hover:bg-gray-800
-               text-white rounded-lg px-4 py-3
-               flex items-center justify-center gap-2
-               disabled:cursor-not-allowed
-               disabled:opacity-70">
+                                   bg-gray-800 hover:bg-gray-900
+                                   disabled:hover:bg-gray-800
+                                   text-white rounded-lg px-4 py-3
+                                   flex items-center justify-center gap-2
+                                   disabled:cursor-not-allowed
+                                   disabled:opacity-70">
 
-    <span x-show="!uploading" wire:loading.remove wire:target="uploadFiles">
-        <i class="fa-solid fa-upload"></i> Uploaden
-    </span>
+                                <span wire:loading.remove wire:target="file,newCropimage,uploadFiles">
+                                    <i class="fa-solid fa-upload"></i> Uploaden
+                                </span>
 
-                            <span x-show="uploading || $wire.__instance.loading">
-        <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-    </span>
+                                                        <span wire:loading wire:target="file,newCropimage,uploadFiles">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
+                                </span>
                         </button>
                     </div>
 
                 </div>
-
-            </div>
             </div>
 
 
