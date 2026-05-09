@@ -59,6 +59,25 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
+                    <div
+                        x-data="{ cropUploading: false }"
+                        x-on:livewire-upload-start="
+                            if ($event.detail.name === 'newCropimage') {
+                                cropUploading = true
+                            }
+                        "
+                                            x-on:livewire-upload-finish="
+                            if ($event.detail.name === 'newCropimage') {
+                                cropUploading = false
+                            }
+                        "
+                                            x-on:livewire-upload-error="
+                            if ($event.detail.name === 'newCropimage') {
+                                cropUploading = false
+                            }
+                        "
+                                        >
+
                     {{-- 📄 Bestanden upload --}}
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-gray-700 mb-1">
@@ -96,26 +115,32 @@
                     {{-- Upload knop --}}
                     <div class="flex items-end md:items-center">
                         <button wire:click="uploadFiles"
+                                :disabled="cropUploading"
                                 wire:loading.attr="disabled"
-                                wire:target="file,newCropimage,uploadFiles"
+                                wire:target="uploadFiles"
                                 class="w-full md:w-100 mt-[30px]
-                               bg-gray-800 hover:bg-gray-900
-                               disabled:hover:bg-gray-800
-                               text-white rounded-lg px-4 py-3
-                               flex items-center justify-center gap-2
-                               disabled:cursor-not-allowed
-                               disabled:opacity-70">
+               bg-gray-800 hover:bg-gray-900
+               disabled:hover:bg-gray-800
+               text-white rounded-lg px-4 py-3
+               flex items-center justify-center gap-2
+               disabled:cursor-not-allowed
+               disabled:opacity-70">
 
-                    <span wire:loading.remove wire:target="file,newCropimage,uploadFiles">
-                        <i class="fa-solid fa-upload"></i> Uploaden
-                    </span>
+    <span x-show="!cropUploading" wire:loading.remove wire:target="uploadFiles">
+        <i class="fa-solid fa-upload"></i> Uploaden
+    </span>
 
-                                            <span wire:loading wire:target="file,newCropimage,uploadFiles">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-                    </span>
+                            <span x-show="cropUploading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Thumbnail uploaden...
+    </span>
+
+                            <span x-show="!cropUploading" wire:loading wire:target="uploadFiles">
+        <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
+    </span>
                         </button>
                     </div>
 
+                </div>
                 </div>
             </div>
 
