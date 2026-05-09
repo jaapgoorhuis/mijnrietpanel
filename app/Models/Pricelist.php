@@ -12,7 +12,7 @@ class Pricelist extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'friendly_name', 'file_name','lang','pricelistFolder_id'];
+   protected $fillable = ['order_id', 'friendly_name', 'file_name','lang','pricelist_category_id'];
     protected $table = 'pricelist';
     public function pricelistFolder()
     {
