@@ -81,10 +81,10 @@ class UploadPricelist extends Component
                     'pricelist_category_id' => '0'
                 ]);
             }
-            session()->flash('success', __('messages.De bestanden zijn geupload.'));
+            session()->flash('success','De bestanden zijn geupload.');
             return $this->redirect('/pricelist/upload', navigate: true);
         } else {
-            session()->flash('error', __('messages.Upload één of meerdere bestanden.'));
+            session()->flash('error', 'Upload één of meerdere bestanden.');
         }
 
     }
