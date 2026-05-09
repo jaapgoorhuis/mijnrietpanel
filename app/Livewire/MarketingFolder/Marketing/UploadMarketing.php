@@ -64,7 +64,7 @@ class UploadMarketing extends Component
 
 
         'cropimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp', // max 2MB
-        'newCropimage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
+        'newCropimage' => 'image|mimes:jpg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
     ];
 
     public function messages(): array
