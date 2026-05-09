@@ -6,6 +6,7 @@
                     {{ __('messages.Mijn Rietpanel') }}
                 </a>
             </li>
+
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
@@ -27,7 +28,9 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">  {!! __('messages.uploaden') !!}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">
+                        {!! __('messages.uploaden') !!}
+                    </p>
                 </div>
             </li>
         </ol>
@@ -55,116 +58,157 @@
 
             {{-- UPLOAD NIEUWE BESTANDEN --}}
             @admin
-            <div class="bg-white p-6 rounded-lg shadow mb-6">
+
+            <div
+                x-data="{ cropUploading: false }"
+
+                x-on:livewire-upload-start="
+                    if ($event.detail.name === 'newCropimage') {
+                        cropUploading = true
+                    }
+                "
+
+                x-on:livewire-upload-finish="
+                    if ($event.detail.name === 'newCropimage') {
+                        cropUploading = false
+                    }
+                "
+
+                x-on:livewire-upload-error="
+                    if ($event.detail.name === 'newCropimage') {
+                        cropUploading = false
+                    }
+                "
+                class="bg-white p-6 rounded-lg shadow mb-6"
+            >
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
-                    <div
-                        x-data="{ cropUploading: false }"
-                        x-on:livewire-upload-start="
-                            if ($event.detail.name === 'newCropimage') {
-                                cropUploading = true
-                            }
-                        "
-                                            x-on:livewire-upload-finish="
-                            if ($event.detail.name === 'newCropimage') {
-                                cropUploading = false
-                            }
-                        "
-                                            x-on:livewire-upload-error="
-                            if ($event.detail.name === 'newCropimage') {
-                                cropUploading = false
-                            }
-                        "
-                                        >
-
-                    {{-- 📄 Bestanden upload --}}
+                    {{-- 📄 Bestand --}}
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             📄 Bestand *
                         </label>
-                        <input wire:model="file" type="file"
-                               class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
+
+                        <input
+                            wire:model="file"
+                            type="file"
+                            class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm"
+                        >
+
                         <p class="text-xs text-gray-400 mt-1">
                             Upload een bestand
                         </p>
+
                         @error('file')
-                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                        <div class="text-red-500 text-sm">
+                            {{ $message }}
+                        </div>
                         @enderror
                     </div>
 
-                    {{-- 🖼 Thumbnail upload --}}
+                    {{-- 🖼 Thumbnail --}}
                     <div class="flex flex-col">
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             🖼 Thumbnail *
                         </label>
-                        <input type="file" wire:model="newCropimage"
-                               class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
+
+                        <input
+                            type="file"
+                            wire:model="newCropimage"
+                            class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm"
+                        >
 
                         <p class="text-xs text-gray-400 mt-1">
                             Wordt gebruikt als preview afbeelding
                         </p>
 
                         @error('newCropimage')
-                        <div class="text-red-500 text-sm">{{ $message }}</div>
+                        <div class="text-red-500 text-sm">
+                            {{ $message }}
+                        </div>
                         @enderror
-
-
                     </div>
 
-                    {{-- Upload knop --}}
+                    {{-- BUTTON --}}
                     <div class="flex items-end md:items-center">
-                        <button wire:click="uploadFiles"
-                                :disabled="cropUploading"
-                                wire:loading.attr="disabled"
+
+                        <button
+                            wire:click="uploadFiles"
+                            :disabled="cropUploading"
+                            wire:loading.attr="disabled"
+                            wire:target="uploadFiles"
+
+                            class="w-full md:w-100 mt-[30px]
+                                   bg-gray-800 hover:bg-gray-900
+                                   disabled:hover:bg-gray-800
+                                   text-white rounded-lg px-4 py-3
+                                   flex items-center justify-center gap-2
+                                   disabled:cursor-not-allowed
+                                   disabled:opacity-70"
+                        >
+
+                            {{-- NORMAAL --}}
+                            <span
+                                x-show="!cropUploading"
+                                wire:loading.remove
                                 wire:target="uploadFiles"
-                                class="w-full md:w-100 mt-[30px]
-               bg-gray-800 hover:bg-gray-900
-               disabled:hover:bg-gray-800
-               text-white rounded-lg px-4 py-3
-               flex items-center justify-center gap-2
-               disabled:cursor-not-allowed
-               disabled:opacity-70">
+                            >
+                                <i class="fa-solid fa-upload"></i>
+                                Uploaden
+                            </span>
 
-    <span x-show="!cropUploading" wire:loading.remove wire:target="uploadFiles">
-        <i class="fa-solid fa-upload"></i> Uploaden
-    </span>
-
+                            {{-- THUMBNAIL UPLOAD --}}
                             <span x-show="cropUploading">
-        <i class="fa-solid fa-spinner fa-spin"></i> Thumbnail uploaden...
-    </span>
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                Thumbnail uploaden...
+                            </span>
 
-                            <span x-show="!cropUploading" wire:loading wire:target="uploadFiles">
-        <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-    </span>
+                            {{-- OPSLAAN --}}
+                            <span
+                                x-show="!cropUploading"
+                                wire:loading
+                                wire:target="uploadFiles"
+                            >
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                Uploaden...
+                            </span>
+
                         </button>
+
                     </div>
 
-                </div>
                 </div>
             </div>
-
 
             @endadmin
 
             {{-- GEEN ITEMS --}}
             @if(!count($this->marketing))
-                <p class="text-gray-500">Geen bestanden gevonden</p>
+                <p class="text-gray-500">
+                    Geen bestanden gevonden
+                </p>
             @else
 
                 <ul wire:sortable="updateOrder">
 
                     @foreach($this->marketing as $marketing)
 
-                        <li wire:sortable.item="{{ $marketing->id }}"
-                            wire:key="marketing-{{ $marketing->id }}">
+                        <li
+                            wire:sortable.item="{{ $marketing->id }}"
+                            wire:key="marketing-{{ $marketing->id }}"
+                        >
 
-                            <div x-data="{ open: false }"
-                                 class="border rounded-lg mb-3">
+                            <div
+                                x-data="{ open: false }"
+                                class="border rounded-lg mb-3"
+                            >
 
                                 {{-- HEADER --}}
-                                <div @click="open = !open"
-                                     class="flex justify-between items-center p-4 bg-gray-50 cursor-pointer">
+                                <div
+                                    @click="open = !open"
+                                    class="flex justify-between items-center p-4 bg-gray-50 cursor-pointer"
+                                >
 
                                     <div class="flex items-center gap-3">
                                         <i wire:sortable.handle class="fa-solid fa-sort cursor-move"></i>
@@ -175,76 +219,117 @@
                                 </div>
 
                                 {{-- CONTENT --}}
-                                <div x-show="open" x-transition class="p-5 border-t">
+                                <div
+                                    x-show="open"
+                                    x-transition
+                                    class="p-5 border-t"
+                                >
 
                                     {{-- DELETE --}}
                                     <div class="text-right mb-3">
-                                        <i wire:click="remove({{ $marketing->id }})"
-                                           class="fa-solid fa-trash cursor-pointer text-red-500"></i>
+                                        <i
+                                            wire:click="remove({{ $marketing->id }})"
+                                            class="fa-solid fa-trash cursor-pointer text-red-500"
+                                        ></i>
                                     </div>
 
-                                    {{-- NAAM --}}
-                                    <label class="text-gray-400 text-sm">Bestandsnaam</label>
-                                    <input type="text"
-                                           wire:model="friendly_name.{{ $marketing->id }}"
-                                           class="w-full border-b-2 border-gray-300 focus:border-[#C0A16E] mb-4">
+                                    {{-- BESTANDSNAAM --}}
+                                    <label class="text-gray-400 text-sm">
+                                        Bestandsnaam
+                                    </label>
 
-                                    {{-- IMAGE UPLOAD --}}
-                                    <label class="text-gray-400 text-sm">Tumbnail</label>
-                                    <input type="file"
-                                           wire:model="cropimage.{{ $marketing->id }}"
-                                           class="w-full border rounded-lg p-2 bg-gray-50">
+                                    <input
+                                        type="text"
+                                        wire:model="friendly_name.{{ $marketing->id }}"
+                                        class="w-full border-b-2 border-gray-300 focus:border-[#C0A16E] mb-4"
+                                    >
+
+                                    {{-- IMAGE --}}
+                                    <label class="text-gray-400 text-sm">
+                                        Thumbnail
+                                    </label>
+
+                                    <input
+                                        type="file"
+                                        wire:model="cropimage.{{ $marketing->id }}"
+                                        class="w-full border rounded-lg p-2 bg-gray-50"
+                                    >
 
                                     {{-- ERROR --}}
                                     @error('cropimage.'.$marketing->id)
-                                    <div class="text-red-500 text-sm">{{ $message }}</div>
-                                    @enderror
-                                    @error('newCropimage.'.$marketing->id)
-                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                    <div class="text-red-500 text-sm">
+                                        {{ $message }}
+                                    </div>
                                     @enderror
 
                                     {{-- HUIDIGE AFBEELDING --}}
                                     @if($marketing->cropimage)
                                         <div class="mt-3">
-                                            <p class="text-xs text-gray-400">Huidig:</p>
-                                            <img src="{{ asset('storage/marketing/' . $marketing->cropimage) }}"
-                                                 class="h-24 object-contain border rounded">
+                                            <p class="text-xs text-gray-400">
+                                                Huidig:
+                                            </p>
+
+                                            <img
+                                                src="{{ asset('storage/marketing/' . $marketing->cropimage) }}"
+                                                class="h-24 object-contain border rounded"
+                                            >
                                         </div>
                                     @endif
 
-                                    {{-- NIEUWE PREVIEW --}}
+                                    {{-- PREVIEW --}}
                                     @if(
-                                            isset($cropimage[$marketing->id]) &&
-                                            str_starts_with($cropimage[$marketing->id]->getMimeType(), 'image/')
-                                        )
+                                        isset($cropimage[$marketing->id]) &&
+                                        str_starts_with($cropimage[$marketing->id]->getMimeType(), 'image/')
+                                    )
+
                                         <div class="mt-3">
-                                            <p class="text-xs text-gray-400">Preview:</p>
-                                            <img src="{{ $cropimage[$marketing->id]->temporaryUrl() }}"
-                                                 class="h-24 object-contain border rounded">
+                                            <p class="text-xs text-gray-400">
+                                                Preview:
+                                            </p>
+
+                                            <img
+                                                src="{{ $cropimage[$marketing->id]->temporaryUrl() }}"
+                                                class="h-24 object-contain border rounded"
+                                            >
                                         </div>
+
                                     @endif
 
                                     {{-- BUTTON --}}
                                     <div class="text-right mt-4">
-                                        <button wire:click="updateItem({{ $marketing->id }})"
-                                                wire:loading.attr="disabled"
+
+                                        <button
+                                            wire:click="updateItem({{ $marketing->id }})"
+                                            wire:loading.attr="disabled"
+                                            wire:target="cropimage.{{ $marketing->id }}"
+                                            class="w-full md:w-100 mt-[30px]
+                                                   bg-gray-800 hover:bg-gray-900
+                                                   text-white rounded-lg px-4 py-3
+                                                   flex items-center justify-center gap-2"
+                                        >
+
+                                            <span
+                                                wire:loading.remove
                                                 wire:target="cropimage.{{ $marketing->id }}"
-                                                class="w-full md:w-100 mt-[30px] bg-gray-800 hover:bg-gray-900 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-2">
+                                            >
+                                                Opslaan
+                                            </span>
 
-                                <span wire:loading.remove wire:target="cropimage.{{ $marketing->id }}">
-                                   Opslaan
-                                </span>
+                                            <span
+                                                wire:loading
+                                                wire:target="cropimage.{{ $marketing->id }}"
+                                            >
+                                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                                Uploaden...
+                                            </span>
 
-                                            <span wire:loading wire:target="cropimage.{{ $marketing->id }}">
-                                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-                                </span>
                                         </button>
-
 
                                     </div>
 
                                 </div>
                             </div>
+
                         </li>
 
                     @endforeach
