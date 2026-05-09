@@ -56,7 +56,10 @@
             {{-- UPLOAD NIEUWE BESTANDEN --}}
             @admin
             <div class="bg-white p-6 rounded-lg shadow mb-6">
-
+                <div x-data="{ uploading: false }"
+                     x-on:livewire-upload-start="uploading = true"
+                     x-on:livewire-upload-finish="uploading = false"
+                     x-on:livewire-upload-error="uploading = false">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 
                     {{-- 📄 Bestanden upload --}}
@@ -102,8 +105,9 @@
                     {{-- Upload knop --}}
                     <div class="flex items-end md:items-center">
                         <button wire:click="uploadFiles"
+                                :disabled="uploading"
                                 wire:loading.attr="disabled"
-                                wire:target="file,newCropimage,uploadFiles"
+                                wire:target="uploadFiles"
                                 class="w-full md:w-100 mt-[30px]
                bg-gray-800 hover:bg-gray-900
                disabled:hover:bg-gray-800
@@ -112,11 +116,11 @@
                disabled:cursor-not-allowed
                disabled:opacity-70">
 
-    <span wire:loading.remove wire:target="file,newCropimage,uploadFiles">
+    <span x-show="!uploading" wire:loading.remove wire:target="uploadFiles">
         <i class="fa-solid fa-upload"></i> Uploaden
     </span>
 
-                            <span wire:loading wire:target="file,newCropimage,uploadFiles">
+                            <span x-show="uploading || $wire.__instance.loading">
         <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
     </span>
                         </button>
@@ -124,6 +128,7 @@
 
                 </div>
 
+            </div>
             </div>
 
 
