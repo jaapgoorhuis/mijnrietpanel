@@ -174,7 +174,6 @@ class UploadMarketing extends Component
             navigate: true
         );
 
-        $this->uploading = true;
     }
 
     public function remove($id)
