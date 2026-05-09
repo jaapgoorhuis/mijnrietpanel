@@ -94,7 +94,7 @@ class UploadPricelist extends Component
         $file = \App\Models\Pricelist::where('id', $id)->first();
         Storage::disk('public')->delete('pricelist/'.$file->file_name);
         \App\Models\Pricelist::where('id', $id)->delete();
-        session()->flash('success', __('messages.Het bestand is verwijderd.'));
+        session()->flash('success', 'Het bestand is verwijderd.');
     }
 
     public function updateFileName($fileId)
@@ -103,10 +103,10 @@ class UploadPricelist extends Component
             \App\Models\Pricelist::where('id', $fileId)->update([
                 'friendly_name' => $this->friendly_name[$fileId]
             ]);
-            session()->flash('success', __('messages.De bestandsnaam is aangepast.'));
+            session()->flash('success','De bestandsnaam is aangepast.');
 
         } else {
-            session()->flash('error', __('messages.Vul de naam van het bestand in.'));
+            session()->flash('error', 'Vul de naam van het bestand in.');
         }
     }
 }
