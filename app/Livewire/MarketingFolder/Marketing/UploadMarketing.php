@@ -25,7 +25,7 @@ class UploadMarketing extends Component
     public $folderId;
 
     public $folder;
-    public $uploading = false;
+    public bool $uploading = false;
 
     public $cropimage = []; // bestaande afbeeldingen per item
     public $newCropimage; // nieuwe afbeelding bij upload

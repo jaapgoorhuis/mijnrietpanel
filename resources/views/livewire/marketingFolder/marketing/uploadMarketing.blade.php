@@ -95,16 +95,22 @@
 
                     {{-- Upload knop --}}
                     <div class="flex items-end md:items-center">
-                        <button wire:click="uploadFiles"
-                                wire:loading.attr="disabled"
-                                wire:target="newCropimage"
-                                class="w-full md:w-100 mt-[30px]
-               bg-gray-800 hover:bg-gray-900
-               disabled:hover:bg-gray-800
-               text-white rounded-lg px-4 py-3
-               flex items-center justify-center gap-2
-               disabled:cursor-not-allowed
-               disabled:opacity-70">
+                        <button
+                            wire:click="uploadFiles"
+                            wire:loading.attr="disabled"
+                            wire:target="uploadFiles"
+
+                            x-data="{ uploading: @entangle('uploading') }"
+                            :disabled="uploading"
+
+                            class="w-full md:w-100 mt-[30px]
+           bg-gray-800 hover:bg-gray-900
+           disabled:hover:bg-gray-800
+           text-white rounded-lg px-4 py-3
+           flex items-center justify-center gap-2
+           disabled:cursor-not-allowed
+           disabled:opacity-70"
+                        >
 
     <span wire:loading.remove wire:target="newCropimage">
         <i class="fa-solid fa-upload"></i> Uploaden
