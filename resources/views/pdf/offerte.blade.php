@@ -8,18 +8,26 @@
     <link rel="stylesheet" href="{{ asset('pdf.css') }}" type="text/css">
 </head>
 <body>
+<?php
+$company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first();
+?>
+
+
 <div class="page-container" style="padding:15px;">
     <table class="w-full">
         <tr>
             <td class="w-half">
-                <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+                @if($company->logo)
+                    <img src="{{ public_path("storage/companylogos/".$company->logo)}}" alt="" style="width: 200px;"/>
+                @else
+                    <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
+                @endif
+
             </td>
         </tr>
     </table>
 
-    <?php
-    $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first();
-    ?>
+
 
     <div class="margin-top">
         <table class="w-full">
