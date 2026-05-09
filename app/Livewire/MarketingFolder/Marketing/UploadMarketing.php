@@ -61,17 +61,18 @@ class UploadMarketing extends Component
     }
 
     protected $rules = [
-
-
-        'cropimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp', // max 2MB
-        'newCropimage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
+        'cropimage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
+        'newCropimage' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
     ];
 
     public function messages(): array
     {
         return [
-            'cropimage.mimes' => 'Het bestand moet een afbeelding zijn',
+            'cropimage.image' => 'Het bestand moet een afbeelding zijn',
+            'cropimage.mimes' => 'Alleen jpg, jpeg, png, gif of webp toegestaan',
+
             'newCropimage.image' => 'Het nieuwe bestand moet een afbeelding zijn',
+            'newCropimage.mimes' => 'Alleen jpg, jpeg, png, gif of webp toegestaan',
             'newCropimage.max' => 'De afbeelding mag maximaal 2MB zijn',
             'newCropimage.required' => 'De thumbnail is verplicht',
         ];
@@ -112,7 +113,7 @@ class UploadMarketing extends Component
         $manager = new ImageManager(new Driver());
 
         // veilige bestandsnaam
-        $fileName = uniqid() . '_' . pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $extension;
+        $fileName = uniqid() . '_' . pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME) . '.jpg';
         $path = 'marketing/' . $fileName;
 
         // volgorde bepalen
@@ -148,7 +149,7 @@ class UploadMarketing extends Component
         if ($this->newCropimage) {
 
             $cropExtension = strtolower($this->newCropimage->getClientOriginalExtension());
-            $cropName = uniqid() . '_crop.' . $cropExtension;
+            $cropName = uniqid() . '_crop.jpg';
             $cropPath = 'marketing/' . $cropName;
 
             $cropImage = $manager->decodePath($this->newCropimage->getPathname());
