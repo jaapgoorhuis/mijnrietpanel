@@ -97,7 +97,8 @@
                     <div class="flex items-end md:items-center">
                         <button wire:click="uploadFiles"
                                 wire:loading.attr="disabled"
-                                wire:target="newCropimage"
+                                wire:target="uploadFiles"
+                                :disabled="$wire.uploading"
                                 class="w-full md:w-100 mt-[30px]
                bg-gray-800 hover:bg-gray-900
                disabled:hover:bg-gray-800

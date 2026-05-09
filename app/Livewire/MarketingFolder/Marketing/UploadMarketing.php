@@ -25,6 +25,7 @@ class UploadMarketing extends Component
     public $folderId;
 
     public $folder;
+    public $uploading = false;
 
     public $cropimage = []; // bestaande afbeeldingen per item
     public $newCropimage; // nieuwe afbeelding bij upload
@@ -90,6 +91,8 @@ class UploadMarketing extends Component
      */
     public function uploadFiles()
     {
+        $this->uploading = true;
+
         $this->validate();
 
         if (!$this->file) {
@@ -170,6 +173,8 @@ class UploadMarketing extends Component
             '/marketing-maps/' . $this->folderId . '/marketing/upload',
             navigate: true
         );
+
+        $this->uploading = true;
     }
 
     public function remove($id)
