@@ -64,7 +64,7 @@
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             📄 Bestand *
                         </label>
-                        <input wire:model.defer="file" type="file"
+                        <input wire:model="file" type="file"
                                class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
                         <p class="text-xs text-gray-400 mt-1">
                             Upload een bestand
@@ -79,7 +79,7 @@
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             🖼 Thumbnail *
                         </label>
-                        <input type="file" wire:model.defer="newCropimage"
+                        <input type="file" wire:model="newCropimage"
                                class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
 
                         <p class="text-xs text-gray-400 mt-1">
@@ -99,20 +99,20 @@
                                 wire:loading.attr="disabled"
                                 wire:target="file,newCropimage,uploadFiles"
                                 class="w-full md:w-100 mt-[30px]
-                                   bg-gray-800 hover:bg-gray-900
-                                   disabled:hover:bg-gray-800
-                                   text-white rounded-lg px-4 py-3
-                                   flex items-center justify-center gap-2
-                                   disabled:cursor-not-allowed
-                                   disabled:opacity-70">
+                               bg-gray-800 hover:bg-gray-900
+                               disabled:hover:bg-gray-800
+                               text-white rounded-lg px-4 py-3
+                               flex items-center justify-center gap-2
+                               disabled:cursor-not-allowed
+                               disabled:opacity-70">
 
-                                <span wire:loading.remove wire:target="file,newCropimage,uploadFiles">
-                                    <i class="fa-solid fa-upload"></i> Uploaden
-                                </span>
+                    <span wire:loading.remove wire:target="file,newCropimage,uploadFiles">
+                        <i class="fa-solid fa-upload"></i> Uploaden
+                    </span>
 
-                                                        <span wire:loading wire:target="file,newCropimage,uploadFiles">
-                                    <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
-                                </span>
+                                            <span wire:loading wire:target="file,newCropimage,uploadFiles">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Uploaden...
+                    </span>
                         </button>
                     </div>
 
