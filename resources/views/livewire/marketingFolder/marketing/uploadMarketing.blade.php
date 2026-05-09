@@ -64,7 +64,7 @@
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             📄 Bestand *
                         </label>
-                        <input wire:model="file" type="file"
+                        <input wire:model.defer="file" type="file"
                                class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
                         <p class="text-xs text-gray-400 mt-1">
                             Upload een bestand
@@ -79,7 +79,7 @@
                         <label class="text-sm font-medium text-gray-700 mb-1">
                             🖼 Thumbnail *
                         </label>
-                        <input type="file" wire:model="newCropimage"
+                        <input type="file" wire:model.defer="newCropimage"
                                class="w-full border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm">
 
                         <p class="text-xs text-gray-400 mt-1">
