@@ -78,6 +78,7 @@ class UploadPricelist extends Component
                     'file_name' => $file->getClientOriginalName(),
                     'order_id' => $orderId,
                     'lang' => $this->locale,
+                    'pricelist_category_id' => '0'
                 ]);
             }
             session()->flash('success', __('messages.De bestanden zijn geupload.'));
