@@ -226,9 +226,9 @@
 
 
 
-        <?php dd($orderLineHeeftOversize)?>
         @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
 
+                <?php dd($orderLineHeeftOversize)?>
 
             <table class="products toeslagen">
                 <tr class="items">
