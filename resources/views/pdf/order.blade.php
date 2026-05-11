@@ -369,7 +369,11 @@
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
             </tr>
 
-            <?php $totalToeslagPriceBtw = $totalToeslagPrice /100 *21 ?>
+            <?php if ($totalToeslagPrice >0) {
+                $totalToeslagPriceBtw = $totalToeslagPrice /100 *21
+                } else {
+                    $totalToeslagPriceBtw = 0;
+                }?>
 
             <tr>
                 <th style="text-align: left;">21% BTW:</th>
