@@ -183,7 +183,6 @@
 
 
 
-        <?php dd('test')?>
 
         <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
@@ -213,6 +212,10 @@
             }
         }
         ?>
+
+
+        <?php dd('test')?>
+
 
             @if(
                 $zaaglengtes > 0 ||
