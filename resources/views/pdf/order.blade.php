@@ -468,7 +468,7 @@
                     </strong>
                 </th>
 
-                <th style="text-align: left;">
+                <th style="text-align: left; border-top: 1px solid #000;">
                     <strong>
                         {!! '&euro;&nbsp;' . number_format($grandTotal, 2, ',', '.') !!}
                     </strong>
