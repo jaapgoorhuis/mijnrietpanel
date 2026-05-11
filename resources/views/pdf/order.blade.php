@@ -322,15 +322,7 @@
                 </tr>
 
 
-                @if(
-                     $zaaglengtes > 0 ||
-                     ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
-                     ($showLb && $laybacks > 0) ||
-                     ($showCb) ||
-                     ($showNokafschuining && $nokafschuining > 0) ||
-                     ($showVrijeRuimte && $vrijeruimte > 0) ||
-                     $orderLineHeeftOversize
-                 )
+                @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
                     <tr>
                         <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
                         <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
@@ -356,15 +348,7 @@
                 @endif
                 <tr>
                     <th style="text-align: left; border-top:1px solid black">
-                        <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
-                 $zaaglengtes > 0 ||
-                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
+                        <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
                                 incl. {{ __('messages.toeslagen') }}:@endif</strong>
                     </th>
 
