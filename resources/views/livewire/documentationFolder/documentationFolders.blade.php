@@ -40,10 +40,10 @@
             @if($documentationFolder->isEmpty())
                 <p class="text-gray-500">{{ __('messages.Er zijn geen mappen gevonden') }}</p>
             @else
-                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 justify-items-center">
+                <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
                     @foreach($documentationFolder as $folder)
                         <a href="{{ url('/documentation-maps/' . $folder->id . '/documentation') }}"
-                           class="group w-48 border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3">
+                           class="group border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3 w-full">
 
                             {{-- Afbeelding bovenaan --}}
                             @if($folder->cropimage)
@@ -60,7 +60,7 @@
 
                             {{-- Titel onder afbeelding --}}
                             <div class="mt-3 text-center w-full">
-                                <h2 class="text-sm font-medium text-gray-800 truncate">
+                                <h2 class="text-sm font-medium text-gray-800 break-words">
                                     {{ $folder->name }}
                                 </h2>
                             </div>

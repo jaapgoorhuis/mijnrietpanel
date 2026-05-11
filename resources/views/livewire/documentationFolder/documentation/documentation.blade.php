@@ -11,7 +11,7 @@
 
             <li class="flex items-center gap-2">
                 <i class="fa-solid fa-angle-right text-gray-400"></i>
-                <a href="/detail-maps" class="hover:text-[#C0A16E]">
+                <a href="/documentation-maps" class="hover:text-[#C0A16E]">
                     {{ __('messages.Documentatie categorieën') }}
                 </a>
             </li>
