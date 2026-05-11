@@ -225,7 +225,7 @@
 
 
 
-        <?php dd($hasCb)?>
+        <?php dd($hasNok)?>
 
         @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
 
