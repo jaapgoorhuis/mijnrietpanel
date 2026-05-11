@@ -185,7 +185,6 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         </table>
 
         <?php
-        $btw = $totalPrice * 0.21;
         $toeslagen = \App\Models\Surcharges::get();
         $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();
 
@@ -201,8 +200,6 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 break;
             }
         }
-
-        $allInPrice = $totalPrice + $btw;
         ?>
 
         @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $laybacks || $nokafschuining || $vrijeruimte || $orderLineHeeftOversize)
@@ -293,13 +290,56 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         @endif
     </div>
 
-    <!-- TOTAL -->
+    <?php
+    // Veilig checken of er toeslagen zijn
+    $hasToeslagen =
+        $zaaglengtes > 0 ||
+        (
+            isset($vierkantemeterToeslag) &&
+            $vierkantemeterToeslag &&
+            isset($vierkantemeterToeslag->number) &&
+            $totalM2 < $vierkantemeterToeslag->number
+        ) ||
+        ($showLb && $laybacks > 0) ||
+        ($showCb) ||
+        ($showNokafschuining && $nokafschuining > 0) ||
+        ($showVrijeRuimte && $vrijeruimte > 0) ||
+        $orderLineHeeftOversize;
+
+    // BTW berekeningen
+    $subtotalBtw = $totalPrice * 0.21;
+
+    $totalToeslagPriceBtw = $totalToeslagPrice > 0
+        ? $totalToeslagPrice * 0.21
+        : 0;
+
+    // TOTALE BTW
+    $totalBtw = $subtotalBtw;
+
+    if($hasToeslagen) {
+        $totalBtw += $totalToeslagPriceBtw;
+    }
+
+    // Eindtotaal
+    $grandTotal =
+        $totalPrice +
+        $subtotalBtw +
+        $totalToeslagPrice +
+        $totalToeslagPriceBtw;
+
+    // Eventuele offerte rule erbij
+    if($offerte->offerteRules) {
+        $grandTotal += $offerte->offerteRules->price;
+    }
+    ?>
+
+        <!-- TOTAL -->
     <div class="total" style="margin-top:50px;">
         <table class="total-table">
 
             <tr>
                 <th>{{ __('messages.Totaal') }} m²:</th>
-                <th>m² {{$totalM2}}</th>
+                <th>{{ number_format($totalM2, 2, ',', '.') }} m²</th>
             </tr>
 
             <tr>
@@ -307,7 +347,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 <th>€ {{number_format($totalPrice,2,',','.')}}</th>
             </tr>
 
-            @if($totalToeslagPrice > 0)
+            @if($hasToeslagen)
                 <tr>
                     <th>{{ __('messages.Toeslagen') }}:</th>
                     <th>€ {{number_format($totalToeslagPrice,2,',','.')}}</th>
@@ -316,7 +356,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
 
             <tr>
                 <th>21% BTW:</th>
-                <th>€ {{number_format($btw + ($totalToeslagPrice * 0.21),2,',','.')}}</th>
+                <th>€ {{number_format($totalBtw,2,',','.')}}</th>
             </tr>
 
             @if($offerte->offerteRules)
@@ -327,28 +367,19 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             @endif
 
             <tr>
-                <th style="text-align: left; border-top:1px solid black">
-                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
-                 $zaaglengtes > 0 ||
-                 $totalM2 < $vierkantemeterToeslag->number ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb && true) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
-                            incl. {{ __('messages.toeslagen') }}:@endif</strong>
+                <th>
+                    <strong>
+                        {{ __('messages.Totaal') }} incl. 21% BTW
+                        @if($hasToeslagen)
+                            , incl. {{ __('messages.toeslagen') }}
+                        @endif
+                    </strong>
                 </th>
 
-                <th style="border-top:1px solid #000;">
-                    € {{
-                        number_format(
-                            $allInPrice
-                            + $totalToeslagPrice
-                            + ($totalToeslagPrice * 0.21)
-                            + ($offerte->offerteRules->price ?? 0)
-                        ,2,',','.')
-                    }}
+                <th>
+                    <strong>
+                        € {{number_format($grandTotal,2,',','.')}}
+                    </strong>
                 </th>
             </tr>
 
@@ -360,7 +391,6 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
         <p>
             {!!  __('messages.orderConditions') !!}
-
         </p>
     </div>
 </div>
@@ -418,25 +448,23 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
 
     /* Totale prijzen tabel */
     .total-table {
-        width: 50%; /* prijsblok breedte */
+        width: 50%;
         border-collapse: separate;
         border-spacing: 0 2px;
         font-weight: normal;
-        margin-left: auto; /* rechts uitlijnen */
+        margin-left: auto;
         margin-right: 0;
     }
+
     .total-table th {
         padding: 2px 2px;
         font-weight: normal;
-    }
-    .total-table tr:last-child th {
-        border-top: 1px solid #000;
-        padding-top: 2px;
-        font-weight: bold;
+        text-align: left;
     }
 
-    .total-table tr th {
-        text-align: left;
+    .total-table tr:last-child th {
+        padding-top: 2px;
+        font-weight: bold;
     }
 
     /* Separator lijn */
@@ -455,9 +483,11 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         color: #000;
         margin-top: 10px;
     }
+
     .payment-conditions p {
         margin: 4px 0;
     }
+
     .payment-conditions a {
         color: #000;
         text-decoration: none;
@@ -465,8 +495,8 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
 
     /* Footer container */
     .total-footer-container {
-        margin-top: 50px; /* ruimte van content erboven */
-        page-break-inside: avoid; /* voorkomt breuk in PDF */
+        margin-top: 50px;
+        page-break-inside: avoid;
     }
 
     /* Afbeeldingen */
