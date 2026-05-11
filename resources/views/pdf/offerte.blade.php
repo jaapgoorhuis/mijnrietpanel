@@ -340,6 +340,28 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                             incl. {{ __('messages.toeslagen') }}:@endif</strong>
                 </th>
 
+                <th style="border-top:1px solid #000;"><strong>Totaal</strong></th>
+                <th style="border-top:1px solid #000;">
+                    € {{
+                        number_format(
+                            $allInPrice
+                            + $totalToeslagPrice
+                            + ($totalToeslagPrice * 0.21)
+                            + ($offerte->offerteRules->price ?? 0)
+                        ,2,',','.')
+                    }}
+                </th>
+
+                <th style="border-top:1px solid #000;">
+                    € {{
+                        number_format(
+                            $allInPrice
+                            + $totalToeslagPrice
+                            + ($totalToeslagPrice * 0.21)
+                            + ($offerte->offerteRules->price ?? 0)
+                        ,2,',','.')
+                    }}
+                </th>
             </tr>
 
         </table>
