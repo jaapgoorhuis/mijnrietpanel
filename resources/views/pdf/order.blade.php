@@ -224,11 +224,11 @@
         ?>
 
 
-        <?php dd('test')?>
 
 
         @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
 
+                <?php dd('test')?>
 
             <table class="products toeslagen">
                 <tr class="items">
