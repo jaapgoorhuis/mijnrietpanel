@@ -214,8 +214,6 @@
         ?>
 
 
-        <?php dd('test')?>
-
 
             @if(
                 $zaaglengtes > 0 ||
@@ -326,6 +324,12 @@
                             @endif
                     @endif
                 @endforeach
+
+
+
+                    <?php dd('test')?>
+
+
             </table>
         @endif
 
