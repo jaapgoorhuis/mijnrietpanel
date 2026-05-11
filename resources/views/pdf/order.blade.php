@@ -21,6 +21,9 @@
     $company = \App\Models\Company::where('id', $this->order->user->bedrijf_id)->first();
     ?>
 
+    <?php dd($company)?>
+
+
     <div class="margin-top">
         <table class="w-full">
             <tr>
