@@ -354,10 +354,7 @@
                 <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
             </tr>
-            <tr>
-                <th style="text-align: left;">21% BTW:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw, 2, ',', '.') !!}</th>
-            </tr>
+
 
             @if(
                  $zaaglengtes > 0 ||
@@ -371,6 +368,12 @@
             <tr>
                 <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
+            </tr>
+
+            <?php $totalToeslagPriceBtw = $totalToeslagPrice /100 *21 ?>
+            <tr>
+                <th style="text-align: left;">21% BTW:</th>
+                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
             </tr>
             @endif
 
