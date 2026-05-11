@@ -327,17 +327,19 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             @endif
 
             <tr>
-                <th style="border-top:1px solid #000;"><strong>Totaal</strong></th>
-                <th style="border-top:1px solid #000;">
-                    € {{
-                        number_format(
-                            $allInPrice
-                            + $totalToeslagPrice
-                            + ($totalToeslagPrice * 0.21)
-                            + ($offerte->offerteRules->price ?? 0)
-                        ,2,',','.')
-                    }}
+                <th style="text-align: left; border-top:1px solid black">
+                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
+                 $zaaglengtes > 0 ||
+                 $totalM2 < $vierkantemeterToeslag->number ||
+                 ($showLb && $laybacks > 0) ||
+                 ($showCb && true) ||
+                 ($showNokafschuining && $nokafschuining > 0) ||
+                 ($showVrijeRuimte && $vrijeruimte > 0) ||
+                 $orderLineHeeftOversize
+             )
+                            incl. {{ __('messages.toeslagen') }}:@endif</strong>
                 </th>
+
             </tr>
 
         </table>
