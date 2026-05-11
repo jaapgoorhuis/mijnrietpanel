@@ -186,7 +186,7 @@
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first(); ?>
         <?php $totalToeslagPrice = 0?>
-        <?php $allInPrice = $totalPrice + $btw ?>
+
         <?php $totalM2 = 0 ?>
         @foreach($order->orderLines as $orderLine)
                 <?php $totalM2 += $orderLine->m2; ?>
@@ -361,7 +361,7 @@
             </tr>
 
             <?php $btw = $totalPrice + $totalToeslagPrice /100 *21 ?>
-
+            <?php $allInPrice = $totalPrice + $btw ?>
 
         @if(
                  $zaaglengtes > 0 ||
