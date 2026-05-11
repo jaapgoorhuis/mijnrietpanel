@@ -215,6 +215,7 @@
 
 
 
+        <?php dd('test')?>
             @if(
                 $zaaglengtes > 0 ||
                 ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
@@ -225,7 +226,6 @@
                 $orderLineHeeftOversize
             )
 
-                <?php dd('test')?>
 
 
             <table class="products toeslagen">
