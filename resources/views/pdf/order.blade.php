@@ -213,19 +213,22 @@
         }
         ?>
 
+        <?php
+
+        $hasZaag = $zaaglengtes > 0;
+        $hasVierkant = !empty($vierkantemeterLimit) && $totalM2 < $vierkantemeterLimit;
+        $hasLb = !empty($showLb) && $laybacks > 0;
+        $hasCb = !empty($showCb);
+        $hasNok = !empty($showNokafschuining) && $nokafschuining > 0;
+        $hasVrije = !empty($showVrijeRuimte) && $vrijeruimte > 0;
+        ?>
 
 
+        <?php dd('test')?>
 
-        @if(
-             $zaaglengtes > 0 ||
-             (!empty($vierkantemeterLimit) && $totalM2 < $vierkantemeterLimit) ||
-             (!empty($showLb) && $laybacks > 0) ||
-             (!empty($showCb)) ||
-             (!empty($showNokafschuining) && $nokafschuining > 0) ||
-             (!empty($showVrijeRuimte) && $vrijeruimte > 0) ||
-             $orderLineHeeftOversize
-            )
-                <?php dd('test')?>
+
+        @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
+
 
             <table class="products toeslagen">
                 <tr class="items">
