@@ -341,9 +341,8 @@
         @endif
     </div>
 
-    <!-- Prijsblok -->
     <?php
-    // Veilig checken of er toeslagen zijn
+// Veilig checken of er toeslagen zijn
     $hasToeslagen =
         $zaaglengtes > 0 ||
         (
@@ -358,21 +357,28 @@
         ($showVrijeRuimte && $vrijeruimte > 0) ||
         $orderLineHeeftOversize;
 
-    // BTW berekeningen
+// BTW berekeningen
     $subtotalBtw = $totalPrice * 0.21;
 
     $totalToeslagPriceBtw = $totalToeslagPrice > 0
         ? $totalToeslagPrice * 0.21
         : 0;
 
-    // Eindtotaal
+// TOTALE BTW
+    $totalBtw = $subtotalBtw;
+
+    if($hasToeslagen) {
+        $totalBtw += $totalToeslagPriceBtw;
+    }
+
+// Eindtotaal
     $grandTotal =
         $totalPrice +
         $subtotalBtw +
         $totalToeslagPrice +
         $totalToeslagPriceBtw;
 
-    // Eventuele order rule erbij
+// Eventuele order rule erbij
     if($order->orderRules) {
         $grandTotal += $order->orderRules->price;
     }
@@ -403,17 +409,6 @@
                 </th>
             </tr>
 
-            <!-- BTW normale prijs -->
-            <tr>
-                <th style="text-align: left;">
-                    21% BTW:
-                </th>
-
-                <th style="text-align: left;">
-                    {!! '&euro;&nbsp;' . number_format($subtotalBtw, 2, ',', '.') !!}
-                </th>
-            </tr>
-
             <!-- Toeslagen -->
             @if($hasToeslagen)
 
@@ -427,18 +422,18 @@
                     </th>
                 </tr>
 
-                <!-- BTW over toeslagen -->
-                <tr>
-                    <th style="text-align: left;">
-                        21% BTW toeslagen:
-                    </th>
-
-                    <th style="text-align: left;">
-                        {!! '&euro;&nbsp;' . number_format($totalToeslagPriceBtw, 2, ',', '.') !!}
-                    </th>
-                </tr>
-
             @endif
+
+            <!-- BTW totaal -->
+            <tr>
+                <th style="text-align: left;">
+                    21% BTW:
+                </th>
+
+                <th style="text-align: left;">
+                    {!! '&euro;&nbsp;' . number_format($totalBtw, 2, ',', '.') !!}
+                </th>
+            </tr>
 
             <!-- Extra order rule -->
             @if($order->orderRules)
@@ -457,8 +452,7 @@
 
             <!-- Eindtotaal -->
             <tr>
-                <th style="text-align: left;
-        border-top: 1px solid #000;">
+                <th style="text-align: left; border-top: 1px solid #000;">
                     <strong>
                         {{ __('messages.Totaal') }} incl. 21% BTW
 
