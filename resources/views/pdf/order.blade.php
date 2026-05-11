@@ -185,8 +185,6 @@
         <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();?>
-
-        <?php dd($vierkantemeterToeslag)?>
         <?php $totalToeslagPrice = 0?>
         <?php $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw ?>
         <?php $totalM2 = 0 ?>
@@ -210,7 +208,7 @@
 
             @if(
                 $zaaglengtes > 0 ||
-
+                $totalM2 < $vierkantemeterToeslag->number ||
                 ($showLb && $laybacks > 0) ||
                 ($showCb) ||
                 ($showNokafschuining && $nokafschuining > 0) ||
@@ -359,7 +357,7 @@
 
             @if(
                  $zaaglengtes > 0 ||
-
+                 $totalM2 < $vierkantemeterToeslag->number ||
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
@@ -371,11 +369,11 @@
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
             </tr>
 
-            <?php if ($totalToeslagPrice >0) {
-                $totalToeslagPriceBtw = $totalToeslagPrice /100 *21
-                } else {
-                    $totalToeslagPriceBtw = 0;
-                }?>
+                    <?php
+                    $totalToeslagPriceBtw = $totalToeslagPrice > 0
+                        ? $totalToeslagPrice * 0.21
+                        : 0;
+                    ?>
 
             <tr>
                 <th style="text-align: left;">21% BTW:</th>
@@ -393,7 +391,7 @@
                 <th style="text-align: left; border-top:1px solid black">
                     <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
                  $zaaglengtes > 0 ||
-
+                 $totalM2 < $vierkantemeterToeslag->number ||
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
