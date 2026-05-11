@@ -215,18 +215,17 @@
 
 
 
-        <?php dd('test')?>
-            @if(
-                $zaaglengtes > 0 ||
-                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
-                ($showLb && $laybacks > 0) ||
-                ($showCb) ||
-                ($showNokafschuining && $nokafschuining > 0) ||
-                ($showVrijeRuimte && $vrijeruimte > 0) ||
-                $orderLineHeeftOversize
+
+        @if(
+             $zaaglengtes > 0 ||
+             (!empty($vierkantemeterLimit) && $totalM2 < $vierkantemeterLimit) ||
+             (!empty($showLb) && $laybacks > 0) ||
+             (!empty($showCb)) ||
+             (!empty($showNokafschuining) && $nokafschuining > 0) ||
+             (!empty($showVrijeRuimte) && $vrijeruimte > 0) ||
+             $orderLineHeeftOversize
             )
-
-
+                <?php dd('test')?>
 
             <table class="products toeslagen">
                 <tr class="items">
