@@ -271,7 +271,8 @@
                                 @if($orderLineHeeftOversize)
 
                                         <?php
-                                        $totalPrice = $toeslag->price;
+                                        $totalSurchagePrice = $toeslag->price;
+                                        $totalPrice += $totalSurchagePrice;
                                         $totalToeslagPrice += $totalPrice;
                                         ?>
 
@@ -279,7 +280,7 @@
                                         <td>{{ __('messages.'.$toeslag->name) }}</td>
                                         <td>1</td>
                                         <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                        <td>{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalSurchagePrice, 2, ',', '.') !!}</td>
                                     </tr>
 
                                 @endif
