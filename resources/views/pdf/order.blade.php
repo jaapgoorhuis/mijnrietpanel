@@ -224,6 +224,10 @@
                 ($showVrijeRuimte && $vrijeruimte > 0) ||
                 $orderLineHeeftOversize
             )
+
+                <?php dd('test')?>
+
+
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Toeslag') }}</strong></td>
@@ -327,7 +331,6 @@
 
 
 
-                    <?php dd('test')?>
 
 
             </table>
