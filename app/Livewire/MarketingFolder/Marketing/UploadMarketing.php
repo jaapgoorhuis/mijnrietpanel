@@ -95,6 +95,8 @@ class UploadMarketing extends Component
 
         $this->validate();
 
+        dd($this->file?->getSize());
+
         if (!$this->file) {
             session()->flash('error', 'Upload één of meerdere bestanden');
             return;
