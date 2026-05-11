@@ -272,7 +272,6 @@
 
                                         <?php
                                         $totalSurchagePrice = $toeslag->price;
-                                        $totalPrice += $totalSurchagePrice;
                                         $totalToeslagPrice += $totalSurchagePrice;
                                         ?>
 
