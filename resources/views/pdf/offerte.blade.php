@@ -419,6 +419,10 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         font-weight: bold;
     }
 
+    .total-table tr th {
+        text-align: left;
+    }
+
     /* Separator lijn */
     .price-separator {
         border: none;
