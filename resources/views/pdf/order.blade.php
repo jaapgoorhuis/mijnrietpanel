@@ -552,7 +552,6 @@
         font-weight: normal;
     }
     .total-table tr:last-child th {
-        border-top: 1px solid #000;
         padding-top: 2px;
         font-weight: bold;
     }
