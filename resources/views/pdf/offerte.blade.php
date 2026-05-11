@@ -367,7 +367,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             @endif
 
             <tr>
-                <th>
+                <th style="border-top: 1px solid #000;">
                     <strong>
                         {{ __('messages.Totaal') }} incl. 21% BTW
                         @if($hasToeslagen)
@@ -376,7 +376,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                     </strong>
                 </th>
 
-                <th>
+                <th style="border-top: 1px solid #000;">
                     <strong>
                         € {{number_format($grandTotal,2,',','.')}}
                     </strong>
