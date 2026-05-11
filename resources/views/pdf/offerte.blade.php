@@ -299,7 +299,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
 
             <tr>
                 <th>{{ __('messages.Totaal') }} m²:</th>
-                <th>{{$totalM2}}</th>
+                <th>m² {{$totalM2}}</th>
             </tr>
 
             <tr>
