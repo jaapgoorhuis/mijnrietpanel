@@ -114,70 +114,70 @@
             $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
             ?>
 
-            @foreach($orderLines as $orderLine)
-                    <?php $count++; ?>
-                <tr class="items">
-                    <td>{{ $count }}</td>
-                    <td>{{ $orderLine->fillTotaleLengte }} mm</td>
-                    @if($showCb)
-                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>
-                    @endif
-                    @if($showLb)
-                        <?php if($orderLine->lb > 0)  $laybacks += $orderLine->aantal?>
-                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>
-                    @endif
-                    @if($showNokafschuining)
-                        <?php if($orderLine->nokafschuining > 0)  $nokafschuining += $orderLine->aantal?>
-                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>
-                    @endif
+{{--            @foreach($orderLines as $orderLine)--}}
+{{--                    <?php $count++; ?>--}}
+{{--                <tr class="items">--}}
+{{--                    <td>{{ $count }}</td>--}}
+{{--                    <td>{{ $orderLine->fillTotaleLengte }} mm</td>--}}
+{{--                    @if($showCb)--}}
+{{--                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>--}}
+{{--                    @endif--}}
+{{--                    @if($showLb)--}}
+{{--                        <?php if($orderLine->lb > 0)  $laybacks += $orderLine->aantal?>--}}
+{{--                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>--}}
+{{--                    @endif--}}
+{{--                    @if($showNokafschuining)--}}
+{{--                        <?php if($orderLine->nokafschuining > 0)  $nokafschuining += $orderLine->aantal?>--}}
+{{--                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>--}}
+{{--                    @endif--}}
 
-                    @if($showVrijeRuimte)
-                        <?php if($orderLine->vrije_ruimte_2 > 0)  $vrijeruimte += $orderLine->aantal?>
-                        <td>
-                            {{ $orderLine->vrije_ruimte_2 > 0
-                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'
-                                : ''
-                            }}
-                        </td>
-                    @endif
+{{--                    @if($showVrijeRuimte)--}}
+{{--                        <?php if($orderLine->vrije_ruimte_2 > 0)  $vrijeruimte += $orderLine->aantal?>--}}
+{{--                        <td>--}}
+{{--                            {{ $orderLine->vrije_ruimte_2 > 0--}}
+{{--                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'--}}
+{{--                                : ''--}}
+{{--                            }}--}}
+{{--                        </td>--}}
+{{--                    @endif--}}
 
-                    <td>{{ $orderLine->m2 }} m²</td>
-                    <td>{{ $orderLine->aantal }}</td>
-                    <td>
-                            <?php
-                            $panelTypeModel = \App\Models\PanelType::where('name', $order->kerndikte)->first();
-                            if($company->is_reseller) {
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)
-                                    ->where('company_id', $company->id)->first();
-                                $discount = 0;
-                            } else {
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();
-                                $discount = $priceRule->price / 100 * $company->discount;
-                            }
+{{--                    <td>{{ $orderLine->m2 }} m²</td>--}}
+{{--                    <td>{{ $orderLine->aantal }}</td>--}}
+{{--                    <td>--}}
+{{--                            <?php--}}
+{{--                            $panelTypeModel = \App\Models\PanelType::where('name', $order->kerndikte)->first();--}}
+{{--                            if($company->is_reseller) {--}}
+{{--                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)--}}
+{{--                                    ->where('company_id', $company->id)->first();--}}
+{{--                                $discount = 0;--}}
+{{--                            } else {--}}
+{{--                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();--}}
+{{--                                $discount = $priceRule->price / 100 * $company->discount;--}}
+{{--                            }--}}
 
-                            $m2priceBeforeDiscount = $priceRule->price - $discount;
-                            $orderDiscount = $m2priceBeforeDiscount / 100 * $order->discount;
-                            $orderMarge = $m2priceBeforeDiscount / 100 * $order->marge;
+{{--                            $m2priceBeforeDiscount = $priceRule->price - $discount;--}}
+{{--                            $orderDiscount = $m2priceBeforeDiscount / 100 * $order->discount;--}}
+{{--                            $orderMarge = $m2priceBeforeDiscount / 100 * $order->marge;--}}
 
-                            if($company->is_reseller) {
-                                $m2price = $m2priceBeforeDiscount - $orderDiscount;
-                            } elseif($order->marge != 0) {
-                                $m2price = $m2priceBeforeDiscount + $orderMarge;
-                            } else {
-                                $m2price = $m2priceBeforeDiscount;
-                            }
+{{--                            if($company->is_reseller) {--}}
+{{--                                $m2price = $m2priceBeforeDiscount - $orderDiscount;--}}
+{{--                            } elseif($order->marge != 0) {--}}
+{{--                                $m2price = $m2priceBeforeDiscount + $orderMarge;--}}
+{{--                            } else {--}}
+{{--                                $m2price = $m2priceBeforeDiscount;--}}
+{{--                            }--}}
 
-                            $totalPrice += $orderLine->m2 * $m2price;
+{{--                            $totalPrice += $orderLine->m2 * $m2price;--}}
 
-                            if($zaaglengteToeslag && $orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {
-                                $zaaglengtes += $orderLine->aantal;
-                            }
-                            ?>
+{{--                            if($zaaglengteToeslag && $orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {--}}
+{{--                                $zaaglengtes += $orderLine->aantal;--}}
+{{--                            }--}}
+{{--                            ?>--}}
 
-                        {!! '&euro;&nbsp;' . number_format($orderLine->m2 * $m2price, 2, ',', '.') !!}
-                    </td>
-                </tr>
-            @endforeach
+{{--                        {!! '&euro;&nbsp;' . number_format($orderLine->m2 * $m2price, 2, ',', '.') !!}--}}
+{{--                    </td>--}}
+{{--                </tr>--}}
+{{--            @endforeach--}}
             </tbody>
         </table>
 
