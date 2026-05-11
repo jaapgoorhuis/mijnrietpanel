@@ -318,7 +318,6 @@
                 @endforeach
             </table>
         @endif
-        <?php $btw = $totalPrice + $totalToeslagPrice /100 *21 ?>
 
 
         @if($order->comment)
@@ -361,7 +360,10 @@
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
 
-            @if(
+            <?php $btw = $totalPrice + $totalToeslagPrice /100 *21 ?>
+
+
+        @if(
                  $zaaglengtes > 0 ||
                  $totalM2 < $vierkantemeterToeslag->number ||
                  ($showLb && $laybacks > 0) ||
