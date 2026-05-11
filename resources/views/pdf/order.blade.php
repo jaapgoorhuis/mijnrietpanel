@@ -9,6 +9,7 @@
 </head>
 <body>
 <div class="page-container" style="padding:15px;">
+
     <table class="w-full">
         <tr>
             <td class="w-half">
@@ -18,11 +19,8 @@
     </table>
 
     <?php
-    $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
+    $company = \App\Models\Company::where('id', $order->user->bedrijf_id ?? null)->first();
     ?>
-
-    <?php dd($company)?>
-
 
     <div class="margin-top">
         <table class="w-full">
@@ -30,23 +28,24 @@
                 <td class="w-half">
                     <div>Order #: {{$order->order_id}}</div>
                     <div>{{ __('messages.Order datum') }}: {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
-                    <div>{{ __('messages.Bedrijfs-id') }}: {{$company->id}}</div>
+                    <div>{{ __('messages.Bedrijfs-id') }}: {{$company->id ?? ''}}</div>
 
                     <div>{{ __('messages.Referentie') }}: {{$order->referentie}}</div>
                     <div>{{ __('messages.Verkoper') }}: {{$order->intaker}}</div>
-                    @if($order->status == 'In behandeling')
-                    <div>{{ __('messages.Gewenste afleverdatum') }}: {{$order->requested_delivery_date}}</div>
 
+                    @if($order->status == 'In behandeling')
+                        <div>{{ __('messages.Gewenste afleverdatum') }}: {{$order->requested_delivery_date}}</div>
                     @else
                         <div>{{ __('messages.Afleverdatum') }}: {{$order->delivery_date}}</div>
                     @endif
                 </td>
+
                 <td class="w-half">
-                    <div>{{$company->straat}}</div>
-                    <div>{{$company->postcode}}</div>
-                    <div>{{$company->plaats}}</div>
-                    <div>M: {{$order->user->email}}</div>
-                    <div>T: {{$order->user->phone}}</div>
+                    <div>{{$company->straat ?? ''}}</div>
+                    <div>{{$company->postcode ?? ''}}</div>
+                    <div>{{$company->plaats ?? ''}}</div>
+                    <div>M: {{$order->user->email ?? ''}}</div>
+                    <div>T: {{$order->user->phone ?? ''}}</div>
                 </td>
             </tr>
         </table>
@@ -68,44 +67,54 @@
     </div>
 
     <div class="margin-top">
+
         <h3>Order</h3>
+
         <table class="products">
             <tr>
                 <th>{{ __('messages.Rietkleur') }}</th>
                 <th>{{ __('messages.Toepassing') }}</th>
                 <th>{{ __('messages.Merk') }}</th>
                 <th>{{ __('messages.Kerndikte') }}</th>
-                <tr class="items">
-                    <td>{{$order->rietkleur}}</td>
-                    <td>{{$order->toepassing}}</td>
-                    <td>{{$order->merk_paneel}}</td>
-                    <td>{{$order->kerndikte}}</td>
-                </tr>
+            </tr>
+            <tr class="items">
+                <td>{{$order->rietkleur}}</td>
+                <td>{{$order->toepassing}}</td>
+                <td>{{$order->merk_paneel}}</td>
+                <td>{{$order->kerndikte}}</td>
+            </tr>
         </table>
 
         <h3>Panelen</h3>
+
         <table class="products">
             <thead>
             <tr>
                 <th>#</th>
                 <th>{{ __('messages.Lengte') }}</th>
+
                 @if($showCb)
-                <th>{{ __('messages.CB') }}</th>
+                    <th>{{ __('messages.CB') }}</th>
                 @endif
+
                 @if($showLb)
                     <th>{{ __('messages.LB') }}</th>
                 @endif
+
                 @if($showNokafschuining)
                     <th>{{ __('messages.Nokafschuining') }}</th>
                 @endif
+
                 @if($showVrijeRuimte)
                     <th>{{ __('messages.Vrije ruimte') }}</th>
                 @endif
+
                 <th>m²</th>
                 <th>{{ __('messages.Aantal') }}</th>
                 <th>{{ __('messages.Prijs') }}</th>
             </tr>
             </thead>
+
             <tbody>
             <?php
             $totalPrice = 0;
@@ -114,95 +123,72 @@
             $nokafschuining = 0;
             $vrijeruimte = 0;
             $count = 0;
-//            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
+
+            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
+
+            $panelTypeModel = \App\Models\PanelType::where('name', $order->kerndikte)->first();
+            $priceRuleGlobal = null;
+
+            if ($panelTypeModel) {
+                $priceRuleGlobal = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();
+            }
+
+            $totalPrice = 0;
             ?>
 
-{{--            @foreach($orderLines as $orderLine)--}}
-{{--                    <?php $count++; ?>--}}
-{{--                <tr class="items">--}}
-{{--                    <td>{{ $count }}</td>--}}
-{{--                    <td>{{ $orderLine->fillTotaleLengte }} mm</td>--}}
-{{--                    @if($showCb)--}}
-{{--                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>--}}
-{{--                    @endif--}}
-{{--                    @if($showLb)--}}
-{{--                        <?php if($orderLine->lb > 0)  $laybacks += $orderLine->aantal?>--}}
-{{--                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>--}}
-{{--                    @endif--}}
-{{--                    @if($showNokafschuining)--}}
-{{--                        <?php if($orderLine->nokafschuining > 0)  $nokafschuining += $orderLine->aantal?>--}}
-{{--                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>--}}
-{{--                    @endif--}}
+            @foreach($orderLines as $orderLine)
+                    <?php $count++; ?>
 
-{{--                    @if($showVrijeRuimte)--}}
-{{--                        <?php if($orderLine->vrije_ruimte_2 > 0)  $vrijeruimte += $orderLine->aantal?>--}}
-{{--                        <td>--}}
-{{--                            {{ $orderLine->vrije_ruimte_2 > 0--}}
-{{--                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'--}}
-{{--                                : ''--}}
-{{--                            }}--}}
-{{--                        </td>--}}
-{{--                    @endif--}}
+                <tr class="items">
+                    <td>{{ $count }}</td>
+                    <td>{{ $orderLine->fillTotaleLengte }} mm</td>
 
-{{--                    <td>{{ $orderLine->m2 }} m²</td>--}}
-{{--                    <td>{{ $orderLine->aantal }}</td>--}}
-{{--                    <td>--}}
-{{--                            <?php--}}
-{{--                            $panelTypeModel = \App\Models\PanelType::where('name', $order->kerndikte)->first();--}}
-{{--                            if($company->is_reseller) {--}}
-{{--                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)--}}
-{{--                                    ->where('company_id', $company->id)->first();--}}
-{{--                                $discount = 0;--}}
-{{--                            } else {--}}
-{{--                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();--}}
-{{--                                $discount = $priceRule->price / 100 * $company->discount;--}}
-{{--                            }--}}
+                    @if($showCb)
+                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb.' mm' : '' }}</td>
+                    @endif
 
-{{--                            $m2priceBeforeDiscount = $priceRule->price - $discount;--}}
-{{--                            $orderDiscount = $m2priceBeforeDiscount / 100 * $order->discount;--}}
-{{--                            $orderMarge = $m2priceBeforeDiscount / 100 * $order->marge;--}}
+                    @if($showLb)
+                            <?php if($orderLine->lb > 0) $laybacks += $orderLine->aantal; ?>
+                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb.' mm' : '' }}</td>
+                    @endif
 
-{{--                            if($company->is_reseller) {--}}
-{{--                                $m2price = $m2priceBeforeDiscount - $orderDiscount;--}}
-{{--                            } elseif($order->marge != 0) {--}}
-{{--                                $m2price = $m2priceBeforeDiscount + $orderMarge;--}}
-{{--                            } else {--}}
-{{--                                $m2price = $m2priceBeforeDiscount;--}}
-{{--                            }--}}
+                    @if($showNokafschuining)
+                            <?php if($orderLine->nokafschuining > 0) $nokafschuining += $orderLine->aantal; ?>
+                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining.' &deg;' : '' !!}</td>
+                    @endif
 
-{{--                            $totalPrice += $orderLine->m2 * $m2price;--}}
+                    @if($showVrijeRuimte)
+                            <?php if($orderLine->vrije_ruimte_2 > 0) $vrijeruimte += $orderLine->aantal; ?>
+                        <td>
+                            {{ $orderLine->vrije_ruimte_2 > 0
+                                ? $orderLine->vrije_ruimte_2.' mm'
+                                : '' }}
+                        </td>
+                    @endif
 
-{{--                            if($zaaglengteToeslag && $orderLine->fillTotaleLengte < $zaaglengteToeslag->number) {--}}
-{{--                                $zaaglengtes += $orderLine->aantal;--}}
-{{--                            }--}}
-{{--                            ?>--}}
+                    <td>{{ $orderLine->m2 }} m²</td>
+                    <td>{{ $orderLine->aantal }}</td>
 
-{{--                        {!! '&euro;&nbsp;' . number_format($orderLine->m2 * $m2price, 2, ',', '.') !!}--}}
-{{--                    </td>--}}
-{{--                </tr>--}}
-{{--            @endforeach--}}
+                    <td>
+                            <?php
+                            $m2price = $priceRuleGlobal->price ?? 0;
+                            $lineTotal = $orderLine->m2 * $m2price;
+                            $totalPrice += $lineTotal;
+                            ?>
+
+                        {!! '&euro;&nbsp;' . number_format($lineTotal, 2, ',', '.') !!}
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
 
-
-
-
-        <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
-        <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php
+        $totalM2 = $order->orderLines->sum('m2');
 
         $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();
         $vierkantemeterLimit = $vierkantemeterToeslag->number ?? null;
 
-        ?>
-        <?php $totalToeslagPrice = 0?>
-        <?php $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw ?>
-        <?php $totalM2 = 0 ?>
-        @foreach($order->orderLines as $orderLine)
-                <?php $totalM2 += $orderLine->m2; ?>
-        @endforeach
-
-        <?php
         $orderLineHeeftOversize = false;
         $oversizeThreshold = \App\Models\Surcharges::where('rule', 'order')->value('number');
 
@@ -214,344 +200,68 @@
                 }
             }
         }
-        ?>
-
-        <?php
 
         $hasZaag = $zaaglengtes > 0;
-        $hasVierkant = !empty($vierkantemeterLimit) && $totalM2 < $vierkantemeterLimit;
+        $hasVierkant = $vierkantemeterLimit && $totalM2 < $vierkantemeterLimit;
         $hasLb = !empty($showLb) && $laybacks > 0;
         $hasCb = !empty($showCb);
         $hasNok = !empty($showNokafschuining) && $nokafschuining > 0;
         $hasVrije = !empty($showVrijeRuimte) && $vrijeruimte > 0;
         ?>
 
+        @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
 
-
-
-{{--        @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)--}}
-
-{{--                <?php dd('test')?>--}}
-
-{{--            <table class="products toeslagen">--}}
-{{--                <tr class="items">--}}
-{{--                    <td><strong>{{ __('messages.Toeslag') }}</strong></td>--}}
-{{--                    <td><strong>{{ __('messages.Stuks') }}</strong></td>--}}
-{{--                    <td><strong>{{ __('messages.Stuksprijs') }}</strong></td>--}}
-{{--                    <td><strong>{{ __('messages.Totaal') }}</strong></td>--}}
-{{--                </tr>--}}
-
-{{--                @foreach($toeslagen as $toeslag)--}}
-{{--                    @if($toeslag)--}}
-{{--                        @if($toeslag->rule == 'vierkantemeter')--}}
-{{--                            <tr class="items">--}}
-{{--                                @if($totalM2 < $toeslag->number)--}}
-{{--                                    <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                    <td>1</td>--}}
-{{--                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                    <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                    <?php $totalToeslagPrice += $toeslag->price; ?>--}}
-{{--                                @endif--}}
-
-{{--                            </tr>--}}
-{{--                        @endif--}}
-
-{{--                        @if($toeslag->rule == 'zaaglengte')--}}
-{{--                            @if($zaaglengtes > 0)--}}
-{{--                            <tr class="items">--}}
-{{--                                    <?php $zaagprijs = $zaaglengtes * $toeslag->price ?>--}}
-{{--                                <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                <td>{{$zaaglengtes}}</td>--}}
-{{--                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                <td>{!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</td>--}}
-{{--                                    <?php $totalToeslagPrice += $zaagprijs; ?>--}}
-
-{{--                            </tr>--}}
-{{--                            @endif--}}
-{{--                        @endif--}}
-
-{{--                            @if($toeslag->rule == 'Layback')--}}
-{{--                                @if($showLb)--}}
-{{--                                    <tr class="items">--}}
-{{--                                            <?php $totalLaybackPrice = $laybacks * $toeslag->price ?>--}}
-{{--                                        <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                        <td>{{$laybacks}}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($totalLaybackPrice, 2, ',', '.') !!}</td>--}}
-{{--                                            <?php $totalToeslagPrice += $totalLaybackPrice ?>--}}
-
-{{--                                    </tr>--}}
-{{--                                @endif--}}
-{{--                            @endif--}}
-
-{{--                            @if($toeslag->rule == 'order')--}}
-
-{{--                                @if($orderLineHeeftOversize)--}}
-
-{{--                                        <?php--}}
-{{--                                        $totalSurchagePrice = $toeslag->price;--}}
-{{--                                        $totalToeslagPrice += $totalSurchagePrice;--}}
-{{--                                        ?>--}}
-
-{{--                                    <tr class="items">--}}
-{{--                                        <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                        <td>1</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($totalSurchagePrice, 2, ',', '.') !!}</td>--}}
-{{--                                    </tr>--}}
-
-{{--                                @endif--}}
-
-{{--                            @endif--}}
-
-{{--                            @if($toeslag->rule == 'Nokafschuining')--}}
-{{--                                @if($showNokafschuining)--}}
-{{--                                    <tr class="items">--}}
-{{--                                            <?php $totalNokAfschuiningprice = $nokafschuining * $toeslag->price ?>--}}
-{{--                                        <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                        <td>{{$nokafschuining}}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($totalNokAfschuiningprice, 2, ',', '.') !!}</td>--}}
-{{--                                            <?php $totalToeslagPrice += $totalNokAfschuiningprice ?>--}}
-
-{{--                                    </tr>--}}
-{{--                                @endif--}}
-{{--                            @endif--}}
-
-{{--                            @if($toeslag->rule == 'Vrije ruimte')--}}
-{{--                                @if($showVrijeRuimte)--}}
-{{--                                    <tr class="items">--}}
-{{--                                            <?php $vrijeruimteprice = $vrijeruimte * $toeslag->price ?>--}}
-{{--                                        <td>{{ __('messages.'.$toeslag->name) }}</td>--}}
-{{--                                        <td>{{$vrijeruimte}}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>--}}
-{{--                                        <td>{!! '&euro;&nbsp;' . number_format($vrijeruimteprice, 2, ',', '.') !!}</td>--}}
-{{--                                        <?php $totalToeslagPrice += $vrijeruimteprice ?>--}}
-
-{{--                                    </tr>--}}
-{{--                                @endif--}}
-{{--                            @endif--}}
-{{--                    @endif--}}
-{{--                @endforeach--}}
-
-
-
-
-
-{{--            </table>--}}
-{{--        @endif--}}
-
-        @if($order->comment)
             <table class="products toeslagen">
                 <tr class="items">
-                    <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
-                    @if($order->orderRules)
-                        <td>
-                            <strong>{{__('messages.Invloed op prijs')}}</strong>
-                        </td>
-                    @endif
+                    <td><strong>{{ __('messages.Toeslag') }}</strong></td>
+                    <td><strong>{{ __('messages.Stuks') }}</strong></td>
+                    <td><strong>{{ __('messages.Stuksprijs') }}</strong></td>
+                    <td><strong>{{ __('messages.Totaal') }}</strong></td>
                 </tr>
-                <tr class="items">
-                    <td>{{$order->comment}}</td>
-                    @if($order?->status === 'Bevestigd' && $order?->orderRules)
-                        <td>
-                            &euro;&nbsp;{{ number_format($order->orderRules->price, 2, ',', '.') }}
-                        </td>
+
+                @foreach($toeslagen as $toeslag)
+                    @if($toeslag)
+                        <tr class="items">
+                            <td>{{ __('messages.'.$toeslag->name) }}</td>
+                            <td>1</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                        </tr>
                     @endif
-                </tr>
+                @endforeach
             </table>
 
         @endif
+
     </div>
 
+    <style>
+        body, html { margin:0; padding:0; font-family: Arial, sans-serif; font-size:0.8rem; }
+        .w-full { width:100%; }
+        .w-half { width:50%; }
+        .margin-top { margin-top:1.25rem; }
 
-    <!-- Prijsblok (in normale flow) -->
-    <div class="total" style="width: 100%; margin-left:auto; margin-top:50px;">
-        <table class="total-table">
-            <tr>
-                <th style="text-align: left;">{{ __('messages.Totaal') }} m²:</th>
-                <th style="text-align: left;"> m² {{$totalM2}}</th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
-            </tr>
+        table.products {
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
 
+        table.products th {
+            background:#000;
+            color:#fff;
+            padding:0.5rem;
+        }
 
-            @if(
-                 $zaaglengtes > 0 ||
-                 ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
-            <tr>
-                <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
-            </tr>
+        table.products td {
+            padding:0.5rem;
+        }
 
-                    <?php
-                    $totalToeslagPriceBtw = $totalToeslagPrice > 0
-                        ? $totalToeslagPrice * 0.21
-                        : 0;
-                    ?>
+        table.products tr.items {
+            background:#f9fafb;
+        }
+    </style>
 
-            <tr>
-                <th style="text-align: left;">21% BTW:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
-            </tr>
-            @endif
-
-            @if($order->orderRules)
-                <tr>
-                    <th style="text-align: left;">{{$order->orderRules->rule}}:</th>
-                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}</th>
-                </tr>
-            @endif
-            <tr>
-                <th style="text-align: left; border-top:1px solid black">
-                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
-                 $zaaglengtes > 0 ||
-                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
-                            incl. {{ __('messages.toeslagen') }}:@endif</strong>
-                </th>
-
-                @if($order->orderRules)
-                    <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw+ $order->orderRules->price, 2, ',', '.')}}
-                    </th>
-                @else
-                    <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw, 2, ',', '.')}}
-                    </th>
-                @endif
-            </tr>
-        </table>
-    </div>
-
-    <!-- Footer altijd onderaan pagina -->
-    <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
-        <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
-        <p>
-            {!!  __('messages.orderConditions') !!}
-
-        </p>
-    </div>
 </div>
-
-<style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        font-size: 0.8rem;
-    }
-
-    .w-full { width: 100%; }
-    .w-half { width: 50%; }
-    .margin-top { margin-top: 1.25rem; }
-
-    /* Producten tabel */
-    table.products {
-        width: 100%;
-        font-size: 0.8rem;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    table.products th {
-        background-color: #000;
-        color: #fff;
-        padding: 0.5rem;
-        text-align: left;
-    }
-    table.products tr.items {
-        background-color: #f9fafb;
-    }
-    table.products td {
-        padding: 0.5rem 0.5rem 0.5rem 1rem;
-    }
-
-    /* Toeslagen tabel */
-    table.toeslagen {
-        width: 100%;
-        margin-top: 25px;
-        border-collapse: collapse;
-    }
-    table.toeslagen th {
-        background-color: #000;
-        color: #fff;
-        padding: 0.5rem;
-        text-align: left;
-    }
-    table.toeslagen tr.items {
-        background-color: #f9fafb;
-    }
-    table.toeslagen td {
-        padding: 0.5rem 0.5rem 0.5rem 1rem;
-    }
-
-    /* Totale prijzen tabel */
-    .total-table {
-        width: 50%; /* prijsblok breedte */
-        border-collapse: separate;
-        border-spacing: 0 2px;
-        font-weight: normal;
-        margin-left: auto; /* rechts uitlijnen */
-        margin-right: 0;
-    }
-    .total-table th {
-        padding: 2px 2px;
-        font-weight: normal;
-    }
-    .total-table tr:last-child th {
-        border-top: 1px solid #000;
-        padding-top: 2px;
-        font-weight: bold;
-    }
-
-    /* Separator lijn */
-    .price-separator {
-        border: none;
-        border-top: 1px solid #000;
-        margin: 10px 0;
-        width: 100%;
-    }
-
-    /* Betalingsvoorwaarden */
-    .payment-conditions {
-        text-align: left;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        color: #000;
-        margin-top: 10px;
-    }
-    .payment-conditions p {
-        margin: 4px 0;
-    }
-    .payment-conditions a {
-        color: #000;
-        text-decoration: none;
-    }
-
-    /* Footer container */
-    .total-footer-container {
-        margin-top: 50px; /* ruimte van content erboven */
-        page-break-inside: avoid; /* voorkomt breuk in PDF */
-    }
-
-    /* Afbeeldingen */
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-</style>
 </body>
 </html>
