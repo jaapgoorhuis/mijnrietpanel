@@ -271,7 +271,7 @@
                                 @if($orderLineHeeftOversize)
 
                                         <?php
-                                        $totalPrice += $toeslag->price;
+                                        $totalPrice = $toeslag->price;
                                         $totalToeslagPrice += $totalPrice;
                                         ?>
 
