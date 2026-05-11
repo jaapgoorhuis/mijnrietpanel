@@ -210,7 +210,7 @@
 
             @if(
                 $zaaglengtes > 0 ||
-                $totalM2 < $vierkantemeterToeslag->number ||
+
                 ($showLb && $laybacks > 0) ||
                 ($showCb) ||
                 ($showNokafschuining && $nokafschuining > 0) ||
@@ -359,7 +359,7 @@
 
             @if(
                  $zaaglengtes > 0 ||
-                 $totalM2 < $vierkantemeterToeslag->number ||
+
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
@@ -393,7 +393,7 @@
                 <th style="text-align: left; border-top:1px solid black">
                     <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
                  $zaaglengtes > 0 ||
-                 $totalM2 < $vierkantemeterToeslag->number ||
+
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
