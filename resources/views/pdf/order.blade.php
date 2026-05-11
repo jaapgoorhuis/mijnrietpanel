@@ -310,9 +310,76 @@
             </table>
         @endif
 
-        {{-- ================= PRIJSBLOK (blijft volledig intact) ================= --}}
-        {{-- (JE ORIGINELE PRIJSBLOK ZIT HIER ONGEWIJZIGD IN JE FILE) --}}
+        <div class="total" style="width: 100%; margin-left:auto; margin-top:50px;">
+            <table class="total-table">
+                <tr>
+                    <th style="text-align: left;">{{ __('messages.Totaal') }} m²:</th>
+                    <th style="text-align: left;"> m² {{$totalM2}}</th>
+                </tr>
+                <tr>
+                    <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
+                </tr>
 
+
+                @if(
+                     $zaaglengtes > 0 ||
+                     ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
+                     ($showLb && $laybacks > 0) ||
+                     ($showCb) ||
+                     ($showNokafschuining && $nokafschuining > 0) ||
+                     ($showVrijeRuimte && $vrijeruimte > 0) ||
+                     $orderLineHeeftOversize
+                 )
+                    <tr>
+                        <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
+                        <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
+                    </tr>
+
+                        <?php
+                        $totalToeslagPriceBtw = $totalToeslagPrice > 0
+                            ? $totalToeslagPrice * 0.21
+                            : 0;
+                        ?>
+
+                    <tr>
+                        <th style="text-align: left;">21% BTW:</th>
+                        <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
+                    </tr>
+                @endif
+
+                @if($order->orderRules)
+                    <tr>
+                        <th style="text-align: left;">{{$order->orderRules->rule}}:</th>
+                        <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}</th>
+                    </tr>
+                @endif
+                <tr>
+                    <th style="text-align: left; border-top:1px solid black">
+                        <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
+                 $zaaglengtes > 0 ||
+                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
+                 ($showLb && $laybacks > 0) ||
+                 ($showCb) ||
+                 ($showNokafschuining && $nokafschuining > 0) ||
+                 ($showVrijeRuimte && $vrijeruimte > 0) ||
+                 $orderLineHeeftOversize
+             )
+                                incl. {{ __('messages.toeslagen') }}:@endif</strong>
+                    </th>
+
+                    @if($order->orderRules)
+                        <th style="text-align: left; border-top:1px solid black">
+                            € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw+ $order->orderRules->price, 2, ',', '.')}}
+                        </th>
+                    @else
+                        <th style="text-align: left; border-top:1px solid black">
+                            € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw, 2, ',', '.')}}
+                        </th>
+                    @endif
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
