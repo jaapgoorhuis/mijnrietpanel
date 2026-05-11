@@ -399,11 +399,11 @@
 
                 @if($order->orderRules)
                     <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice + $order->orderRules->price, 2, ',', '.')}}
+                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw+ $order->orderRules->price, 2, ',', '.')}}
                     </th>
                 @else
                     <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice, 2, ',', '.')}}
+                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw, 2, ',', '.')}}
                     </th>
                 @endif
             </tr>
