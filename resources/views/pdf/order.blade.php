@@ -18,7 +18,7 @@
     </table>
 
     <?php
-    $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
+    $company = \App\Models\Company::where('id', $this->order->user->bedrijf_id)->first();
     ?>
 
     <div class="margin-top">
