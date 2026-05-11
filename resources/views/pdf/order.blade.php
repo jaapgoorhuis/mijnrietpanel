@@ -18,7 +18,7 @@
     </table>
 
     <?php
-    $company = \App\Models\Company::where('id', $this->order->user->bedrijf_id)->first();
+    $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
     ?>
 
     <div class="margin-top">
@@ -182,11 +182,11 @@
         </table>
 
 
-
+        <?php $btw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first(); ?>
         <?php $totalToeslagPrice = 0?>
-
+        <?php $allInPrice = $totalPrice + $btw ?>
         <?php $totalM2 = 0 ?>
         @foreach($order->orderLines as $orderLine)
                 <?php $totalM2 += $orderLine->m2; ?>
@@ -272,7 +272,7 @@
 
                                         <?php
                                         $totalSurchagePrice = $toeslag->price;
-
+                                        $totalPrice += $totalSurchagePrice;
                                         $totalToeslagPrice += $totalSurchagePrice;
                                         ?>
 
@@ -319,7 +319,6 @@
             </table>
         @endif
 
-
         @if($order->comment)
             <table class="products toeslagen">
                 <tr class="items">
@@ -360,10 +359,7 @@
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
 
-            <?php $btw = $totalPrice + $totalToeslagPrice /100 *21 ?>
-            <?php $allInPrice = $totalPrice + $btw ?>
-
-        @if(
+            @if(
                  $zaaglengtes > 0 ||
                  $totalM2 < $vierkantemeterToeslag->number ||
                  ($showLb && $laybacks > 0) ||
