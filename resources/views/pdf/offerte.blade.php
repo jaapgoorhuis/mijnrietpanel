@@ -356,8 +356,12 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
     </div>
 
     <!-- FOOTER -->
-    <div class="footer" style="position:fixed;bottom:0;width:100%;padding:15px;border-top:1px solid #000;">
-        <strong>{{ __('messages.Betalingsconditie') }}:</strong> {{ __('messages.14 dagen netto') }}
+    <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
+        <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
+        <p>
+            {!!  __('messages.orderConditions') !!}
+
+        </p>
     </div>
 </div>
 
