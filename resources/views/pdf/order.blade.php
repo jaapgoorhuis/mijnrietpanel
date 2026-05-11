@@ -186,6 +186,7 @@
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();?>
         <?php $vierkantemeterLimit = $vierkantemeterToeslag->number ?? null;?>
+        <?php dd($vierkantemeterToeslag);?>
         <?php $totalToeslagPrice = 0?>
         <?php $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw ?>
         <?php $totalM2 = 0 ?>
