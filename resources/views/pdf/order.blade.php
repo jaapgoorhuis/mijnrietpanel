@@ -303,11 +303,12 @@
                             @if($toeslag->rule == 'Vrije ruimte')
                                 @if($showVrijeRuimte)
                                     <tr class="items">
-                                            <?php $totalToeslagPrice += $vrijeruimte * $toeslag->price ?>
+                                            <?php $vrijeruimteprice = $vrijeruimte * $toeslag->price ?>
                                         <td>{{ __('messages.'.$toeslag->name) }}</td>
                                         <td>{{$vrijeruimte}}</td>
                                         <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                        <td>{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</td>
+                                        <td>{!! '&euro;&nbsp;' . number_format($vrijeruimteprice, 2, ',', '.') !!}</td>
+                                        <?php $totalToeslagPrice += $vrijeruimteprice ?>
 
                                     </tr>
                                 @endif
