@@ -17,6 +17,7 @@
         </tr>
     </table>
 
+    <?php dd('test')?>
     <?php
     $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
     ?>
