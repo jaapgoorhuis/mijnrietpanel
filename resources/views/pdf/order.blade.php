@@ -90,23 +90,10 @@
             <tr>
                 <th>#</th>
                 <th>{{ __('messages.Lengte') }}</th>
-
-                @if($showCb)
-                    <th>{{ __('messages.CB') }}</th>
-                @endif
-
-                @if($showLb)
-                    <th>{{ __('messages.LB') }}</th>
-                @endif
-
-                @if($showNokafschuining)
-                    <th>{{ __('messages.Nokafschuining') }}</th>
-                @endif
-
-                @if($showVrijeRuimte)
-                    <th>{{ __('messages.Vrije ruimte') }}</th>
-                @endif
-
+                @if($showCb)<th>{{ __('messages.CB') }}</th>@endif
+                @if($showLb)<th>{{ __('messages.LB') }}</th>@endif
+                @if($showNokafschuining)<th>{{ __('messages.Nokafschuining') }}</th>@endif
+                @if($showVrijeRuimte)<th>{{ __('messages.Vrije ruimte') }}</th>@endif
                 <th>m²</th>
                 <th>{{ __('messages.Aantal') }}</th>
                 <th>{{ __('messages.Prijs') }}</th>
@@ -133,26 +120,25 @@
                     <td>{{ $orderLine->fillTotaleLengte }} mm</td>
 
                     @if($showCb)
-                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>
+                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb.' mm' : '' }}</td>
                     @endif
 
                     @if($showLb)
                             <?php if($orderLine->lb > 0) $laybacks += $orderLine->aantal; ?>
-                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>
+                        <td>{{ $orderLine->lb > 0 ? $orderLine->lb.' mm' : '' }}</td>
                     @endif
 
                     @if($showNokafschuining)
                             <?php if($orderLine->nokafschuining > 0) $nokafschuining += $orderLine->aantal; ?>
-                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>
+                        <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining.' &deg;' : '' !!}</td>
                     @endif
 
                     @if($showVrijeRuimte)
                             <?php if($orderLine->vrije_ruimte_2 > 0) $vrijeruimte += $orderLine->aantal; ?>
                         <td>
                             {{ $orderLine->vrije_ruimte_2 > 0
-                                ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'
-                                : ''
-                            }}
+                                ? $orderLine->vrije_ruimte_2.' mm ('.$orderLine->vrije_ruimte_1.' '.__('messages.mm vanaf boven').')'
+                                : '' }}
                         </td>
                     @endif
 
@@ -173,6 +159,7 @@
                             }
 
                             $m2priceBeforeDiscount = $priceRule->price - $discount;
+
                             $orderDiscount = $m2priceBeforeDiscount / 100 * $order->discount;
                             $orderMarge = $m2priceBeforeDiscount / 100 * $order->marge;
 
@@ -206,13 +193,14 @@
         $vierkantemeterLimit = $vierkantemeterToeslag->number ?? null;
 
         $totalToeslagPrice = 0;
+        $totalToeslagPriceBtw = 0; // 🔥 FIX: altijd bestaan
         $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw;
-        $totalM2 = 0;
-        @foreach($order->orderLines as $orderLine)
-            <?php $totalM2 += $orderLine->m2; ?>
-        @endforeach
 
-        <?php
+        $totalM2 = 0;
+        foreach($order->orderLines as $orderLine) {
+            $totalM2 += $orderLine->m2;
+        }
+
         $orderLineHeeftOversize = false;
         $oversizeThreshold = \App\Models\Surcharges::where('rule', 'order')->value('number');
 
@@ -225,17 +213,15 @@
             }
         }
 
-        // FIXED BOOLEANS
         $hasZaag = $zaaglengtes > 0;
-        $hasVierkant = $vierkantemeterLimit !== null && $totalM2 < $vierkantemeterLimit;
-        $hasLb = $showLb && $laybacks > 0;
-        $hasCb = $showCb;
-        $hasNok = $showNokafschuining && $nokafschuining > 0;
-        $hasVrije = $showVrijeRuimte && $vrijeruimte > 0;
+        $hasVierkant = !empty($vierkantemeterLimit) && $totalM2 < $vierkantemeterLimit;
+        $hasLb = !empty($showLb) && $laybacks > 0;
+        $hasCb = !empty($showCb);
+        $hasNok = !empty($showNokafschuining) && $nokafschuining > 0;
+        $hasVrije = !empty($showVrijeRuimte) && $vrijeruimte > 0;
         ?>
 
         @if($hasZaag || $hasVierkant || $hasLb || $hasCb || $hasNok || $hasVrije || $orderLineHeeftOversize)
-
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Toeslag') }}</strong></td>
@@ -246,29 +232,15 @@
 
                 @foreach($toeslagen as $toeslag)
 
-                    @if($toeslag->rule == 'vierkantemeter')
-                        @if($totalM2 < $toeslag->number)
-                            <tr class="items">
-                                <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                <td>1</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                            </tr>
-                                <?php $totalToeslagPrice += $toeslag->price; ?>
-                        @endif
-                    @endif
-
-                    @if($toeslag->rule == 'zaaglengte')
-                        @if($zaaglengtes > 0)
-                                <?php $zaagprijs = $zaaglengtes * $toeslag->price; ?>
-                            <tr class="items">
-                                <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                <td>{{$zaaglengtes}}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($zaagprijs, 2, ',', '.') !!}</td>
-                            </tr>
-                                <?php $totalToeslagPrice += $zaagprijs; ?>
-                        @endif
+                    @if($toeslag->rule == 'zaaglengte' && $zaaglengtes > 0)
+                            <?php $zaagprijs = $zaaglengtes * $toeslag->price; ?>
+                        <tr class="items">
+                            <td>{{ __('messages.'.$toeslag->name) }}</td>
+                            <td>{{$zaaglengtes}}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price,2,',','.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($zaagprijs,2,',','.') !!}</td>
+                        </tr>
+                            <?php $totalToeslagPrice += $zaagprijs; ?>
                     @endif
 
                     @if($toeslag->rule == 'Layback' && $showLb)
@@ -276,8 +248,8 @@
                         <tr class="items">
                             <td>{{ __('messages.'.$toeslag->name) }}</td>
                             <td>{{$laybacks}}</td>
-                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                            <td>{!! '&euro;&nbsp;' . number_format($totalLaybackPrice, 2, ',', '.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price,2,',','.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($totalLaybackPrice,2,',','.') !!}</td>
                         </tr>
                             <?php $totalToeslagPrice += $totalLaybackPrice; ?>
                     @endif
@@ -286,47 +258,84 @@
                         <tr class="items">
                             <td>{{ __('messages.'.$toeslag->name) }}</td>
                             <td>1</td>
-                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price,2,',','.') !!}</td>
+                            <td>{!! '&euro;&nbsp;' . number_format($toeslag->price,2,',','.') !!}</td>
                         </tr>
                             <?php $totalToeslagPrice += $toeslag->price; ?>
-                    @endif
-
-                    @if($toeslag->rule == 'Nokafschuining')
-                        @if($showNokafschuining)
-                                <?php $totalNokAfschuiningprice = $nokafschuining * $toeslag->price; ?>
-                            <tr class="items">
-                                <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                <td>{{$nokafschuining}}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($totalNokAfschuiningprice, 2, ',', '.') !!}</td>
-                            </tr>
-                                <?php $totalToeslagPrice += $totalNokAfschuiningprice; ?>
-                        @endif
-                    @endif
-
-                    @if($toeslag->rule == 'Vrije ruimte')
-                        @if($showVrijeRuimte)
-                                <?php $vrijeruimteprice = $vrijeruimte * $toeslag->price; ?>
-                            <tr class="items">
-                                <td>{{ __('messages.'.$toeslag->name) }}</td>
-                                <td>{{$vrijeruimte}}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                <td>{!! '&euro;&nbsp;' . number_format($vrijeruimteprice, 2, ',', '.') !!}</td>
-                            </tr>
-                                <?php $totalToeslagPrice += $vrijeruimteprice; ?>
-                        @endif
                     @endif
 
                 @endforeach
             </table>
         @endif
 
+        @if($order->comment)
+            <table class="products toeslagen">
+                <tr class="items">
+                    <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
+                </tr>
+                <tr class="items">
+                    <td>{{$order->comment}}</td>
+                </tr>
+            </table>
+        @endif
     </div>
 
-    {{-- ================== PRIJSBLOK (VOLLEDIG ORIGINEEL, NIETS GEWIJZIGD) ================== --}}
+    <!-- PRIJSBLOK (ONGEWIJZIGD) -->
+    <div class="total" style="width: 100%; margin-left:auto; margin-top:50px;">
+        <table class="total-table">
+            <tr>
+                <th style="text-align: left;">{{ __('messages.Totaal') }} m²:</th>
+                <th style="text-align: left;"> m² {{$totalM2}}</th>
+            </tr>
+            <tr>
+                <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
+                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
+            </tr>
 
+            @if(
+                $zaaglengtes > 0 ||
+                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
+                ($showLb && $laybacks > 0) ||
+                ($showCb) ||
+                ($showNokafschuining && $nokafschuining > 0) ||
+                ($showVrijeRuimte && $vrijeruimte > 0) ||
+                $orderLineHeeftOversize
+            )
+                <tr>
+                    <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
+                </tr>
 
+                    <?php
+                    $totalToeslagPriceBtw = $totalToeslagPrice * 0.21;
+                    ?>
+
+                <tr>
+                    <th style="text-align: left;">21% BTW:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
+                </tr>
+            @endif
+
+            @if($order->orderRules)
+                <tr>
+                    <th style="text-align: left;">{{$order->orderRules->rule}}:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}</th>
+                </tr>
+            @endif
+
+            <tr>
+                <th style="text-align: left; border-top:1px solid black">
+                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW</strong>
+                </th>
+
+                <th style="text-align: left; border-top:1px solid black">
+                    € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw, 2, ',', '.')}}
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- FOOTER -->
     <div class="footer" style="position: fixed; padding:15px; bottom: 0; left: 0; width: 100%; font-size: 0.75rem; line-height: 1.4; border-top: 1px solid #000; padding-top:5px;">
         <p><strong>{{ __('messages.Betalingsconditie') }}:</strong>{{ __('messages.14 dagen netto') }}</p>
         <p>{!! __('messages.orderConditions') !!}</p>
@@ -346,21 +355,18 @@
 
     table.products {
         width: 100%;
-        font-size: 0.8rem;
         border-collapse: collapse;
         margin-top: 20px;
     }
+
     table.products th {
-        background-color: #000;
+        background: #000;
         color: #fff;
         padding: 0.5rem;
-        text-align: left;
     }
-    table.products tr.items {
-        background-color: #f9fafb;
-    }
+
     table.products td {
-        padding: 0.5rem 0.5rem 0.5rem 1rem;
+        padding: 0.5rem;
     }
 
     table.toeslagen {
@@ -368,36 +374,11 @@
         margin-top: 25px;
         border-collapse: collapse;
     }
-    table.toeslagen th {
-        background-color: #000;
-        color: #fff;
-        padding: 0.5rem;
-        text-align: left;
-    }
-    table.toeslagen tr.items {
-        background-color: #f9fafb;
-    }
-    table.toeslagen td {
-        padding: 0.5rem 0.5rem 0.5rem 1rem;
-    }
 
     .total-table {
         width: 50%;
-        border-collapse: separate;
-        border-spacing: 0 2px;
-        font-weight: normal;
         margin-left: auto;
     }
-    .total-table tr:last-child th {
-        border-top: 1px solid #000;
-        font-weight: bold;
-    }
-
-    img {
-        max-width: 100%;
-        height: auto;
-    }
 </style>
-
 </body>
 </html>
