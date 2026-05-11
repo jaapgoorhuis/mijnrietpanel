@@ -341,7 +341,7 @@
         @endif
     </div>
 
-
+    <!-- Prijsblok -->
     <?php
     // Veilig checken of er toeslagen zijn
     $hasToeslagen =
@@ -457,7 +457,7 @@
 
             <!-- Eindtotaal -->
             <tr>
-                <th style="text-align: left; border-top:1px solid black">
+                <th style="text-align: left;">
                     <strong>
                         {{ __('messages.Totaal') }} incl. 21% BTW
 
@@ -467,7 +467,7 @@
                     </strong>
                 </th>
 
-                <th style="text-align: left; border-top:1px solid black">
+                <th style="text-align: left;">
                     <strong>
                         {!! '&euro;&nbsp;' . number_format($grandTotal, 2, ',', '.') !!}
                     </strong>
