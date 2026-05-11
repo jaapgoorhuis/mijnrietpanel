@@ -371,12 +371,13 @@
             </tr>
 
             <?php $totalToeslagPriceBtw = $totalToeslagPrice /100 *21 ?>
-            {{$totalPriceWithouthSurchargesBtw}}
-            {{$totalToeslagPriceBtw}}
 
             <tr>
                 <th style="text-align: left;">21% BTW:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
+                <th>
+                    {{$totalPriceWithouthSurchargesBtw}} {{$totalToeslagPriceBtw}}
+                </th>
             </tr>
             @endif
 
