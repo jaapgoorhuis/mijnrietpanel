@@ -399,7 +399,6 @@ class CreateOrders extends Component
         // 3️⃣ Als er geen fouten zijn, opslaan
         if (! $this->getErrorBag()->any()) {
 
-            dd('huh');
             $latestOrder = Order::orderBy('id', 'desc')->first();
 
             if ($latestOrder) {
