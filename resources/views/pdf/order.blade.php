@@ -111,7 +111,7 @@
             $nokafschuining = 0;
             $vrijeruimte = 0;
             $count = 0;
-            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
+//            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
             ?>
 
 {{--            @foreach($orderLines as $orderLine)--}}
