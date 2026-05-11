@@ -255,12 +255,12 @@
                             @if($toeslag->rule == 'Layback')
                                 @if($showLb)
                                     <tr class="items">
-                                            <?php $totalToeslagPrice += $laybacks * $toeslag->price ?>
+                                            <?php $totalLaybackPrice = $laybacks * $toeslag->price ?>
                                         <td>{{ __('messages.'.$toeslag->name) }}</td>
                                         <td>{{$laybacks}}</td>
                                         <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                        <td>{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</td>
-
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalLaybackPrice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalLaybackPrice ?>
 
                                     </tr>
                                 @endif
@@ -289,12 +289,12 @@
                             @if($toeslag->rule == 'Nokafschuining')
                                 @if($showNokafschuining)
                                     <tr class="items">
-                                            <?php $totalToeslagPrice += $nokafschuining * $toeslag->price ?>
+                                            <?php $totalNokAfschuiningprice = $nokafschuining * $toeslag->price ?>
                                         <td>{{ __('messages.'.$toeslag->name) }}</td>
                                         <td>{{$nokafschuining}}</td>
                                         <td>{!! '&euro;&nbsp;' . number_format($toeslag->price, 2, ',', '.') !!}</td>
-                                        <td>{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</td>
-
+                                        <td>{!! '&euro;&nbsp;' . number_format($totalNokAfschuiningprice, 2, ',', '.') !!}</td>
+                                            <?php $totalToeslagPrice += $totalNokAfschuiningprice ?>
 
                                     </tr>
                                 @endif
