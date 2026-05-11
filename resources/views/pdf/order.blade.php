@@ -184,7 +184,6 @@
 
         <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
-        <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();?>
         <?php $totalToeslagPrice = 0?>
         <?php $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw ?>
         <?php $totalM2 = 0 ?>
