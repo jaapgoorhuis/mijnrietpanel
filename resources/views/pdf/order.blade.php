@@ -385,7 +385,16 @@
             @endif
             <tr>
                 <th style="text-align: left; border-top:1px solid black">
-                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,  @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $order->orderRules)incl. {{ __('messages.toeslagen') }}:@endif</strong>
+                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
+                 $zaaglengtes > 0 ||
+                 $totalM2 < $vierkantemeterToeslag->number ||
+                 ($showLb && $laybacks > 0) ||
+                 ($showCb && true) ||
+                 ($showNokafschuining && $nokafschuining > 0) ||
+                 ($showVrijeRuimte && $vrijeruimte > 0) ||
+                 $orderLineHeeftOversize
+             )
+                            incl. {{ __('messages.toeslagen') }}:@endif</strong>
                 </th>
 
                 @if($order->orderRules)
