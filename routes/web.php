@@ -124,6 +124,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
+
     Route::get('/download-order/order-{id}', function($id) {
         $order = Order::where('order_id', $id)->firstOrFail();
         $orderLines = OrderLines::where('order_id', $order->id)->get();
@@ -137,20 +138,32 @@ Route::middleware('auth')->group(function () {
         $company = $order->company; // Als je een relatie hebt
         $kerndikte = $order->kerndikte;
 
-        Pdf::loadView('pdf.order', [
-            'order' => $order,
-            'orderLines' => $orderLines,
-            'showNokafschuining' => $showNokafschuining,
-            'showVrijeRuimte' => $showVrijeRuimte,
-            'showLb' => $showLb,
-            'showCb' => $showCb,
-            'company' => $company,
-            'kerndikte' => $kerndikte
-        ])->save(public_path("/storage/orders/order-$order->order_id.pdf"));
+        $panelTypes = \App\Models\PanelType::pluck('name')->toArray();
 
-        $url = public_path("storage/orders/order-$order->order_id.pdf");
+        if(in_array($kerndikte,$panelTypes)) {
 
-        return response()->file($url);
+
+            Pdf::loadView('pdf.order', [
+                'order' => $order,
+                'orderLines' => $orderLines,
+                'showNokafschuining' => $showNokafschuining,
+                'showVrijeRuimte' => $showVrijeRuimte,
+                'showLb' => $showLb,
+                'showCb' => $showCb,
+                'company' => $company,
+                'kerndikte' => $kerndikte
+            ])->save(public_path("/storage/orders/order-$order->order_id.pdf"));
+
+            $url = public_path("storage/orders/order-$order->order_id.pdf");
+
+            return response()->file($url);
+        }
+
+        else {
+            session()->flash('error', __('De order heeft geen kerndikte, pas deze aan'));
+            return redirect('/orders');
+        }
+
     });
 
     Route::get('/download-offerte/offerte-{id}', function($id) {
@@ -163,20 +176,29 @@ Route::middleware('auth')->group(function () {
         $company = $offerte->company; // Als je een relatie hebt
         $kerndikte = $offerte->kerndikte;
 
-        Pdf::loadView('pdf.offerte',
-            ['offerte' => $offerte,
-                'offerteLines' => $offerteLines,
-                'showNokafschuining' => $showNokafschuining,
-                'showLb' => $showLb,
-                'showCb' => $showCb,
-                'showVrijeRuimte' => $showVrijeRuimte
-            ])
-            ->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
+        $panelTypes = \App\Models\PanelType::pluck('name')->toArray();
+
+        if(in_array($kerndikte,$panelTypes)) {
+
+            Pdf::loadView('pdf.offerte',
+                ['offerte' => $offerte,
+                    'offerteLines' => $offerteLines,
+                    'showNokafschuining' => $showNokafschuining,
+                    'showLb' => $showLb,
+                    'showCb' => $showCb,
+                    'showVrijeRuimte' => $showVrijeRuimte
+                ])
+                ->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
 
 
-        $url = public_path('storage/offertes/offerte-'.$offerte->offerte_id.'.pdf');
+            $url = public_path('storage/offertes/offerte-' . $offerte->offerte_id . '.pdf');
+            return response()->file($url);
+        }
+        else {
+            session()->flash('error', 'De offerte heeft geen kerndikte, pas deze aan');
+            return redirect('/offertes');
+        }
 
-        return response()->file($url);
     });
 
 

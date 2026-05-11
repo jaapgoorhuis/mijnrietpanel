@@ -229,4 +229,6 @@ return [
     'De nokafschuining moet minimaal 0 graden zijn' => 'The ridge bevel must not be less than 0 degrees.',
     'Ordertoeslag panelen boven de 14500mm' => 'Order surcharge for panels over 14,500 mm',
     'Downloaden'=> 'Downloaden',
+    'De order heeft geen kerndikte, pas deze aan' => 'The order has no core thickness, please adjust it',
+    'De offerte heeft geen kerndikte, pas deze aan' => 'The quotation has no core thickness, please adjust it'
     ];

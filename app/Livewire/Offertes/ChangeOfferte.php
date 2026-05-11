@@ -129,8 +129,16 @@ class ChangeOfferte extends Component
         $this->marge = $this->offerte->marge;
         $this->comment = $this->offerte->comment;
 
-        $this->priceRule = PanelType::where('name', $this->kerndikte)->first()->priceRule;
-        $this->priceRulePrice = $this->priceRule->price;
+        $this->priceRule = PanelType::where('name', $this->kerndikte)->first();
+        if($this->priceRule) {
+            $this->priceRulePrice = $this->priceRule->priceRule->price;
+        } else {
+            $this->priceRulePrice = 0;
+            $this->kerndikte = '';
+        }
+
+
+
         $this->requested_delivery_date = $this->offerte->requested_delivery_date;
 
         foreach($this->exsistingOfferteLines as $key => $exsistingOfferteLine) {
@@ -308,6 +316,7 @@ class ChangeOfferte extends Component
             'aflever_plaats' => 'required',
             'aflever_land' => 'required',
             'intaker' => 'required',
+            'kerndikte' => 'required',
             'discount' => 'required|min:0',
             'fillTotaleLengte.*' => 'required|numeric|min:500|max:17000',
             'aantal.*' => 'required|numeric|min:1',
