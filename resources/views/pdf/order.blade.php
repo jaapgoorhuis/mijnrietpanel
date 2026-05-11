@@ -356,7 +356,7 @@
             </tr>
             <tr>
                 <th style="text-align: left;">21% BTW:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
+                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw, 2, ',', '.') !!}</th>
             </tr>
 
             @if(
