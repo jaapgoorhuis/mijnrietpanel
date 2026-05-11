@@ -349,36 +349,49 @@
                 <th style="text-align: left;">{{ __('messages.Totaal') }} m²:</th>
                 <th style="text-align: left;"> m² {{$totalM2}}</th>
             </tr>
+
             <tr>
                 <th style="text-align: left;">{{ __('messages.Subtotaal') }}:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPrice, 2, ',', '.') !!}</th>
             </tr>
 
+            <?php
+            // 🔥 FIX 1: safe fallback (no null crash)
+            $vierkantemeterLimit = $vierkantemeterToeslag->number ?? null;
 
-            @if(
-                 $zaaglengtes > 0 ||
-                 $totalM2 < $vierkantemeterToeslag->number ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
-            <tr>
-                <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
-            </tr>
+            $hasToeslagen =
+                $zaaglengtes > 0 ||
+                ($vierkantemeterLimit && $totalM2 < $vierkantemeterLimit) ||
+                ($showLb && $laybacks > 0) ||
+                ($showCb) ||
+                ($showNokafschuining && $nokafschuining > 0) ||
+                ($showVrijeRuimte && $vrijeruimte > 0) ||
+                $orderLineHeeftOversize;
 
-            <?php if ($totalToeslagPrice >0) {
-                $totalToeslagPriceBtw = $totalToeslagPrice /100 *21
-                } else {
-                    $totalToeslagPriceBtw = 0;
-                }?>
+            $totalToeslagPriceBtw = 0;
+            ?>
 
-            <tr>
-                <th style="text-align: left;">21% BTW:</th>
-                <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}</th>
-            </tr>
+            @if($hasToeslagen)
+
+                <tr>
+                    <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
+                    <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
+                </tr>
+
+                    <?php
+                    // 🔥 FIX 2: altijd geldig + veilig
+                    $totalToeslagPriceBtw = $totalToeslagPrice > 0
+                        ? ($totalToeslagPrice * 0.21)
+                        : 0;
+                    ?>
+
+                <tr>
+                    <th style="text-align: left;">21% BTW:</th>
+                    <th style="text-align: left;">
+                        {!! '&euro;&nbsp;' . number_format($totalPriceWithouthSurchargesBtw + $totalToeslagPriceBtw, 2, ',', '.') !!}
+                    </th>
+                </tr>
+
             @endif
 
             @if($order->orderRules)
@@ -387,29 +400,26 @@
                     <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}</th>
                 </tr>
             @endif
+
             <tr>
                 <th style="text-align: left; border-top:1px solid black">
-                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
-                 $zaaglengtes > 0 ||
-                 $totalM2 < $vierkantemeterToeslag->number ||
-                 ($showLb && $laybacks > 0) ||
-                 ($showCb) ||
-                 ($showNokafschuining && $nokafschuining > 0) ||
-                 ($showVrijeRuimte && $vrijeruimte > 0) ||
-                 $orderLineHeeftOversize
-             )
-                            incl. {{ __('messages.toeslagen') }}:@endif</strong>
+                    <strong>{{ __('messages.Totaal') }} incl. 21% BTW,
+                        @if($hasToeslagen)
+                            incl. {{ __('messages.toeslagen') }}:
+                        @endif
+                    </strong>
                 </th>
 
-                @if($order->orderRules)
-                    <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw+ $order->orderRules->price, 2, ',', '.')}}
-                    </th>
-                @else
-                    <th style="text-align: left; border-top:1px solid black">
-                        € {{number_format($allInPrice + $totalToeslagPrice + $totalToeslagPriceBtw, 2, ',', '.')}}
-                    </th>
-                @endif
+                <th style="text-align: left; border-top:1px solid black">
+                    € {{
+                    number_format(
+                        $allInPrice
+                        + $totalToeslagPrice
+                        + $totalToeslagPriceBtw
+                        + ($order->orderRules->price ?? 0),
+                    2, ',', '.')
+                }}
+                </th>
             </tr>
         </table>
     </div>
