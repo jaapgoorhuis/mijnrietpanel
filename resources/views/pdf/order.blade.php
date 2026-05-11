@@ -457,7 +457,8 @@
 
             <!-- Eindtotaal -->
             <tr>
-                <th style="text-align: left;">
+                <th style="text-align: left;
+        border-top: 1px solid #000;">
                     <strong>
                         {{ __('messages.Totaal') }} incl. 21% BTW
 
