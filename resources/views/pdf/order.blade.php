@@ -184,6 +184,10 @@
 
         <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
+        <?php
+        $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();
+        $vierkantemeterLimit = $vierkantemeterToeslag->number ?? null;
+        ?>
         <?php $totalToeslagPrice = 0?>
         <?php $allInPrice = $totalPrice + $totalPriceWithouthSurchargesBtw ?>
         <?php $totalM2 = 0 ?>
@@ -207,7 +211,7 @@
 
             @if(
                 $zaaglengtes > 0 ||
-
+                $totalM2 < $vierkantemeterLimit ||
                 ($showLb && $laybacks > 0) ||
                 ($showCb) ||
                 ($showNokafschuining && $nokafschuining > 0) ||
@@ -356,7 +360,7 @@
 
             @if(
                  $zaaglengtes > 0 ||
-
+                 $totalM2 < $vierkantemeterLimit ||
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
@@ -390,7 +394,7 @@
                 <th style="text-align: left; border-top:1px solid black">
                     <strong>{{ __('messages.Totaal') }} incl. 21% BTW,    @if(
                  $zaaglengtes > 0 ||
-
+                 $totalM2 < $vierkantemeterLimit ||
                  ($showLb && $laybacks > 0) ||
                  ($showCb) ||
                  ($showNokafschuining && $nokafschuining > 0) ||
