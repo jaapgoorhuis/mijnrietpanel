@@ -210,7 +210,7 @@
                 $zaaglengtes > 0 ||
                 $totalM2 < $vierkantemeterToeslag->number ||
                 ($showLb && $laybacks > 0) ||
-                ($showCb && true) ||
+                ($showCb) ||
                 ($showNokafschuining && $nokafschuining > 0) ||
                 ($showVrijeRuimte && $vrijeruimte > 0) ||
                 $orderLineHeeftOversize
