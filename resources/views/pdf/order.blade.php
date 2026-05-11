@@ -182,7 +182,7 @@
         </table>
 
 
-        <?php $btw = $totalPrice /100 *21 ?>
+
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
         <?php $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first(); ?>
         <?php $totalToeslagPrice = 0?>
@@ -318,6 +318,8 @@
                 @endforeach
             </table>
         @endif
+        <?php $btw = $totalPrice + $totalToeslagPrice /100 *21 ?>
+
 
         @if($order->comment)
             <table class="products toeslagen">
