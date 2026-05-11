@@ -272,7 +272,7 @@
 
                                         <?php
                                         $totalSurchagePrice = $toeslag->price;
-                                        $totalPrice += $totalSurchagePrice;
+
                                         $totalToeslagPrice += $totalSurchagePrice;
                                         ?>
 
@@ -359,7 +359,15 @@
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($btw, 2, ',', '.') !!}</th>
             </tr>
 
-            @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $orderLineHeeftOversize )
+            @if(
+                 $zaaglengtes > 0 ||
+                 $totalM2 < $vierkantemeterToeslag->number ||
+                 ($showLb && $laybacks > 0) ||
+                 ($showCb && true) ||
+                 ($showNokafschuining && $nokafschuining > 0) ||
+                 ($showVrijeRuimte && $vrijeruimte > 0) ||
+                 $orderLineHeeftOversize
+             )
             <tr>
                 <th style="text-align: left;">{{ __('messages.Toeslagen') }}:</th>
                 <th style="text-align: left;">{!! '&euro;&nbsp;' . number_format($totalToeslagPrice, 2, ',', '.') !!}</th>
