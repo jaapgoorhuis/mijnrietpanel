@@ -17,7 +17,6 @@
         </tr>
     </table>
 
-    <?php dd('test')?>
     <?php
     $company = \App\Models\Company::where('id', $order->user->bedrijf_id)->first();
     ?>
@@ -182,6 +181,9 @@
             </tbody>
         </table>
 
+
+
+        <?php dd('test')?>
 
         <?php $totalPriceWithouthSurchargesBtw = $totalPrice /100 *21 ?>
         <?php $toeslagen = \App\Models\Surcharges::get(); ?>
