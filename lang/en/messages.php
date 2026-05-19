@@ -130,6 +130,7 @@ return [
     'Statistieken' => 'Statistics',
     'Prijsregels' => 'Price rules',
     'Account verzoeken' => 'Account requests',
+    'Downloads' => 'Downloads',
     'Offerte datum' => 'Quotation date',
     'Totale prijs' => 'Total price',
     'Transportkosten (onder 50m²)' => 'Transport costs (under 50m²)',
@@ -138,7 +139,7 @@ return [
     'Voorbeeld detailFolders' => 'Detail examples',
     'Mijn marketing' => 'My marketing',
     'Documentatie' => 'Documentation',
-    'Voorwaarden / Prijslijst' => 'Condtions / Pricelist',
+    'Voorwaarden' => 'Condtions',
 
     'Alle bestanden downloaden' => 'Download all files',
     'Geselecteerde bestanden downloaden' => 'Download selected files',

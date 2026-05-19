@@ -122,7 +122,9 @@ class CreateOffertes extends Component
 
     public function render()
     {
-
+        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
+        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
+        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
 
         return view('livewire.offertes.createOfferte');
     }

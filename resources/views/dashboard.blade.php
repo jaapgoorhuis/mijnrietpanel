@@ -112,7 +112,7 @@
                         </svg>
 
                         <span class="text-lg font-semibold tracking-tight text-neutral-900">
-                            {{ __('messages.Documentatie') }}
+                            {{ __('messages.Downloads') }}
                         </span>
 
                     </a>
@@ -127,7 +127,7 @@
                             </svg>
 
                             <span class="text-lg font-semibold tracking-tight text-neutral-900 text-center">
-                                {{ __('messages.Voorwaarden / Prijslijst') }}
+                                {{ __('messages.Voorwaarden') }}
                             </span>
 
                         </a>
