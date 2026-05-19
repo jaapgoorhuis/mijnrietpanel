@@ -32,6 +32,7 @@ class User extends Authenticatable
         'is_production_employee',
         'is_removed',
         'is_active',
+        'bill_email',
         'lang',
     ];
 
