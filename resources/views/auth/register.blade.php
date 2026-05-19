@@ -21,7 +21,7 @@
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('auth.Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="email" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -30,6 +30,12 @@
             <x-input-label for="phone" :value="__('auth.Telefoonnummer')" />
             <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required autocomplete="phone" />
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="bill_email" :value="__('auth.Facturatie adres')" />
+            <x-text-input id="bill_email" class="block mt-1 w-full" type="email" name="bill_email" :value="old('bill_email')" required autocomplete="bill_email" />
+            <x-input-error :messages="$errors->get('bill_email')" class="mt-2" />
         </div>
 
         <!-- Password -->

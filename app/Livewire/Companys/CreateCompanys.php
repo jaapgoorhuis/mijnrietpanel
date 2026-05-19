@@ -20,6 +20,7 @@ class CreateCompanys extends Component
     public $straat;
     public $postcode;
     public $plaats;
+    public $bill_email;
 
     public $message;
     public $messageStraat;
@@ -93,7 +94,9 @@ class CreateCompanys extends Component
         'reseller' => 'required',
         'straat' => 'required',
         'plaats' => 'required',
-        'postcode' => 'required'
+        'postcode' => 'required',
+        'bill_email' => 'nullable|email'
+
 
     ];
 
@@ -107,6 +110,7 @@ class CreateCompanys extends Component
             'plaats.required' => 'De plaats is een verplicht veld.',
             'straat.required' => 'De straat is een verplicht veld.',
             'postcode.required' => 'De postcode is een verplicht veld.',
+            'bill_email.email'=> 'Dit moet een geldig emailadres zijn',
 
         ];
     }
@@ -120,6 +124,7 @@ class CreateCompanys extends Component
             'straat' => $this->straat,
             'postcode' => $this->postcode,
             'plaats' => $this->plaats,
+            'bill_email' => $this->bill_email,
         ]);
 
         $companyId = Company::orderBy('id', 'desc')->first();

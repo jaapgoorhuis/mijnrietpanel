@@ -24,6 +24,7 @@ class EditCompanys extends Component
     public $plaats;
 
     public $message;
+    public $bill_email;
 
     public $messageStraat;
 
@@ -36,6 +37,7 @@ class EditCompanys extends Component
         $this->straat = $this->company->straat;
         $this->postcode = $this->company->postcode;
         $this->plaats = $this->company->plaats;
+        $this->bill_email = $this->company->bill_email;
     }
 
     public function render()
@@ -109,7 +111,8 @@ class EditCompanys extends Component
             'discount' => 'required',
             'straat' => 'required',
             'plaats' => 'required',
-            'postcode' => 'required'
+            'postcode' => 'required',
+            'bill_email' => 'nullable|email',
         ];
 
     }
@@ -122,6 +125,7 @@ class EditCompanys extends Component
             'straat.required' => 'De straat is een verplicht veld.',
             'postcode.required' => 'De postcode is een verplicht veld.',
             'discount.required' => 'Vul de korting voor het bedrijf in. Als het bedrijf geen korting heeft vul dan 0 in.',
+            'bill_email.email' => 'Dit moet een geldig email adres zijn',
 
         ];
     }
@@ -136,6 +140,7 @@ class EditCompanys extends Component
             'straat' => $this->straat,
             'postcode' => $this->postcode,
             'plaats' => $this->plaats,
+            'bill_email' => $this->bill_email,
         ]);
 
         $pricerules = PriceRules::where('reseller', 0)->get();

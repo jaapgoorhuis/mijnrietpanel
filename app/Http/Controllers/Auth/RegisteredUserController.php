@@ -61,6 +61,7 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'is_active' => false,
             'lang' => $locale,
+            'bill_email' => $request->bill_email,
         ]);
 
         event(new Registered($user));
@@ -80,6 +81,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'bedrijfsnaam' => ['required'],
             'phone' => ['required'],
+            'bill_email' => ['email'],
         ];
     }
 
@@ -93,6 +95,7 @@ class RegisteredUserController extends Controller
             'phone.required' => __('messages.phone_required'),
             'confirmed' => __('messages.not_confirmed'),
             'password.min' => __('messages.password_not_longenaugh'),
+            'bill_email.email' => __('messages.Dit moet een geldit email adres zijn'),
         ];
     }
 }
