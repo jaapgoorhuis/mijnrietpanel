@@ -34,6 +34,7 @@ class EditAccountRequests extends Component
     public $email;
     public $phone;
     public $oldStatus;
+    public $bill_email;
     public $oldCompany;
     public $message;
 
@@ -51,6 +52,7 @@ class EditAccountRequests extends Component
         $this->phone = $this->user->phone;
         $this->status = $this->user->is_active;
         $this->oldStatus = $this->user->is_active;
+        $this->bill_email = $this->user->bill_email;
         $this->oldCompany = $this->user->bedrijf_id;
 
         if($this->user->is_architect) {
