@@ -31,6 +31,6 @@ return [
     'Wachtwoord vergeten?' => 'Forgot your password?',
     'Stuur reset email' => 'Send reset email',
     'invalid_credentials' => 'The credentials do not match',
-    'Facturatie adres' => 'Billing address',
+    'Facturatie E-mail adres' => 'Billing E-mail address',
 
 ];

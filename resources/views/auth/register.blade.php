@@ -33,7 +33,7 @@
         </div>
 
         <div class="mt-4">
-            <x-input-label for="bill_email" :value="__('auth.Facturatie adres')" />
+            <x-input-label for="bill_email" :value="__('auth.Facturatie E-mail adres')" />
             <x-text-input id="bill_email" class="block mt-1 w-full" type="email" name="bill_email" :value="old('bill_email')" required autocomplete="bill_email" />
             <x-input-error :messages="$errors->get('bill_email')" class="mt-2" />
         </div>
