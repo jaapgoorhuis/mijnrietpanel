@@ -19,6 +19,7 @@ class Company extends Authenticatable
         'plaats',
         'logo',
         'lang',
+        'bill_email'
 
     ];
 
