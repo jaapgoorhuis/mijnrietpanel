@@ -139,7 +139,7 @@ return [
     'Voorbeeld detailFolders' => 'Detail examples',
     'Mijn marketing' => 'My marketing',
     'Documentatie' => 'Documentation',
-    'Voorwaarden' => 'Condtions',
+    'Voorwaarden' => 'Conditions',
 
     'Alle bestanden downloaden' => 'Download all files',
     'Geselecteerde bestanden downloaden' => 'Download selected files',
