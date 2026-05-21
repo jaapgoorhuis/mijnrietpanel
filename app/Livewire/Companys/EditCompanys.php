@@ -25,6 +25,7 @@ class EditCompanys extends Component
 
     public $message;
     public $bill_email;
+    public $lang;
 
     public $messageStraat;
 

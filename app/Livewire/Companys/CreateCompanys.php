@@ -25,6 +25,8 @@ class CreateCompanys extends Component
     public $message;
     public $messageStraat;
 
+    public $lang;
+
 
 
     public function updatedBedrijfsnaam($value) {
@@ -95,7 +97,7 @@ class CreateCompanys extends Component
         'straat' => 'required',
         'plaats' => 'required',
         'postcode' => 'required',
-        'bill_email' => 'nullable|email'
+        'bill_email' => 'nullable|email',
 
 
     ];
@@ -125,6 +127,7 @@ class CreateCompanys extends Component
             'postcode' => $this->postcode,
             'plaats' => $this->plaats,
             'bill_email' => $this->bill_email,
+
         ]);
 
         $companyId = Company::orderBy('id', 'desc')->first();

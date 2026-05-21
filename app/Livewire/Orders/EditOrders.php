@@ -5,6 +5,7 @@ namespace App\Livewire\Orders;
 use App\Mail\sendNewCustomer;
 use App\Mail\sendOrder;
 use App\Mail\sendOrderConfirmed;
+use App\Mail\sendOrderConfirmedByRietpanel;
 use App\Mail\sendOrderList;
 use App\Mail\sendOrderListConfirmation;
 use App\Models\Order;
@@ -171,7 +172,8 @@ class EditOrders extends Component
 
         try {
                 //send confirmation mail to administratie@rietpanel.nl
-                Mail::to(['inkoop@rietpanel.nl','administratie@rietpanel.nl'])->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
+                Mail::to(['inkoop@rietpanel.nl'])->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
+                Mail::to(['info@crewa.nl'])->send(new sendOrderConfirmedByRietpanel($this->order));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);

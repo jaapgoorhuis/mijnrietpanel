@@ -86,6 +86,24 @@
                             <div class="text-red-500">@error('plaats') {{ $message }} @enderror</div>
                         </div>
 
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="plaats" class="text-gray-400">Facturatie email adres </label>
+                            <input type="text" wire:model="bill_email" name="bill_email" id="bill_email" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " />
+                            <div class="text-red-500">@error('bill_email') {{ $message }} @enderror</div>
+                        </div>
+
+                        <div class="relative z-0 w-full mb-5 group">
+                            <label for="land" class="text-gray-400">Bedrijfstaal</label>
+                            <select id="land" wire:model="lang" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+
+                                <option @if($this->company->lang == 'nl') selected @endif value="nl">Nederlands</option>
+                                <option @if($this->company->lang == 'en') selected @endif value="en">Engels</option>
+
+                            </select>
+
+                            <div class="text-red-500">@error('lang') {{ $message }} @enderror</div>
+                        </div>
+
 
                         <button wire:loading.attr="disabled" wire:click.prevent="createCompany()" class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Bedrijf toevoegen</button>
 

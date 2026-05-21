@@ -62,6 +62,7 @@
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
                             <th scope="col" class="px-4 py-3">Korting</th>
                             <th scope="col" class="px-4 py-3">Dealer</th>
+                            <th scope="col" class="px-4 py-3">Facturatie email</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
                             </th>
@@ -80,6 +81,8 @@
                                         Nee
                                     @endif
                                 </td>
+
+                                <td class="px-4 py-3">@if(!$company->bill_email)Geen emailadres bekend @else {{$company->bill_email}} @endif</td>
 
                                 <td  class="px-4 py-3 flex items-center justify-end">
                                     <button id="{{$company->id}}-dropdown-button" data-dropdown-toggle="{{$company->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">

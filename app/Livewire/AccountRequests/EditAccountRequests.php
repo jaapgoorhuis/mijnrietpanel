@@ -126,6 +126,8 @@ class EditAccountRequests extends Component
             $production_employee = 0;
         }
 
+        $user = User::findOrFail($id);
+
         User::where('id', $id)->update([
             'bedrijf_id' => $this->company_id,
             'name' => $this->gebruikersnaam,
@@ -136,6 +138,20 @@ class EditAccountRequests extends Component
             'is_production_employee' => $production_employee,
             'lang' => $this->lang,
         ]);
+
+        $company = Company::findOrFail($this->company_id);
+
+        // bedrijf billing email updaten
+        if (
+            $company &&
+            empty($user->company->bill_email)
+        ) {
+
+            $company->update([
+                'bill_email' => $this->email,
+            ]);
+
+        }
 
          if($this->oldCompany != $this->company_id && $this->oldStatus != $this->status) {
             session()->flash('success','De gebruiker is toegevoegd aan een bedrijf, en de status van het account is bijgewerkt. Er is een email verstuurd naar het bijbehorende email adres dat de status van het account is geupdate');
@@ -168,6 +184,7 @@ class EditAccountRequests extends Component
         }else {
             Company::create([
                 'bedrijfsnaam' => $this->bedrijfsnaam,
+                'bill_email' => $this->bill_email,
                 'discount' => 0
             ]);
             session()->flash('success','Het bedrijf is toegevoegd.');
