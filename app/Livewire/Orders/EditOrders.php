@@ -173,7 +173,7 @@ class EditOrders extends Component
         try {
                 //send confirmation mail to administratie@rietpanel.nl
                 Mail::to(['inkoop@rietpanel.nl'])->send(new sendOrderListConfirmation($this->order, $this->new_purchage_order_email));
-                Mail::to(['info@crewa.nl'])->send(new sendOrderConfirmedByRietpanel($this->order));
+                Mail::to(['orders@rietpanel.nl'])->send(new sendOrderConfirmedByRietpanel($this->order));
 
         } catch (\Exception $e) {
             return redirect('/orders')->with('error', 'Er is een fout opgetreden bij het versturen van de e-mail naar de administratie.' . $e);
