@@ -96,8 +96,8 @@
                             <label for="land" class="text-gray-400">Bedrijfstaal</label>
                             <select id="land" wire:model="lang" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
-                                <option @if($this->company->lang == 'nl') selected @endif value="nl">Nederlands</option>
-                                <option @if($this->company->lang == 'en') selected @endif value="en">Engels</option>
+                                <option value="nl">Nederlands</option>
+                                <option value="en">Engels</option>
 
                             </select>
 

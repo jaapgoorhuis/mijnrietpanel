@@ -25,7 +25,7 @@ class CreateCompanys extends Component
     public $message;
     public $messageStraat;
 
-    public $lang;
+    public $lang = 'nl';
 
 
 
