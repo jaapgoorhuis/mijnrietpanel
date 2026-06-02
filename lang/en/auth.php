@@ -32,5 +32,28 @@ return [
     'Stuur reset email' => 'Send reset email',
     'invalid_credentials' => 'The credentials do not match',
     'Facturatie E-mail adres' => 'Billing E-mail address',
+    'Tweestapsverificatie' => 'Two-Factor Authentication',
+
+    'Open Microsoft Authenticator en voer de 6-cijferige verificatiecode in.'
+    => 'Open Microsoft Authenticator and enter the 6-digit verification code.',
+
+    'Authenticatiecode' => 'Authentication Code',
+
+    'Verifiëren' => 'Verify',
+
+    'two_factor_setup_title' => 'Set up Two-Factor Authentication',
+
+    'two_factor_setup_description' =>
+        'Scan the QR code with Microsoft Authenticator. Then enter the generated code to activate two-factor authentication.',
+
+    'two_factor_manual_key' => 'Manual key',
+
+    'two_factor_manual_key_hint' =>
+        'Use this key only if scanning the QR code does not work.',
+
+    'authentication_code' => 'Authentication code',
+
+    'activate_2fa' => 'Activate 2FA',
+
 
 ];

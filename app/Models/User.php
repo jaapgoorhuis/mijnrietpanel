@@ -33,7 +33,12 @@ class User extends Authenticatable
         'is_removed',
         'is_active',
         'bill_email',
+        'two_factor_enabled',
         'lang',
+    ];
+
+    protected $casts = [
+        'two_factor_secret' => 'encrypted',
     ];
 
     public function companys() {

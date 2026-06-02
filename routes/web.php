@@ -1,16 +1,38 @@
 <?php
 
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Auth\TwoFactorSetupController;
 use App\Http\Controllers\OrderPakketList;
 use App\Http\Controllers\ProfileController;
 use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\Supliers;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use PragmaRX\Google2FA\Google2FA;
 
 Route::get('/', function () {
     return redirect('/login');
 });
+
+Route::get('/2fa/setup', [TwoFactorSetupController::class, 'show'])
+    ->name('2fa.setup');
+
+Route::post('/2fa/setup', [TwoFactorSetupController::class, 'store'])
+    ->name('2fa.setup.store');
+
+Route::get('/2fa', [TwoFactorController::class, 'show'])
+    ->name('2fa.verify');
+
+Route::post('/2fa', [TwoFactorController::class, 'verify'])
+    ->name('2fa.verify.post');
+
+Route::get('/2fa', [TwoFactorController::class, 'show'])
+    ->name('2fa.verify');
+
+Route::post('/2fa', [TwoFactorController::class, 'verify'])
+    ->name('2fa.verify.post');
 
 Route::get('/dashboard', function () {
 
@@ -235,6 +257,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/download-bulk-zip', [\App\Http\Controllers\ZipDownloadController::class, 'download'])->name('download.bulk.zip');
+
+
 });
 
 
