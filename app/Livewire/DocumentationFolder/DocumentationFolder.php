@@ -32,10 +32,10 @@ DocumentationFolder extends Component
 
     public function uploadFolder() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/documentation-maps/upload', navigate: true);
+            return $this->redirect('/download-maps/upload', navigate: true);
         }
         else {
-            return $this->redirect('/documentation-maps', navigate: true);
+            return $this->redirect('/download-maps', navigate: true);
         }
     }
 

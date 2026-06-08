@@ -155,7 +155,7 @@ class UploadDocumentation extends Component
 
             $this->reset(['file', 'newCropimage']);
 
-            return $this->redirect('/documentation-maps/' . $this->folderId . '/documentation/upload', navigate: true);
+            return $this->redirect('/download-maps/' . $this->folderId . '/download/upload', navigate: true);
         }
 
         session()->flash('error', 'Upload één of meerdere bestanden.');

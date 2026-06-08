@@ -42,10 +42,10 @@ Documentation extends Component
 
     public function uploadDocumentation() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/documentation-maps/'.$this->folderId.'/documentation/upload', navigate: true);
+            return $this->redirect('//'.$this->folderId.'/documentation/upload', navigate: true);
         }
         else {
-            return $this->redirect('/documentation-maps', navigate: true);
+            return $this->redirect('/', navigate: true);
         }
     }
 
