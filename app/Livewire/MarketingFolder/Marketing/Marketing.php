@@ -63,6 +63,7 @@ Marketing extends Component
         $params = [
             'files' => $this->selectedDownloads,
             'route' => 'marketing',
+            'name' => $this->folder->name,
         ];
 
 

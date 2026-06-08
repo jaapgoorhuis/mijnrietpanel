@@ -73,6 +73,7 @@ Details extends Component
         $params = [
             'files' => $this->selectedDownloads,
             'route' => 'details',
+            'name' => $this->category->name,
         ];
 
 

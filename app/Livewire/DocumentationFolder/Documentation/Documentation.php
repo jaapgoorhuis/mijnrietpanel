@@ -63,7 +63,9 @@ Documentation extends Component
         $params = [
             'files' => $this->selectedDownloads,
             'route' => 'documentation',
+            'name' => $this->folder->name,
         ];
+
 
 
         $query = http_build_query($params);

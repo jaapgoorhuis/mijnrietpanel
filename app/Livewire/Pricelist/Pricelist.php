@@ -62,6 +62,7 @@ Pricelist extends Component
         $params = [
             'files' => $this->selectedDownloads,
             'route' => 'pricelist',
+            'name' => __('messages.Voorwaarden'),
         ];
 
         $query = http_build_query($params);
