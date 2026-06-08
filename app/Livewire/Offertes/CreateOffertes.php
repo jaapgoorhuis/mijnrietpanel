@@ -363,24 +363,25 @@ class CreateOffertes extends Component
         ];
     }
 
-    public function saveOfferte() {
-
+    public function saveOfferte()
+    {
         $this->validate();
 
         $latestOfferte = Offerte::orderBy('id', 'desc')->first();
 
-        if($latestOfferte) {
+        if ($latestOfferte) {
             $currentYear = date('y');
-            if(str_starts_with($latestOfferte->offerte_id, $currentYear)) {
+
+            if (str_starts_with($latestOfferte->offerte_id, $currentYear)) {
                 $offerteId = $latestOfferte->offerte_id + 1;
             } else {
-                $offerteId = $currentYear.'0600';
+                $offerteId = $currentYear . '0600';
             }
-
         } else {
             $offerteId = 250600;
         }
-        Offerte::create([
+
+        $offerte = Offerte::create([
             'klantnaam' => $this->klant_naam,
             'referentie' => $this->referentie,
             'aflever_straat' => $this->aflever_straat,
@@ -398,55 +399,62 @@ class CreateOffertes extends Component
             'status' => 'In behandeling',
             'offerte_id' => $offerteId,
             'requested_delivery_date' => $this->requested_delivery_date,
-            'comment'=> $this->comment,
-            'lang'=> $this->locale,
+            'comment' => $this->comment,
+            'lang' => $this->locale,
         ]);
 
-        $offerte = Offerte::orderBy('id', 'desc')->first();
+        foreach ($this->offerteLines as $index => $key) {
+            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : 0;
+            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : 0;
+            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : 0;
+            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : 0;
 
-        foreach($this->offerteLines as $index => $key) {
+            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
 
-                $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
-                $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-                $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
-                $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
-                $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
+            OfferteLines::create([
+                'offerte_id' => $offerte->id,
+                'fillLb' => $fillLb,
+                'fillTotaleLengte' => $fillTotaleLengte,
+                'aantal' => $aantal,
+                'user_id' => Auth::user()->id,
+                'm2' => $m2,
 
-                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+            ]);
+        }
 
-                OfferteLines::create([
-                    'offerte_id' => $offerte->id,
-                    'fillLb' => $fillLb,
-                    'fillTotaleLengte' => $fillTotaleLengte,
-                    'aantal' => $aantal,
-                    'user_id' => Auth::user()->id,
-                    'm2' => $m2,
+        $offerte->refresh();
+        $offerte->load(['offerteLines', 'user', 'surcharges']);
 
-                      // als optie niet geselecteerd is -> 0
-                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
-                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
-                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
-                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-                ]);
-            }
+        app(\App\Services\PricingServices::class)->updateDocumentPricing($offerte);
 
-        $offerteLines = OfferteLines::where('offerte_id', $offerte->id)->get();
+        $offerte->refresh();
+        $offerte->load(['offerteLines', 'user', 'surcharges']);
+
+        $offerteLines = $offerte->offerteLines;
 
         $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
         $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
-
-
+        Pdf::loadView('pdf.offerte', [
+            'offerte' => $offerte,
+            'offerteLines' => $offerteLines,
+            'showNokafschuining' => $showNokafschuining,
+            'showLb' => $showLb,
+            'showCb' => $showCb,
+            'showVrijeRuimte' => $showVrijeRuimte,
+        ])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
 
         Mail::to(Auth::user()->email)->send(new sendOfferte($offerte));
 
-        session()->flash('success',__('messages.De offerte is aangemaakt'));
+        session()->flash('success', __('messages.De offerte is aangemaakt'));
 
-        session()->flash('success','De offerte is aangemaakt.');
         return $this->redirect('/offertes', navigate: true);
     }
 

@@ -9,8 +9,8 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/documentation-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
-                        {{ __('messages.Documentatie categorieën') }}
+                    <a href="/download-maps" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                        {{ __('messages.Downloads') }}
                     </a>
                 </div>
             </li>
@@ -18,7 +18,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/documentation-maps/{{$folderId}}/documentation" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
+                    <a href="/download-maps/{{$folderId}}/download" class="ms-1 text-sm font-medium text-gray-700 md:ms-2 hover:text-[#C0A16E]">
                         {{$folder->name}}
                     </a>
                 </div>

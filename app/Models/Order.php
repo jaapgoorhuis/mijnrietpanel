@@ -12,7 +12,12 @@ class Order extends Authenticatable
 {
    use HasFactory;
 
-   protected $fillable = ['order_id', 'klantnaam', 'split_m2', 'planned_m2_today','rietpanel_comment', 'marge','lang', 'requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
+   protected $fillable = ['order_id', 'klantnaam','subtotal',
+       'surcharges_total',
+       'vat_total',
+       'grand_total',
+       'prices_updated_at',
+       'split_m2', 'planned_m2_today','rietpanel_comment', 'marge','lang', 'requested_delivery_date', 'comment', 'aflever_straat','project_naam', 'rietkleur', 'toepassing', 'order_ordered',  'merk_paneel','kerndikte', 'aflever_postcode', 'aflever_land','aflever_plaats','referentie','discount', 'intaker', 'user_id', 'status'];
    public function orderLines()
    {
        return $this->hasMany(OrderLines::class);
@@ -53,6 +58,11 @@ class Order extends Authenticatable
     public function getTotalM2PlannedAttribute()
     {
         return $this->planning()->sum('planned_m2');
+    }
+
+    public function surcharges()
+    {
+        return $this->hasMany(\App\Models\OrderSurcharge::class, 'order_id');
     }
 
 }

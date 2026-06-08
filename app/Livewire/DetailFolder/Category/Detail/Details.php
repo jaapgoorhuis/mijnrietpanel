@@ -32,6 +32,7 @@ Details extends Component
         $this->category = DetailCategory::find($category);
         $this->folderId = $id;
 
+
         $this->locale = config('app.locale'); // leest APP_LOCALE uit .env
 
         if ($this->locale === 'nl') {
@@ -88,6 +89,8 @@ Details extends Component
 
             $zip = new ZipStream();
 
+
+
             foreach ($this->details as $detail) {
 
                 if (!$detail->file_name) {
@@ -95,7 +98,7 @@ Details extends Component
                 }
 
                 // veilige ZIP naam
-                $safeName = str_replace(['/', '\\'], '_', $detail->file_name);
+                $safeName = str_replace(['/', '\\'], '_', $this->category->name);
 
                 $filePath = Storage::disk('public')->path('details/' . $detail->file_name);
 
@@ -111,6 +114,6 @@ Details extends Component
 
             $zip->finish();
 
-        }, str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $this->folder->name) . '.zip');
+        }, str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $this->category->name) . '.zip');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Offertes;
 
+use AllowDynamicProperties;
 use App\Mail\sendOfferte;
 use App\Mail\sendOrder;
 use App\Models\Application;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class ChangeOfferte extends Component
+#[AllowDynamicProperties] class ChangeOfferte extends Component
 {
 
     public $klant_naam;
@@ -90,13 +91,40 @@ class ChangeOfferte extends Component
     public $laybackPrice;
     public $nokafschuiningPrice;
     public $panelImages = [];
+    public bool $showPriceUpdateModal = false;
 
+    public $priceUpdateMessage = '';
     public function mount($id) {
         if(Auth::user()->bedrijf_id == 0) {
             session()->flash('error', 'Uw account is niet gekoppeld aan een bedrijf. Hierdoor kunt u geen offertes plaatsen. Neem contact met rietpanel op om dit probleem te verhelpen.');
             return $this->redirect('/offertes', navigate: true);
         }
         $this->offerte_id = $id;
+        $offerte = Offerte::findOrFail($id);
+
+        $latestPriceRule = \App\Models\PriceRules::latest('updated_at')->first();
+        $latestSurcharge = \App\Models\Surcharges::latest('updated_at')->first();
+
+        $latestPricingUpdate = collect([
+            optional($latestPriceRule)->updated_at,
+            optional($latestSurcharge)->updated_at,
+        ])->filter()->max();
+
+        if (
+            !$offerte->prices_updated_at ||
+            ($latestPricingUpdate && $offerte->prices_updated_at < $latestPricingUpdate)
+        ) {
+
+
+            $this->showPriceUpdateModal = true;
+
+
+
+            $this->priceUpdateMessage = __('messages.price_update_warning_quotation', [
+                'date' => $latestPricingUpdate->format('d-m-Y H:i'),
+            ]);
+        }
+
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
@@ -112,6 +140,7 @@ class ChangeOfferte extends Component
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
         $this->brands = $this->dakSupliers;
+
 
         $this->klant_naam = $this->offerte->klantnaam;
         $this->referentie = $this->offerte->referentie;
@@ -421,10 +450,14 @@ class ChangeOfferte extends Component
         ];
     }
 
-    public function saveOfferte() {
+
+    public function saveOfferte()
+    {
         $this->validate();
 
-        Offerte::where('id', $this->offerte_id)->update([
+        $offerte = Offerte::findOrFail($this->offerte_id);
+
+        $offerte->update([
             'klantnaam' => $this->klant_naam,
             'referentie' => $this->referentie,
             'aflever_straat' => $this->aflever_straat,
@@ -444,49 +477,63 @@ class ChangeOfferte extends Component
             'comment' => $this->comment,
         ]);
 
-        $offerte = Offerte::where('id', $this->offerte_id)->first();
-        OfferteLines::where('offerte_id', $this->offerte_id)->delete();
+        OfferteLines::where('offerte_id', $offerte->id)->delete();
 
-        foreach($this->offerteLines as $index => $key) {
+        foreach ($this->offerteLines as $index => $key) {
+            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : 0;
+            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : 0;
+            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : 0;
+            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : 0;
 
-                $fillCb = array_key_exists($index, $this->fillCb) ? $this->fillCb[$index] : '0';
-                $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-                $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
-                $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
-                $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
-                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
 
-                OfferteLines::create([
-                    'offerte_id' => $offerte->id,
-                    'fillLb' => $fillLb,
-                    'fillTotaleLengte' => $fillTotaleLengte,
-                    'aantal' => $aantal,
-                    'user_id' => $this->creator_user_id,
-                    'm2' => $m2,
+            OfferteLines::create([
+                'offerte_id' => $offerte->id,
+                'fillLb' => $fillLb,
+                'fillTotaleLengte' => $fillTotaleLengte,
+                'aantal' => $aantal,
+                'user_id' => $this->creator_user_id,
+                'm2' => $m2,
 
-                      // als optie niet geselecteerd is -> 0
-                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
-                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
-                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
-                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-                ]);
-            }
+                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+            ]);
+        }
 
-        $offerteLines = OfferteLines::where('offerte_id', $offerte->id)->get();
+        $offerte->refresh();
+        $offerte->load(['offerteLines', 'user', 'surcharges']);
+
+        app(\App\Services\PricingServices::class)->updateDocumentPricing($offerte);
+
+        $offerte->refresh();
+        $offerte->load(['offerteLines', 'user', 'surcharges']);
+
+        $offerteLines = $offerte->offerteLines;
+
         $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
         $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.offerte', ['offerte' => $offerte, 'offerteLines' => $offerteLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
+        Pdf::loadView('pdf.offerte', [
+            'offerte' => $offerte,
+            'offerteLines' => $offerteLines,
+            'showNokafschuining' => $showNokafschuining,
+            'showLb' => $showLb,
+            'showCb' => $showCb,
+            'showVrijeRuimte' => $showVrijeRuimte,
+        ])->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
 
-
-//        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
+        // Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOfferte($offerte));
 
         session()->flash('success', __('messages.De offerte is bewerkt'));
+
         return $this->redirect('/offertes', navigate: true);
     }
+
 
     public function cancelChangeOfferte() {
         return $this->redirect('/offertes', navigate: true);

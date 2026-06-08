@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Marketing categorieën') }}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Mijn marketing') }}</p>
                 </div>
             </li>
         </ol>
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between mb-6">
                 {{-- Titel altijd zichtbaar --}}
                 <h1 class="text-lg font-semibold text-gray-800">
-                    {{ __('messages.Marketing') }}
+                    {{ __('messages.Mijn marketing') }}
                 </h1>
 
                 {{-- Knop alleen voor admins --}}

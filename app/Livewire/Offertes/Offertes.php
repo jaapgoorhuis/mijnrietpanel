@@ -83,27 +83,29 @@ class Offertes extends Component
         }
     }
 
-    public function createOfferteOrder($offerteId) {
-        $offerte = Offerte::where('id', $offerteId)->first();
+    public function createOfferteOrder($offerteId)
+    {
+        $offerte = Offerte::with(['offerteLines', 'surcharges', 'user'])->findOrFail($offerteId);
 
         $offerte->update([
-            'is_order' => 1
+            'is_order' => 1,
         ]);
+
         $latestOrder = Order::orderBy('id', 'desc')->first();
 
-        if($latestOrder) {
+        if ($latestOrder) {
             $currentYear = date('y');
-            if(str_starts_with($latestOrder->order_id, $currentYear)) {
+
+            if (str_starts_with($latestOrder->order_id, $currentYear)) {
                 $orderId = $latestOrder->order_id + 1;
             } else {
-                $orderId = $currentYear.'0600';
+                $orderId = $currentYear . '0600';
             }
-
         } else {
             $orderId = 250600;
         }
 
-        Order::create([
+        $order = Order::create([
             'klantnaam' => $offerte->klantnaam,
             'referentie' => $offerte->referentie,
             'aflever_straat' => $offerte->aflever_straat,
@@ -120,18 +122,21 @@ class Offertes extends Component
             'status' => 'In behandeling',
             'order_id' => $orderId,
             'discount' => $offerte->discount,
+            'marge' => $offerte->marge ?? 0,
             'requested_delivery_date' => $offerte->requested_delivery_date,
-            'comment'=> $offerte->comment,
+            'comment' => $offerte->comment,
             'lang' => $offerte->lang,
+
+            'subtotal' => $offerte->subtotal,
+            'surcharges_total' => $offerte->surcharges_total,
+            'vat_total' => $offerte->vat_total,
+            'grand_total' => $offerte->grand_total,
+            'prices_updated_at' => $offerte->prices_updated_at,
         ]);
 
-        $orderAfterCreate = Order::orderBy('id', 'desc')->first();
-
-        $offerteLines = OfferteLines::where('offerte_id',$offerte->id)->get();
-
-        foreach($offerteLines as $offerteLine) {
+        foreach ($offerte->offerteLines as $offerteLine) {
             OrderLines::create([
-                'order_id' => $orderAfterCreate->id,
+                'order_id' => $order->id,
                 'rietkleur' => $offerteLine->rietkleur,
                 'toepassing' => $offerteLine->toepassing,
                 'merk_paneel' => $offerteLine->merk_paneel,
@@ -141,25 +146,51 @@ class Offertes extends Component
                 'fillTotaleLengte' => $offerteLine->fillTotaleLengte,
                 'aantal' => $offerteLine->aantal,
                 'user_id' => Auth::user()->id,
-                'm2' => $offerteLine->m2
+                'm2' => $offerteLine->m2,
+
+                'lb' => $offerteLine->lb,
+                'nokafschuining' => $offerteLine->nokafschuining,
+                'vrije_ruimte_1' => $offerteLine->vrije_ruimte_1,
+                'vrije_ruimte_2' => $offerteLine->vrije_ruimte_2,
+
+                'price_per_m2' => $offerteLine->price_per_m2,
             ]);
         }
 
-        $order = Order::orderBy('id', 'desc')->first();
+        foreach ($offerte->surcharges as $surcharge) {
+            \App\Models\OrderSurcharge::create([
+                'order_id' => $order->id,
+                'name' => $surcharge->name,
+                'rule' => $surcharge->rule,
+                'qty' => $surcharge->qty,
+                'unit_price' => $surcharge->unit_price,
+                'total' => $surcharge->total,
+            ]);
+        }
 
+        $order->refresh();
+        $order->load(['orderLines', 'user', 'surcharges']);
 
-        $orderLines = OrderLines::where('order_id', $order->id)->get();
+        $orderLines = $order->orderLines;
 
         $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
         $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.order',['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-'.$orderId.'.pdf'));
+        Pdf::loadView('pdf.order', [
+            'order' => $order,
+            'orderLines' => $orderLines,
+            'showNokafschuining' => $showNokafschuining,
+            'showLb' => $showLb,
+            'showCb' => $showCb,
+            'showVrijeRuimte' => $showVrijeRuimte,
+        ])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
 
         Mail::to(Auth::user()->email)->send(new sendOfferteToOrder($order));
 
         session()->flash('success', __('Er is een order aangemaakt van deze offerte'));
+
         return $this->redirect('/offertes', navigate: true);
     }
 }

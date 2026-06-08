@@ -41,7 +41,7 @@ class UploadPricelist extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp',
+        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp','ifc',
     ];
 
     public function messages(): array

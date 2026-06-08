@@ -105,7 +105,7 @@
                     </a>
 
                     {{-- DOCUMENTATIE --}}
-                    <a href="/documentation-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                    <a href="/download-maps" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 12.75V7.5A2.25 2.25 0 014.5 5.25h3.879a2.25 2.25 0 011.591.659l1.121 1.121a2.25 2.25 0 001.591.659H19.5A2.25 2.25 0 0121.75 9.75v7.5A2.25 2.25 0 0119.5 19.5H4.5A2.25 2.25 0 012.25 17.25v-4.5z"/>
@@ -120,7 +120,7 @@
                     {{-- PRIJSLIJST --}}
                     @if(!$user->is_architect || $user->is_admin)
 
-                        <a href="/pricelist" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
+                        <a href="/voorwaarden" class="group relative rounded-2xl bg-white ring-1 ring-black/5 shadow-sm p-8 sm:p-10 flex flex-col items-center gap-5 transition transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-800">
 
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-12 w-12 text-neutral-700">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9.75v3.75m0 3.75h.008M6.75 3.75h6.75L18 8.25v12a.75.75 0 01-.75.75h-9a.75.75 0 01-.75-.75v-16.5a.75.75 0 01.75-.75z"/>

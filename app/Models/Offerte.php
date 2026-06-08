@@ -23,5 +23,9 @@ class Offerte extends Authenticatable
        return $this->belongsTo(User::class);
    }
 
+    public function surcharges()
+    {
+        return $this->hasMany(\App\Models\OfferteSurcharge::class, 'offerte_id');
+    }
 
 }

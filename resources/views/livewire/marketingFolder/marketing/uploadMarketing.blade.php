@@ -12,7 +12,7 @@
 
             <li>
                 <a href="/marketing-maps" class="text-sm text-gray-700 hover:text-[#C0A16E]">
-                    {{ __('messages.Marketing categorieën') }}
+                    {{ __('messages.Mijn marketing') }}
                 </a>
             </li>
 

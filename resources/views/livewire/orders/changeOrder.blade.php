@@ -30,6 +30,39 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="grid">
+                    @if($showPriceUpdateModal)
+                        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
+                            <div class="border-2 border-[#C0A16E] bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+
+                                <h3 class="text-lg font-bold mb-4">
+                                    {{ __('messages.Prijswijziging gedetecteerd') }}
+                                </h3>
+
+                                <p class="mb-6">
+                                    {{ $priceUpdateMessage }}
+                                </p>
+
+                                <div class="flex justify-center gap-4">
+                                    <button
+                                        type="button"
+                                        wire:click="keepOldOrderPrices"
+                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                                    >
+                                        {{ __('messages.Oude prijzen houden') }}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        wire:click="useNewOrderPrices"
+                                        class="px-4 py-2 bg-[#C0A16E] text-white rounded hover:bg-[#d1b079]"
+                                    >
+                                        {{ __('messages.Nieuwe prijzen toepassen') }}
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
 
                     <div x-data="{ showConfirmModal: @entangle('showConfirmModal') }">
                         <!-- Je content / form hier -->

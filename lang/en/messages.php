@@ -233,4 +233,6 @@ return [
     'De order heeft geen kerndikte, pas deze aan' => 'The order has no core thickness, please adjust it',
     'De offerte heeft geen kerndikte, pas deze aan' => 'The quotation has no core thickness, please adjust it',
     'Dit moet een geldit email adres zijn' => 'This must be a legit email address',
+    'price_update_warning_quotation' => 'This quotation uses outdated prices. The last price change was on :date. When saving this quotation, all prices will be recalculated.',
+    'price_update_warning_order' => 'This order uses outdated prices. The last price change was on :date. Choose whether you want to keep the old prices or recalculate the prices using the current price list.',
     ];

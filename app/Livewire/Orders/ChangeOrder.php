@@ -95,6 +95,11 @@ class ChangeOrder extends Component
     public $laybackPrice;
     public $nokafschuiningPrice;
     public $panelImages = [];
+
+    public bool $showPriceUpdateModal = false;
+    public string $priceUpdateMessage = '';
+    public bool $recalculateOrderPrices = false;
+
     public function mount($id) {
 
 
@@ -103,13 +108,36 @@ class ChangeOrder extends Component
             return $this->redirect('/orders', navigate: true);
         }
         $this->order_id = $id;
+        $this->order = Order::where('id', $id)->first();
 
+        $latestPriceRule = \App\Models\PriceRules::latest('updated_at')->first();
+        $latestSurcharge = \App\Models\Surcharges::latest('updated_at')->first();
+
+        $latestPricingUpdate = collect([
+            optional($latestPriceRule)->updated_at,
+            optional($latestSurcharge)->updated_at,
+        ])->filter()->max();
+
+        if (
+            auth()->user()->is_admin &&
+            $latestPricingUpdate &&
+            $this->order->prices_updated_at &&
+            $this->order->prices_updated_at < $latestPricingUpdate
+        ) {
+
+
+            $this->showPriceUpdateModal = true;
+
+            $this->priceUpdateMessage = __('messages.price_update_warning_order', [
+                'date' => $latestPricingUpdate->format('d-m-Y H:i'),
+            ]);
+        }
 
 
         $this->wandSupliers = Supliers::where('toepassing_wand', 1)->get();
         $this->dakSupliers = Supliers::where('toepassing_dak', 1)->get();
         $this->panelTypes = PanelType::whereIn('id', PriceRules::pluck('panel_type'))->get();
-        $this->order = Order::where('id', $id)->first();
+
         $this->creator_user_id = $this->order->user_id;
 
         $this->creator_user = User::where('id', $this->creator_user_id)->first();
@@ -204,6 +232,18 @@ class ChangeOrder extends Component
         $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
         $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
         return view('livewire.orders.changeOrder');
+    }
+
+    public function keepOldOrderPrices()
+    {
+        $this->recalculateOrderPrices = false;
+        $this->showPriceUpdateModal = false;
+    }
+
+    public function useNewOrderPrices()
+    {
+        $this->recalculateOrderPrices = true;
+        $this->showPriceUpdateModal = false;
     }
 
     public function updateSelectedPanelOption($index)
@@ -453,18 +493,24 @@ class ChangeOrder extends Component
         ];
     }
 
-    public function saveOrder() {
-
-
+    public function saveOrder()
+    {
         $this->fillTotaleLengte = array_filter($this->fillTotaleLengte, fn($v) => $v !== '');
         $this->fillTotaleLengte = array_values($this->fillTotaleLengte);
 
-
         $this->validate();
 
+        $order = Order::with(['orderLines', 'user'])->findOrFail($this->order_id);
 
+        $oldLinePrices = $order->orderLines
+            ->values()
+            ->mapWithKeys(function ($line, $index) {
+                return [
+                    $index => $line->price_per_m2,
+                ];
+            });
 
-        Order::where('id', $this->order_id)->update([
+        $order->update([
             'klantnaam' => $this->klant_naam,
             'referentie' => $this->referentie,
             'aflever_straat' => $this->aflever_straat,
@@ -485,22 +531,15 @@ class ChangeOrder extends Component
             'comment' => $this->comment,
         ]);
 
-        $order = Order::where('id', $this->order_id)->first();
+        OrderLines::where('order_id', $order->id)->delete();
 
+        foreach ($this->orderLines as $index => $key) {
+            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : 0;
+            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : 0;
+            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : 0;
+            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : 0;
 
-
-        OrderLines::where('order_id', $this->order_id)->delete();
-
-
-        foreach($this->orderLines as $index => $key) {
-
-            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : '0';
-            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : '0';
-            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : '0';
-            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : '0';
             $selectedOptions = $this->selectedPanelOption[$index] ?? [];
-
-
 
             OrderLines::create([
                 'order_id' => $order->id,
@@ -510,16 +549,49 @@ class ChangeOrder extends Component
                 'user_id' => Auth::user()->id,
                 'm2' => $m2,
 
-                // als optie niet geselecteerd is -> 0
                 'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
                 'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
                 'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
                 'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
                 'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+
+                'price_per_m2' => $this->recalculateOrderPrices
+                    ? null
+                    : ($oldLinePrices[$index] ?? 0),
             ]);
         }
 
-        $orderLines = OrderLines::where('order_id', $order->id)->get();
+        $order->refresh();
+        $order->load(['orderLines', 'user', 'surcharges']);
+
+        if ($this->recalculateOrderPrices) {
+            app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
+
+            $order->refresh();
+            $order->load(['orderLines', 'user', 'surcharges']);
+        } else {
+            $subtotal = $order->orderLines->sum(function ($line) {
+                return (float) $line->m2 * (float) $line->price_per_m2;
+            });
+
+            $surchargesTotal = (float) ($order->surcharges_total ?? 0);
+            $vat = ($subtotal + $surchargesTotal) * 0.21;
+            $grandTotal = $subtotal + $surchargesTotal + $vat;
+
+            if ($order->orderRules) {
+                $grandTotal += (float) $order->orderRules->price;
+            }
+
+            $order->subtotal = $subtotal;
+            $order->vat_total = $vat;
+            $order->grand_total = $grandTotal;
+            $order->save();
+
+            $order->refresh();
+            $order->load(['orderLines', 'user']);
+        }
+
+        $orderLines = $order->orderLines;
         $user = User::where('id', $order->user_id)->first();
 
         $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
@@ -527,14 +599,21 @@ class ChangeOrder extends Component
         $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
 
-        Pdf::loadView('pdf.order', ['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-' . $order->order_id . '.pdf'));
+        Pdf::loadView('pdf.order', [
+            'order' => $order,
+            'orderLines' => $orderLines,
+            'showNokafschuining' => $showNokafschuining,
+            'showLb' => $showLb,
+            'showCb' => $showCb,
+            'showVrijeRuimte' => $showVrijeRuimte,
+        ])->save(public_path('/storage/orders/order-' . $order->order_id . '.pdf'));
 
-
-        if(Auth::user()->is_admin == 1 && $order->user_id != Auth::user()->id) {
+        if (Auth::user()->is_admin == 1 && $order->user_id != Auth::user()->id) {
             Mail::to($user->email)->send(new orderUpdated($order));
         }
 
-        session()->flash('success','De order is bewerkt.');
+        session()->flash('success', __('messages.De order is bewerkt'));
+
         return $this->redirect('/orders', navigate: true);
     }
 

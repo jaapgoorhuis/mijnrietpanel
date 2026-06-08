@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Documentatie categorieën') }}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2 ">   {{ __('messages.Downloads') }}</p>
                 </div>
             </li>
         </ol>
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between mb-6">
                 {{-- Titel altijd zichtbaar --}}
                 <h1 class="text-lg font-semibold text-gray-800">
-                    {{ __('messages.Documentatie') }}
+                    {{ __('messages.Downloads') }}
                 </h1>
 
                 {{-- Knop alleen voor admins --}}
@@ -42,7 +42,7 @@
             @else
                 <div class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
                     @foreach($documentationFolder as $folder)
-                        <a href="{{ url('/documentation-maps/' . $folder->id . '/documentation') }}"
+                        <a href="{{ url('/download-maps/' . $folder->id . '/download') }}"
                            class="group border rounded-lg overflow-hidden shadow hover:shadow-lg transition duration-200 bg-white flex flex-col items-center p-3 w-full">
 
                             {{-- Afbeelding bovenaan --}}

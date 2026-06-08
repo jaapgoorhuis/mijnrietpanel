@@ -10,7 +10,7 @@
             <li>
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">   {{ __('messages.Prijslijst / Algemene voorwaarden') }}</p>
+                    <p class="ms-1 text-sm font-medium text-gray-700 md:ms-2">   {{ __('messages.Voorwaarden') }}</p>
                 </div>
             </li>
         </ol>

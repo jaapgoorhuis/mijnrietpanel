@@ -389,30 +389,27 @@ class CreateOrders extends Component
     }
 
 
-
-    public function saveOrder() {
-
+    public function saveOrder()
+    {
         $this->validate();
 
-
-
-        // 3️⃣ Als er geen fouten zijn, opslaan
         if (! $this->getErrorBag()->any()) {
 
             $latestOrder = Order::orderBy('id', 'desc')->first();
 
             if ($latestOrder) {
                 $currentYear = date('y');
+
                 if (str_starts_with($latestOrder->order_id, $currentYear)) {
                     $orderId = $latestOrder->order_id + 1;
                 } else {
                     $orderId = $currentYear . '0600';
                 }
-
             } else {
                 $orderId = 250600;
             }
-            Order::create([
+
+            $order = Order::create([
                 'klantnaam' => $this->klant_naam,
                 'referentie' => $this->referentie,
                 'aflever_straat' => $this->aflever_straat,
@@ -435,18 +432,13 @@ class CreateOrders extends Component
                 'lang' => $this->locale,
             ]);
 
-            $order = Order::orderBy('id', 'desc')->first();
-
             foreach ($this->orderLines as $index => $key) {
-                $fillCb = $this->fillCb[$index] ?? '0';
-                $fillLb = $this->fillLb[$index] ?? '0';
-                $fillTotaleLengte = $this->fillTotaleLengte[$index] ?? '0';
-                $aantal = $this->aantal[$index] ?? '0';
-                $m2 = $this->m2[$index] ?? '0';
+                $fillLb = $this->fillLb[$index] ?? 0;
+                $fillTotaleLengte = $this->fillTotaleLengte[$index] ?? 0;
+                $aantal = $this->aantal[$index] ?? 0;
+                $m2 = $this->m2[$index] ?? 0;
 
-                // bepaal per optie of deze geselecteerd is
                 $selectedOptions = $this->selectedPanelOption[$index] ?? [];
-
 
                 OrderLines::create([
                     'order_id' => $order->id,
@@ -457,7 +449,6 @@ class CreateOrders extends Component
                     'user_id' => Auth::user()->id,
                     'm2' => $m2,
 
-                    // als optie niet geselecteerd is -> 0
                     'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
                     'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
                     'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
@@ -466,23 +457,40 @@ class CreateOrders extends Component
                 ]);
             }
 
-            $orderLines = OrderLines::where('order_id', $order->id)->get();
+            $order->refresh();
+            $order->load(['orderLines', 'user']);
+
+            app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
+
+            $order->refresh();
+            $order->load(['orderLines', 'user', 'surcharges']);
+
+            $orderLines = $order->orderLines;
 
             $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
             $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
             $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
             $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
 
-            Pdf::loadView('pdf.order', ['order' => $order, 'orderLines' => $orderLines, 'showNokafschuining' => $showNokafschuining, 'showLb' => $showLb, 'showCb' => $showCb, 'showVrijeRuimte' => $showVrijeRuimte])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
+            Pdf::loadView('pdf.order', [
+                'order' => $order,
+                'orderLines' => $orderLines,
+                'showNokafschuining' => $showNokafschuining,
+                'showLb' => $showLb,
+                'showCb' => $showCb,
+                'showVrijeRuimte' => $showVrijeRuimte,
+            ])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
 
             Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
 
             Mail::to(Auth::user()->email)->send(new newOrderCustomer($order));
 
             session()->flash('success', __('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen'));
+
             return $this->redirect('/orders', navigate: true);
         }
     }
+
 
     public function cancelCreateOrder() {
         return $this->redirect('/orders', navigate: true);

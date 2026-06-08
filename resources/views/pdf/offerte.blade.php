@@ -8,9 +8,27 @@
     <link rel="stylesheet" href="{{ asset('pdf.css') }}" type="text/css">
 </head>
 <body>
-
 <?php
 $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first();
+
+/*
+|--------------------------------------------------------------------------
+| Opgeslagen prijsgegevens
+|--------------------------------------------------------------------------
+| De PDF rekent geen prijzen/toeslagen meer opnieuw uit.
+| Alles wordt opgeslagen via PricingServices::updateDocumentPricing()
+| tijdens aanmaken/bewerken van de offerte.
+*/
+$offerteLines = $offerteLines ?? $offerte->offerteLines;
+
+$toeslagen = $offerte->surcharges ?? collect();
+$hasToeslagen = $toeslagen->count() > 0;
+
+$totalPrice = (float) ($offerte->subtotal ?? 0);
+$totalToeslagPrice = (float) ($offerte->surcharges_total ?? 0);
+$totalBtw = (float) ($offerte->vat_total ?? 0);
+$grandTotal = (float) ($offerte->grand_total ?? 0);
+$totalM2 = $offerteLines->sum('m2');
 ?>
 
 <div class="page-container" style="padding:15px;">
@@ -104,19 +122,13 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             </thead>
 
             <tbody>
-            <?php
-            $totalPrice = 0;
-            $zaaglengtes = 0;
-            $laybacks = 0;
-            $nokafschuining = 0;
-            $vrijeruimte = 0;
-            $count = 0;
-
-            $zaaglengteToeslag = \App\Models\Surcharges::where('rule', 'zaaglengte')->first();
-            ?>
+            <?php $count = 0; ?>
 
             @foreach($offerteLines as $line)
-                    <?php $count++; ?>
+                    <?php
+                    $count++;
+                    $lineTotal = (float) $line->m2 * (float) ($line->price_per_m2 ?? 0);
+                    ?>
 
                 <tr class="items">
                     <td>{{ $count }}</td>
@@ -127,17 +139,14 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                     @endif
 
                     @if($showLb)
-                            <?php if($line->lb > 0) $laybacks += $line->aantal; ?>
                         <td>{{ $line->lb > 0 ? $line->lb.' mm' : '' }}</td>
                     @endif
 
                     @if($showNokafschuining)
-                            <?php if($line->nokafschuining > 0) $nokafschuining += $line->aantal; ?>
                         <td>{{ $line->nokafschuining > 0 ? $line->nokafschuining.'°' : '' }}</td>
                     @endif
 
                     @if($showVrijeRuimte)
-                            <?php if($line->vrije_ruimte_2 > 0) $vrijeruimte += $line->aantal; ?>
                         <td>
                             {{ $line->vrije_ruimte_2 > 0
                                 ? $line->vrije_ruimte_2.' mm ('.$line->vrije_ruimte_1.' mm vanaf boven)'
@@ -149,34 +158,6 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                     <td>{{ $line->aantal }}</td>
 
                     <td>
-                            <?php
-                            $panelTypeModel = \App\Models\PanelType::where('name', $offerte->kerndikte)->first();
-
-                            if($company->is_reseller){
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)
-                                    ->where('company_id', $company->id)->first();
-                                $discount = 0;
-                            } else {
-                                $priceRule = \App\Models\PriceRules::where('panel_type', $panelTypeModel->id)->first();
-                                $discount = $priceRule->price / 100 * $company->discount;
-                            }
-
-                            $base = $priceRule->price - $discount;
-                            $disc = $base / 100 * $offerte->discount;
-                            $marge = $base / 100 * $offerte->marge;
-
-                            $m2price = $company->is_reseller
-                                ? $base - $disc
-                                : ($offerte->marge != 0 ? $base + $marge : $base);
-
-                            $lineTotal = $line->m2 * $m2price;
-                            $totalPrice += $lineTotal;
-
-                            if($zaaglengteToeslag && $line->fillTotaleLengte < $zaaglengteToeslag->number){
-                                $zaaglengtes += $line->aantal;
-                            }
-                            ?>
-
                         € {{ number_format($lineTotal, 2, ',', '.') }}
                     </td>
                 </tr>
@@ -184,26 +165,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
             </tbody>
         </table>
 
-        <?php
-        $toeslagen = \App\Models\Surcharges::get();
-        $vierkantemeterToeslag = \App\Models\Surcharges::where('rule', 'vierkantemeter')->first();
-
-        $totalToeslagPrice = 0;
-        $totalM2 = $offerte->offerteLines->sum('m2');
-
-        $orderLineHeeftOversize = false;
-        $oversizeThreshold = \App\Models\Surcharges::where('rule', 'order')->value('number');
-
-        foreach($offerte->offerteLines as $l){
-            if($oversizeThreshold && $l->fillTotaleLengte > $oversizeThreshold){
-                $orderLineHeeftOversize = true;
-                break;
-            }
-        }
-        ?>
-
-        @if($zaaglengtes > 0 || $totalM2 < $vierkantemeterToeslag->number || $laybacks || $nokafschuining || $vrijeruimte || $orderLineHeeftOversize)
-
+        @if($hasToeslagen)
             <table class="products toeslagen">
                 <tr class="items">
                     <th>{{ __('messages.Toeslag') }}</th>
@@ -213,67 +175,12 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
                 </tr>
 
                 @foreach($toeslagen as $t)
-
-                    @if($t->rule == 'zaaglengte' && $zaaglengtes > 0)
-                            <?php $price = $zaaglengtes * $t->price; $totalToeslagPrice += $price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>{{$zaaglengtes}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
-                    @if($t->rule == 'Layback' && $showLb)
-                            <?php $price = $laybacks * $t->price; $totalToeslagPrice += $price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>{{$laybacks}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
-                    @if($t->rule == 'Nokafschuining' && $showNokafschuining)
-                            <?php $price = $nokafschuining * $t->price; $totalToeslagPrice += $price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>{{$nokafschuining}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
-                    @if($t->rule == 'Vrije ruimte' && $showVrijeRuimte)
-                            <?php $price = $vrijeruimte * $t->price; $totalToeslagPrice += $price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>{{$vrijeruimte}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
-                    @if($t->rule == 'vierkantemeter' && $totalM2 < $t->number)
-                            <?php $totalToeslagPrice += $t->price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>1</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
-                    @if($t->rule == 'order' && $orderLineHeeftOversize)
-                            <?php $totalToeslagPrice += $t->price; ?>
-                        <tr>
-                            <td>{{$t->name}}</td>
-                            <td>1</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                            <td>€ {{number_format($t->price,2,',','.')}}</td>
-                        </tr>
-                    @endif
-
+                    <tr>
+                        <td>{{ __('messages.' . $t->name) }}</td>
+                        <td>{{ $t->qty }}</td>
+                        <td>€ {{ number_format($t->unit_price, 2, ',', '.') }}</td>
+                        <td>€ {{ number_format($t->total, 2, ',', '.') }}</td>
+                    </tr>
                 @endforeach
             </table>
         @endif
@@ -290,50 +197,7 @@ $company = \App\Models\Company::where('id', $offerte->user->bedrijf_id)->first()
         @endif
     </div>
 
-    <?php
-    // Veilig checken of er toeslagen zijn
-    $hasToeslagen =
-        $zaaglengtes > 0 ||
-        (
-            isset($vierkantemeterToeslag) &&
-            $vierkantemeterToeslag &&
-            isset($vierkantemeterToeslag->number) &&
-            $totalM2 < $vierkantemeterToeslag->number
-        ) ||
-        ($showLb && $laybacks > 0) ||
-        ($showCb) ||
-        ($showNokafschuining && $nokafschuining > 0) ||
-        ($showVrijeRuimte && $vrijeruimte > 0) ||
-        $orderLineHeeftOversize;
-
-    // BTW berekeningen
-    $subtotalBtw = $totalPrice * 0.21;
-
-    $totalToeslagPriceBtw = $totalToeslagPrice > 0
-        ? $totalToeslagPrice * 0.21
-        : 0;
-
-    // TOTALE BTW
-    $totalBtw = $subtotalBtw;
-
-    if($hasToeslagen) {
-        $totalBtw += $totalToeslagPriceBtw;
-    }
-
-    // Eindtotaal
-    $grandTotal =
-        $totalPrice +
-        $subtotalBtw +
-        $totalToeslagPrice +
-        $totalToeslagPriceBtw;
-
-    // Eventuele offerte rule erbij
-    if($offerte->offerteRules) {
-        $grandTotal += $offerte->offerteRules->price;
-    }
-    ?>
-
-        <!-- TOTAL -->
+    <!-- TOTAL -->
     <div class="total" style="margin-top:50px;">
         <table class="total-table">
 

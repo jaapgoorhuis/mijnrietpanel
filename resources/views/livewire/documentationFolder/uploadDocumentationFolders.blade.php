@@ -11,8 +11,8 @@
             <li class="inline-flex items-center">
                 <div class="flex items-center">
                     <i class="fa-solid fa-angle-right"></i>
-                    <a href="/documentation-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
-                        {{ __('messages.Documentatie categorieën') }}
+                    <a href="/download-maps" class="md:ms-2 inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#C0A16E]">
+                        {{ __('messages.Downloads') }}
                     </a>
                 </div>
             </li>

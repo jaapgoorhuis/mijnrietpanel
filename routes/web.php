@@ -72,13 +72,13 @@ Route::middleware('auth')->group(function () {
     Route::get('marketing-maps/{id}/marketing', \App\Livewire\MarketingFolder\Marketing\Marketing::class)->name('marketing');
     Route::get('marketing-maps/{id}/marketing/upload', \App\Livewire\MarketingFolder\Marketing\UploadMarketing::class);
 
-    Route::get('documentation-maps', \App\Livewire\DocumentationFolder\DocumentationFolder::class)->name('documentation');
-    Route::get('documentation-maps/{id}/documentation', \App\Livewire\DocumentationFolder\Documentation\Documentation::class)->name('documentation');
-    Route::get('documentation-maps/upload', \App\Livewire\DocumentationFolder\UploadDocumentationFolder::class);
-    Route::get('documentation-maps/{id}/documentation/upload', \App\Livewire\DocumentationFolder\Documentation\UploadDocumentation::class);
+    Route::get('download-maps', \App\Livewire\DocumentationFolder\DocumentationFolder::class)->name('download');
+    Route::get('download-maps/{id}/download', \App\Livewire\DocumentationFolder\Documentation\Documentation::class)->name('download');
+    Route::get('download-maps/upload', \App\Livewire\DocumentationFolder\UploadDocumentationFolder::class);
+    Route::get('download-maps/{id}/download/upload', \App\Livewire\DocumentationFolder\Documentation\UploadDocumentation::class);
 
-    Route::get('pricelist', \App\Livewire\Pricelist\Pricelist::class)->name('pricelist');
-    Route::get('pricelist/upload', \App\Livewire\Pricelist\UploadPricelist::class);
+    Route::get('voorwaarden', \App\Livewire\Pricelist\Pricelist::class)->name('voorwaarden');
+    Route::get('voorwaarden/upload', \App\Livewire\Pricelist\UploadPricelist::class);
 
 
     Route::get('/companys/{slug}/users/edit/{id}', \App\Livewire\Companys\EditCompanyUsers::class);

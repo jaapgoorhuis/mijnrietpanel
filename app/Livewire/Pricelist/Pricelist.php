@@ -45,10 +45,10 @@ Pricelist extends Component
     }
     public function uploadPricelist() {
         if(Auth::user()->is_admin) {
-            return $this->redirect('/pricelist/upload', navigate: true);
+            return $this->redirect('/voorwaarden/upload', navigate: true);
         }
         else {
-            return $this->redirect('/pricelist', navigate: true);
+            return $this->redirect('/voorwaarden', navigate: true);
         }
     }
 
@@ -94,7 +94,7 @@ Pricelist extends Component
 
             $zip->finish();
 
-        }, 'prijslijst.zip');
+        }, __('messages.Voorwaarden') . '.zip');
     }
 
 
