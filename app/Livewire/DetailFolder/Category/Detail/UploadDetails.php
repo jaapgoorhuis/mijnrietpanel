@@ -51,7 +51,7 @@ class UploadDetails extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf,jpg,jpeg,ifc,png,gif,bmp,webp,svg,dwg,rvt,rfa|mimetypes:font/otf,application/x-font-otf,application/octet-stream',
+        'files.*' => 'required|file|mimes:pdf,jpg,jpeg,ifc,png,gif,bmp,webp,svg,dwg,docx,doc,rvt,rfa|mimetypes:font/otf,application/x-font-otf,application/octet-stream',
     ];
 
     public function messages(): array

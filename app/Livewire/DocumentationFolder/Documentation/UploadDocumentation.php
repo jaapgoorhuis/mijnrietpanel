@@ -93,7 +93,7 @@ class UploadDocumentation extends Component
 
         if ($this->file) {
 
-            $allowed = ['pdf','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa', 'ifc'];
+            $allowed = ['pdf','jpg','jpeg','png','doc','docx','gif','bmp','webp','svg','otf','dwg','rvt','rfa', 'ifc'];
             $extension = strtolower($this->file->getClientOriginalExtension());
 
             if (!in_array($extension, $allowed)) {

@@ -105,7 +105,7 @@ class UploadMarketing extends Component
 
         $extension = strtolower($this->file->getClientOriginalExtension());
 
-        $allowed = ['pdf','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa', 'ifc'];
+        $allowed = ['pdf','docx','doc','jpg','jpeg','png','gif','bmp','webp','svg','otf','dwg','rvt','rfa', 'ifc'];
 
         if (!in_array($extension, $allowed)) {
             throw \Illuminate\Validation\ValidationException::withMessages([
