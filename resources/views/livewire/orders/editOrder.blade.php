@@ -23,26 +23,76 @@
                             Prijs invloed:
                             <div class="tooltip">
                                 <div class="tooltip-content">
-                                    Beschrijf in eigen woorden de wens van de klant. Doe dit zo kort en duidelijk mogelijk. Jouw beschrijving komt op de pakketlijst, fabriekslijst en bevestigde order te staan. De prijs komt bovenop de normale prijs van de order. Heeft de klant geen opmerking? Laat de regel en prijs dan leeg.
-
+                                    Beschrijf in eigen woorden de wens van de klant. Doe dit zo kort en duidelijk mogelijk.
+                                    Jouw beschrijving komt op de pakketlijst, fabriekslijst en bevestigde order te staan.
+                                    De prijs komt bovenop de normale prijs van de order.
+                                    Heeft de klant geen opmerking? Laat de regel en prijs dan leeg.
                                 </div>
                                 <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer" id="tooltip-marge"></i>
                             </div>
                         </h5>
 
+                        @foreach($priceRules as $index => $priceRule)
+                            <div class="border border-gray-200 rounded-lg p-3 mb-4">
+                                <div class="grid md:grid-cols-2 md:gap-6">
+                                    <div class="relative z-0 w-full mb-5 group">
+                                        <label class="text-gray-400">Regel:</label>
+                                        <input
+                                            type="text"
+                                            wire:model="priceRules.{{ $index }}.rule"
+                                            class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"
+                                            placeholder=" "
+                                        />
+                                        <div class="text-red-500">
+                                            @error("priceRules.$index.rule") {{ $message }} @enderror
+                                        </div>
+                                    </div>
 
-                        <div class="grid md:grid-cols-2 md:gap-6">
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="rule" class="text-gray-400">Regel:</label>
-                                <input type="text"  wire:model="rule" name="rule" id="rule" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('rule') {{ $message }} @enderror</div>
+                                    <div class="relative z-0 w-full mb-5 group">
+                                        <label class="text-gray-400">Prijs:</label>
+                                        <input
+                                            type="number"
+                                            step=".01"
+                                            wire:model="priceRules.{{ $index }}.price"
+                                            class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"
+                                            placeholder=" "
+                                        />
+                                        <div class="text-red-500">
+                                            @error("priceRules.$index.price") {{ $message }} @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative z-0 w-full mb-2 group flex items-center justify-between">
+                                    <label class="text-gray-400">
+                                        <input
+                                            wire:model="priceRules.{{ $index }}.show_orderlist"
+                                            type="checkbox"
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+                                        >
+                                        Laat opmerking op de inkooporder zien
+                                    </label>
+
+                                    @if($index > 0)
+                                        <button
+                                            type="button"
+                                            wire:click="removePriceRule({{ $index }})"
+                                            class="text-red-600 text-sm font-medium"
+                                        >
+                                            Verwijderen
+                                        </button>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <label for="price" class="text-gray-400">prijs:</label>
-                                <input type="number"  step=".01" wire:model="price" name="price" id="price" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                                <div class="text-red-500">@error('price') {{ $message }} @enderror</div>
-                            </div>
-                        </div>
+                        @endforeach
+
+                        <button
+                            type="button"
+                            wire:click="addPriceRule"
+                            class="mb-5 text-sm text-blue-600 font-medium"
+                        >
+                            + Extra prijsregel toevoegen
+                        </button>
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="show-orderlist" class="text-gray-400">Laat opmerking op de inkooporder zien:</label>

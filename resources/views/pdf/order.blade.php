@@ -236,17 +236,17 @@
             @endif
 
             <!-- Extra order rule -->
-            @if($order->orderRules)
+            @foreach($order->orderRules as $rule)
                 <tr>
-                    <th style="text-align: left;">
-                        {{$order->orderRules->rule}}:
+                    <th style="text-align:left; font-weight: bold">
+                        {{ $rule->rule }}:
                     </th>
 
-                    <th style="text-align: left;">
-                        {!! '&euro;&nbsp;' . number_format($order->orderRules->price, 2, ',', '.') !!}
+                    <th style="text-align:left; font-weight: bold">
+                        € {{ number_format($rule->price,2,',','.') }}
                     </th>
                 </tr>
-            @endif
+            @endforeach
 
             <!-- BTW totaal -->
             <tr>

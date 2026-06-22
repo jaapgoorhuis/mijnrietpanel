@@ -73,7 +73,7 @@
                                 <h3 class="text-lg font-bold mb-4">{{ __('Let op!') }}</h3>
                                 <p class="mb-6">
 
-                                    De inkooporder is al verstuurd naar de leverancier. Neemt eerst contact op met de leverancier om te kijken of deze de inkooporder al heeft verwerkt en voorkom verkeerde leveringen</p>
+                                    De inkooporder is al verstuurd naar de leverancier. Neemt eerst contact op met de leverancier om te kijken of deze de inkooporder al heeft verwerkt en voorkom verkeerde leveringen. <br/><br/><Strong>Prijsregels</strong><br/>De prijsregels die bij het bevestigen zijn toegevoegd worden automatisch verwijderd als je de order toch bewerkt. Deze moet je later weer handmatig toevoegen.</p>
                                 <div class="flex justify-center gap-4">
                                     <button @click="showConfirmModal = false" wire:click="cancelChangeOrder()"  class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                                         Annuleren

@@ -124,7 +124,7 @@
                                     @if($order->order_ordered == '')
                                         {{ __('messages.Nee')}}
                                     @else
-                                        {{$order->order_ordered}}
+                                        {{ \Carbon\Carbon::parse($order->order_ordered)->format('d-m-Y H:i') }}
                                     @endif
                                 </td>
                                 @endadmin

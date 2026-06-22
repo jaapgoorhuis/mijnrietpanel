@@ -34,7 +34,7 @@ class Order extends Authenticatable
    }
     public function orderRules()
     {
-        return $this->hasOne(OrderRules::class);
+        return $this->hasMany(OrderRules::class, 'order_id');
     }
 
    public function user() {

@@ -109,21 +109,21 @@
                     <td style="padding-right: 60px;">Aanmaakdatum:</td><td>{{$order->updated_at->format('d-m-Y')}}</td>
                 </tr>
 
-                @if($order->orderRules)
-
-                    @if($order->orderRules->show_orderlist)
-                        <tr>
-                            <td><strong>Opmerking(en):</strong></td>
-                            <td>{{$order->orderRules->rule}}</td>
-                        </tr>
-                   @endif
+                @if($order->orderRules && $order->orderRules->count() > 0)
+                    @foreach($order->orderRules as $orderRule)
+                        @if($orderRule->show_orderlist)
+                            <tr>
+                                <td><strong>Opmerking(en):</strong></td>
+                                <td>{{ $orderRule->rule }}</td>
+                            </tr>
+                        @endif
+                    @endforeach
                 @endif
 
                 @if($order->rietpanel_comment)
-                    <br/>
                     <tr>
                         <td style="padding-right: 30px;"><strong>Opmerking vanuit Rietpanel:</strong></td>
-                        <td>{{$order->rietpanel_comment}}</td>
+                        <td>{{ $order->rietpanel_comment }}</td>
                     </tr>
                 @endif
             </table>

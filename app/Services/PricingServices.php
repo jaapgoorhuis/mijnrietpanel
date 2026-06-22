@@ -15,10 +15,20 @@ class PricingServices
 {
     public function calculate($document, $lines = null, $company = null): array
     {
+        $document->loadMissing(['user']);
+
+        if ($document instanceof Order) {
+            $document->loadMissing(['orderRules']);
+        }
+
+        if ($document instanceof Offerte) {
+            $document->loadMissing(['offerteRules']);
+        }
+
         $company = $company ?: Company::find($document->user->bedrijf_id);
         $lines = $lines ?: $this->getLines($document);
 
-        $panelType = PanelType::where('name', $document->kerndikte)->first();
+        $panelType = $this->getPanelType($document);
 
         $subtotal = 0;
         $lineTotals = [];
@@ -31,7 +41,12 @@ class PricingServices
         $zaaglengteToeslag = Surcharges::where('rule', 'zaaglengte')->first();
 
         foreach ($lines as $line) {
-            $m2price = $this->calculateM2Price($document, $company, $panelType);
+            $m2price = $line->price_per_m2;
+
+            if ($m2price === null || (float) $m2price <= 0) {
+                $m2price = $this->calculateM2Price($document, $company, $panelType);
+            }
+
             $lineTotal = (float) $line->m2 * (float) $m2price;
 
             $lineTotals[$line->id] = $lineTotal;
@@ -49,7 +64,10 @@ class PricingServices
                 $vrijeruimte += (int) $line->aantal;
             }
 
-            if ($zaaglengteToeslag && (float) $line->fillTotaleLengte < (float) $zaaglengteToeslag->number) {
+            if (
+                $zaaglengteToeslag &&
+                (float) $line->fillTotaleLengte < (float) $zaaglengteToeslag->number
+            ) {
                 $zaaglengtes += (int) $line->aantal;
             }
         }
@@ -60,7 +78,10 @@ class PricingServices
         $oversizeThreshold = Surcharges::where('rule', 'order')->value('number');
 
         foreach ($lines as $line) {
-            if ($oversizeThreshold && (float) $line->fillTotaleLengte > (float) $oversizeThreshold) {
+            if (
+                $oversizeThreshold &&
+                (float) $line->fillTotaleLengte > (float) $oversizeThreshold
+            ) {
                 $orderLineHeeftOversize = true;
                 break;
             }
@@ -93,7 +114,10 @@ class PricingServices
                 $amount = $qty * (float) $surcharge->price;
             }
 
-            if ($surcharge->rule === 'vierkantemeter' && (float) $totalM2 < (float) $surcharge->number) {
+            if (
+                $surcharge->rule === 'vierkantemeter' &&
+                (float) $totalM2 < (float) $surcharge->number
+            ) {
                 $qty = 1;
                 $amount = (float) $surcharge->price;
             }
@@ -115,12 +139,11 @@ class PricingServices
                 $surchargesTotal += $amount;
             }
         }
+
         $rulePrice = $this->getRulePrice($document);
 
         $vatBase = $subtotal + $surchargesTotal + $rulePrice;
-
         $vat = $vatBase * 0.21;
-
         $grandTotal = $vatBase + $vat;
 
         return [
@@ -146,9 +169,17 @@ class PricingServices
     {
         $document->loadMissing(['user']);
 
+        if ($document instanceof Order) {
+            $document->loadMissing(['orderRules']);
+        }
+
+        if ($document instanceof Offerte) {
+            $document->loadMissing(['offerteRules']);
+        }
+
         $company = Company::find($document->user->bedrijf_id);
         $lines = $this->getLines($document);
-        $panelType = PanelType::where('name', $document->kerndikte)->first();
+        $panelType = $this->getPanelType($document);
 
         foreach ($lines as $line) {
             $m2Price = $this->calculateM2Price($document, $company, $panelType);
@@ -158,6 +189,7 @@ class PricingServices
                 $line->save();
             }
         }
+
         $pricing = $this->calculate($document, $lines, $company);
 
         $this->storeSurcharges($document, $pricing['surcharge_rows']);
@@ -208,11 +240,15 @@ class PricingServices
     private function getLines($document)
     {
         if ($document instanceof Offerte) {
-            return $document->offerteLines;
+            return $document->relationLoaded('offerteLines')
+                ? $document->offerteLines
+                : $document->offerteLines()->get();
         }
 
         if ($document instanceof Order) {
-            return $document->orderLines;
+            return $document->relationLoaded('orderLines')
+                ? $document->orderLines
+                : $document->orderLines()->get();
         }
 
         return collect();
@@ -220,23 +256,26 @@ class PricingServices
 
     private function getRulePrice($document): float
     {
-        if (
-            $document instanceof Offerte &&
-            method_exists($document, 'offerteRules') &&
-            $document->offerteRules
-        ) {
-            return (float) $document->offerteRules->price;
+        if ($document instanceof Offerte) {
+            $document->loadMissing(['offerteRules']);
+
+            return $document->offerteRules
+                ? (float) $document->offerteRules->price
+                : 0;
         }
 
-        if (
-            $document instanceof Order &&
-            method_exists($document, 'orderRules') &&
-            $document->orderRules
-        ) {
-            return (float) $document->orderRules->price;
+        if ($document instanceof Order) {
+            $document->loadMissing(['orderRules']);
+
+            return (float) $document->orderRules->sum('price');
         }
 
         return 0;
+    }
+
+    private function getPanelType($document)
+    {
+        return PanelType::where('name', $document->kerndikte)->first();
     }
 
     private function calculateM2Price($document, $company, $panelType): float
@@ -269,6 +308,6 @@ class PricingServices
 
         return $company->is_reseller
             ? $base - $disc
-            : (($document->marge ?? 0) != 0 ? $base + $marge : $base);
+            : (((float) ($document->marge ?? 0)) !== 0.0 ? $base + $marge : $base);
     }
 }
