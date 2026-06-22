@@ -223,6 +223,21 @@ Route::middleware('auth')->group(function () {
 
     });
 
+    Route::get('/fix-order/{id}', function ($id) {
+
+        $order = \App\Models\Order::with([
+            'user',
+            'orderLines',
+            'orderRules'
+        ])->findOrFail($id);
+
+        app(\App\Services\PricingServices::class)
+            ->updateDocumentPricing($order);
+
+        return 'Klaar';
+    });
+
+
 
     Route::get('/download-fabriekslijst/fabrieklijst-{id}', function($id) {
         $order = Order::where('order_id', $id)->first();
