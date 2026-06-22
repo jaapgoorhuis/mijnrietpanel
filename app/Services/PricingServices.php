@@ -115,10 +115,13 @@ class PricingServices
                 $surchargesTotal += $amount;
             }
         }
-
         $rulePrice = $this->getRulePrice($document);
-        $vat = ($subtotal + $surchargesTotal) * 0.21;
-        $grandTotal = $subtotal + $surchargesTotal + $vat + $rulePrice;
+
+        $vatBase = $subtotal + $surchargesTotal + $rulePrice;
+
+        $vat = $vatBase * 0.21;
+
+        $grandTotal = $vatBase + $vat;
 
         return [
             'line_totals' => $lineTotals,
@@ -148,10 +151,13 @@ class PricingServices
         $panelType = PanelType::where('name', $document->kerndikte)->first();
 
         foreach ($lines as $line) {
-            $line->price_per_m2 = $this->calculateM2Price($document, $company, $panelType);
-            $line->save();
-        }
+            $m2Price = $this->calculateM2Price($document, $company, $panelType);
 
+            if ($m2Price > 0) {
+                $line->price_per_m2 = $m2Price;
+                $line->save();
+            }
+        }
         $pricing = $this->calculate($document, $lines, $company);
 
         $this->storeSurcharges($document, $pricing['surcharge_rows']);

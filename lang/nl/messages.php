@@ -20,8 +20,8 @@ return [
     'password_not_longenaugh' => 'Het wachtwoord moet minimaal 8 tekens bevatten',
     'percentage_marge' => 'Vul hier een percentage marge. in Marge is het percentage winst wat je bovenop de inkoopprijs kunt plaatsen.',
     'orderConditions' => 'Op al onze offertes, adviezen, leveringen, opdrachten en op alle met ons gesloten overeenkomsten zijn onze voorwaarden van toepassing.<br> Deze voorwaarden worden op verzoek kosteloos toegezonden en zijn te lezen via uw portaal op <a href="https://mijn.rietpanel.nl/" target="_blank">https://mijn.rietpanel.nl/</a>.<br> Genoemde levertijden zijn verwachte levertijden en hieraan kunnen geen rechten worden ontleend.',
-    'minpanellength' => 'Voer hier de totale paneellengte in in mm, inclusief de CB. De minimale lengte is 500 mm en de maximale lengte is 17.000 mm. Let op: er geldt een toeslag van €250 voor bestellingen met panelen langer dan 14.500 mm en een toeslag van €8 voor panelen met een lengte onder de 2.000mm per paneel.',
-    'panelToShort' => 'De paneel lengte is te kort om een vrije ruimte toe te voegen. Kies een paneel lengte van minimaal 750mm',
+    'minpanellength' => 'Voer hier de totale element lengte in in mm, inclusief de CB. De minimale lengte is 500 mm en de maximale lengte is 17.000 mm. Let op: er geldt een toeslag van €250 voor bestellingen met elementen langer dan 14.500 mm en een toeslag van €8 voor elementen met een lengte onder de 2.000mm per element.',
+    'panelToShort' => 'De element lengte is te kort om een vrije ruimte toe te voegen. Kies een element lengte van minimaal 750mm',
     'Voorwaarden' => 'Voorwaarden',
 
     'price_update_warning_quotation' => 'Deze offerte gebruikt oude prijzen. De laatste prijswijziging was op :date. Bij het opslaan worden alle prijzen opnieuw berekend.',

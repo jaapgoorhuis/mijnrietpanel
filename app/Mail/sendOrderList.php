@@ -58,7 +58,7 @@ class sendOrderList extends Mailable
     {
         return [
             Attachment::fromPath(public_path('/storage/orderlijst/order-'.$this->order_id.'.pdf'))
-                ->as('order-'.$this->order_id.'.pdf')
+                ->as('Inkooporder-'.$this->order_id.'.pdf')
                 ->withMime('application/pdf'),
         ];
     }

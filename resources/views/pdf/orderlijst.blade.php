@@ -131,7 +131,7 @@
         <td class="right">
             <div style="height: 35px;"></div>
             <span class="orange">Afleveradres</span><br>
-            Rietpanel<br>
+            Rietpanel B.V.<br>
             Nijverheidsweg 59<br>
             3771 ME Barneveld<br>
             Nederland<br><br>

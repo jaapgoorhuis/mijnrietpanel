@@ -13,6 +13,7 @@ use App\Models\OrderLines;
 use App\Models\OrderRules;
 use App\Models\OrderTemplate;
 use App\Models\Supliers;
+use App\Services\PricingServices;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -144,11 +145,13 @@ class EditOrders extends Component
             $this->order->delivery_date = $this->delivery_date;
             $this->order->order_ordered = now();
             $this->order->save();
+            app(PricingServices::class)->updateDocumentPricing($this->order->fresh());
+
         });
 
         $orderLines = $this->order->orderLines;
 
-        $order = Order::with(['Suplier', 'orderRules', 'user'])->find($this->order->id);
+        $order = Order::with(['Suplier', 'orderRules', 'user', 'orderLines', 'surcharges'])->find($this->order->id);
 
         $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
         $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
@@ -192,7 +195,7 @@ class EditOrders extends Component
 
 
 
-        session()->flash('success','De order #'.$order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl en naar administratie@rietpanel.nl');
+        session()->flash('success','De order #'.$order->order_id.' is bevestigd. Er is een email verstuurd met een bevestiging naar '.$order->user->email.' De inkooporder is verstuurd naar inkoop@rietpanel.nl');
 
         return $this->redirect('/productPlanning');
     }

@@ -290,7 +290,7 @@ class CreateOffertes extends Component
                         $ruimte2 = $value;
 
                         if (!$totaal) {
-                            $fail(__('messages.Vul eerst de totale paneellengte in voor dit paneel'));
+                            $fail(__('messages.Vul eerst de totale element lengte in voor dit element'));
                             return;
                         }
 
@@ -339,8 +339,8 @@ class CreateOffertes extends Component
             'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
             'totaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
             'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
-            'aantal.*.min' => __('messages.Dit moet mimimaal 1 paneel zijn'),
-            'aantal.*.required' => __('messages.Het aantal panelen is een verplicht veld'),
+            'aantal.*.min' => __('messages.Dit moet mimimaal 1 element zijn'),
+            'aantal.*.required' => __('messages.Het aantal elementen is een verplicht veld'),
             'cb.*.max' => __('messages.De CB mag maximaal 140mm zijn'),
             'cb.*.min' => __('messages.De CB moet minimaal 20mm zijn'),
             'lb.*.min' => __('messages.De LB moet minimaal 20mm zijn'),

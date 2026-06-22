@@ -40,7 +40,7 @@
                         <br/><br/>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="klant_naam" class="text-gray-400">   {{ __('messages.Klant naam') }} *</label>
+                                <label for="klant_naam" class="text-gray-400">   {{ __('messages.Klantnaam') }} *</label>
                                 <input type="text"  wire:model="klant_naam" name="klant_naam" id="klant_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('klant_naam') {{ $message }} @enderror</div>
                             </div>
@@ -61,7 +61,7 @@
 
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="klant_naam" class="text-gray-400">   {{ __('messages.Project naam') }} *</label>
+                                <label for="klant_naam" class="text-gray-400">   {{ __('messages.Projectnaam') }} *</label>
                                 <input type="text"  wire:model="project_naam" name="project_naam" id="project_naam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
                                 <div class="text-red-500">@error('project_naam') {{ $message }} @enderror</div>
                             </div>
@@ -136,14 +136,14 @@
                                 <select id="toepassing" wire:model="toepassing" wire:change="updateBrands()" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
                                     <option value="Dak">{{ __('messages.Dak') }}</option>
-                                    <option value="Wand">{{ __('messages.Wand') }}</option>
+                                    <option value="Wand">{{ __('messages.Gevel') }}</option>
 
                                 </select>
                             </div>
 
 
                             <div class="relative z-0 w-full mb-5 group">
-                                <label for="merk_paneel" class="text-gray-400">{{ __('messages.Merk paneel') }} *</label>
+                                <label for="merk_paneel" class="text-gray-400">{{ __('messages.Element') }} *</label>
                                 <select @if(count($this->orderLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->brands as  $brands)
                                         <option @if($brands->status == 0) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
@@ -182,7 +182,7 @@
 
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
-                                    <label for="fillTotaleLengte" class="text-gray-400"> {{ __('messages.Totale paneellengte') }} (mm) *
+                                    <label for="fillTotaleLengte" class="text-gray-400"> {{ __('messages.Totale element lengte') }} (mm) *
                                         <div class="tooltip" wire:ignore>
                                             <div class="tooltip-content">
                                                 {{ __('messages.minpanellength') }}
@@ -194,10 +194,10 @@
                                     <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
                                 <div class="relative z-0 w-full mb-5 group">
-                                    <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal panelen') }} *
+                                    <label for="fillTotaleLengte" class="text-gray-400">{{ __('messages.Aantal elementen') }} *
                                         <div class="tooltip">
                                             <div class="tooltip-content">
-                                                {{ __('messages.Vul hier het aantal panelen in welke u nodig heeft met de ingevulde specificaties Heeft u meerdere panelen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken') }}
+                                                {{ __('messages.Vul hier het aantal elementen in welke u nodig heeft met de ingevulde specificaties Heeft u meerdere elementen nodig met andere specificaties? Druk dan op de plus hieronder om een extra rij aan te maken') }}
                                             </div>
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
@@ -419,7 +419,7 @@
                         <div class="text-right">
 
                             <button wire:click="addOrderLine()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-                                <i class="fa fa-plus hover:cursor-pointer"></i>{{ __('messages.Paneel toevoegen') }}
+                                <i class="fa fa-plus hover:cursor-pointer"></i>{{ __('messages.Element toevoegen') }}
                             </button>
 
                         </div>

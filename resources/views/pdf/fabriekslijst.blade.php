@@ -14,7 +14,7 @@
         <tr>
             <td class="label">Ordernummer:</td>
             <td>{{$order->order_id}}</td>
-            <td class="label">Dikte paneel:</td>
+            <td class="label">Dikte element:</td>
             <td style="color:red">{{$order->kerndikte}}</td>
             <td rowspan="6" class="logo">
                 <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
@@ -23,7 +23,7 @@
         <tr>
             <td class="label">Klantnaam:</td>
             <td>{{$order->klantnaam}}</td>
-            <td class="label">Riet spoort:</td>
+            <td class="label">Rietkleur:</td>
             <td  style="color:red">{{$order->rietkleur}}</td>
         </tr>
         <tr>
@@ -35,7 +35,7 @@
         <tr>
             <td class="label">Aanmaakdatum:</td>
             <td>{{$order->updated_at->format('d-m-Y')}}</td>
-            <td class="label">Merk paneel:</td>
+            <td class="label">Merk element:</td>
             <td  style="color:red">{{$order->merk_paneel}}</td>
         </tr>
 

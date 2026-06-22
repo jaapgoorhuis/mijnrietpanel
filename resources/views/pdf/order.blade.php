@@ -47,6 +47,7 @@
                     <div>Order #: {{$order->order_id}}</div>
                     <div>{{ __('messages.Order datum') }}: {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
                     <div>{{ __('messages.Bedrijfs-id') }}: {{$company->id}}</div>
+                    <div>{{ __('messages.Projectnaam') }}: {{$order->project_naam}}</div>
 
                     <div>{{ __('messages.Referentie') }}: {{$order->referentie}}</div>
                     <div>{{ __('messages.Verkoper') }}: {{$order->intaker}}</div>
@@ -99,7 +100,7 @@
             </tr>
         </table>
 
-        <h3>Panelen</h3>
+        <h3>{{__('messages.Elementen')}}</h3>
         <table class="products">
             <thead>
             <tr>
@@ -186,19 +187,11 @@
             <table class="products toeslagen">
                 <tr class="items">
                     <td><strong>{{ __('messages.Klant opmerking') }}</strong></td>
-                    @if($order->orderRules)
-                        <td>
-                            <strong>{{__('messages.Invloed op prijs')}}</strong>
-                        </td>
-                    @endif
+
                 </tr>
                 <tr class="items">
                     <td>{{$order->comment}}</td>
-                    @if($order?->status === 'Bevestigd' && $order?->orderRules)
-                        <td>
-                            &euro;&nbsp;{{ number_format($order->orderRules->price, 2, ',', '.') }}
-                        </td>
-                    @endif
+
                 </tr>
             </table>
         @endif
@@ -242,17 +235,6 @@
                 </tr>
             @endif
 
-            <!-- BTW totaal -->
-            <tr>
-                <th style="text-align: left;">
-                    21% BTW:
-                </th>
-
-                <th style="text-align: left;">
-                    {!! '&euro;&nbsp;' . number_format($totalBtw, 2, ',', '.') !!}
-                </th>
-            </tr>
-
             <!-- Extra order rule -->
             @if($order->orderRules)
                 <tr>
@@ -265,6 +247,19 @@
                     </th>
                 </tr>
             @endif
+
+            <!-- BTW totaal -->
+            <tr>
+                <th style="text-align: left;">
+                    21% BTW:
+                </th>
+
+                <th style="text-align: left;">
+                    {!! '&euro;&nbsp;' . number_format($totalBtw, 2, ',', '.') !!}
+                </th>
+            </tr>
+
+
 
             <!-- Eindtotaal -->
             <tr>
