@@ -21,9 +21,7 @@ class PricingServices
             $document->loadMissing(['orderRules']);
         }
 
-        if ($document instanceof Offerte) {
-            $document->loadMissing(['offerteRules']);
-        }
+
 
         $company = $company ?: Company::find($document->user->bedrijf_id);
         $lines = $lines ?: $this->getLines($document);
@@ -173,9 +171,6 @@ class PricingServices
             $document->loadMissing(['orderRules']);
         }
 
-        if ($document instanceof Offerte) {
-            $document->loadMissing(['offerteRules']);
-        }
 
         $company = Company::find($document->user->bedrijf_id);
         $lines = $this->getLines($document);
@@ -256,13 +251,6 @@ class PricingServices
 
     private function getRulePrice($document): float
     {
-        if ($document instanceof Offerte) {
-            $document->loadMissing(['offerteRules']);
-
-            return $document->offerteRules
-                ? (float) $document->offerteRules->price
-                : 0;
-        }
 
         if ($document instanceof Order) {
             $document->loadMissing(['orderRules']);

@@ -38,6 +38,19 @@
     $totalBtw = (float) ($order->vat_total ?? 0);
     $grandTotal = (float) ($order->grand_total ?? 0);
     $totalM2 = $orderLines->sum('m2');
+
+    // Waterstops per orderregel ophalen uit de nieuwe tabel.
+    // Fallback: als er nog oude data op order_lines staat, wordt die ook getoond.
+    $waterstopsByOrderLine = collect();
+
+    if ($showWaterstop ?? false) {
+        $waterstopsByOrderLine = \Illuminate\Support\Facades\DB::table('order_line_waterstops')
+            ->whereIn('order_line_id', $orderLines->pluck('id'))
+            ->orderBy('vertical')
+            ->orderBy('horizontal')
+            ->get()
+            ->groupBy('order_line_id');
+    }
     ?>
 
     <div class="margin-top">
@@ -101,7 +114,7 @@
         </table>
 
         <h3>{{__('messages.Elementen')}}</h3>
-        <table class="products">
+        <table class="products elements-table">
             <thead>
             <tr>
                 <th>#</th>
@@ -117,6 +130,9 @@
                 @endif
                 @if($showVrijeRuimte)
                     <th>{{ __('messages.Vrije ruimte') }}</th>
+                @endif
+                @if($showWaterstop)
+                    <th>{{ __('messages.Waterstop') }}</th>
                 @endif
                 <th>m²</th>
                 <th>{{ __('messages.Aantal') }}</th>
@@ -147,6 +163,32 @@
                                 ? $orderLine->vrije_ruimte_2 . ' mm (' . $orderLine->vrije_ruimte_1 . ' ' . __('messages.mm vanaf boven') . ')'
                                 : ''
                             }}
+                        </td>
+                    @endif
+
+                    @if($showWaterstop)
+                        <td class="waterstop-cell">
+                            @php
+                                $lineWaterstops = $waterstopsByOrderLine[$orderLine->id] ?? collect();
+
+                                if ($lineWaterstops->isEmpty() && $orderLine->waterstop_type) {
+                                    $lineWaterstops = collect([
+                                        (object) [
+                                            'type' => $orderLine->waterstop_type,
+                                            'vertical' => $orderLine->waterstop_vertical,
+                                            'horizontal' => $orderLine->waterstop_horizontal ?? 0,
+                                        ]
+                                    ]);
+                                }
+                            @endphp
+
+                            @foreach($lineWaterstops as $waterstopIndex => $waterstop)
+                                <div class="waterstop-line">
+                                    <strong>{{ $waterstop->type }} {{ __('messages.mm') }}</strong><br>
+                                    {{ __('messages.V') }}: {{ $waterstop->vertical }} {{ __('messages.mm') }}<br>
+                                    {{ __('messages.H') }}: {{ $waterstop->horizontal ?? 0 }} {{ __('messages.mm') }}
+                                </div>
+                            @endforeach
                         </td>
                     @endif
 
@@ -323,6 +365,33 @@
     }
     table.products td {
         padding: 0.5rem 0.5rem 0.5rem 1rem;
+    }
+
+    /* Elementen tabel compact houden, omdat Waterstop extra informatie bevat */
+    table.elements-table {
+        font-size: 0.72rem;
+    }
+    table.elements-table th {
+        padding: 0.35rem;
+    }
+    table.elements-table td {
+        padding: 0.35rem 0.35rem 0.35rem 0.45rem;
+        vertical-align: top;
+    }
+
+    .waterstop-cell {
+        min-width: 70px;
+    }
+    .waterstop-line {
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 3px;
+        margin-bottom: 3px;
+        line-height: 1.25;
+    }
+    .waterstop-line:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
     }
 
     /* Toeslagen tabel */

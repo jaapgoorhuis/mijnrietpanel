@@ -156,6 +156,9 @@ Route::middleware('auth')->group(function () {
         $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
+        $showWaterstop = $orderLines->contains(function ($line) {
+            return !empty($line->waterstop_type);
+        });
 
         $company = $order->company; // Als je een relatie hebt
         $kerndikte = $order->kerndikte;
@@ -173,6 +176,7 @@ Route::middleware('auth')->group(function () {
                 'showLb' => $showLb,
                 'showCb' => $showCb,
                 'company' => $company,
+                'showWaterstop' => $showWaterstop,
                 'kerndikte' => $kerndikte
             ])->save(public_path("/storage/orders/order-$order->order_id.pdf"));
 
