@@ -61,13 +61,12 @@
             <div class="p-6 text-gray-900">
 
                 <div class="relative">
-                    <button type="button" class="w-full ] mb-[20px] sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                        <a target="_blank"
-                           href="{{ asset('/storage/uploads/rietpanel-order-formulier.pdf') }}?v={{ Storage::disk('public')->lastModified('uploads/rietpanel-order-formulier.pdf') }}">
-                            <i class="fa-solid fa-download"></i>
-                            {{ __('messages.Download inmeet formulier') }}
-                        </a>
-                    </button>
+                    <a target="_blank"
+                       href="{{ asset('/storage/uploads/rietpanel-order-formulier.pdf') }}?v={{ Storage::disk('public')->lastModified('uploads/rietpanel-order-formulier.pdf') }}"
+                       class="inline-block w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 text-center">
+                        <i class="fa-solid fa-download"></i>
+                        {{ __('messages.Download inmeet formulier') }}
+                    </a>
                     <div class="relative md:absolute right-0 top-[-9px]">
                         @admin
                         <button wire:click="uploadOrderForm()" type="button" class="w-full sm:w-auto text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  ">
