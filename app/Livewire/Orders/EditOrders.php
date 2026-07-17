@@ -7,6 +7,7 @@ use App\Mail\sendOrderConfirmedByRietpanel;
 use App\Mail\sendOrderList;
 use App\Mail\sendOrderListConfirmation;
 use App\Models\Order;
+use App\Models\OrderLineWaterstop;
 use App\Models\OrderRules;
 use App\Services\PricingServices;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ use Livewire\Component;
 
 class EditOrders extends Component
 {
+
     public $orderId;
     public $order;
 
@@ -46,7 +48,10 @@ class EditOrders extends Component
 
         $this->orderId = Route::current()->parameter('id');
 
-        $this->order = Order::with(['Suplier', 'orderLines'])->findOrFail($this->orderId);
+        $this->order = Order::with([
+            'Suplier',
+            'orderLines.waterstops'
+        ])->findOrFail($this->orderId);
 
         $this->existing_purchage_order_email = $this->order->Suplier->suplier_email;
         $this->existing_purchage_order_suplier = $this->order->Suplier->suplier_name;
@@ -134,10 +139,35 @@ class EditOrders extends Component
 
             $freshOrder = Order::with([
                 'user',
-                'orderLines',
+                'orderLines.waterstops',
                 'orderRules',
                 'surcharges',
             ])->findOrFail($this->order->id);
+
+
+// bestaande waterstop toeslagen opnieuw opbouwen
+            foreach ($freshOrder->orderLines as $orderLine) {
+
+                // oude waterstops verwijderen
+                $orderLine->waterstops()->delete();
+
+                // nieuwe waterstops opslaan als ze bestaan
+                if (!empty($orderLine->waterstops)) {
+                    foreach ($orderLine->waterstops as $waterstop) {
+
+                        OrderLineWaterstop::create([
+                            'order_line_id' => $orderLine->id,
+                            'type' => $waterstop->type,
+                            'vertical' => $waterstop->vertical,
+                            'horizontal' => $waterstop->horizontal ?? 0,
+                        ]);
+
+                    }
+                }
+            }
+
+
+            $freshOrder->refresh();
 
             app(PricingServices::class)->updateDocumentPricing($freshOrder);
         });
