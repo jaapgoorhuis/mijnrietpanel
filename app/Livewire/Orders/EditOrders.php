@@ -186,6 +186,7 @@ class EditOrders extends Component
             'showNokafschuining' => $showNokafschuining,
             'showLb' => $showLb,
             'showCb' => $showCb,
+            'showWaterstop' => $showWaterstop,
             'showVrijeRuimte' => $showVrijeRuimte,
         ])->save(public_path('/storage/orders/order-' . $order->order_id . '.pdf'));
 
