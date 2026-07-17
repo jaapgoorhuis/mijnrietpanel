@@ -146,24 +146,11 @@ class EditOrders extends Component
 
 
 // bestaande waterstop toeslagen opnieuw opbouwen
+            // waterstops behouden en opnieuw laden voor pricing
             foreach ($freshOrder->orderLines as $orderLine) {
 
-                // oude waterstops verwijderen
-                $orderLine->waterstops()->delete();
+                $orderLine->load('waterstops');
 
-                // nieuwe waterstops opslaan als ze bestaan
-                if (!empty($orderLine->waterstops)) {
-                    foreach ($orderLine->waterstops as $waterstop) {
-
-                        OrderLineWaterstop::create([
-                            'order_line_id' => $orderLine->id,
-                            'type' => $waterstop->type,
-                            'vertical' => $waterstop->vertical,
-                            'horizontal' => $waterstop->horizontal ?? 0,
-                        ]);
-
-                    }
-                }
             }
 
 
@@ -176,11 +163,12 @@ class EditOrders extends Component
             'Suplier',
             'orderRules',
             'user',
-            'orderLines',
+            'orderLines.waterstops',
             'surcharges',
         ])->findOrFail($this->order->id);
 
         $orderLines = $order->orderLines;
+        $showWaterstop = $orderLines->contains(fn ($line) => $line->waterstops->count() > 0);
 
         $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
         $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
