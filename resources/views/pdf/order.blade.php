@@ -71,6 +71,7 @@
                     @endif
                 </td>
                 <td class="w-half">
+                    <div>{{$company->bedrijfsnaam}}</div>
                     <div>{{$company->straat}}</div>
                     <div>{{$company->postcode}}</div>
                     <div>{{$company->plaats}}</div>

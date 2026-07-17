@@ -47,7 +47,7 @@ return [
     'Toepassing' => 'Adjustment',
     'Dak' => 'Roof',
     'Gevel' => 'Facade',
-    'Element' => 'Element',
+    'Merk element' => 'Brand element',
     'Opmerkingen' => 'Comments',
     'Element toevoegen' => 'Add element',
     'Order plaatsen' => 'Add order',
