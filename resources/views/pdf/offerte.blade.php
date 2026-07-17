@@ -129,7 +129,10 @@ if ($showWaterstop ?? false) {
             @foreach($offerteLines as $line)
                     <?php
                     $count++;
-                    $lineTotal = (float) $line->m2 * (float) ($line->price_per_m2 ?? 0);
+                    $lineTotal = round(
+                        (float) $line->m2 * (float) ($line->price_per_m2 ?? 0),
+                        2
+                    );
                     ?>
                 <tr class="items">
                     <td>{{ $count }}</td>

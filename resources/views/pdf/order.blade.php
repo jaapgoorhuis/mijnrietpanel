@@ -202,7 +202,10 @@
                     <td>{{ $orderLine->aantal }}</td>
                     <td>
                             <?php
-                            $lineTotal = (float) $orderLine->m2 * (float) ($orderLine->price_per_m2 ?? 0);
+                            $lineTotal = round(
+                                (float) $orderLine->m2 * (float) ($orderLine->price_per_m2 ?? 0),
+                                2
+                            );
                             ?>
                         {!! '&euro;&nbsp;' . number_format($lineTotal, 2, ',', '.') !!}
                     </td>

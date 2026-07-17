@@ -46,7 +46,10 @@ class PricingServices
                 $m2price = $this->calculateM2Price($document, $company, $panelType);
             }
 
-            $lineTotal = (float) $line->m2 * (float) $m2price;
+            $lineTotal = round(
+                (float) $line->m2 * (float) $m2price,
+                2
+            );
 
             $lineTotals[$line->id] = $lineTotal;
             $subtotal += $lineTotal;
