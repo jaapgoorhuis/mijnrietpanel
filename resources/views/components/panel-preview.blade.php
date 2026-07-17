@@ -508,12 +508,17 @@
                             $wsTopPx = max(0, min($panelHeightPx - $wsHeightPx, $wsTopPx));
 
                             $wsMmPosition = $wsFromLeft + $laybackMm;
+
+$waterstopWidthPx = 20;
+$waterstopLineOffsetMm = -20;
+$wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                         @endphp
 
                         {{-- Waterstop afbeelding --}}
                         <div
                             class="absolute pointer-events-none"
                             data-mm="{{ $wsMmPosition }}"
+                            data-waterstop-width="20"
                             :style="'left: ' + mmToPx(parseFloat($el.dataset.mm)) + 'px; top:{{ $wsTopPx }}px; width:20px; height:{{ $wsHeightPx }}px; z-index:20;'"
                         >
                             <img
@@ -535,7 +540,9 @@
                                     ((20 + ({{ $wsIndex }} * 20)) / scale)
                                 }px;
                                 z-index: 40;
-                                width: ${mmToPx(parseFloat($el.dataset.mm))}px;
+                               width: ${
+                                    mmToPx(parseFloat($el.dataset.mm)) + 20
+                                }px;
                                 font-size: ${Math.max(8, 10 / scale)}px;
                             `"
                             >
