@@ -15,6 +15,8 @@ class OrderLines extends Authenticatable
         return $this->belongsTo(Order::class);
     }
 
+
+
     public function waterstops()
     {
         return $this->hasMany(OrderLineWaterstop::class, 'order_line_id');

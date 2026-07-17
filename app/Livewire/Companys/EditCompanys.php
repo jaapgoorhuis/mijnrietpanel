@@ -15,6 +15,8 @@ use function Spatie\LaravelPdf\Support\pdf;
 class EditCompanys extends Component
 {
     public $company;
+    public $architect_bureau;
+
     public $bedrijfsnaam;
     public $discount;
     public $reseller;
@@ -34,7 +36,7 @@ class EditCompanys extends Component
 
         $this->bedrijfsnaam = $this->company->bedrijfsnaam;
         $this->discount = $this->company->discount;
-        $this->reseller = $this->company->is_reseller;
+        $this->architect_bureau = $this->company->is_architect_bureau;
         $this->straat = $this->company->straat;
         $this->postcode = $this->company->postcode;
         $this->plaats = $this->company->plaats;
@@ -114,6 +116,7 @@ class EditCompanys extends Component
             'plaats' => 'required',
             'postcode' => 'required',
             'bill_email' => 'nullable|email',
+            'architect_bureau' => 'required',
         ];
 
     }
@@ -124,6 +127,7 @@ class EditCompanys extends Component
             'bedrijfsnaam.required' => 'De bedrijfsnaam is een verplicht veld.',
             'plaats.required' => 'De plaats is een verplicht veld.',
             'straat.required' => 'De straat is een verplicht veld.',
+            'architect_bureau.required' => 'Vul in of dit bedrijf een architectenbureau is.',
             'postcode.required' => 'De postcode is een verplicht veld.',
             'discount.required' => 'Vul de korting voor het bedrijf in. Als het bedrijf geen korting heeft vul dan 0 in.',
             'bill_email.email' => 'Dit moet een geldig email adres zijn',
@@ -137,7 +141,7 @@ class EditCompanys extends Component
         Company::where('id', $id)->update([
             'bedrijfsnaam' => $this->bedrijfsnaam,
             'discount' => $this->discount,
-            'is_reseller' => $this->reseller,
+            'is_architect_bureau' => $this->architect_bureau,
             'straat' => $this->straat,
             'postcode' => $this->postcode,
             'plaats' => $this->plaats,
@@ -147,24 +151,24 @@ class EditCompanys extends Component
         $pricerules = PriceRules::where('reseller', 0)->get();
         $existingPriceRules = PriceRules::where('company_id', $this->company->id)->get();
 
-        if($this->reseller) {
-            if(!count($existingPriceRules)) {
-                foreach ($pricerules as $pricerule) {
-                    PriceRules::create([
-                        'rule_name' => $pricerule->rule_name,
-                        'panel_type' => $pricerule->panel_type,
-                        'price' => $pricerule->price,
-                        'company_id' => $this->company->id,
-                        'reseller' => 1,
-                    ]);
-                }
-            }
-        } else {
-            $pricerules = PriceRules::where('company_id', $this->company->id)->get();
-            foreach($pricerules as $rule) {
-                $rule->delete();
-            }
-        }
+//        if($this->reseller) {
+//            if(!count($existingPriceRules)) {
+//                foreach ($pricerules as $pricerule) {
+//                    PriceRules::create([
+//                        'rule_name' => $pricerule->rule_name,
+//                        'panel_type' => $pricerule->panel_type,
+//                        'price' => $pricerule->price,
+//                        'company_id' => $this->company->id,
+//                        'reseller' => 1,
+//                    ]);
+//                }
+//            }
+//        } else {
+//            $pricerules = PriceRules::where('company_id', $this->company->id)->get();
+//            foreach($pricerules as $rule) {
+//                $rule->delete();
+//            }
+////        }
 
         session()->flash('success','Het bedrijf is aangepast');
         return $this->redirect('/companys', navigate: true);

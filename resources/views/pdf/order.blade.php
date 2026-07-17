@@ -186,7 +186,13 @@
                                 <div class="waterstop-line">
                                     <strong>{{ $waterstop->type }} {{ __('messages.mm') }}</strong><br>
                                     {{ __('messages.V') }}: {{ $waterstop->vertical }} {{ __('messages.mm') }}<br>
-                                    {{ __('messages.H') }}: {{ $waterstop->horizontal ?? 0 }} {{ __('messages.mm') }}
+                                    @if(($waterstop->horizontal ?? 0) < 0)
+                                        {{ __('messages.H') }}: {{ abs($waterstop->horizontal) }} {{ __('messages.mm') }} {{ __('messages.naar links') }}
+                                    @elseif(($waterstop->horizontal ?? 0) > 0)
+                                        {{ __('messages.H') }}: {{ $waterstop->horizontal }} {{ __('messages.mm') }} {{ __('messages.naar rechts') }}
+                                    @else
+                                        {{ __('messages.Gecentreerd in het midden van het element') }}
+                                    @endif
                                 </div>
                             @endforeach
                         </td>

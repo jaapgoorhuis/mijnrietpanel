@@ -27,7 +27,7 @@
 
 <div class="py-12">
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-white overflow-visible shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="grid">
                     <form>
@@ -47,6 +47,7 @@
 
                             <div class="relative z-0 w-full mb-5 group">
                                 <label for="requested_delivery_date" class="text-gray-400">{{ __('messages.Gewenste leverdatum') }} *</label>
+
                                 <input
                                     type="text"
                                     class="datepicker block w-full bg-neutral-secondary-medium border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"
@@ -203,7 +204,17 @@
                                             <i wire:click.prevent="" class="fa-solid fa-circle-info hover:cursor-pointer"></i>
                                         </div>
                                     </label>
-                                    <input type="number" min="500" max="14500" wire:model="fillTotaleLengte.{{$index}}" wire:change="updateTotaleLengte({{$index}})" wire:keydown="updateTotaleLengte({{$index}})" name="fillTotaleLengte" id="fillTotaleLengte" class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0" required />
+                                    <input
+                                        type="number"
+                                        min="500"
+                                        max="14500"
+                                        wire:model.live.debounce.400ms="fillTotaleLengte.{{$index}}"
+                                        wire:blur="normalizePanelOptions({{$index}})"
+                                        name="fillTotaleLengte"
+                                        id="fillTotaleLengte"
+                                        class="focus:border-b-[#C0A16E] block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0"
+                                        required
+                                    />
                                     <div class="text-red-500">@error('totaleLengte.'.$index) {{ $message }} @enderror</div>
                                 </div>
 
@@ -227,8 +238,10 @@
 
                             <br/><br/><br/>
 
-                            <div class="flex flex-col sm:flex-row w-full mb-[30px] gap-2">
-                                <div class="w-full sm:w-[250px] flex flex-col gap-2">
+                            <div wire:key="order-line-{{ $index }}" class="flex flex-col lg:flex-row w-full mb-[30px] gap-8 items-start">
+
+
+                            <div class="w-full lg:w-[280px] flex-shrink-0">
 
                                     @php
                                         $tooltips = [
@@ -245,15 +258,21 @@
                                         4 => __('messages.Vrije ruimte')
                                     ] as $option => $label)
                                         <label class="cursor-pointer flex flex-col relative mt-[20px]">
-                                            <input type="checkbox"
-                                                   wire:model="selectedPanelOption.{{$index}}"
-                                                   wire:click="updateSelectedPanelOption({{$index}})"
-                                                   value="{{ $option }}"
-                                                   class="hidden peer">
 
-                                            <div class="border rounded p-1 w-full peer-checked:border-blue-500 relative">
-                                                <img src="{{ asset("storage/images/rietpanel/paneel-$option.png") }}" class="w-full h-[50px] object-contain">
-                                                <div class="text-center font-bold mt-1">{{ $label }}</div>
+                                            <div
+                                                wire:click="togglePanelOption({{$index}}, {{$option}})"
+                                                class="border rounded p-1 w-full relative cursor-pointer
+        {{ in_array($option, $selectedPanelOption[$index] ?? []) ? 'border-blue-500 border-2' : '' }}"
+                                            >
+
+                                                <img
+                                                    src="{{ asset("storage/images/rietpanel/paneel-$option.png") }}"
+                                                    class="w-full h-[50px] object-contain"
+                                                >
+
+                                                <div class="text-center font-bold mt-1">
+                                                    {{ $label }}
+                                                </div>
 
                                                 @if(isset($tooltips[$option]))
                                                     <div class="absolute top-1 right-1">
@@ -261,14 +280,16 @@
                                                             <i class="fa-solid fa-circle-info text-gray-600 hover:text-blue-500 cursor-pointer"></i>
 
                                                             <div class="absolute right-0 top-full mt-1 w-56 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
-                                                                opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto
-                                                                transition-opacity duration-200 z-50">
+                        opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto
+                        transition-opacity duration-200 z-50">
                                                                 {{ $tooltips[$option] }}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 @endif
+
                                             </div>
+                                        </label>
 
                                             @if(in_array($option, $selectedOptions))
                                                 @if($option == 4)
@@ -276,6 +297,7 @@
                                                     <div class="relative">
                                                         <input type="number"
                                                                wire:model.live="panelValues.{{$index}}.4_1"
+                                                               wire:blur="normalizePanelOptions({{$index}})"
                                                                wire:change="updatePanelValues({{$index}}, '4_1')"
                                                                placeholder="{{ __('messages.Vul waarde in') }}"
                                                                class="border rounded px-2 py-1 w-full mt-1">
@@ -292,6 +314,7 @@
                                                     <div class="relative">
                                                         <input type="number"
                                                                wire:model.live="panelValues.{{$index}}.4_2"
+                                                               wire:blur="normalizePanelOptions({{$index}})"
                                                                wire:change="updatePanelValues({{$index}}, '4_2')"
                                                                placeholder="{{ __('messages.Vul waarde in') }}"
                                                                class="border rounded px-2 py-1 w-full mt-1">
@@ -306,12 +329,14 @@
                                                 @elseif($option == 3)
                                                     <label><strong>{{ $label }} in graden</strong></label>
                                                     <div class="relative">
-                                                        <input type="number"
-                                                               wire:model="panelValues.{{$index}}.{{ $option }}"
-                                                               wire:keydown="updatePanelValues({{$index}}, {{$option}})"
-                                                               min="0"
-                                                               max="60"
-                                                               class="border rounded px-2 py-1 w-full pr-10 mt-1">
+                                                        <input
+                                                            type="number"
+                                                            wire:model.live.debounce.400ms="panelValues.{{$index}}.{{$option}}"
+                                                            wire:blur="validateFreeSpace({{$index}})"
+                                                            min="0"
+                                                            step="1"
+                                                            class="border rounded px-2 py-1 w-full pr-10 mt-1"
+                                                        >
 
                                                         <span class="absolute right-2 top-[77%] -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
                                                             &deg;
@@ -324,7 +349,8 @@
                                                     <label><strong>{{ $label }} in {{ __('messages.mm') }}</strong></label>
 
                                                     <select
-                                                        wire:model="panelValues.{{$index}}.{{ $option }}"
+                                                        wire:model.live.debounce.400ms="panelValues.{{$index}}.{{ $option }}"
+                                                        wire:blur="validateFreeSpace({{$index}})"
                                                         wire:change="updatePanelValues({{$index}}, {{$option}})"
                                                         class="border rounded px-2 py-1 w-full mt-1"
                                                     >
@@ -341,12 +367,16 @@
                                         </label>
                                     @endforeach
 
-                                    <div class="border rounded p-3 mt-4 bg-gray-50">
+                                    <div class="text-red-500 text-sm mt-2">
+                                        @error('totaleLengte.'.$index) {{ $message }} @enderror
+                                    </div>
+
+                                    <div   wire:key="waterstop-container-{{ $index }}-{{ $waterstopEnabled[$index] ?? 0 }}" class="border rounded p-3 mt-4 bg-gray-50">
                                         <label class="flex items-center gap-2 font-bold cursor-pointer">
                                             <input
                                                 type="checkbox"
                                                 @checked($waterstopEnabled[$index] ?? false)
-                                                wire:click="toggleWaterstop({{$index}})"
+                                                wire:click="toggleWaterstopChecked({{$index}})"
                                             >
 
                                             {{ __('messages.Waterstop') }}
@@ -356,7 +386,7 @@
 
                                                 <div class="absolute left-0 top-full mt-1 w-80 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
                                                     opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-50">
-                                                    {{ __('messages.Waterstop wordt niet meegenomen in de render Alleen het type en de positie worden opgeslagen') }}
+                                                    {{ __('messages.Meerprijs per waterstop '). ' €' . $this->waterstopPrice.',-',}}
                                                 </div>
                                             </div>
                                         </label>
@@ -388,6 +418,7 @@
 
                                                         <select
                                                             wire:model.live="panelValues.{{$index}}.waterstops.{{$wsIndex}}.type"
+                                                            wire:change="normalizePanelOptions({{$index}})"
                                                             class="border rounded px-2 py-1 w-full mt-1"
                                                         >
                                                             <option value="">{{ __('messages.Selecteer') }}...</option>
@@ -417,9 +448,10 @@
                                                         <div class="relative">
                                                             <input
                                                                 type="number"
-                                                                min="300"
-                                                                max="{{ $currentVerticalMax }}"
-                                                                wire:model.live="panelValues.{{$index}}.waterstops.{{$wsIndex}}.vertical"
+                                                                wire:model.live.debounce.400ms="panelValues.{{$index}}.waterstops.{{$wsIndex}}.vertical"
+                                                                wire:blur="validateWaterstopInput({{$index}}, {{$wsIndex}})"
+                                                                min="0"
+                                                                max="{{ $currentVerticalMax ?? 14500 }}"
                                                                 class="border rounded px-2 py-1 w-full mt-1 pr-10"
                                                                 placeholder="300"
                                                             >
@@ -446,6 +478,7 @@
 
                                                         <div class="relative">
                                                             <input
+                                                                wire:blur="normalizePanelOptions({{$index}})"
                                                                 type="number"
                                                                 wire:model.live="panelValues.{{$index}}.waterstops.{{$wsIndex}}.horizontal"
                                                                 class="border rounded px-2 py-1 w-full mt-1 pr-10"
@@ -490,18 +523,26 @@
                                     </div>
                                 </div>
 
-                                <div class="flex-1 flex justify-center mt-[40px]">
-                                    <div class="relative md:w-[90%] mx-auto">
+                                <div class="block lg:hidden text-xs text-gray-500 text-center mb-2 animate-pulse">
+                                    ← {{ __('messages.swipe_horizontal_panel') }} →
+                                </div>
+
+                                <div
+                                    class="w-full lg:flex-1 lg:min-w-0 lg:self-start lg:sticky lg:top-24 lg:h-fit z-20"
+                                    wire:loading.class="opacity-0"
+                                    wire:target="panelValues.{{ $index }}"
+                                >
+                                    <div class="relative w-full max-w-full overflow-x-auto lg:overflow-visible bg-white">
                                         <x-panel-preview
                                             :index="$index"
                                             :selected-options="$selectedOptions"
                                             :panel-values="$panelValues[$index] ?? []"
                                             :totale-lengte="$totaleLengte[$index] ?? 0"
                                         />
-
-
                                     </div>
                                 </div>
+
+
                             </div>
                         @endforeach
 
@@ -509,6 +550,24 @@
                             <button wire:click="addOrderLine()" type="button" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                                 <i class="fa fa-plus hover:cursor-pointer"></i>{{ __('messages.Element toevoegen') }}
                             </button>
+                        </div>
+
+                        <div
+                            x-data="{ show:false, message:'' }"
+                            x-on:show-form-error.window="
+        message = $event.detail.message;
+        show = true;
+        setTimeout(() => show = false, 5000);
+    "
+                        >
+                            <div
+                                x-show="show"
+                                x-transition
+                                class="fixed top-5 right-5 z-50 bg-red-500 text-white px-5 py-3 rounded shadow-lg"
+                            >
+                                <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                                <span x-text="message"></span>
+                            </div>
                         </div>
 
                         <button wire:loading.attr="disabled" wire:target="saveOrder" wire:click.prevent="saveOrder()" @if(!count($this->orderLines)) disabled @endif class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
@@ -525,3 +584,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener('show-form-error', () => {
+        setTimeout(() => {
+            let error = document.querySelector('.text-red-500');
+
+            if(error){
+                error.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }, 100);
+    });
+</script>

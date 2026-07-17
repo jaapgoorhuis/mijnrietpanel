@@ -20,7 +20,7 @@ class AccountRequests extends Component
     public function render()
     {
         if(Auth::user()->is_admin) {
-            $this->users = User::where('bedrijf_id', 0)->get();
+            $this->users = User::where('is_active', 0)->get();
             return view('livewire.accountRequests.accountRequests');
         } else {
             return $this->redirect('/dashboard', navigate: true);

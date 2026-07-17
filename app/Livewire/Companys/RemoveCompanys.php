@@ -37,7 +37,7 @@ class RemoveCompanys extends Component
 
         Company::where('id', $id)->update(['is_active'=> false]);
 
-        PriceRules::where('company_id', $id)->update(['is_active' => false]);
+
 
         $users = User::where('bedrijf_id', $id)->get();
 

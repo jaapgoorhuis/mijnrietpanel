@@ -41,7 +41,7 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="project_name" class="text-gray-400">Bedrijfsnaam *</label>
                             <input type="text" wire:model.live="bedrijfsnaam" name="bedrijfsnaam" id="bedrijfsnaam" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]" placeholder=" " required />
-                            <div class="text-red-500">@error('company_name') {{ $message }} @enderror</div>
+                            <div class="text-red-500">@error('bedrijfsnaam') {{ $message }} @enderror</div>
                         </div>
                         @if ($message)
                             <p class="text-red-500 mt-1">{{ $message }}</p>
@@ -54,12 +54,12 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="reseller" class="text-gray-400">Dealer</label>
-                            <select id="reseller" wire:model="reseller" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <label for="reseller" class="text-gray-400">Architect bureau</label>
+                            <select id="reseller" wire:model="architect_bureau" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     <option value="0">Nee</option>
                                     <option value="1">Ja</option>
                             </select>
-                            <div class="text-red-500">@error('reseller') {{ $message }} @enderror</div>
+                            <div class="text-red-500">@error('architect_bureau') {{ $message }} @enderror</div>
                         </div>
 
                         <div class="grid md:grid-cols-2 md:gap-6">
@@ -79,6 +79,44 @@
                             </div>
                         </div>
 
+                        @if($showRestoreCompanyModal)
+                            <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
+                                <div class="border-2 border-[#C0A16E] bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+
+                                    <h3 class="text-lg font-bold mb-4">
+                                        Bedrijf herstellen
+                                    </h3>
+
+                                    <p class="mb-6">
+                                        Het bedrijf <strong>{{ $restoreCompany->bedrijfsnaam }}</strong> bestaat al,
+                                        maar staat op non-actief.<br><br>
+
+                                        Wil je dit bedrijf herstellen?
+                                    </p>
+
+                                    <div class="flex justify-center gap-4">
+
+                                        <button
+                                            type="button"
+                                            wire:click="$set('showRestoreCompanyModal', false)"
+                                            class="px-4 py-2 border rounded"
+                                        >
+                                            Nee
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            wire:click="restoreInactiveCompany"
+                                            class="px-4 py-2 bg-[#C0A16E] text-white rounded hover:bg-[#d1b079]"
+                                        >
+                                            Ja, herstellen
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="relative z-0 w-full mb-5 group">
                             <label for="plaats" class="text-gray-400">plaats *</label>
@@ -113,4 +151,3 @@
         </div>
     </div>
 </div>
-

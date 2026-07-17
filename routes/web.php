@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function () {
 
         $panelTypes = \App\Models\PanelType::pluck('name')->toArray();
 
+
         if(in_array($kerndikte,$panelTypes)) {
 
 
@@ -201,7 +202,9 @@ Route::middleware('auth')->group(function () {
         $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
         $company = $offerte->company; // Als je een relatie hebt
         $kerndikte = $offerte->kerndikte;
-
+        $showWaterstop = $offerteLines->contains(function ($line) {
+            return !empty($line->waterstop_type);
+        });
         $panelTypes = \App\Models\PanelType::pluck('name')->toArray();
 
         if(in_array($kerndikte,$panelTypes)) {
@@ -212,6 +215,7 @@ Route::middleware('auth')->group(function () {
                     'showNokafschuining' => $showNokafschuining,
                     'showLb' => $showLb,
                     'showCb' => $showCb,
+                    'showWaterstop' => $showWaterstop,
                     'showVrijeRuimte' => $showVrijeRuimte
                 ])
                 ->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));

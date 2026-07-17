@@ -58,14 +58,14 @@
                         </div>
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="reseller" class="text-gray-400">Dealer</label>
-                            <select id="reseller" wire:model="reseller" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <label for="reseller" class="text-gray-400">Architecten bureau</label>
+                            <select id="reseller" wire:model="architect_bureau" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
 
                                 <option value="0">Nee</option>
                                 <option value="1">Ja</option>
 
                             </select>
-                            <div class="text-red-500">@error('reseller') {{ $message }} @enderror</div>
+                            <div class="text-red-500">@error('architect_bureau') {{ $message }} @enderror</div>
                         </div>
 
                         <div class="grid md:grid-cols-2 md:gap-6">

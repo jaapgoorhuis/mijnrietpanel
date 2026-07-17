@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderLineWaterstop extends Model
+class OfferteLineWaterstop extends Model
 {
-    protected $table = 'order_line_waterstops';
+    protected $table = 'offerte_line_waterstops';
 
     protected $fillable = [
-        'order_line_id',
+        'offerte_line_id',
         'type',
         'vertical',
         'horizontal',
@@ -21,9 +21,9 @@ class OrderLineWaterstop extends Model
         'horizontal' => 'integer',
     ];
 
-    public function orderLine()
+    public function offerteLine()
     {
-        return $this->belongsTo(OrderLines::class, 'order_line_id');
+        return $this->belongsTo(OfferteLines::class, 'offerte_line_id');
     }
 
 

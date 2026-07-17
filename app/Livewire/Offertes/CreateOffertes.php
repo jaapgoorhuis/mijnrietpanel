@@ -2,14 +2,17 @@
 
 namespace App\Livewire\Offertes;
 
+use App\Livewire\Concerns\HasPanelOptionValidation;
 use App\Mail\sendOfferte;
 use App\Mail\sendOrder;
 use App\Models\Application;
 use App\Models\Company;
 use App\Models\Offerte;
 use App\Models\OfferteLines;
+use App\Models\OfferteLineWaterstop;
 use App\Models\Order;
 use App\Models\OrderLines;
+use App\Models\OrderLineWaterstop;
 use App\Models\OrderTemplate;
 use App\Models\PanelBrand;
 use App\Models\PanelLook;
@@ -18,12 +21,16 @@ use App\Models\PriceRules;
 use App\Models\Supliers;
 use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class CreateOffertes extends Component
 {
+
+    use HasPanelOptionValidation;
+
 
     public $klant_naam;
     public $referentie;
@@ -33,6 +40,12 @@ class CreateOffertes extends Component
     public $aflever_land;
 
     public $intaker;
+
+    public array $selectedPanelOption = [];
+    public array $panelValues = [];
+    public array $fillTotaleLengte = [];
+    public array $totaleLengte = [];
+    public array $waterstopEnabled = [];
 
     public $rietkleur = 'Old look';
     public $toepassing = 'Dak';
@@ -44,14 +57,12 @@ class CreateOffertes extends Component
 
     public $m2 = [];
 
-    public $fillTotaleLengte = [''];
 
     public $fillCb = ['0'];
     public $fillLb = ['0'];
 
     public $lb = [];
     public $cb = [];
-    public $totaleLengte = [];
 
     public $panelBrands;
     public $panelTypes;
@@ -81,14 +92,14 @@ class CreateOffertes extends Component
     public $requested_delivery_date;
 
     public $comment;
-    public $selectedPanelOption =[];
-    public $panelValues =[];
 
     public $vrijeruimtePrice;
     public $laybackPrice;
     public $nokafschuiningPrice;
 
     public $panelImages = [];
+
+    public $waterstopPrice;
 
 
     public function mount() {
@@ -125,7 +136,7 @@ class CreateOffertes extends Component
         $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
         $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
         $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
-
+        $this->waterstopPrice = \App\Models\Surcharges::where('rule', 'Waterstop')->first()?->price ?? 0;
         return view('livewire.offertes.createOfferte');
     }
 
@@ -145,6 +156,9 @@ class CreateOffertes extends Component
 
         $this->panelImages[$index] = "/storage/images/rietpanel/paneel-$key.png";
     }
+
+
+
 
 
     public function updatePanelValues($key,$index)
@@ -203,6 +217,7 @@ class CreateOffertes extends Component
     }
 
     public function addOfferteLine() {
+        $this->waterstopEnabled[] = false;
         $this->offerteLines[] = '';
         $this->fillCb[] = '0';
         $this->cb[] = '0';
@@ -217,25 +232,84 @@ class CreateOffertes extends Component
             2 => 20,
             3=> 0,
             '4_1' => 0,
-            '4_2' => 0
+            '4_2' => 0,
+            'waterstops' => [],
         ];
         $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
         $this->selectedPanelOption[] = [];
 
     }
+    public function removeOfferteLine($index)
+    {
+        foreach ([
+                     'waterstopEnabled',
+                     'offerteLines',
+                     'totaleLengte',
+                     'aantal',
+                     'lb',
+                     'cb',
+                     'panelValues',
+                     'selectedPanelOption',
+                     'panelImages',
+                     'fillTotaleLengte',
+                     'fillCb',
+                     'fillLb',
+                     'm2',
+                 ] as $property) {
+            unset($this->{$property}[$index]);
+            $this->{$property} = array_values($this->{$property});
+        }
+    }
 
-    public function removeOfferteLine($index) {
-        unset($this->offerteLines[$index]);
-        unset($this->totaleLengte[$index]);
-        unset($this->aantal[$index]);
-        unset($this->lb[$index]);
-        unset($this->cb[$index]);
-        unset($this->selectedPanelOption[$index]);
-        $this->offerteLines = array_values($this->offerteLines);
-        $this->totaleLengte = array_values($this->totaleLengte);
-        $this->aantal = array_values($this->aantal);
-        $this->lb = array_values($this->lb);
-        $this->cb = array_values($this->cb);
+    public function toggleWaterstop($index)
+    {
+        $this->waterstopEnabled[$index] = !($this->waterstopEnabled[$index] ?? false);
+
+        if (! isset($this->panelValues[$index]['waterstops'])) {
+            $this->panelValues[$index]['waterstops'] = [];
+        }
+
+        if ($this->waterstopEnabled[$index] && count($this->panelValues[$index]['waterstops']) === 0) {
+            $this->addWaterstop($index);
+        }
+
+        if (! $this->waterstopEnabled[$index]) {
+            $this->panelValues[$index]['waterstops'] = [];
+        }
+
+        $this->normalizePanelOptions($index);
+    }
+
+    public function addWaterstop($elementIndex)
+    {
+        if (! isset($this->panelValues[$elementIndex]['waterstops'])) {
+            $this->panelValues[$elementIndex]['waterstops'] = [];
+        }
+
+        $this->panelValues[$elementIndex]['waterstops'][] = [
+            'type' => '',
+            'vertical' => '',
+            'horizontal' => 0,
+        ];
+
+        $this->waterstopEnabled[$elementIndex] = true;
+
+        $this->normalizePanelOptions($elementIndex);
+    }
+
+    public function removeWaterstop($elementIndex, $waterstopIndex)
+    {
+        unset($this->panelValues[$elementIndex]['waterstops'][$waterstopIndex]);
+
+        $this->panelValues[$elementIndex]['waterstops'] = array_values(
+            $this->panelValues[$elementIndex]['waterstops'] ?? []
+        );
+
+        if (count($this->panelValues[$elementIndex]['waterstops']) === 0) {
+            $this->waterstopEnabled[$elementIndex] = false;
+        }
+
+        $this->normalizePanelOptions($elementIndex);
     }
 
     public function rules()
@@ -318,6 +392,61 @@ class CreateOffertes extends Component
                 ];
             }
         }
+
+        foreach ($this->offerteLines as $index => $line) {
+            if (! ($this->waterstopEnabled[$index] ?? false)) {
+                continue;
+            }
+
+            $waterstops = $this->panelValues[$index]['waterstops'] ?? [];
+
+            foreach ($waterstops as $wsIndex => $waterstop) {
+                $rules["panelValues.$index.waterstops.$wsIndex.type"] = 'required|in:960,840,730,500,300';
+
+                $rules["panelValues.$index.waterstops.$wsIndex.vertical"] = [
+                    'required',
+                    'integer',
+                    'min:300',
+                    function ($attribute, $value, $fail) use ($index) {
+                        $totaal = (int) ($this->fillTotaleLengte[$index] ?? 0);
+
+                        if (! $totaal) {
+                            $fail(__('messages.Vul eerst de totale element lengte in voor dit element'));
+                            return;
+                        }
+
+                        $maxVertical = $totaal - 600;
+
+                        if ($maxVertical < 300) {
+                            $fail(__('messages.panelToShort'));
+                            return;
+                        }
+
+                        if ((int) $value > $maxVertical) {
+                            $fail(__('messages.De verticale positie mag maximaal ') . $maxVertical . ' mm zijn');
+                        }
+                    },
+                ];
+
+                $rules["panelValues.$index.waterstops.$wsIndex.horizontal"] = [
+                    'required',
+                    'integer',
+                    function ($attribute, $value, $fail) use ($index, $wsIndex) {
+                        $type = (int) ($this->panelValues[$index]['waterstops'][$wsIndex]['type'] ?? 0);
+                        $max = $this->waterstopHorizontalMax($type);
+
+                        if (! in_array($type, [960, 840, 730, 500, 300], true)) {
+                            $fail(__('messages.Selecteer eerst een type waterstop'));
+                            return;
+                        }
+
+                        if ((int) $value < -$max || (int) $value > $max) {
+                            $fail(__('messages.De horizontale verplaatsing mag maximaal ') . $max . ' mm naar links of rechts zijn');
+                        }
+                    },
+                ];
+            }
+        }
         return $rules;
     }
 
@@ -360,80 +489,131 @@ class CreateOffertes extends Component
             'panelValues.*.2.required' => __('messages.Vul een waarde in voor Nok afschuining'),
             'panelValues.*.3_1.required' => __('messages.Vul een waarde in voor Vrije ruimte 0-x1'),
             'panelValues.*.3_2.required' => __('messages.Vul een waarde in voor Vrije ruimte x1-x2'),
+            'panelValues.*.waterstops.*.type.required' => __('messages.Selecteer een type waterstop'),
+            'panelValues.*.waterstops.*.type.in' => __('messages.Selecteer een geldig type waterstop'),
+            'panelValues.*.waterstops.*.vertical.required' => __('messages.Vul de verticale positie van de waterstop in'),
+            'panelValues.*.waterstops.*.vertical.integer' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.waterstops.*.vertical.min' => __('messages.De verticale positie moet minimaal 300 mm zijn'),
+            'panelValues.*.waterstops.*.horizontal.required' => __('messages.Vul de horizontale verplaatsing van de waterstop in'),
+            'panelValues.*.waterstops.*.horizontal.integer' => __('messages.Dit moet een getal zijn'),
+
         ];
     }
 
     public function saveOfferte()
     {
-        $this->validate();
+        // Eerst normaliseren
+        $this->normalizePanelOptions();
 
-        $latestOfferte = Offerte::orderBy('id', 'desc')->first();
+        if (! $this->validatePanelOptions()) {
+            $this->dispatch(
+                'show-form-error',
+                message: __('messages.form_has_errors')
+            );
 
-        if ($latestOfferte) {
+            return;
+        }
+
+
+        // Daarna Laravel validatie
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            $this->dispatch(
+                'show-form-error',
+                message: __('messages.form_has_errors')
+            );
+
+            throw $e;
+        }
+
+        $offerte = null;
+        $offerteId = null;
+        $waterstopsByLineIndex = [];
+
+        DB::transaction(function () use (&$offerte, &$offerteId, &$waterstopsByLineIndex) {
+            $latestOfferte = Offerte::orderBy('id', 'desc')->first();
             $currentYear = date('y');
 
-            if (str_starts_with($latestOfferte->offerte_id, $currentYear)) {
-                $offerteId = $latestOfferte->offerte_id + 1;
+            if ($latestOfferte && str_starts_with((string) $latestOfferte->offerte_id, $currentYear)) {
+                $offerteId = (int) $latestOfferte->offerte_id + 1;
             } else {
                 $offerteId = $currentYear . '0600';
             }
-        } else {
-            $offerteId = 250600;
-        }
 
-        $offerte = Offerte::create([
-            'klantnaam' => $this->klant_naam,
-            'referentie' => $this->referentie,
-            'aflever_straat' => $this->aflever_straat,
-            'aflever_postcode' => $this->aflever_postcode,
-            'aflever_land' => $this->aflever_land,
-            'aflever_plaats' => $this->aflever_plaats,
-            'intaker' => $this->intaker,
-            'discount' => $this->discount,
-            'merk_paneel' => $this->merk_paneel,
-            'rietkleur' => $this->rietkleur,
-            'toepassing' => $this->toepassing,
-            'kerndikte' => $this->kerndikte,
-            'project_naam' => $this->project_naam,
-            'user_id' => Auth::user()->id,
-            'status' => 'In behandeling',
-            'offerte_id' => $offerteId,
-            'requested_delivery_date' => $this->requested_delivery_date,
-            'comment' => $this->comment,
-            'lang' => $this->locale,
-        ]);
-
-        foreach ($this->offerteLines as $index => $key) {
-            $fillLb = array_key_exists($index, $this->fillLb) ? $this->fillLb[$index] : 0;
-            $fillTotaleLengte = array_key_exists($index, $this->fillTotaleLengte) ? $this->fillTotaleLengte[$index] : 0;
-            $aantal = array_key_exists($index, $this->aantal) ? $this->aantal[$index] : 0;
-            $m2 = array_key_exists($index, $this->m2) ? $this->m2[$index] : 0;
-
-            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
-
-            OfferteLines::create([
-                'offerte_id' => $offerte->id,
-                'fillLb' => $fillLb,
-                'fillTotaleLengte' => $fillTotaleLengte,
-                'aantal' => $aantal,
-                'user_id' => Auth::user()->id,
-                'm2' => $m2,
-
-                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-                'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
-                'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
-                'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
-                'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+            $offerte = Offerte::create([
+                'klantnaam' => $this->klant_naam,
+                'referentie' => $this->referentie,
+                'aflever_straat' => $this->aflever_straat,
+                'aflever_postcode' => $this->aflever_postcode,
+                'aflever_land' => $this->aflever_land,
+                'aflever_plaats' => $this->aflever_plaats,
+                'intaker' => $this->intaker,
+                'discount' => $this->discount,
+                'merk_paneel' => $this->merk_paneel,
+                'rietkleur' => $this->rietkleur,
+                'toepassing' => $this->toepassing,
+                'kerndikte' => $this->kerndikte,
+                'project_naam' => $this->project_naam,
+                'user_id' => Auth::id(),
+                'status' => 'In behandeling',
+                'offerte_id' => $offerteId,
+                'marge' => $this->marge,
+                'requested_delivery_date' => $this->requested_delivery_date,
+                'comment' => $this->comment,
+                'lang' => $this->locale,
             ]);
-        }
+
+            foreach ($this->offerteLines as $index => $key) {
+                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+
+                $waterstops = ($this->waterstopEnabled[$index] ?? false)
+                    ? array_values($this->panelValues[$index]['waterstops'] ?? [])
+                    : [];
+
+                $firstWaterstop = $waterstops[0] ?? null;
+
+                $waterstopsByLineIndex[$index] = $waterstops;
+
+                OfferteLines::create([
+                    'offerte_id' => $offerte->id,
+                    'fillLb' => $this->fillLb[$index] ?? 0,
+                    'fillTotaleLengte' => $this->fillTotaleLengte[$index] ?? 0,
+                    'aantal' => $this->aantal[$index] ?? 0,
+                    'user_id' => Auth::id(),
+                    'm2' => $this->m2[$index] ?? 0,
+
+                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+
+                    'waterstop_type' => $firstWaterstop ? ($firstWaterstop['type'] ?? null) : null,
+                    'waterstop_vertical' => $firstWaterstop ? ($firstWaterstop['vertical'] ?? null) : null,
+                    'waterstop_horizontal' => $firstWaterstop ? ($firstWaterstop['horizontal'] ?? 0) : null,
+                ]);
+            }
+
+
+            foreach ($offerte->offerteLines->values() as $index => $offerteLine) {
+                foreach (($waterstopsByLineIndex[$index] ?? []) as $waterstop) {
+                    OfferteLineWaterstop::create([
+                        'offerte_line_id' => $offerteLine->id,
+                        'type' => (int) $waterstop['type'],
+                        'vertical' => (int) $waterstop['vertical'],
+                        'horizontal' => (int) ($waterstop['horizontal'] ?? 0),
+                    ]);
+                }
+            }
+        });
+
 
         $offerte->refresh();
         $offerte->load(['offerteLines', 'user', 'surcharges']);
 
         app(\App\Services\PricingServices::class)->updateDocumentPricing($offerte);
-
-        $offerte->refresh();
-        $offerte->load(['offerteLines', 'user', 'surcharges']);
 
         $offerteLines = $offerte->offerteLines;
 
@@ -441,6 +621,7 @@ class CreateOffertes extends Component
         $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
+        $showWaterstop = $offerteLines->contains(fn ($line) => $line->waterstops->count() > 0);
 
         Pdf::loadView('pdf.offerte', [
             'offerte' => $offerte,
@@ -448,6 +629,7 @@ class CreateOffertes extends Component
             'showNokafschuining' => $showNokafschuining,
             'showLb' => $showLb,
             'showCb' => $showCb,
+            'showWaterstop' => $showWaterstop,
             'showVrijeRuimte' => $showVrijeRuimte,
         ])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
 

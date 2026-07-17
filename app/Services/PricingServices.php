@@ -34,6 +34,7 @@ class PricingServices
         $zaaglengtes = 0;
         $laybacks = 0;
         $nokafschuining = 0;
+        $waterstops = 0;
         $vrijeruimte = 0;
 
         $zaaglengteToeslag = Surcharges::where('rule', 'zaaglengte')->first();
@@ -60,6 +61,10 @@ class PricingServices
 
             if ((float) $line->vrije_ruimte_2 > 0) {
                 $vrijeruimte += (int) $line->aantal;
+            }
+
+            if ($line->waterstops->isNotEmpty()) {
+                $waterstops += $line->waterstops->count() * (int) $line->aantal;
             }
 
             if (
@@ -107,6 +112,12 @@ class PricingServices
                 $amount = $qty * (float) $surcharge->price;
             }
 
+            if ($surcharge->rule === 'Waterstop' && $waterstops > 0) {
+                $qty = $waterstops;
+                $amount = $qty * (float) $surcharge->price;
+            }
+
+
             if ($surcharge->rule === 'Vrije ruimte' && $vrijeruimte > 0) {
                 $qty = $vrijeruimte;
                 $amount = $qty * (float) $surcharge->price;
@@ -151,6 +162,7 @@ class PricingServices
             'surcharges_total' => $surchargesTotal,
             'total_m2' => $totalM2,
             'vat' => $vat,
+            'waterstops' => $waterstops,
             'rule_price' => $rulePrice,
             'grand_total' => $grandTotal,
             'has_surcharges' => count($surchargeRows) > 0,
@@ -235,15 +247,15 @@ class PricingServices
     private function getLines($document)
     {
         if ($document instanceof Offerte) {
-            return $document->relationLoaded('offerteLines')
-                ? $document->offerteLines
-                : $document->offerteLines()->get();
+            return $document->offerteLines()
+                ->with('waterstops')
+                ->get();
         }
 
         if ($document instanceof Order) {
-            return $document->relationLoaded('orderLines')
-                ? $document->orderLines
-                : $document->orderLines()->get();
+            return $document->orderLines()
+                ->with('waterstops')
+                ->get();
         }
 
         return collect();

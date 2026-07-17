@@ -13,7 +13,8 @@ class Company extends Authenticatable
     protected $fillable = [
         'bedrijfsnaam',
         'discount',
-        'is_reseller',
+        'is_architect_bureau',
+        'is_active',
         'straat',
         'postcode',
         'plaats',

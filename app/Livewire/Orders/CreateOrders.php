@@ -16,9 +16,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
+use App\Livewire\Concerns\HasPanelOptionValidation;
 
 class CreateOrders extends Component
 {
+    use HasPanelOptionValidation;
+
     public $intaker;
 
     public $klant_naam;
@@ -37,9 +40,9 @@ class CreateOrders extends Component
     public $m2 = [];
     public $discount = 0;
 
-    public $fillTotaleLengte = [''];
-    public $fillCb = [''];
-    public $fillLb = [''];
+    public $fillTotaleLengte = [];
+    public $fillCb = [];
+    public $fillLb = [];
 
     public $lb = [];
     public $cb = [];
@@ -76,6 +79,7 @@ class CreateOrders extends Component
 
     public $vrijeruimtePrice;
     public $laybackPrice;
+    public $waterstopPrice;
     public $nokafschuiningPrice;
 
     public $panelImages = [];
@@ -124,6 +128,7 @@ class CreateOrders extends Component
     {
         $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()?->price ?? 0;
         $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()?->price ?? 0;
+        $this->waterstopPrice = \App\Models\Surcharges::where('rule', 'Waterstop')->first()?->price ?? 0;
         $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()?->price ?? 0;
 
         return view('livewire.orders.createOrder');
@@ -131,6 +136,16 @@ class CreateOrders extends Component
 
     public function updateSelectedPanelOption($index)
     {
+
+        if (! $this->hasValidPanelLength((int) $index)) {
+            $this->selectedPanelOption[$index] = [];
+            $this->panelImages[$index] = '/storage/images/rietpanel/paneel.png';
+            return;
+        }
+
+        $this->normalizePanelOptions((int) $index);
+        $this->normalizePanelOptions($index);
+
         $options = $this->selectedPanelOption[$index] ?? [];
 
         if (empty($options)) {
@@ -147,7 +162,14 @@ class CreateOrders extends Component
     {
         if (! isset($this->panelValues[$index])) {
             $this->panelValues[$index] = [];
+            if (isset($index)) {
+                $this->normalizePanelOptions((int) $index);
+            } elseif (isset($key)) {
+                $this->normalizePanelOptions((int) $key);
+            }
         }
+
+        $this->normalizePanelOptions($index);
     }
 
     public function updatePrice()
@@ -178,8 +200,9 @@ class CreateOrders extends Component
 
     public function updateTotaleLengte($index)
     {
+        $this->totaleLengte[$index] = $this->fillTotaleLengte[$index] ?: '';
+        $this->normalizePanelOptions((int) $index);
         $this->updateM2($index);
-        $this->totaleLengte[$index] = $this->fillTotaleLengte[$index] ?: '0';
     }
 
     public function updateBrands()
@@ -253,6 +276,8 @@ class CreateOrders extends Component
         if (! $this->waterstopEnabled[$index]) {
             $this->panelValues[$index]['waterstops'] = [];
         }
+
+        $this->normalizePanelOptions($index);
     }
 
     public function addWaterstop($elementIndex)
@@ -268,6 +293,8 @@ class CreateOrders extends Component
         ];
 
         $this->waterstopEnabled[$elementIndex] = true;
+
+        $this->normalizePanelOptions($elementIndex);
     }
 
     public function removeWaterstop($elementIndex, $waterstopIndex)
@@ -281,6 +308,8 @@ class CreateOrders extends Component
         if (count($this->panelValues[$elementIndex]['waterstops']) === 0) {
             $this->waterstopEnabled[$elementIndex] = false;
         }
+
+        $this->normalizePanelOptions($elementIndex);
     }
 
     public function rules()
@@ -295,7 +324,7 @@ class CreateOrders extends Component
             'aflever_land' => 'required',
             'intaker' => 'required',
             'discount' => 'required|min:0',
-            'totaleLengte.*' => 'required|numeric|min:500|max:17000',
+            'fillTotaleLengte.*' => 'required|numeric|min:500|max:14500',
             'aantal.*' => 'required|numeric|min:1',
             'kerndikte' => 'required',
             'requested_delivery_date' => 'required',
@@ -426,9 +455,9 @@ class CreateOrders extends Component
             'discount.required' => __('messages.Vul aub de korting in. Als u de klant geen korting geeft, vul dan 0 in'),
             'discount.min' => __('messages.De korting kan niet lager dan 0 procent zijn'),
             'intaker.required' => __('messages.Vul aub uw naam in'),
-            'totaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
-            'totaleLengte.*.max' => __('messages.De lengte mag maximaal 17000mm zijn'),
-            'totaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
+            'fillTotaleLengte.*.min' => __('messages.De lengte moet mimimaal 500mm zijn'),
+            'fillTotaleLengte.*.max' => __('messages.De lengte mag maximaal 14500mm zijn'),
+            'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 element zijn'),
             'aantal.*.required' => __('messages.Het aantal elementen is een verplicht veld'),
             'panelValues.*.1.required' => __('messages.Vul een waarde in voor Layback'),
@@ -437,7 +466,7 @@ class CreateOrders extends Component
             'panelValues.*.2.numeric' => __('messages.Dit moet een getal zijn'),
             'panelValues.*.3.required' => __('messages.Vul een waarde in voor Nok afschuining'),
             'panelValues.*.3.numeric' => __('messages.Dit moet een getal zijn'),
-            'panelValues.*.3.min' => __('messages.De nokafschuining moet minimaal 0 graden zijn'),
+            'panelValues.*.3.min' => __('messages.De nokafschuining moet minimaal 1 graad zijn'),
             'panelValues.*.3.max' => __('messages.De nokafschuining mag maximaal 60 graden zijn'),
             'panelValues.*.4_1.min' => __('messages.Dit moet een getal hoger dan 300 mm zijn'),
             'panelValues.*.4_2.min' => __('messages.Dit moet een getal hoger dan 50 mm zijn'),
@@ -455,14 +484,29 @@ class CreateOrders extends Component
 
     public function saveOrder()
     {
-        $this->validate();
+        // Eerst normaliseren
+        $this->normalizePanelOptions();
 
-        if ($this->waterstopsHaveOverlap()) {
+        if (! $this->validatePanelOptions()) {
+            $this->dispatch(
+                'show-form-error',
+                message: __('messages.form_has_errors')
+            );
+
             return;
         }
 
-        if ($this->getErrorBag()->any()) {
-            return;
+        // Daarna Laravel validatie
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            $this->dispatch(
+                'show-form-error',
+                message: __('messages.form_has_errors')
+            );
+
+            throw $e;
         }
 
         $order = null;
@@ -533,13 +577,6 @@ class CreateOrders extends Component
                 ]);
             }
 
-            $order->refresh();
-            $order->load(['orderLines', 'user', 'surcharges', 'orderRules']);
-
-            app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
-
-            $order->refresh();
-            $order->load(['orderLines', 'user', 'surcharges', 'orderRules']);
 
             foreach ($order->orderLines->values() as $index => $orderLine) {
                 foreach (($waterstopsByLineIndex[$index] ?? []) as $waterstop) {
@@ -553,8 +590,11 @@ class CreateOrders extends Component
             }
         });
 
+
         $order->refresh();
-        $order->load(['orderLines.waterstops', 'user', 'surcharges', 'orderRules']);
+        $order->load(['orderLines', 'user', 'surcharges', 'orderRules']);
+
+        app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
 
         $orderLines = $order->orderLines;
 
@@ -581,6 +621,18 @@ class CreateOrders extends Component
 
         return $this->redirect('/orders', navigate: true);
     }
+
+//    public function updatedFillTotaleLengte($value, $index): void
+//    {
+//        $this->totaleLengte[$index] = $value ?: '';
+//
+//        $this->updateM2($index);
+//
+//        if (is_numeric($value) && (int) $value >= 500 && (int) $value <= 14500) {
+//            $this->resetErrorBag("totaleLengte.$index");
+//            $this->resetErrorBag("fillTotaleLengte.$index");
+//        }
+//    }
 
     private function waterstopsHaveOverlap(): bool
     {
@@ -616,17 +668,6 @@ class CreateOrders extends Component
         }
 
         return false;
-    }
-
-    private function waterstopHorizontalMax($type): int
-    {
-        return [
-            960 => 0,
-            840 => 60,
-            730 => 115,
-            500 => 230,
-            300 => 330,
-        ][(int) $type] ?? 0;
     }
 
     private function waterstopsOverlap(array $a, array $b): bool

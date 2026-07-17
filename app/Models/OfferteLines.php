@@ -10,4 +10,10 @@ use Illuminate\Notifications\Notifiable;
 class OfferteLines extends Authenticatable
 {
     protected $fillable = ['offerte_id', 'fillCb', 'fillLb', 'waterstop_type','waterstop_vertical', 'waterstop_horizontal','lb','nokafschuining', 'vrije_ruimte_1', 'vrije_ruimte_2', 'fillTotaleLengte', 'aantal', 'user_id','m2'];
+
+    public function waterstops()
+    {
+        return $this->hasMany(OfferteLineWaterstop::class, 'offerte_line_id');
+    }
 }
+

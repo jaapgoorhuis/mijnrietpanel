@@ -81,6 +81,7 @@
                                     <option value="Nokafschuining">Nokafschuining</option>
                                     <option value="Vrije ruimte">Vrije ruimte</option>
                                     <option value="order">Order</option>
+                                    <option value="Waterstop">Waterstop</option>
 
                                 </select>
                                 <div class="text-red-500">@error('rule') {{ $message }} @enderror</div>

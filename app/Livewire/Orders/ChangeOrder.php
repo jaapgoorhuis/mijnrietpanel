@@ -2,22 +2,27 @@
 
 namespace App\Livewire\Orders;
 
+use App\Livewire\Concerns\HasPanelOptionValidation;
 use App\Mail\orderUpdated;
 use App\Models\Company;
 use App\Models\Order;
 use App\Models\OrderLines;
+use App\Models\OrderLineWaterstop;
 use App\Models\OrderRules;
 use App\Models\PanelType;
 use App\Models\PriceRules;
 use App\Models\Supliers;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ChangeOrder extends Component
 {
+    use HasPanelOptionValidation;
+
     public $klant_naam, $referentie, $aflever_straat, $aflever_postcode, $aflever_plaats, $aflever_land;
     public $intaker, $rietkleur = 'Old look', $toepassing = 'Dak', $merk_paneel, $kerndikte, $project_naam;
     public $aantal = [], $m2 = [], $fillTotaleLengte = ['0'], $fillCb = ['0'], $fillLb = ['0'];
@@ -28,7 +33,7 @@ class ChangeOrder extends Component
     public $deletedOrderLines = [], $marge = 0, $order_id, $creator_user_id, $exsistingOrderLines, $creator_user;
     public $priceRulePrice, $saved = false, $requested_delivery_date, $comment;
     public $confirmedOrder = false, $showConfirmModal = false;
-    public $selectedPanelOption = [], $panelValues = [], $vrijeruimtePrice, $laybackPrice, $nokafschuiningPrice, $panelImages = [];
+    public $selectedPanelOption = [], $panelValues = [], $vrijeruimtePrice, $laybackPrice, $nokafschuiningPrice, $waterstopPrice, $panelImages = [];
     public array $waterstopEnabled = [];
 
     public bool $showPriceUpdateModal = false;
@@ -43,7 +48,7 @@ class ChangeOrder extends Component
         }
 
         $this->order_id = $id;
-        $this->order = Order::with(['orderLines', 'user', 'orderRules', 'surcharges'])->findOrFail($id);
+        $this->order = Order::with(['orderLines.waterstops', 'user', 'orderRules', 'surcharges'])->findOrFail($id);
 
         $latestPriceRule = \App\Models\PriceRules::latest('updated_at')->first();
         $latestSurcharge = \App\Models\Surcharges::latest('updated_at')->first();
@@ -75,7 +80,7 @@ class ChangeOrder extends Component
         $this->company = Company::find($this->creator_user->bedrijf_id);
         $this->companyDiscount = $this->company->discount;
 
-        $this->exsistingOrderLines = OrderLines::where('order_id', $id)->get();
+        $this->exsistingOrderLines = OrderLines::with('waterstops')->where('order_id', $id)->get();
 
         $this->werkendeBreedte = $this->dakSupliers->first()->werkende_breedte;
 
@@ -114,18 +119,25 @@ class ChangeOrder extends Component
             $this->cb[$key] = $exsistingOrderLine->fillCb;
             $this->totaleLengte[$key] = $exsistingOrderLine->fillTotaleLengte;
 
+            $waterstops = $exsistingOrderLine->waterstops
+                ->map(fn ($ws) => [
+                    'type' => (string) $ws->type,
+                    'vertical' => $ws->vertical,
+                    'horizontal' => $ws->horizontal,
+                ])
+                ->values()
+                ->toArray();
+
             $this->panelValues[$key] = [
                 1 => $exsistingOrderLine->lb ?? 0,
                 2 => $exsistingOrderLine->fillCb ?? 0,
                 3 => $exsistingOrderLine->nokafschuining ?? 0,
                 '4_1' => $exsistingOrderLine->vrije_ruimte_1 ?? 0,
                 '4_2' => $exsistingOrderLine->vrije_ruimte_2 ?? 0,
-                'waterstop_type' => $exsistingOrderLine->waterstop_type ?? '',
-                'waterstop_vertical' => $exsistingOrderLine->waterstop_vertical ?? '',
-                'waterstop_horizontal' => $exsistingOrderLine->waterstop_horizontal ?? 0,
+                'waterstops' => $waterstops,
             ];
 
-            $this->waterstopEnabled[$key] = !empty($exsistingOrderLine->waterstop_type);
+            $this->waterstopEnabled[$key] = count($waterstops) > 0;
 
             $this->selectedPanelOption[$key] = [];
 
@@ -141,6 +153,8 @@ class ChangeOrder extends Component
                 sort($options);
                 $this->panelImages[$key] = "/storage/images/rietpanel/paneel-" . implode('-', $options) . ".png";
             }
+
+            $this->normalizePanelOptions((int) $key);
         }
 
         if ($this->order->status === 'Bevestigd') {
@@ -156,9 +170,10 @@ class ChangeOrder extends Component
 
     public function render()
     {
-        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()->price;
-        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()->price;
-        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()->price;
+        $this->nokafschuiningPrice = \App\Models\Surcharges::where('rule', 'Nokafschuining')->first()?->price ?? 0;
+        $this->laybackPrice = \App\Models\Surcharges::where('rule', 'Layback')->first()?->price ?? 0;
+        $this->vrijeruimtePrice = \App\Models\Surcharges::where('rule', 'Vrije ruimte')->first()?->price ?? 0;
+        $this->waterstopPrice = \App\Models\Surcharges::where('rule', 'Waterstop')->first()?->price ?? 0;
 
         return view('livewire.orders.changeOrder');
     }
@@ -175,35 +190,20 @@ class ChangeOrder extends Component
         $this->showPriceUpdateModal = false;
     }
 
-    public function updateSelectedPanelOption($index)
-    {
-        $options = $this->selectedPanelOption[$index] ?? [];
 
-        if (empty($options)) {
-            $this->panelImages[$index] = '/storage/images/rietpanel/paneel.png';
-            return;
-        }
-
-        sort($options);
-
-        if (in_array(1, $options)) {
-            $this->panelValues[$index][1] = 20;
-        }
-
-        if (in_array(2, $options)) {
-            $this->panelValues[$index][2] = 20;
-        }
-
-        $this->panelImages[$index] = "/storage/images/rietpanel/paneel-" . implode('-', $options) . ".png";
-    }
 
     public function updatePanelValues($index, $key)
     {
-        // Livewire werkt de waarde al bij via wire:model.
-        // Deze methode zorgt alleen dat wire:change/wire:keydown geen fout geeft.
         if (! isset($this->panelValues[$index])) {
             $this->panelValues[$index] = [];
+            if (isset($index)) {
+                $this->normalizePanelOptions((int) $index);
+            } elseif (isset($key)) {
+                $this->normalizePanelOptions((int) $key);
+            }
         }
+
+        $this->normalizePanelOptions($index);
     }
 
     public function updatePrice()
@@ -230,8 +230,9 @@ class ChangeOrder extends Component
 
     public function updateTotaleLengte($index)
     {
-        $this->updateM2($index);
         $this->totaleLengte[$index] = $this->fillTotaleLengte[$index] ?: '0';
+        $this->normalizePanelOptions((int) $index);
+        $this->updateM2($index);
     }
 
     public function updateBrands()
@@ -263,9 +264,7 @@ class ChangeOrder extends Component
             3 => 0,
             '4_1' => 0,
             '4_2' => 0,
-            'waterstop_type' => '',
-            'waterstop_vertical' => '',
-            'waterstop_horizontal' => 0,
+            'waterstops' => [],
         ];
 
         $this->panelImages[] = '/storage/images/rietpanel/paneel.png';
@@ -285,6 +284,57 @@ class ChangeOrder extends Component
             unset($this->{$property}[$index]);
             $this->{$property} = array_values($this->{$property});
         }
+    }
+
+    public function toggleWaterstop($index)
+    {
+        $this->waterstopEnabled[$index] = !($this->waterstopEnabled[$index] ?? false);
+
+        if (! isset($this->panelValues[$index]['waterstops'])) {
+            $this->panelValues[$index]['waterstops'] = [];
+        }
+
+        if ($this->waterstopEnabled[$index] && count($this->panelValues[$index]['waterstops']) === 0) {
+            $this->addWaterstop($index);
+        }
+
+        if (! $this->waterstopEnabled[$index]) {
+            $this->panelValues[$index]['waterstops'] = [];
+        }
+
+        $this->normalizePanelOptions($index);
+    }
+
+    public function addWaterstop($elementIndex)
+    {
+        if (! isset($this->panelValues[$elementIndex]['waterstops'])) {
+            $this->panelValues[$elementIndex]['waterstops'] = [];
+        }
+
+        $this->panelValues[$elementIndex]['waterstops'][] = [
+            'type' => '',
+            'vertical' => '',
+            'horizontal' => 0,
+        ];
+
+        $this->waterstopEnabled[$elementIndex] = true;
+
+        $this->normalizePanelOptions($elementIndex);
+    }
+
+    public function removeWaterstop($elementIndex, $waterstopIndex)
+    {
+        unset($this->panelValues[$elementIndex]['waterstops'][$waterstopIndex]);
+
+        $this->panelValues[$elementIndex]['waterstops'] = array_values(
+            $this->panelValues[$elementIndex]['waterstops'] ?? []
+        );
+
+        if (count($this->panelValues[$elementIndex]['waterstops']) === 0) {
+            $this->waterstopEnabled[$elementIndex] = false;
+        }
+
+        $this->normalizePanelOptions($elementIndex);
     }
 
     public function rules()
@@ -319,6 +369,7 @@ class ChangeOrder extends Component
 
             if (in_array(4, $options)) {
                 $rules["panelValues.$index.4_1"] = 'required|numeric|min:300';
+
                 $rules["panelValues.$index.4_2"] = [
                     'required',
                     'numeric',
@@ -326,16 +377,31 @@ class ChangeOrder extends Component
                     function ($attribute, $value, $fail) use ($index) {
                         $totaal = $this->fillTotaleLengte[$index] ?? 0;
                         $ruimte1 = $this->panelValues[$index]['4_1'] ?? 0;
+                        $ruimte2 = $value;
 
                         if (! $totaal) {
                             $fail(__('messages.Vul eerst de totale element lengte in voor dit element'));
                             return;
                         }
 
+                        if ($ruimte1 < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn'));
+                            return;
+                        }
+
                         $maxRuimte2 = $totaal - $ruimte1 - 300;
 
-                        if ($maxRuimte2 < 0 || $value > $maxRuimte2) {
+                        if ($maxRuimte2 < 0) {
                             $fail(__('messages.panelToShort'));
+                            return;
+                        }
+
+                        if ($ruimte2 > $maxRuimte2) {
+                            $fail(
+                                __('messages.Vrije ruimte mag maximaal ') .
+                                $maxRuimte2 .
+                                __('messages.mm zijn op basis van totale lengte en ruimte bovenkant tot vrije ruimte')
+                            );
                         }
                     },
                 ];
@@ -343,10 +409,16 @@ class ChangeOrder extends Component
         }
 
         foreach ($this->orderLines as $index => $line) {
-            if (($this->waterstopEnabled[$index] ?? false)) {
-                $rules["panelValues.$index.waterstop_type"] = 'required|in:960,840,730,500,300';
+            if (! ($this->waterstopEnabled[$index] ?? false)) {
+                continue;
+            }
 
-                $rules["panelValues.$index.waterstop_vertical"] = [
+            $waterstops = $this->panelValues[$index]['waterstops'] ?? [];
+
+            foreach ($waterstops as $wsIndex => $waterstop) {
+                $rules["panelValues.$index.waterstops.$wsIndex.type"] = 'required|in:960,840,730,500,300';
+
+                $rules["panelValues.$index.waterstops.$wsIndex.vertical"] = [
                     'required',
                     'integer',
                     'min:300',
@@ -371,26 +443,17 @@ class ChangeOrder extends Component
                     },
                 ];
 
-                $rules["panelValues.$index.waterstop_horizontal"] = [
+                $rules["panelValues.$index.waterstops.$wsIndex.horizontal"] = [
                     'required',
                     'integer',
-                    function ($attribute, $value, $fail) use ($index) {
-                        $type = (int) ($this->panelValues[$index]['waterstop_type'] ?? 0);
+                    function ($attribute, $value, $fail) use ($index, $wsIndex) {
+                        $type = (int) ($this->panelValues[$index]['waterstops'][$wsIndex]['type'] ?? 0);
+                        $max = $this->waterstopHorizontalMax($type);
 
-                        $maxByType = [
-                            960 => 0,
-                            840 => 60,
-                            730 => 115,
-                            500 => 230,
-                            300 => 330,
-                        ];
-
-                        if (! isset($maxByType[$type])) {
+                        if (! in_array($type, [960, 840, 730, 500, 300], true)) {
                             $fail(__('messages.Selecteer eerst een type waterstop'));
                             return;
                         }
-
-                        $max = $maxByType[$type];
 
                         if ((int) $value < -$max || (int) $value > $max) {
                             $fail(__('messages.De horizontale verplaatsing mag maximaal ') . $max . ' mm naar links of rechts zijn');
@@ -421,13 +484,23 @@ class ChangeOrder extends Component
             'fillTotaleLengte.*.required' => __('messages.De lengte is een verplicht veld'),
             'aantal.*.min' => __('messages.Dit moet mimimaal 1 element zijn'),
             'aantal.*.required' => __('messages.Het aantal elementen is een verplicht veld'),
-            'panelValues.*.waterstop_type.required' => __('messages.Selecteer een type waterstop'),
-            'panelValues.*.waterstop_type.in' => __('messages.Selecteer een geldig type waterstop'),
-            'panelValues.*.waterstop_vertical.required' => __('messages.Vul de verticale positie van de waterstop in'),
-            'panelValues.*.waterstop_vertical.integer' => __('messages.Dit moet een getal zijn'),
-            'panelValues.*.waterstop_vertical.min' => __('messages.De verticale positie moet minimaal 300 mm zijn'),
-            'panelValues.*.waterstop_horizontal.required' => __('messages.Vul de horizontale verplaatsing van de waterstop in'),
-            'panelValues.*.waterstop_horizontal.integer' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.1.required' => __('messages.Vul een waarde in voor Layback'),
+            'panelValues.*.1.numeric' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.2.required' => __('messages.Vul een waarde in voor Cutback'),
+            'panelValues.*.2.numeric' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.3.required' => __('messages.Vul een waarde in voor Nok afschuining'),
+            'panelValues.*.3.numeric' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.3.min' => __('messages.De nokafschuining moet minimaal 1 graad zijn'),
+            'panelValues.*.3.max' => __('messages.De nokafschuining mag maximaal 60 graden zijn'),
+            'panelValues.*.4_1.min' => __('messages.Dit moet een getal hoger dan 300 mm zijn'),
+            'panelValues.*.4_2.min' => __('messages.Dit moet een getal hoger dan 50 mm zijn'),
+            'panelValues.*.waterstops.*.type.required' => __('messages.Selecteer een type waterstop'),
+            'panelValues.*.waterstops.*.type.in' => __('messages.Selecteer een geldig type waterstop'),
+            'panelValues.*.waterstops.*.vertical.required' => __('messages.Vul de verticale positie van de waterstop in'),
+            'panelValues.*.waterstops.*.vertical.integer' => __('messages.Dit moet een getal zijn'),
+            'panelValues.*.waterstops.*.vertical.min' => __('messages.De verticale positie moet minimaal 300 mm zijn'),
+            'panelValues.*.waterstops.*.horizontal.required' => __('messages.Vul de horizontale verplaatsing van de waterstop in'),
+            'panelValues.*.waterstops.*.horizontal.integer' => __('messages.Dit moet een getal zijn'),
             'kerndikte.required' => __('messages.De kerndikte is een verplicht veld'),
             'requested_delivery_date.required' => __('messages.Dit is een verplicht veld'),
         ];
@@ -435,79 +508,116 @@ class ChangeOrder extends Component
 
     public function saveOrder()
     {
-        $this->fillTotaleLengte = array_values(array_filter($this->fillTotaleLengte, fn($v) => $v !== ''));
+        $this->fillTotaleLengte = array_values(array_filter($this->fillTotaleLengte, fn ($v) => $v !== ''));
 
-        $this->validate();
+        $this->normalizePanelOptions();
 
-        $order = Order::with(['orderLines', 'user', 'orderRules', 'surcharges'])->findOrFail($this->order_id);
+        if (! $this->validatePanelOptions()) {
+            $this->dispatch('show-form-error', message: __('messages.form_has_errors'));
+            return;
+        }
+
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->dispatch('show-form-error', message: __('messages.form_has_errors'));
+            throw $e;
+        }
+
+        $order = Order::with(['orderLines.waterstops', 'user', 'orderRules', 'surcharges'])->findOrFail($this->order_id);
 
         $wasConfirmed = $order->status === 'Bevestigd';
 
         $oldLinePrices = $order->orderLines
             ->values()
-            ->mapWithKeys(fn($line, $index) => [$index => $line->price_per_m2]);
+            ->mapWithKeys(fn ($line, $index) => [$index => $line->price_per_m2]);
 
-        $order->update([
-            'klantnaam' => $this->klant_naam,
-            'referentie' => $this->referentie,
-            'aflever_straat' => $this->aflever_straat,
-            'aflever_postcode' => $this->aflever_postcode,
-            'aflever_land' => $this->aflever_land,
-            'aflever_plaats' => $this->aflever_plaats,
-            'intaker' => $this->intaker,
-            'discount' => $this->discount,
-            'merk_paneel' => $this->merk_paneel,
-            'rietkleur' => $this->rietkleur,
-            'toepassing' => $this->toepassing,
-            'kerndikte' => $this->kerndikte,
-            'project_naam' => $this->project_naam,
-            'marge' => $this->marge,
-            'user_id' => $this->creator_user_id,
-            'status' => 'In behandeling',
-            'requested_delivery_date' => $this->requested_delivery_date,
-            'comment' => $this->comment,
-        ]);
-
-        if ($wasConfirmed) {
-            OrderRules::where('order_id', $order->id)->delete();
-        }
-
-        OrderLines::where('order_id', $order->id)->delete();
-
-        foreach ($this->orderLines as $index => $key) {
-            $selectedOptions = $this->selectedPanelOption[$index] ?? [];
-
-            OrderLines::create([
-                'order_id' => $order->id,
-                'fillLb' => $this->fillLb[$index] ?? 0,
-                'fillTotaleLengte' => $this->fillTotaleLengte[$index] ?? 0,
-                'aantal' => $this->aantal[$index] ?? 0,
-                'user_id' => Auth::user()->id,
-                'm2' => $this->m2[$index] ?? 0,
-                'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
-                'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
-                'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
-                'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
-                'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-
-                'waterstop_type' => ($this->waterstopEnabled[$index] ?? false) ? ($this->panelValues[$index]['waterstop_type'] ?? null) : null,
-                'waterstop_vertical' => ($this->waterstopEnabled[$index] ?? false) ? ($this->panelValues[$index]['waterstop_vertical'] ?? null) : null,
-                'waterstop_horizontal' => ($this->waterstopEnabled[$index] ?? false) ? ($this->panelValues[$index]['waterstop_horizontal'] ?? 0) : null,
-
-                'price_per_m2' => $this->recalculateOrderPrices ? null : ($oldLinePrices[$index] ?? 0),
+        DB::transaction(function () use ($order, $wasConfirmed, $oldLinePrices) {
+            $order->update([
+                'klantnaam' => $this->klant_naam,
+                'referentie' => $this->referentie,
+                'aflever_straat' => $this->aflever_straat,
+                'aflever_postcode' => $this->aflever_postcode,
+                'aflever_land' => $this->aflever_land,
+                'aflever_plaats' => $this->aflever_plaats,
+                'intaker' => $this->intaker,
+                'discount' => $this->discount,
+                'merk_paneel' => $this->merk_paneel,
+                'rietkleur' => $this->rietkleur,
+                'toepassing' => $this->toepassing,
+                'kerndikte' => $this->kerndikte,
+                'project_naam' => $this->project_naam,
+                'marge' => $this->marge,
+                'user_id' => $this->creator_user_id,
+                'status' => 'In behandeling',
+                'requested_delivery_date' => $this->requested_delivery_date,
+                'comment' => $this->comment,
             ]);
-        }
+
+            if ($wasConfirmed) {
+                OrderRules::where('order_id', $order->id)->delete();
+            }
+
+            // Eerst de waterstops van de bestaande orderregels opruimen, dan pas de regels zelf
+            OrderLineWaterstop::whereIn('order_line_id', $order->orderLines->pluck('id'))->delete();
+            OrderLines::where('order_id', $order->id)->delete();
+
+            $waterstopsByLineIndex = [];
+
+            foreach ($this->orderLines as $index => $key) {
+                $selectedOptions = $this->selectedPanelOption[$index] ?? [];
+
+                $waterstops = ($this->waterstopEnabled[$index] ?? false)
+                    ? array_values($this->panelValues[$index]['waterstops'] ?? [])
+                    : [];
+
+                $firstWaterstop = $waterstops[0] ?? null;
+
+                $waterstopsByLineIndex[$index] = $waterstops;
+
+                OrderLines::create([
+                    'order_id' => $order->id,
+                    'fillLb' => $this->fillLb[$index] ?? 0,
+                    'fillTotaleLengte' => $this->fillTotaleLengte[$index] ?? 0,
+                    'aantal' => $this->aantal[$index] ?? 0,
+                    'user_id' => Auth::id(),
+                    'm2' => $this->m2[$index] ?? 0,
+                    'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
+                    'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
+                    'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
+                    'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
+                    'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
+
+                    'waterstop_type' => $firstWaterstop ? ($firstWaterstop['type'] ?? null) : null,
+                    'waterstop_vertical' => $firstWaterstop ? ($firstWaterstop['vertical'] ?? null) : null,
+                    'waterstop_horizontal' => $firstWaterstop ? ($firstWaterstop['horizontal'] ?? 0) : null,
+
+                    'price_per_m2' => $this->recalculateOrderPrices ? null : ($oldLinePrices[$index] ?? 0),
+                ]);
+            }
+
+            foreach ($order->orderLines()->get()->values() as $index => $orderLine) {
+                foreach (($waterstopsByLineIndex[$index] ?? []) as $waterstop) {
+                    OrderLineWaterstop::create([
+                        'order_line_id' => $orderLine->id,
+                        'type' => (int) $waterstop['type'],
+                        'vertical' => (int) $waterstop['vertical'],
+                        'horizontal' => (int) ($waterstop['horizontal'] ?? 0),
+                    ]);
+                }
+            }
+        });
 
         $order->refresh();
-        $order->load(['orderLines', 'user', 'orderRules', 'surcharges']);
+        $order->load(['orderLines.waterstops', 'user', 'orderRules', 'surcharges']);
 
         if ($this->recalculateOrderPrices || $wasConfirmed) {
             app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
 
             $order->refresh();
-            $order->load(['orderLines', 'user', 'orderRules', 'surcharges']);
+            $order->load(['orderLines.waterstops', 'user', 'orderRules', 'surcharges']);
         } else {
-            $subtotal = $order->orderLines->sum(fn($line) => (float) $line->m2 * (float) $line->price_per_m2);
+            $subtotal = $order->orderLines->sum(fn ($line) => (float) $line->m2 * (float) $line->price_per_m2);
             $surchargesTotal = (float) ($order->surcharges_total ?? 0);
             $rulePrice = $order->orderRules ? (float) $order->orderRules->sum('price') : 0;
 
@@ -520,7 +630,7 @@ class ChangeOrder extends Component
             $order->save();
 
             $order->refresh();
-            $order->load(['orderLines', 'user', 'orderRules', 'surcharges']);
+            $order->load(['orderLines.waterstops', 'user', 'orderRules', 'surcharges']);
         }
 
         $orderLines = $order->orderLines;
@@ -530,9 +640,7 @@ class ChangeOrder extends Component
         $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
         $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
-        $showWaterstop = $orderLines->contains(function ($line) {
-            return !empty($line->waterstop_type);
-        });
+        $showWaterstop = $orderLines->contains(fn ($line) => $line->waterstops->count() > 0);
 
         Pdf::loadView('pdf.order', [
             'order' => $order,
@@ -556,17 +664,6 @@ class ChangeOrder extends Component
     public function cancelChangeOrder()
     {
         return $this->redirect('/orders', navigate: true);
-    }
-
-    public function toggleWaterstop($index)
-    {
-        $this->waterstopEnabled[$index] = !($this->waterstopEnabled[$index] ?? false);
-
-        if (! $this->waterstopEnabled[$index]) {
-            $this->panelValues[$index]['waterstop_type'] = null;
-            $this->panelValues[$index]['waterstop_vertical'] = null;
-            $this->panelValues[$index]['waterstop_horizontal'] = null;
-        }
     }
 
     public function updateM2($index)

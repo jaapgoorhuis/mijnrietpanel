@@ -61,7 +61,7 @@
                             <th scope="col" class="px-4 py-3">Bedrijf ID</th>
                             <th scope="col" class="px-4 py-3">Bedrijfsnaam</th>
                             <th scope="col" class="px-4 py-3">Korting</th>
-                            <th scope="col" class="px-4 py-3">Dealer</th>
+                            <th scope="col" class="px-4 py-3">Type bedrijf</th>
                             <th scope="col" class="px-4 py-3">Facturatie email</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
@@ -75,10 +75,10 @@
                                 <td class="px-4 py-3">{{$company->bedrijfsnaam}}</td>
                                 <td class="px-4 py-3">{{$company->discount}} %</td>
                                 <td class="px-4 py-3">
-                                    @if($company->is_reseller)
-                                        Ja
+                                    @if($company->is_architect_bureau)
+                                        Architecten bureau
                                     @else
-                                        Nee
+                                        Wederverkoper
                                     @endif
                                 </td>
 
