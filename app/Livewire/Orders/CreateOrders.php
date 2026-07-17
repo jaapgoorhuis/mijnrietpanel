@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Orders;
 
+use AllowDynamicProperties;
 use App\Mail\newOrderCustomer;
 use App\Mail\sendOrder;
 use App\Models\Company;
@@ -14,7 +15,9 @@ use App\Models\Supliers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Livewire\Concerns\HasPanelOptionValidation;
 
@@ -23,14 +26,17 @@ class CreateOrders extends Component
     use HasPanelOptionValidation;
 
     public $intaker;
-
+    public int $expectedRenders = 0;
+    public int $receivedRenders = 0;
+    public bool $isSaving = false;
+    public int $rendersReceived = 0;
     public $klant_naam;
     public $referentie;
     public $aflever_straat;
     public $aflever_postcode;
     public $aflever_plaats;
     public $aflever_land;
-
+    public $orderId;
     public $rietkleur = 'Old look';
     public $toepassing = 'Dak';
     public $merk_paneel;
@@ -70,7 +76,7 @@ class CreateOrders extends Component
     public $requested_delivery_date;
 
     public $marge = 0;
-
+    public array $panelRenders = [];
     public $locale;
     public $comment;
 
@@ -508,7 +514,7 @@ class CreateOrders extends Component
 
             throw $e;
         }
-
+        $this->isSaving = true;
         $order = null;
         $orderId = null;
         $waterstopsByLineIndex = [];
@@ -545,6 +551,7 @@ class CreateOrders extends Component
                 'comment' => $this->comment,
                 'lang' => $this->locale,
             ]);
+
 
             foreach ($this->orderLines as $index => $key) {
                 $selectedOptions = $this->selectedPanelOption[$index] ?? [];
@@ -593,33 +600,92 @@ class CreateOrders extends Component
 
         $order->refresh();
         $order->load(['orderLines', 'user', 'surcharges', 'orderRules']);
-
         app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
+        $order->refresh();
+        $order->load(['orderLines', 'user', 'surcharges', 'orderRules']);
 
-        $orderLines = $order->orderLines;
+        $this->receivedRenders = 0;
+        $this->expectedRenders = count($this->orderLines);
+        $this->orderId = $order->id;
 
-        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
-        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
-        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
-        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
-        $showWaterstop = $orderLines->contains(fn ($line) => $line->waterstops->count() > 0);
+        $this->dispatch('capture-panel-renders');
+
+
+    }
+
+    #[On('save-panel-render')]
+    #[On('save-panel-render')]
+    public function savePanelRender($index, $image)
+    {
+        $orderLine = OrderLines::where('order_id', $this->orderId)
+            ->orderBy('id')
+            ->get()
+            ->values()
+            ->get($index);
+
+        if (! $orderLine) {
+            return;
+        }
+
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+
+        $filename = 'orderline-'.$orderLine->id.'.png';
+
+        \Storage::disk('public')->put(
+            'orderlines/renders/'.$filename,
+            base64_decode($image)
+        );
+
+        $orderLine->update([
+            'render_image' => 'orderlines/renders/'.$filename,
+        ]);
+
+        $this->receivedRenders++;
+
+        if ($this->receivedRenders >= $this->expectedRenders) {
+            $this->finishOrder();
+        }
+    }
+
+    public function finishOrder()
+    {
+
+        $order = Order::with([
+            'orderLines.waterstops',
+            'user',
+            'surcharges',
+            'orderRules'
+        ])->findOrFail($this->orderId);
+
 
         Pdf::loadView('pdf.order', [
             'order' => $order,
-            'orderLines' => $orderLines,
-            'showNokafschuining' => $showNokafschuining,
-            'showLb' => $showLb,
-            'showCb' => $showCb,
-            'showWaterstop' => $showWaterstop,
-            'showVrijeRuimte' => $showVrijeRuimte,
-        ])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
+            'orderLines' => $order->orderLines,
+            'showNokafschuining' => $order->orderLines->where('nokafschuining','>',0)->count() > 0,
+            'showLb' => $order->orderLines->where('lb','>',0)->count() > 0,
+            'showCb' => $order->orderLines->where('fillCb','>',0)->count() > 0,
+            'showWaterstop' => $order->orderLines->contains(fn($line)=>$line->waterstops->count()>0),
+            'showVrijeRuimte' => $order->orderLines->where('vrije_ruimte_2','>',0)->count()>0,
+        ])
+            ->save(public_path('/storage/orders/order-'.$order->order_id.'.pdf'));
 
-        Mail::to(env('MAIL_TO_ADDRESS'))->send(new sendOrder($order));
-        Mail::to(Auth::user()->email)->send(new newOrderCustomer($order));
 
-        session()->flash('success', __('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen'));
+        Mail::to(env('MAIL_TO_ADDRESS'))
+            ->send(new sendOrder($order));
 
-        return $this->redirect('/orders', navigate: true);
+
+        Mail::to(Auth::user()->email)
+            ->send(new newOrderCustomer($order));
+
+
+        session()->flash(
+            'success',
+            __('messages.De order is aangemaakt. Wij controleren de order en zullen deze zo spoedig mogelijk bevestigen')
+        );
+
+
+        return $this->redirect('/orders', navigate:true);
     }
 
 //    public function updatedFillTotaleLengte($value, $index): void

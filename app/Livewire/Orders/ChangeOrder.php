@@ -16,13 +16,15 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ChangeOrder extends Component
 {
     use HasPanelOptionValidation;
-
+    public bool $isSaving = false;
     public $klant_naam, $referentie, $aflever_straat, $aflever_postcode, $aflever_plaats, $aflever_land;
     public $intaker, $rietkleur = 'Old look', $toepassing = 'Dak', $merk_paneel, $kerndikte, $project_naam;
     public $aantal = [], $m2 = [], $fillTotaleLengte = ['0'], $fillCb = ['0'], $fillLb = ['0'];
@@ -35,10 +37,13 @@ class ChangeOrder extends Component
     public $confirmedOrder = false, $showConfirmModal = false;
     public $selectedPanelOption = [], $panelValues = [], $vrijeruimtePrice, $laybackPrice, $nokafschuiningPrice, $waterstopPrice, $panelImages = [];
     public array $waterstopEnabled = [];
-
     public bool $showPriceUpdateModal = false;
     public string $priceUpdateMessage = '';
     public bool $recalculateOrderPrices = false;
+    protected $listeners = [
+        'panel-renders-finished' => 'finishUpdate'
+    ];
+
 
     public function mount($id)
     {
@@ -525,7 +530,7 @@ class ChangeOrder extends Component
         }
 
         $order = Order::with(['orderLines.waterstops', 'user', 'orderRules', 'surcharges'])->findOrFail($this->order_id);
-
+        $this->isSaving = true;
         $wasConfirmed = $order->status === 'Bevestigd';
 
         $oldLinePrices = $order->orderLines
@@ -596,6 +601,7 @@ class ChangeOrder extends Component
                 ]);
             }
 
+
             foreach ($order->orderLines()->get()->values() as $index => $orderLine) {
                 foreach (($waterstopsByLineIndex[$index] ?? []) as $waterstop) {
                     OrderLineWaterstop::create([
@@ -633,32 +639,65 @@ class ChangeOrder extends Component
             $order->load(['orderLines.waterstops', 'user', 'orderRules', 'surcharges']);
         }
 
-        $orderLines = $order->orderLines;
-        $user = User::find($order->user_id);
+        $this->dispatch('capture-panel-renders');
 
-        $showNokafschuining = $orderLines->where('nokafschuining', '>', 0)->count() > 0;
-        $showVrijeRuimte = $orderLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
-        $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
-        $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
-        $showWaterstop = $orderLines->contains(fn ($line) => $line->waterstops->count() > 0);
 
-        Pdf::loadView('pdf.order', [
-            'order' => $order,
-            'orderLines' => $orderLines,
-            'showNokafschuining' => $showNokafschuining,
-            'showLb' => $showLb,
-            'showCb' => $showCb,
-            'showVrijeRuimte' => $showVrijeRuimte,
-            'showWaterstop' => $showWaterstop,
-        ])->save(public_path('/storage/orders/order-' . $order->order_id . '.pdf'));
 
-        if (Auth::user()->is_admin == 1 && $order->user_id != Auth::user()->id) {
-            Mail::to($user->email)->send(new orderUpdated($order));
+    }
+
+    public function finishUpdate()
+    {
+        session()->flash(
+            'success',
+            __('messages.De order is bewerkt')
+        );
+
+        return $this->redirect('/orders', navigate:true);
+    }
+
+    #[On('save-panel-render')]
+    public function savePanelRender($index, $image): void
+    {
+        logger('render ontvangen '.$index);
+
+
+        $orderLine = OrderLines::where('order_id', $this->order_id)
+            ->orderBy('id')
+            ->get()
+            ->values()
+            ->get($index);
+
+        if (! $orderLine) {
+            logger('Geen orderline gevonden '.$index);
+            return;
         }
 
-        session()->flash('success', __('messages.De order is bewerkt'));
 
-        return $this->redirect('/orders', navigate: true);
+        $image = str_replace(
+            'data:image/png;base64,',
+            '',
+            $image
+        );
+
+
+        $image = str_replace(' ', '+', $image);
+
+
+        $filename = 'orderline-'.$orderLine->id.'.png';
+
+
+        \Storage::disk('public')->put(
+            'orderlines/renders/'.$filename,
+            base64_decode($image)
+        );
+
+
+        $orderLine->update([
+            'render_image' => 'orderlines/renders/'.$filename
+        ]);
+
+
+        logger('Render opgeslagen '.$filename);
     }
 
     public function cancelChangeOrder()

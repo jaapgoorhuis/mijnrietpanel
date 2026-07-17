@@ -114,6 +114,7 @@
 @endphp
 
 <div
+    id="panel-render-{{ $index }}"
     class="relative w-full max-w-full overflow-visible pt-24"
     data-free-space-from-left="{{ $hasVrijeRuimte ? $freeSpaceFromLeft : 0 }}"
     data-free-space-size="{{ $hasVrijeRuimte ? $freeSpaceSize : 0 }}"
@@ -586,7 +587,7 @@
                             <text
                                 x="10"
                                 y="41"
-                                :font-size="Math.max(5, 7 / scale)"
+                                font-size="7"
                                 font-family="sans-serif"
                                 font-weight="700"
                             >
@@ -646,3 +647,4 @@
     </div>
 
 </div>
+

@@ -1,6 +1,10 @@
 import './bootstrap';
 import 'livewire-sortable';
 import 'flowbite-datepicker';
+import html2canvas from 'html2canvas';
+
+window.html2canvas = html2canvas;
+
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';

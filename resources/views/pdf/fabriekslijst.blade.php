@@ -57,13 +57,17 @@
         </tr>
     </table>
 
-    @if($order->orderRules)
-    <table class="order-table-visual">
-        <tr>
-            <td class="header">Opmerkingen</td>
-            <td style="color:red; font-weight: bold">{{$order->orderRules->rule}}</td>
-        </tr>
-    </table>
+    @if($order->orderRules->count())
+        <table class="order-table-visual">
+            <tr>
+                <td class="header">Opmerkingen</td>
+                <td style="color:red; font-weight: bold">
+                    @foreach($order->orderRules as $rule)
+                        {{ $rule->rule }}<br>
+                    @endforeach
+                </td>
+            </tr>
+        </table>
     @endif
 
     <table class="order-table-visual">
@@ -75,34 +79,41 @@
                 </td>
             </tr>
             <tr class="bar-row">
-                <td colspan="2">
-                    @php
-                        // Bepaal welke opties aanwezig zijn
-                        $selectedOptions = [];
+                <td colspan="2" style="text-align:center; padding:15px;">
+                    @if($orderLine->render_image)
+                        <img
+                            src="{{ public_path('storage/' . $orderLine->render_image) }}"
+                            style="max-width:100%; max-height:180px;"
+                            alt="Render">
+                    @else
 
-                        if($orderLine->lb > 0) $selectedOptions[] = 1;
-                        if($orderLine->fillCb > 0) $selectedOptions[] = 2;
-                        if($orderLine->nokafschuining > 0) $selectedOptions[] = 3;
-                        if($orderLine->vrije_ruimte_1 > 0 || $orderLine->vrije_ruimte_2 > 0) $selectedOptions[] = 4;
+                        @php
+                            // Bepaal welke opties aanwezig zijn
+                            $selectedOptions = [];
 
-                        sort($selectedOptions); // belangrijk zodat key consistent is
-                        $keyString = implode('-', $selectedOptions);
+                            if($orderLine->lb > 0) $selectedOptions[] = 1;
+                            if($orderLine->fillCb > 0) $selectedOptions[] = 2;
+                            if($orderLine->nokafschuining > 0) $selectedOptions[] = 3;
+                            if($orderLine->vrije_ruimte_1 > 0 || $orderLine->vrije_ruimte_2 > 0) $selectedOptions[] = 4;
+
+                            sort($selectedOptions); // belangrijk zodat key consistent is
+                            $keyString = implode('-', $selectedOptions);
 
 
-                        // Standaard afbeelding als geen optie is ingevuld
-                        $imagePath = $keyString
-                        ? public_path("storage/images/rietpanel/paneel-$keyString.png")
-                        : public_path("storage/images/rietpanel/paneel.png");
+                            // Standaard afbeelding als geen optie is ingevuld
+                            $imagePath = $keyString
+                            ? public_path("storage/images/rietpanel/paneel-$keyString.png")
+                            : public_path("storage/images/rietpanel/paneel.png");
 
-                    @endphp
+                        @endphp
 
-                    <div class="panel-banner" style="background-image: url('{{ $imagePath }}');">
+                        <div class="panel-banner" style="background-image: url('{{ $imagePath }}');">
 
-                        @if($orderLine->fillCb)
-                        <div class="cb-label">
-                           <strong>{{$orderLine->fillCb}} mm</strong>
-                        </div>
-                        @endif
+                            @if($orderLine->fillCb)
+                                <div class="cb-label">
+                                    <strong>{{$orderLine->fillCb}} mm</strong>
+                                </div>
+                            @endif
 
                             @if($orderLine->nokafschuining)
                                 <div class="nok-label">
@@ -129,12 +140,14 @@
                                 </div>
                             @endif
 
-                        <div class="totale-maat" style="margin-bottom: 30px;">
-                            <strong style="font-family: DejaVu Sans, sans-serif;">
-                                &larr; Totale lengte: {{$orderLine->fillTotaleLengte}} mm &rarr;
-                            </strong>
+                            <div class="totale-maat" style="margin-bottom: 30px;">
+                                <strong style="font-family: DejaVu Sans, sans-serif;">
+                                    &larr; Totale lengte: {{$orderLine->fillTotaleLengte}} mm &rarr;
+                                </strong>
+                            </div>
                         </div>
-                    </div>
+
+                    @endif
                 </td>
             </tr>
         @endforeach

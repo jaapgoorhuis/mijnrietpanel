@@ -622,14 +622,19 @@
                             </div>
                         </div>
 
-                        <button wire:loading.attr="disabled" wire:target="saveOrder" wire:click.prevent="saveOrder()" @if(!count($this->orderLines)) disabled @endif class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-                            <div wire:loading wire:target="saveOrder">
-                                <i class="fa-solid fa-spinner fa-spin"></i>{{ __('messages.Order plaatsen') }}
-                            </div>
-                            <div wire:loading.attr="hidden" wire:target="saveOrder">
+                        <button
+                            wire:click.prevent="saveOrder"
+                            @disabled($isSaving || !count($this->orderLines))
+                            class="text-white bg-[#C0A16E] mt-10 hover:bg-[#d1b079] disabled:bg-[#c0a16e99] disabled:cursor-not-allowed hover:cursor-pointer focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                        >
+                            @if($isSaving)
+                                <i class="fa-solid fa-spinner fa-spin"></i>
                                 {{ __('messages.Order updaten') }}
-                            </div>
+                            @else
+                                {{ __('messages.Order updaten') }}
+                            @endif
                         </button>
+
                     </form>
                 </div>
             </div>
@@ -637,6 +642,143 @@
     </div>
 </div>
 
+<script>
+    window.addEventListener('capture-panel-renders', async () => {
+
+        let renders = [];
+
+        const elements = document.querySelectorAll('[id^="panel-render-"]');
+
+        for (let index = 0; index < elements.length; index++) {
+
+            document.documentElement.style.setProperty('--tw-ring-color','#000');
+
+            let canvas = await html2canvas(elements[index], {
+                onclone: (clonedDoc) => {
+                    clonedDoc.querySelectorAll('*').forEach(el => {
+                        const style = window.getComputedStyle(el);
+
+                        if (style.color.includes('oklch')) {
+                            el.style.color = '#000000';
+                        }
+
+                        if (style.backgroundColor.includes('oklch')) {
+                            el.style.backgroundColor = '#ffffff';
+                        }
+
+                        if (style.borderColor.includes('oklch')) {
+                            el.style.borderColor = '#000000';
+                        }
+                    });
+                },
+                scale: 2,
+                backgroundColor:'#ffffff'
+            });
+
+
+            // witte ruimte verwijderen
+            canvas = cropCanvas(canvas);
+
+
+            let image = canvas.toDataURL('image/png');
+
+
+            await Livewire.dispatch('save-panel-render',{
+                index:index,
+                image:image
+            });
+        }
+
+
+        await Livewire.dispatch('panel-renders-finished');
+
+    });
+
+
+
+    function cropCanvas(canvas) {
+
+        const ctx = canvas.getContext('2d');
+
+        const imageData = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const data = imageData.data;
+
+
+        let minX = canvas.width;
+        let minY = canvas.height;
+        let maxX = 0;
+        let maxY = 0;
+
+
+        for (let y = 0; y < canvas.height; y++) {
+
+            for (let x = 0; x < canvas.width; x++) {
+
+                let index = (y * canvas.width + x) * 4;
+
+                let r = data[index];
+                let g = data[index + 1];
+                let b = data[index + 2];
+                let a = data[index + 3];
+
+
+                // alles wat niet wit is telt als onderdeel van de render
+                if (
+                    a > 0 &&
+                    !(r > 245 && g > 245 && b > 245)
+                ) {
+
+                    if (x < minX) minX = x;
+                    if (y < minY) minY = y;
+                    if (x > maxX) maxX = x;
+                    if (y > maxY) maxY = y;
+
+                }
+            }
+        }
+
+
+        // niets gevonden
+        if (maxX === 0 && maxY === 0) {
+            return canvas;
+        }
+
+
+        let width = maxX - minX;
+        let height = maxY - minY;
+
+
+        let croppedCanvas = document.createElement('canvas');
+
+        croppedCanvas.width = width;
+        croppedCanvas.height = height;
+
+
+        croppedCanvas
+            .getContext('2d')
+            .drawImage(
+                canvas,
+                minX,
+                minY,
+                width,
+                height,
+                0,
+                0,
+                width,
+                height
+            );
+
+
+        return croppedCanvas;
+    }
+
+</script>
 <script>
     window.addEventListener('show-form-error', () => {
         setTimeout(() => {

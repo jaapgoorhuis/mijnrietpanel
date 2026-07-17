@@ -77,11 +77,17 @@
                 <td>{{ $order->referentie }}</td>
             </tr>
 
-            @if($order->orderRules)
-                <tr>
-                    <td class="label">Opmerking(en):</td>
-                    <td>{{ $order->orderRules->rule }}</td>
-                </tr>
+            @if($order->orderRules->count())
+                <table class="order-table-visual">
+                    <tr>
+                        <td class="header">Opmerkingen</td>
+                        <td style="color:red; font-weight: bold">
+                            @foreach($order->orderRules as $rule)
+                                {{ $rule->rule }}<br>
+                            @endforeach
+                        </td>
+                    </tr>
+                </table>
             @endif
 
             <tr>
