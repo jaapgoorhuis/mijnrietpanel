@@ -683,11 +683,12 @@
             let image = canvas.toDataURL('image/png');
 
 
-            await Livewire.dispatch('save-panel-render',{
+            Livewire.dispatch('save-panel-render',{
                 index:index,
                 image:image
             });
         }
+
 
 
         await Livewire.dispatch('panel-renders-finished');

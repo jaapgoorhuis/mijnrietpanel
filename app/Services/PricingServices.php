@@ -47,7 +47,7 @@ class PricingServices
             }
 
             $lineTotal = round(
-                (float) $line->m2 * (float) $m2price,
+                round((float) $line->m2, 2) * round((float) $m2price, 2),
                 2
             );
 
@@ -79,6 +79,7 @@ class PricingServices
         }
 
         $totalM2 = $lines->sum('m2');
+        $subtotal = round($subtotal, 2);
 
         $orderLineHeeftOversize = false;
         $oversizeThreshold = Surcharges::where('rule', 'order')->value('number');
@@ -102,28 +103,43 @@ class PricingServices
 
             if ($surcharge->rule === 'zaaglengte' && $zaaglengtes > 0) {
                 $qty = $zaaglengtes;
-                $amount = $qty * (float) $surcharge->price;
+                $amount = round(
+                    $qty * round((float) $surcharge->price, 2),
+                    2
+                );
             }
 
             if ($surcharge->rule === 'Layback' && $laybacks > 0) {
                 $qty = $laybacks;
-                $amount = $qty * (float) $surcharge->price;
+                $amount = round(
+                    $qty * round((float) $surcharge->price, 2),
+                    2
+                );
             }
 
             if ($surcharge->rule === 'Nokafschuining' && $nokafschuining > 0) {
                 $qty = $nokafschuining;
-                $amount = $qty * (float) $surcharge->price;
+                $amount = round(
+                    $qty * round((float) $surcharge->price, 2),
+                    2
+                );
             }
 
             if ($surcharge->rule === 'Waterstop' && $waterstops > 0) {
                 $qty = $waterstops;
-                $amount = $qty * (float) $surcharge->price;
+                $amount = round(
+                    $qty * round((float) $surcharge->price, 2),
+                    2
+                );
             }
 
 
             if ($surcharge->rule === 'Vrije ruimte' && $vrijeruimte > 0) {
                 $qty = $vrijeruimte;
-                $amount = $qty * (float) $surcharge->price;
+                $amount = round(
+                    $qty * round((float) $surcharge->price, 2),
+                    2
+                );
             }
 
             if (
@@ -155,8 +171,12 @@ class PricingServices
         $rulePrice = $this->getRulePrice($document);
 
         $vatBase = $subtotal + $surchargesTotal + $rulePrice;
-        $vat = $vatBase * 0.21;
-        $grandTotal = $vatBase + $vat;
+        $vat = round($vatBase * 0.21, 2);
+
+        $grandTotal = round(
+            $vatBase + $vat,
+            2
+        );
 
         return [
             'line_totals' => $lineTotals,
@@ -309,8 +329,11 @@ class PricingServices
         $marge = $base / 100 * (float) ($document->marge ?? 0);
         $disc = $base / 100 * (float) ($document->discount ?? 0);
 
-        return $company->is_reseller
-            ? $base - $disc
-            : (((float) ($document->marge ?? 0)) !== 0.0 ? $base + $marge : $base);
+        return round(
+            $company->is_reseller
+                ? $base - $disc
+                : (((float) ($document->marge ?? 0)) !== 0.0 ? $base + $marge : $base),
+            2
+        );
     }
 }
