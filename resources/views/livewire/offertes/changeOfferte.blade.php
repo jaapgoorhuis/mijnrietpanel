@@ -370,6 +370,7 @@
                                                         <input type="number"
                                                                wire:model.live.debounce.400ms="panelValues.{{$index}}.{{ $option }}"
                                                                wire:blur="normalizePanelOptions({{$index}})"
+                                                               wire:change="updatePanelValues({{$index}}, {{$option}})"
                                                                min="0"
                                                                max="60"
                                                                class="border rounded px-2 py-1 w-full pr-10 mt-1">

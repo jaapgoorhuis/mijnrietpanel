@@ -260,7 +260,13 @@ class PanelOptionValidationService
             return $values;
         }
 
-        $values[3] = max(self::NOK_MIN, min(self::NOK_MAX, (int) ($values[3] ?? self::NOK_MIN)));
+        // Leeg laten tijdens typen
+        if (($values[3] ?? '') === '') {
+            return $values;
+        }
+
+        // Niet begrenzen
+        $values[3] = (int) $values[3];
 
         return $values;
     }

@@ -8,42 +8,46 @@ trait HasPanelOptionValidation
 {
     public function updated($property, $value): void
     {
-        if ($this->shouldValidatePanelOptions($property)) {
+        if (! $this->shouldValidatePanelOptions($property)) {
+            return;
+        }
 
-            $this->syncTotaleLengteFromFill();
+        $this->syncTotaleLengteFromFill();
 
-            if (str_starts_with($property, 'panelValues.')) {
-                $parts = explode('.', $property);
-                $index = $parts[1] ?? null;
-                $field = $parts[2] ?? null;
+        if (str_starts_with($property, 'panelValues.')) {
 
-                $isWaterstop = $field === 'waterstops';
+            $parts = explode('.', $property);
+            $index = isset($parts[1]) ? (int) $parts[1] : null;
+            $field = $parts[2] ?? null;
 
-                if ($index !== null) {
+            if ($index === null) {
+                return;
+            }
 
-                    if (in_array($field, ['4_1', '4_2'])) {
-                        $this->validateVrijeRuimte((int)$index);
-                        $this->limitVrijeRuimteStart((int)$index);
+            // Vrije ruimte
+            if (in_array($field, ['4_1', '4_2'], true)) {
+                $this->validateVrijeRuimte($index);
+                $this->limitVrijeRuimteStart($index);
+            }
 
-                    } elseif ($isWaterstop) {
-                        \Log::info("Waterstop updated triggered", [
-                            'property' => $property,
-                            'index' => $index,
-                            'value' => $value
-                        ]);
+            // Waterstops
+            if ($field === 'waterstops') {
+                $this->validateWaterstops($index);
+            }
 
-                        $this->validateWaterstops((int)$index);
-                    }
-                }
-                 elseif ($isWaterstop) {
-                    \Log::info("Waterstop updated triggered", [
-                        'property' => $property,
-                        'index' => $index,
-                        'value' => $value
-                    ]);
+            // Altijd alle paneelopties opnieuw valideren
+            $this->validatePanelOptionsLive($index);
+        }
 
-                    $this->validateWaterstops((int)$index);
-                }
+        // Paneellengte gewijzigd
+        if (str_starts_with($property, 'fillTotaleLengte.') || str_starts_with($property, 'totaleLengte.')) {
+
+            $parts = explode('.', $property);
+            $index = isset($parts[1]) ? (int) $parts[1] : null;
+
+            if ($index !== null) {
+                $this->validatePanelLengthLive($index);
+                $this->validatePanelOptionsLive($index);
             }
         }
     }
