@@ -26,8 +26,8 @@ class OrderExample extends Component
     }
 
     public function genereer() {
-        $data = [ 'test' => 'test'];
+        $data = [ 'test.php' => 'test.php'];
 
-        Pdf::loadView('pdf.testorder',$data)->save(public_path('/storage/orders/order-test.pdf'));
+        Pdf::loadView('pdf.testorder',$data)->save(public_path('/storage/orders/order-test.php.pdf'));
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Offerte;
 use App\Models\OfferteLines;
 use App\Models\Order;
 use App\Models\OrderLines;
+use App\Models\OrderLineWaterstop;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -85,7 +86,11 @@ class Offertes extends Component
 
     public function createOfferteOrder($offerteId)
     {
-        $offerte = Offerte::with(['offerteLines', 'surcharges', 'user'])->findOrFail($offerteId);
+        $offerte = Offerte::with([
+            'offerteLines.waterstops',
+            'surcharges',
+            'user',
+        ])->findOrFail($offerteId);
 
         $offerte->update([
             'is_order' => 1,
@@ -135,7 +140,8 @@ class Offertes extends Component
         ]);
 
         foreach ($offerte->offerteLines as $offerteLine) {
-            OrderLines::create([
+
+            $orderLine = OrderLines::create([
                 'order_id' => $order->id,
                 'rietkleur' => $offerteLine->rietkleur,
                 'toepassing' => $offerteLine->toepassing,
@@ -145,7 +151,7 @@ class Offertes extends Component
                 'kerndikte' => $offerteLine->kerndikte,
                 'fillTotaleLengte' => $offerteLine->fillTotaleLengte,
                 'aantal' => $offerteLine->aantal,
-                'user_id' => Auth::user()->id,
+                'user_id' => Auth::id(),
                 'm2' => $offerteLine->m2,
 
                 'lb' => $offerteLine->lb,
@@ -153,8 +159,21 @@ class Offertes extends Component
                 'vrije_ruimte_1' => $offerteLine->vrije_ruimte_1,
                 'vrije_ruimte_2' => $offerteLine->vrije_ruimte_2,
 
+                'waterstop_type' => $offerteLine->waterstop_type,
+                'waterstop_vertical' => $offerteLine->waterstop_vertical,
+                'waterstop_horizontal' => $offerteLine->waterstop_horizontal,
+
                 'price_per_m2' => $offerteLine->price_per_m2,
             ]);
+
+            foreach ($offerteLine->waterstops as $waterstop) {
+                OrderLineWaterstop::create([
+                    'order_line_id' => $orderLine->id,
+                    'type' => $waterstop->type,
+                    'vertical' => $waterstop->vertical,
+                    'horizontal' => $waterstop->horizontal,
+                ]);
+            }
         }
 
         foreach ($offerte->surcharges as $surcharge) {
@@ -178,12 +197,16 @@ class Offertes extends Component
         $showCb = $orderLines->where('fillCb', '>', 0)->count() > 0;
         $showLb = $orderLines->where('lb', '>', 0)->count() > 0;
 
+        $showWaterstop = $orderLines->contains(fn ($line) => $line->waterstops->count() > 0);
+        $order->load(['orderLines.waterstops', 'user', 'surcharges']);
+
         Pdf::loadView('pdf.order', [
             'order' => $order,
             'orderLines' => $orderLines,
             'showNokafschuining' => $showNokafschuining,
             'showLb' => $showLb,
             'showCb' => $showCb,
+            'showWaterstop' => $showWaterstop,
             'showVrijeRuimte' => $showVrijeRuimte,
         ])->save(public_path('/storage/orders/order-' . $orderId . '.pdf'));
 

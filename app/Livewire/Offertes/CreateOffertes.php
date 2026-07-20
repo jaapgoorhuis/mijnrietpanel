@@ -3,6 +3,7 @@
 namespace App\Livewire\Offertes;
 
 use App\Livewire\Concerns\HasPanelOptionValidation;
+use App\Mail\newOrderCustomer;
 use App\Mail\sendOfferte;
 use App\Mail\sendOrder;
 use App\Models\Application;
@@ -23,6 +24,7 @@ use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -39,7 +41,14 @@ class CreateOffertes extends Component
     public $aflever_plaats;
     public $aflever_land;
 
+    public int $expectedRenders = 0;
+    public int $receivedRenders = 0;
+    public int $rendersReceived = 0;
     public $intaker;
+    public $offerteId;
+    public $offerte;
+
+    public $saved = false;
 
     public array $selectedPanelOption = [];
     public array $panelValues = [];
@@ -86,8 +95,8 @@ class CreateOffertes extends Component
     public $priceRule;
 
     public $marge;
+    public bool $isSaving = false;
     public $priceRulePrice;
-    public $saved = FALSE;
 
     public $requested_delivery_date;
 
@@ -514,7 +523,6 @@ class CreateOffertes extends Component
             return;
         }
 
-
         // Daarna Laravel validatie
         try {
             $this->validate();
@@ -528,6 +536,7 @@ class CreateOffertes extends Component
             throw $e;
         }
 
+        $this->isSaving = true;
         $offerte = null;
         $offerteId = null;
         $waterstopsByLineIndex = [];
@@ -564,6 +573,7 @@ class CreateOffertes extends Component
                 'comment' => $this->comment,
                 'lang' => $this->locale,
             ]);
+
 
             foreach ($this->offerteLines as $index => $key) {
                 $selectedOptions = $this->selectedPanelOption[$index] ?? [];
@@ -612,32 +622,83 @@ class CreateOffertes extends Component
 
         $offerte->refresh();
         $offerte->load(['offerteLines', 'user', 'surcharges']);
-
         app(\App\Services\PricingServices::class)->updateDocumentPricing($offerte);
+        $offerte->refresh();
+        $offerte->load(['OfferteLines', 'user', 'surcharges']);
 
-        $offerteLines = $offerte->offerteLines;
+        $this->receivedRenders = 0;
+        $this->expectedRenders = count($this->offerteLines);
+        $this->offerteId = $offerte->id;
 
-        $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
-        $showVrijeRuimte = $offerteLines->where('vrije_ruimte_2', '>', 0)->count() > 0;
-        $showCb = $offerteLines->where('fillCb', '>', 0)->count() > 0;
-        $showLb = $offerteLines->where('lb', '>', 0)->count() > 0;
-        $showWaterstop = $offerteLines->contains(fn ($line) => $line->waterstops->count() > 0);
+        $this->dispatch('capture-panel-renders');
+
+
+    }
+
+    #[On('save-panel-render')]
+    public function savePanelRender($index, $image)
+    {
+        $offerteLine = OfferteLines::where('offerte_id', $this->offerteId)
+            ->orderBy('id')
+            ->get()
+            ->values()
+            ->get($index);
+
+        if (! $offerteLine) {
+            return;
+        }
+
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+
+        $filename = 'offerteline-'.$offerteLine->id.'.png';
+
+        \Storage::disk('public')->put(
+            'offertelines/renders/'.$filename,
+            base64_decode($image)
+        );
+
+        $offerteLine->update([
+            'render_image' => 'offertelines/renders/'.$filename,
+        ]);
+
+        $this->receivedRenders++;
+
+        if ($this->receivedRenders >= $this->expectedRenders) {
+            $this->finishOfferte();
+        }
+    }
+
+    public function finishOfferte()
+    {
+
+        $offerte = Offerte::with([
+            'offertelines.waterstops',
+            'user',
+            'surcharges',
+
+        ])->findOrFail($this->offerteId);
+
 
         Pdf::loadView('pdf.offerte', [
             'offerte' => $offerte,
-            'offerteLines' => $offerteLines,
-            'showNokafschuining' => $showNokafschuining,
-            'showLb' => $showLb,
-            'showCb' => $showCb,
-            'showWaterstop' => $showWaterstop,
-            'showVrijeRuimte' => $showVrijeRuimte,
-        ])->save(public_path('/storage/offertes/offerte-' . $offerteId . '.pdf'));
+            'offerteLines' => $offerte->offerteLines,
+            'showNokafschuining' => $offerte->offerteLines->where('nokafschuining','>',0)->count() > 0,
+            'showLb' => $offerte->offerteLines->where('lb','>',0)->count() > 0,
+            'showCb' => $offerte->offerteLines->where('fillCb','>',0)->count() > 0,
+            'showWaterstop' => $offerte->offerteLines->contains(fn($line)=>$line->waterstops->count()>0),
+            'showVrijeRuimte' => $offerte->offerteLines->where('vrije_ruimte_2','>',0)->count()>0,
+        ])
+            ->save(public_path('/storage/offertes/offerte-'.$offerte->offerte_id.'.pdf'));
+
 
         Mail::to(Auth::user()->email)->send(new sendOfferte($offerte));
 
+
         session()->flash('success', __('messages.De offerte is aangemaakt'));
 
-        return $this->redirect('/offertes', navigate: true);
+
+        return $this->redirect('/offertes', navigate:true);
     }
 
     public function cancelCreateOfferte() {

@@ -614,7 +614,6 @@ class CreateOrders extends Component
     }
 
     #[On('save-panel-render')]
-    #[On('save-panel-render')]
     public function savePanelRender($index, $image)
     {
         $orderLine = OrderLines::where('order_id', $this->orderId)

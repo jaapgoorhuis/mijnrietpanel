@@ -10,8 +10,11 @@ use App\Models\Application;
 use App\Models\Company;
 use App\Models\Offerte;
 use App\Models\OfferteLines;
+use App\Models\OfferteLineWaterstop;
 use App\Models\Order;
 use App\Models\OrderLines;
+use App\Models\OrderLineWaterstop;
+use App\Models\OrderRules;
 use App\Models\OrderTemplate;
 use App\Models\PanelBrand;
 use App\Models\PanelLook;
@@ -23,6 +26,7 @@ use App\Rules\ZeroOrMinFifty;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -31,6 +35,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
     use HasPanelOptionValidation;
 
+    public bool $isSaving = false;
     public $klant_naam;
     public $referentie;
     public $aflever_straat;
@@ -98,6 +103,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
     public $panelImages = [];
     public bool $showPriceUpdateModal = false;
     public $waterstopPrice;
+    protected $listeners = [
+        'panel-renders-finished' => 'finishUpdate'
+    ];
 
     public $priceUpdateMessage = '';
     public function mount($id) {
@@ -323,7 +331,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
         $this->selectedPanelOption[] = [];
     }
 
-    public function removeOrderLine($index)
+    public function removeOfferteLine($index)
     {
         if (isset($this->exsistingOfferteLines[$index])) {
             $this->deleteOfferteLines[] = $this->exsistingOfferteLines[$index]->id;
@@ -563,7 +571,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
     public function saveOfferte()
     {
-        $this->fillTotaleLengte = array_values(array_filter($this->fillTotaleLengte, fn ($v) => $v !== ''));
+        $this->fillTotaleLengte = array_values(array_filter($this->fillTotaleLengte, fn($v) => $v !== ''));
 
         $this->normalizePanelOptions();
 
@@ -580,15 +588,20 @@ use Barryvdh\DomPDF\Facade\Pdf;
         }
 
         $offerte = Offerte::with(['offerteLines.waterstops', 'user', 'surcharges'])->findOrFail($this->offerte_id);
+        $this->isSaving = true;
+        $oldLinePrices = $offerte->offerteLines
+            ->values()
+            ->mapWithKeys(fn ($line, $index) => [$index => $line->price_per_m2]);
 
-        DB::transaction(function () use ($offerte) {
+
+        DB::transaction(function () use ($offerte, $oldLinePrices) {
             $offerte->update([
                 'klantnaam' => $this->klant_naam,
                 'referentie' => $this->referentie,
                 'aflever_straat' => $this->aflever_straat,
                 'aflever_postcode' => $this->aflever_postcode,
-                'aflever_plaats' => $this->aflever_plaats,
                 'aflever_land' => $this->aflever_land,
+                'aflever_plaats' => $this->aflever_plaats,
                 'intaker' => $this->intaker,
                 'discount' => $this->discount,
                 'merk_paneel' => $this->merk_paneel,
@@ -596,17 +609,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
                 'toepassing' => $this->toepassing,
                 'kerndikte' => $this->kerndikte,
                 'project_naam' => $this->project_naam,
+                'marge' => $this->marge,
                 'user_id' => $this->creator_user_id,
                 'status' => 'In behandeling',
                 'requested_delivery_date' => $this->requested_delivery_date,
                 'comment' => $this->comment,
             ]);
 
-            // Oude waterstops + regels verwijderen
-            DB::table('offerte_line_waterstops')
-                ->whereIn('offerte_line_id', $offerte->offerteLines->pluck('id'))
-                ->delete();
 
+            // Eerst de waterstops van de bestaande orderregels opruimen, dan pas de regels zelf
+            OfferteLineWaterstop::whereIn('offerte_line_id', $offerte->offerteLines->pluck('id'))->delete();
             OfferteLines::where('offerte_id', $offerte->id)->delete();
 
             $waterstopsByLineIndex = [];
@@ -618,30 +630,38 @@ use Barryvdh\DomPDF\Facade\Pdf;
                     ? array_values($this->panelValues[$index]['waterstops'] ?? [])
                     : [];
 
+                $firstWaterstop = $waterstops[0] ?? null;
+
                 $waterstopsByLineIndex[$index] = $waterstops;
 
-                $newLine = OfferteLines::create([
+                OfferteLines::create([
                     'offerte_id' => $offerte->id,
                     'fillLb' => $this->fillLb[$index] ?? 0,
                     'fillTotaleLengte' => $this->fillTotaleLengte[$index] ?? 0,
                     'aantal' => $this->aantal[$index] ?? 0,
-                    'user_id' => $this->creator_user_id,
+                    'user_id' => Auth::id(),
                     'm2' => $this->m2[$index] ?? 0,
-
                     'lb' => in_array(1, $selectedOptions) ? ($this->panelValues[$index][1] ?? 0) : 0,
                     'nokafschuining' => in_array(3, $selectedOptions) ? ($this->panelValues[$index][3] ?? 0) : 0,
                     'vrije_ruimte_1' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_1'] ?? 0) : 0,
                     'vrije_ruimte_2' => in_array(4, $selectedOptions) ? ($this->panelValues[$index]['4_2'] ?? 0) : 0,
                     'fillCb' => in_array(2, $selectedOptions) ? ($this->panelValues[$index][2] ?? 0) : 0,
-                ]);
 
-                // Waterstops opslaan
-                foreach ($waterstops as $waterstop) {
-                    DB::table('offerte_line_waterstops')->insert([
-                        'offerte_line_id' => $newLine->id,
-                        'type' => (int) $waterstop['type'],
-                        'vertical' => (int) $waterstop['vertical'],
-                        'horizontal' => (int) ($waterstop['horizontal'] ?? 0),
+                    'waterstop_type' => $firstWaterstop ? ($firstWaterstop['type'] ?? null) : null,
+                    'waterstop_vertical' => $firstWaterstop ? ($firstWaterstop['vertical'] ?? null) : null,
+                    'waterstop_horizontal' => $firstWaterstop ? ($firstWaterstop['horizontal'] ?? 0) : null,
+
+                ]);
+            }
+
+
+            foreach ($offerte->offerteLines()->get()->values() as $index => $offerteLine) {
+                foreach (($waterstopsByLineIndex[$index] ?? []) as $waterstop) {
+                    OfferteLineWaterstop::create([
+                        'offerte_line_id' => $offerteLine->id,
+                        'type' => (int)$waterstop['type'],
+                        'vertical' => (int)$waterstop['vertical'],
+                        'horizontal' => (int)($waterstop['horizontal'] ?? 0),
                     ]);
                 }
             }
@@ -650,13 +670,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
         $offerte->refresh();
         $offerte->load(['offerteLines.waterstops', 'user', 'surcharges']);
 
-        // Pricing updaten
         app(\App\Services\PricingServices::class)->updateDocumentPricing($offerte);
 
         $offerte->refresh();
         $offerte->load(['offerteLines.waterstops', 'user', 'surcharges']);
 
-        // PDF genereren
         $offerteLines = $offerte->offerteLines;
 
         $showNokafschuining = $offerteLines->where('nokafschuining', '>', 0)->count() > 0;
@@ -675,9 +693,64 @@ use Barryvdh\DomPDF\Facade\Pdf;
             'showWaterstop' => $showWaterstop,
         ])->save(public_path('/storage/offertes/offerte-' . $offerte->offerte_id . '.pdf'));
 
-        session()->flash('success', __('messages.De offerte is bewerkt'));
+        $this->dispatch('capture-panel-renders');
+    }
 
-        return $this->redirect('/offertes', navigate: true);
+
+
+    public function finishUpdate()
+    {
+        session()->flash(
+            'success',
+            __('messages.De offerte is bewerkt')
+        );
+
+        return $this->redirect('/offertes', navigate:true);
+    }
+
+    #[On('save-panel-render')]
+    public function savePanelRender($index, $image): void
+    {
+        logger('render ontvangen '.$index);
+
+
+        $offerteLine = OfferteLines::where('offerte_id', $this->offerte_id)
+            ->orderBy('id')
+            ->get()
+            ->values()
+            ->get($index);
+
+        if (! $offerteLine) {
+            logger('Geen offerteline gevonden '.$index);
+            return;
+        }
+
+
+        $image = str_replace(
+            'data:image/png;base64,',
+            '',
+            $image
+        );
+
+
+        $image = str_replace(' ', '+', $image);
+
+
+        $filename = 'offerteline-'.$offerteLine->id.'.png';
+
+
+        \Storage::disk('public')->put(
+            'offertelines/renders/'.$filename,
+            base64_decode($image)
+        );
+
+
+        $offerteLine->update([
+            'render_image' => 'offertelines/renders/'.$filename
+        ]);
+
+
+        logger('Render opgeslagen '.$filename);
     }
 
     public function cancelChangeOfferte() {
