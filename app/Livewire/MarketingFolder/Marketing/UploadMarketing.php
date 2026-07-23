@@ -62,10 +62,9 @@ class UploadMarketing extends Component
     }
 
     protected $rules = [
-
-
-        'cropimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp', // max 2MB
-        'newCropimage' => 'image|mimes:jpg,jpeg,png,gif,webp', // nieuwe afbeelding bij upload
+        'file' => 'required',
+        'newCropimage' => 'required|image|mimes:jpg,jpeg,png,gif,webp',
+        'cropimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp',
     ];
 
     public function messages(): array

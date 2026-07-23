@@ -105,7 +105,7 @@
                             wire:click="uploadFiles"
                             wire:loading.attr="disabled"
                             wire:target="uploadFiles,file,newCropimage"
-                            :disabled="uploading || !$wire.file || !$wire.newCropimage"
+                            :disabled="uploading || !$wire.file"
                             class="w-full bg-gray-800 hover:bg-gray-900 text-white rounded-lg px-4 py-3
                                flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                         >
@@ -171,6 +171,16 @@
                                            class="w-full border rounded p-2">
 
                                     @error('cropimage.'.$marketing->id)
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                    @enderror
+
+                                    @if(!$newCropimage)
+                                        <div class="text-sm text-red-500 mt-1">
+                                            ⚠️ Thumbnail is verplicht
+                                        </div>
+                                    @endif
+
+                                    @error('newCropimage')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                     @enderror
 
