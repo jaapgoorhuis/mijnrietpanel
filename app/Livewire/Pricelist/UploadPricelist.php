@@ -4,6 +4,7 @@ namespace App\Livewire\Pricelist;
 
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -41,7 +42,7 @@ class UploadPricelist extends Component
     }
 
     protected $rules = [
-        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp','ifc','doc','docx',
+        'files.*' => 'required|file|mimes:pdf,dwg,jpg,jpeg,png,gif,bmp,webp,ifc,doc,docx',
     ];
 
     public function messages(): array
@@ -62,31 +63,53 @@ class UploadPricelist extends Component
 
     public function uploadFiles()
     {
-        $this->validate();
-        if ($this->files) {
-            foreach ($this->files as $file) {
-                $file->storeAs(path: 'pricelist', name: $file->getClientOriginalName(), options: 'public');
-                $latestPricelist = \App\Models\Pricelist::orderBy('created_at', 'desc')->first();
+        try {
+            $this->validate();
 
-                if ($latestPricelist) {
-                    $orderId = $latestPricelist->order_id + 1;
-                } else {
-                    $orderId = 1;
+            if ($this->files) {
+                foreach ($this->files as $file) {
+
+                    $file->storeAs(
+                        path: 'pricelist',
+                        name: $file->getClientOriginalName(),
+                        options: 'public'
+                    );
+
+                    $latestPricelist = \App\Models\Pricelist::orderBy('created_at', 'desc')->first();
+
+                    if ($latestPricelist) {
+                        $orderId = $latestPricelist->order_id + 1;
+                    } else {
+                        $orderId = 1;
+                    }
+
+                    \App\Models\Pricelist::create([
+                        'friendly_name' => $file->getClientOriginalName(),
+                        'file_name' => $file->getClientOriginalName(),
+                        'order_id' => $orderId,
+                        'lang' => $this->locale,
+                        'pricelist_category_id' => '0'
+                    ]);
                 }
-                \App\Models\Pricelist::create([
-                    'friendly_name' => $file->getClientOriginalName(),
-                    'file_name' => $file->getClientOriginalName(),
-                    'order_id' => $orderId,
-                    'lang' => $this->locale,
-                    'pricelist_category_id' => '0'
-                ]);
-            }
-            session()->flash('success','De bestanden zijn geupload.');
-            return $this->redirect('/pricelist/upload', navigate: true);
-        } else {
-            session()->flash('error', 'Upload één of meerdere bestanden.');
-        }
 
+                session()->flash('success','De bestanden zijn geupload.');
+                return $this->redirect('/voorwaarden/upload', navigate: true);
+
+            } else {
+                session()->flash('error', 'Upload één of meerdere bestanden.');
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::error('Pricelist upload fout', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            session()->flash('error', 'Upload mislukt: '.$e->getMessage());
+        }
     }
 
     public function removePricelist($id)
