@@ -104,8 +104,10 @@
                                                     <div class="p-5 border border-gray-200 dark:border-gray-700">
                                                         <div class="relative z-0 w-full mb-5 group">
                                                             <div class="text-right">
-                                                                <i wire:click="removePricelist({{$pricelist->id}})" class="fa-solid fa-trash hover:cursor-pointer"></i>
+                                                                <i wire:click="removePricelist({{$pricelist->id}})"
+                                                                   class="fa-solid fa-trash text-red-500 hover:text-red-700 hover:scale-110 transition hover:cursor-pointer"></i>
                                                             </div>
+
                                                             <label for="project_name" class="text-gray-400"> {{ __('messages.Bestandsnaam') }}</label>
                                                             <input placeholder="{{$pricelist->friendly_name}}" type="text" wire:model="friendly_name.{{$pricelist->id}}"  name="friendly_name.{{$pricelist->id}}" id="friendly_name.{{$pricelist->id}}" class="block py-2.5 px-0 w-full text-md text-gray-900 border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-b-[#C0A16E]"  required />
                                                             <div class="text-red-500">@error('friendly_name.'.$pricelist->id) {{ $message }} @enderror</div>

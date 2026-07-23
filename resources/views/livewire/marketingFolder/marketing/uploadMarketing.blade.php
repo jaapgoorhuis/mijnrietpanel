@@ -156,9 +156,9 @@
                                 <div x-show="open" x-transition class="p-5 border-t">
 
                                     <div class="text-right">
-                                        <i ire:click="remove({{ $marketing->id }})" class="fa-solid fa-trash hover:cursor-pointer"></i>
+                                        <i wire:click="remove({{ $marketing->id }})"
+                                           class="fa-solid fa-trash text-red-500 hover:text-red-700 hover:scale-110 transition hover:cursor-pointer"></i>
                                     </div>
-
 
                                     {{-- NAME --}}
                                     <input type="text"
