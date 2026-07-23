@@ -155,10 +155,10 @@
                                 {{-- CONTENT --}}
                                 <div x-show="open" x-transition class="p-5 border-t">
 
-                                    <button wire:click="remove({{ $marketing->id }})"
-                                            class="text-red-500 text-sm mb-3">
-                                        Verwijderen
-                                    </button>
+                                    <div class="text-right">
+                                        <i ire:click="remove({{ $marketing->id }})" class="fa-solid fa-trash hover:cursor-pointer"></i>
+                                    </div>
+
 
                                     {{-- NAME --}}
                                     <input type="text"
