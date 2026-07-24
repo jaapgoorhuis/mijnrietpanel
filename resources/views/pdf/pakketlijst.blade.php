@@ -106,7 +106,7 @@
                     {{ $order->order_id }}
                 </td>
 
-                <td rowspan="7" class="logo">
+                <td rowspan=" @if($order->rietpanel_comment) 7 @else 6 @endif" class="logo">
 
                     <img src="{{ public_path('storage/images/rietpanel-R.png') }}"
                          style="width:90px;">
@@ -163,6 +163,7 @@
 
             </tr>
 
+            @if($order->rietpanel_comment)
             <tr>
 
                 <td class="label">
@@ -174,6 +175,7 @@
                 </td>
 
             </tr>
+            @endif
 
             <tr>
 
