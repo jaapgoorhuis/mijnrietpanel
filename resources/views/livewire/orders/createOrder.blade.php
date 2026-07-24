@@ -333,7 +333,6 @@
                                                             type="number"
                                                             wire:model.live.debounce.400ms="panelValues.{{$index}}.{{$option}}"
                                                             wire:blur="validateFreeSpace({{$index}})"
-                                                            wire:change="updatePanelValues({{$index}}, {{$option}})"
                                                             min="0"
                                                             step="1"
                                                             class="border rounded px-2 py-1 w-full pr-10 mt-1"

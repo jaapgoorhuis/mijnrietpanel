@@ -134,7 +134,7 @@
                 </td>
 
                 <td>
-                    {{ $order->adres }}{{ $order->aflever_plaats }}
+                    {{ $order->aflever_straat }} {{$order->aflever_postcode}} {{ $order->aflever_plaats }}
                 </td>
 
             </tr>
