@@ -170,10 +170,6 @@ class CreateOffertes extends Component
 
 
 
-    public function updatePanelValues($key,$index)
-    {
-        $this->panelValues[$key][$index] = $this->panelValues[$key][$index];
-    }
 
 
     public function updatePrice() {

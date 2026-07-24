@@ -16,7 +16,7 @@
             <td>{{$order->order_id}}</td>
             <td class="label">Dikte element:</td>
             <td style="color:red">{{$order->kerndikte}}</td>
-            <td rowspan="6" class="logo">
+            <td rowspan="5" class="logo">
                 <img src="{{ public_path("storage/images/rietpanel_logo.png")}}" alt="" style="width: 200px;"/>
             </td>
         </tr>
@@ -30,7 +30,7 @@
             <td class="label">Projectnaam:</td>
             <td>{{$order->project_naam}}</td>
             <td class="label">Toepassing:</td>
-            <td  style="color:red">{{$order->toepassing}}</td>
+            <td  style="color:red">@if($order->toepassing == 'Wand')Gevel @else Dak @endif</td>
         </tr>
         <tr>
             <td class="label">Aanmaakdatum:</td>
@@ -44,17 +44,10 @@
             <td>
               {{$order->orderlines()->sum('m2')}} m²
             </td>
-            <td class="label">Artikelnummer:</td>
-            <td  style="color:red">
-                RP{{str_replace('m', '', $order->kerndikte)}}-{{strtoupper(substr($order->merk_paneel, 0, 2))}}-{{strtoupper(substr($order->rietkleur, 0, 1))}}
-            </td>
-        </tr>
-        <tr>
             <td>Leverdatum:</td>
             <td >{{$order->delivery_date}}</td>
-            <td></td>
-            <td></td>
         </tr>
+
     </table>
 
     @if($order->orderRules->count())
@@ -80,12 +73,12 @@
             </tr>
             <tr class="bar-row">
                 <td colspan="2" style="text-align:center; padding:15px;">
-                    @if($orderLine->render_image)
-                        <img
-                            src="{{ public_path('storage/' . $orderLine->render_image) }}"
-                            style="max-width:100%; max-height:180px;"
-                            alt="Render">
-                    @else
+{{--                    @if($orderLine->render_image)--}}
+{{--                        <img--}}
+{{--                            src="{{ public_path('storage/' . $orderLine->render_image) }}"--}}
+{{--                            style="max-width:100%; max-height:180px;"--}}
+{{--                            alt="Render">--}}
+{{--                    @else--}}
 
                         @php
                             // Bepaal welke opties aanwezig zijn
@@ -132,7 +125,7 @@
                                         &larr; {{$orderLine->vrije_ruimte_2}} mm &rarr;
                                     </strong>
                                 </div>
-                            @endif
+{{--                            @endif--}}
 
                             @if($orderLine->lb)
                                 <div class="lb-label">

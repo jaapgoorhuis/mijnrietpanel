@@ -358,7 +358,6 @@
                                                     <select
                                                         wire:model.live.debounce.400ms="panelValues.{{$index}}.{{ $option }}"
                                                         wire:blur="normalizePanelOptions({{$index}})"
-                                                        wire:change="updatePanelValues({{$index}}, {{$option}})"
                                                         class="border rounded px-2 py-1 w-full mt-1"
                                                     >
                                                         @for($i = 20; $i <= 140; $i += 20)

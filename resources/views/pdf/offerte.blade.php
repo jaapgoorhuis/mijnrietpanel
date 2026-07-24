@@ -100,7 +100,7 @@ if ($showWaterstop ?? false) {
             </tr>
             <tr class="items">
                 <td>{{$offerte->rietkleur}}</td>
-                <td>{{$offerte->toepassing}}</td>
+                <td>@if($offerte->toepassing == 'Wand') Gevel @else Dak @endif</td>
                 <td>{{$offerte->merk_paneel}}</td>
                 <td>{{$offerte->kerndikte}}</td>
             </tr>
@@ -113,8 +113,8 @@ if ($showWaterstop ?? false) {
             <tr>
                 <th>#</th>
                 <th>{{ __('messages.Lengte') }}</th>
-                @if($showCb)<th>{{ __('messages.CB') }}</th>@endif
                 @if($showLb)<th>{{ __('messages.LB') }}</th>@endif
+                @if($showCb)<th>{{ __('messages.CB') }}</th>@endif
                 @if($showNokafschuining)<th>{{ __('messages.Nokafschuining') }}</th>@endif
                 @if($showVrijeRuimte)<th>{{ __('messages.Vrije ruimte') }}</th>@endif
                 @if($showWaterstop)<th>{{ __('messages.Waterstop') }}</th>@endif

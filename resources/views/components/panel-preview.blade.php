@@ -457,83 +457,83 @@
                     </div>
                 @endif
 
-                    @foreach($waterstops as $wsIndex => $waterstop)
-                        @php
-                            $wsType = (int) ($waterstop['type'] ?? 0);
+                @foreach($waterstops as $wsIndex => $waterstop)
+                    @php
+                        $wsType = (int) ($waterstop['type'] ?? 0);
 
-                            if (!$wsType) {
-                                continue;
-                            }
+                        if (!$wsType) {
+                            continue;
+                        }
 
-                           $wsFromLeftInput = (int) ($waterstop['vertical'] ?? 0);
+                       $wsFromLeftInput = (int) ($waterstop['vertical'] ?? 0);
 
-                            $maxWaterstopPosition = $length - 600;
+                        $maxWaterstopPosition = $length - 600;
 
-                            $wsFromLeft = min(
-                                max(300, $wsFromLeftInput),
-                                $maxWaterstopPosition
-                            );
+                        $wsFromLeft = min(
+                            max(300, $wsFromLeftInput),
+                            $maxWaterstopPosition
+                        );
 
-                            $maxWaterstopPosition = max(300, $length - 600);
+                        $maxWaterstopPosition = max(300, $length - 600);
 
-                            $wsFromLeft = max(
-                                300,
-                                min($wsFromLeft, $maxWaterstopPosition)
-                            );
-                            $wsFromCenter = (int) ($waterstop['horizontal'] ?? 0);
+                        $wsFromLeft = max(
+                            300,
+                            min($wsFromLeft, $maxWaterstopPosition)
+                        );
+                        $wsFromCenter = (int) ($waterstop['horizontal'] ?? 0);
 
-                            // Werkelijke hoogte die $panelHeightPx representeert (incl.
-                            // perspectief-effect van de render).
-                            $panelRealHeightMm = 1365.43;
-                            $mmToPxVertical = $panelHeightPx / $panelRealHeightMm;
+                        // Werkelijke hoogte die $panelHeightPx representeert (incl.
+                        // perspectief-effect van de render).
+                        $panelRealHeightMm = 1365.43;
+                        $mmToPxVertical = $panelHeightPx / $panelRealHeightMm;
 
-                            // Marge bovenaan de afbeelding voordat het meetbare werkgebied
-                            // Marge bovenaan de afbeelding voordat het meetbare werkgebied
-                            // begint (perspectief-correctie).
-                            $topOffsetMm = 20;
-                            $topOffsetPx = $topOffsetMm * $mmToPxVertical;
+                        // Marge bovenaan de afbeelding voordat het meetbare werkgebied
+                        // Marge bovenaan de afbeelding voordat het meetbare werkgebied
+                        // begint (perspectief-correctie).
+                        $topOffsetMm = 20;
+                        $topOffsetPx = $topOffsetMm * $mmToPxVertical;
 
-                            // Alle waterstops worden gecentreerd binnen een virtueel
-                            // werkgebied van 960mm (= de grootste waterstop-maat). Bij
-                            // type 960 is de marge dus 0, bij kleinere types symmetrisch
-                            // verdeeld boven en onder.
-                            $waterstopWorkAreaMm = 960;
-                            $marginMm = max(0, ($waterstopWorkAreaMm - $wsType) / 2);
+                        // Alle waterstops worden gecentreerd binnen een virtueel
+                        // werkgebied van 960mm (= de grootste waterstop-maat). Bij
+                        // type 960 is de marge dus 0, bij kleinere types symmetrisch
+                        // verdeeld boven en onder.
+                        $waterstopWorkAreaMm = 960;
+                        $marginMm = max(0, ($waterstopWorkAreaMm - $wsType) / 2);
 
-                            $wsHeightPx = $wsType * $mmToPxVertical;
-                            $wsHeightPx = max(20, min($panelHeightPx, $wsHeightPx));
+                        $wsHeightPx = $wsType * $mmToPxVertical;
+                        $wsHeightPx = max(20, min($panelHeightPx, $wsHeightPx));
 
-                            // horizontal: positief = omhoog (kleinere top), negatief = omlaag
-                            $wsTopPx = $topOffsetPx + ($marginMm * $mmToPxVertical) - ($wsFromCenter * $mmToPxVertical);
-                            $wsTopPx = max(0, min($panelHeightPx - $wsHeightPx, $wsTopPx));
+                        // horizontal: positief = omhoog (kleinere top), negatief = omlaag
+                        $wsTopPx = $topOffsetPx + ($marginMm * $mmToPxVertical) - ($wsFromCenter * $mmToPxVertical);
+                        $wsTopPx = max(0, min($panelHeightPx - $wsHeightPx, $wsTopPx));
 
-                            $wsMmPosition = $wsFromLeft + $laybackMm;
+                        $wsMmPosition = $wsFromLeft + $laybackMm;
 
 $waterstopWidthPx = 20;
 $waterstopLineOffsetMm = -20;
 $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
-                        @endphp
+                    @endphp
 
-                        {{-- Waterstop afbeelding --}}
-                        <div
-                            class="absolute pointer-events-none"
-                            data-mm="{{ $wsMmPosition }}"
-                            data-waterstop-width="20"
-                            :style="'left: ' + mmToPx(parseFloat($el.dataset.mm)) + 'px; top:{{ $wsTopPx }}px; width:20px; height:{{ $wsHeightPx }}px; z-index:20;'"
+                    {{-- Waterstop afbeelding --}}
+                    <div
+                        class="absolute pointer-events-none"
+                        data-mm="{{ $wsMmPosition }}"
+                        data-waterstop-width="20"
+                        :style="'left: ' + mmToPx(parseFloat($el.dataset.mm)) + 'px; top:{{ $wsTopPx }}px; width:20px; height:{{ $wsHeightPx }}px; z-index:20;'"
+                    >
+                        <img
+                            src="{{ asset($basePath . 'Waterstop.png') }}"
+                            alt="Waterstop"
+                            class="block max-w-none"
+                            style="width:20px; height:100%; object-fit:fill;"
                         >
-                            <img
-                                src="{{ asset($basePath . 'Waterstop.png') }}"
-                                alt="Waterstop"
-                                class="block max-w-none"
-                                style="width:20px; height:100%; object-fit:fill;"
-                            >
-                        </div>
+                    </div>
 
-                        {{-- Maat vanaf links --}}
-                        <div
-                            class="absolute text-center font-bold pointer-events-none"
-                            data-mm="{{ $wsMmPosition }}"
-                            :style="`
+                    {{-- Maat vanaf links --}}
+                    <div
+                        class="absolute text-center font-bold pointer-events-none"
+                        data-mm="{{ $wsMmPosition }}"
+                        :style="`
                                 left: 0;
                                top: ${
                                     {{ $panelHeightPx }} +
@@ -545,19 +545,19 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                                 }px;
                                 font-size: ${Math.max(8, 10 / scale)}px;
                             `"
-                            >
-                            <div class="flex items-center w-full">
-                                <span>|</span>
-                                <span class="flex-1 border-t border-black"></span>
-                                <span>|</span>
-                            </div>
-
-                            <div class="leading-tight break-words text-center px-1 rounded">
-
-                                {{ $wsFromLeft }} {{ __('messages.mm') }}
-                            </div>
+                    >
+                        <div class="flex items-center w-full">
+                            <span>|</span>
+                            <span class="flex-1 border-t border-black"></span>
+                            <span>|</span>
                         </div>
-                    @endforeach
+
+                        <div class="leading-tight break-words text-center px-1 rounded">
+
+                            {{ $wsFromLeft }} {{ __('messages.mm') }}
+                        </div>
+                    </div>
+                @endforeach
 
                 @if($hasNok)
                     <div
@@ -604,40 +604,40 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                     </div>
                 @endif
 
-                    @if($totaleLengte)
-                        <div
-                            class="absolute text-center font-bold pointer-events-none"
-                            :style="`
+                @if($totaleLengte)
+                    <div
+                        class="absolute text-center font-bold pointer-events-none"
+                        :style="`
             left: 0;
          top: {{ $panelHeightPx + 10 }}px;
             width: 100%;
             z-index: 100;
             font-size: ${Math.max(8, 11 / scale)}px;
         `"
-                        >
-                            <div class="flex items-center w-full">
-                                <span>|</span>
-                                <span class="flex-1 border-t border-black"></span>
-                                <span>|</span>
-                            </div>
-
-                            <div class="leading-none whitespace-nowrap mt-1">
-                                {{ $totaleLengte }} mm
-                            </div>
+                    >
+                        <div class="flex items-center w-full">
+                            <span>|</span>
+                            <span class="flex-1 border-t border-black"></span>
+                            <span>|</span>
                         </div>
-                    @endif
+
+                        <div class="leading-none whitespace-nowrap mt-1">
+                            {{ $totaleLengte }} mm
+                        </div>
+                    </div>
+                @endif
 
                 @if($hasCutback)
-                        <div
-                            class="absolute text-center font-bold"
-                            :style="`
+                    <div
+                        class="absolute text-center font-bold"
+                        :style="`
                                 right:0;
                                 top:{{ $panelHeightPx - 40 }}px;
                                 width:{{ $cutbackWidthPx }}px;
                                 z-index:50;
                                 font-size: ${Math.max(8, 11 / scale)}px;
                             `"
-                        >
+                    >
                         <div class="flex items-center w-full">
                             <span>|</span>
                             <span class="flex-1 border-t border-black"></span>

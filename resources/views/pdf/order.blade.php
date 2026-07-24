@@ -108,7 +108,7 @@
             </tr>
             <tr class="items">
                 <td>{{$order->rietkleur}}</td>
-                <td>{{$order->toepassing}}</td>
+                <td>@if($order->toepassing == 'Wand') Gevel @else Dak @endif</td>
                 <td>{{$order->merk_paneel}}</td>
                 <td>{{$order->kerndikte}}</td>
             </tr>
@@ -120,11 +120,12 @@
             <tr>
                 <th>#</th>
                 <th>{{ __('messages.Lengte') }}</th>
-                @if($showCb)
-                    <th>{{ __('messages.CB') }}</th>
-                @endif
+
                 @if($showLb)
                     <th>{{ __('messages.LB') }}</th>
+                @endif
+                @if($showCb)
+                    <th>{{ __('messages.CB') }}</th>
                 @endif
                 @if($showNokafschuining)
                     <th>{{ __('messages.Nokafschuining') }}</th>
@@ -148,11 +149,12 @@
                 <tr class="items">
                     <td>{{ $count }}</td>
                     <td>{{ $orderLine->fillTotaleLengte }} mm</td>
-                    @if($showCb)
-                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>
-                    @endif
+
                     @if($showLb)
                         <td>{{ $orderLine->lb > 0 ? $orderLine->lb . ' mm' : '' }}</td>
+                    @endif
+                    @if($showCb)
+                        <td>{{ $orderLine->fillCb > 0 ? $orderLine->fillCb . ' mm' : '' }}</td>
                     @endif
                     @if($showNokafschuining)
                         <td>{!! $orderLine->nokafschuining > 0 ? $orderLine->nokafschuining . ' &deg;' : '' !!}</td>

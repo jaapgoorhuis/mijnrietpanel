@@ -13,11 +13,16 @@ class OrderPakketList extends Controller
 {
     public function generatePdf($order_id)
     {
-        $order = Order::where('order_id', $order_id)->first();
+        $order = Order::with([
+            'orderLines.waterstops',
+            'orderRules',
+        ])
+            ->where('order_id', $order_id)
+            ->firstOrFail();
+        $orderlines = $order->orderLines;
 
         $dikte = intval(str_replace( 'mm', '', $order->kerndikte)) + 30;
 
-        $orderlines = $order->orderLines->toArray();
         $maxDikte = 1220;
 
         if (empty($orderlines)) {
@@ -29,7 +34,7 @@ class OrderPakketList extends Controller
         // -----------------------------
         $groepen = [];
         foreach ($orderlines as $line) {
-            $groepen[$line['fillTotaleLengte']][] = $line;
+            $groepen[$line->fillTotaleLengte][] = $line;
         }
         krsort($groepen);
 
@@ -37,21 +42,18 @@ class OrderPakketList extends Controller
         $leftovers = [];
 
         foreach ($groepen as $lengte => $lines) {
-            $items = [];
-            foreach ($lines as $l) {
-                if(!$l['fillCb']) {
-                    $cb = 0;
-                } else {
-                    $cb = $l['fillCb'];
-                }
 
-                for ($i = 0; $i < $l['aantal']; $i++) {
+            $items = [];
+
+            foreach ($lines as $l) {
+
+                for ($i = 0; $i < $l->aantal; $i++) {
+
                     $items[] = [
-                        'id' => $l['id'],
+                        'orderLine' => $l,
                         'dikte' => $dikte,
-                        'lengte' => $lengte,
-                        'cb' => $cb,
                     ];
+
                 }
             }
 
@@ -60,22 +62,31 @@ class OrderPakketList extends Controller
             $vollPakketten = intdiv(count($items), $perPakket);
 
             for ($i = 0; $i < $vollPakketten; $i++) {
+
                 $pakket = array_splice($items, 0, $perPakket);
-                usort($pakket, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+
+                usort($pakket, function ($a, $b) {
+                    return $b['orderLine']->fillTotaleLengte <=> $a['orderLine']->fillTotaleLengte;
+                });
+
                 $pakketten[] = $pakket;
             }
 
-            if (count($items) > 0) {
+            if (count($items)) {
                 $leftovers = array_merge($leftovers, $items);
             }
         }
 
-        usort($leftovers, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+        usort($leftovers, function ($a, $b) {
+            return $b['orderLine']->fillTotaleLengte <=> $a['orderLine']->fillTotaleLengte;
+        });
         $current = [];
         $currentDikte = 0;
         foreach ($leftovers as $item) {
             if ($currentDikte + $item['dikte'] > $maxDikte) {
-                usort($current, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+                usort($current, function ($a, $b) {
+                    return $b['orderLine']->fillTotaleLengte <=> $a['orderLine']->fillTotaleLengte;
+                });
                 $pakketten[] = $current;
                 $current = [];
                 $currentDikte = 0;
@@ -84,7 +95,11 @@ class OrderPakketList extends Controller
             $currentDikte += $item['dikte'];
         }
         if (!empty($current)) {
-            usort($current, fn($a, $b) => $b['lengte'] <=> $a['lengte']);
+
+            usort($current, function ($a, $b) {
+                return $b['orderLine']->fillTotaleLengte <=> $a['orderLine']->fillTotaleLengte;
+            });
+
             $pakketten[] = $current;
         }
 
