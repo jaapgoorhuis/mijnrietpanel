@@ -408,27 +408,40 @@
                                                         @error('totaleLengte.'.$index) {{ $message }} @enderror
                                                     </div>
 
-                                                    <div   wire:key="waterstop-container-{{ $index }}-{{ $waterstopEnabled[$index] ?? 0 }}" class="border rounded p-3 mt-4 bg-gray-50">
-                                                        <label class="flex items-center gap-2 font-bold cursor-pointer">
-                                                            <input
-                                                                type="checkbox"
-                                                                @checked($waterstopEnabled[$index] ?? false)
-                                                                wire:click="toggleWaterstopChecked({{$index}})"
+                                                    <label class="cursor-pointer flex flex-col relative mt-[20px]">
+
+                                                        <div
+                                                            wire:click="toggleWaterstopChecked({{$index}})"
+                                                            class="border rounded p-1 w-full relative cursor-pointer
+        {{ ($waterstopEnabled[$index] ?? false) ? 'border-blue-500 border-2' : '' }}"
+                                                        >
+
+                                                            <img
+                                                                src="{{ asset('storage/images/rietpanel/paneel-5.png') }}"
+                                                                class="w-full h-[50px] object-contain"
                                                             >
 
-                                                            {{ __('messages.Waterstop') }}
+                                                            <div class="text-center font-bold mt-1">
+                                                                {{ __('messages.Waterstop') }}
+                                                            </div>
 
-                                                            <div class="relative inline-block group">
-                                                                <i wire:click.prevent="" class="fa-solid fa-circle-info text-gray-500 hover:text-blue-500 cursor-pointer"></i>
+                                                            <div class="absolute top-1 right-1">
+                                                                <div class="relative inline-block group">
+                                                                    <i class="fa-solid fa-circle-info text-gray-600 hover:text-blue-500 cursor-pointer"></i>
 
-                                                                <div class="absolute left-0 top-full mt-1 w-80 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
-                                                    opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-50">
-                                                                    {{ __('messages.Meerprijs per waterstop '). ' €' . $this->waterstopPrice.',-',}}
+                                                                    <div class="absolute right-0 top-full mt-1 w-56 bg-gray-700 text-white text-sm p-2 rounded shadow-lg
+                        opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto
+                        transition-opacity duration-200 z-50">
+                                                                        {{ __('messages.Meerprijs per waterstop '). ' €' . $this->waterstopPrice.',-' }}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </label>
 
-                                                        @if($waterstopEnabled[$index] ?? false)
+                                                        </div>
+                                                    </label>
+
+                                                    @if($waterstopEnabled[$index] ?? false)
+                                                        <div wire:key="waterstop-container-{{ $index }}-{{ $waterstopEnabled[$index] ?? 0 }}" class="border rounded p-3 mt-4 bg-gray-50">
                                                             <div class="mt-3 space-y-3">
                                                                 @foreach(($panelValues[$index]['waterstops'] ?? []) as $wsIndex => $waterstop)
                                                                     @php
@@ -479,7 +492,7 @@
                                                                         </div>
 
                                                                         <label class="block mt-3">
-                                                                            <strong>{{ __('messages.Positie vanaf bovenzijde') }}</strong>
+                                                                            <strong>{{ __('messages.Positie vanaf bovenzijde tot onderkant waterstop') }}</strong>
                                                                         </label>
 
                                                                         <div class="relative">
@@ -556,8 +569,8 @@
                                                             <div class="text-red-500 text-sm mt-2">
                                                                 @error('panelValues.'.$index.'.waterstops') {{ $message }} @enderror
                                                             </div>
-                                                        @endif
-                                                    </div>
+                                                        </div>
+                                                    @endif
                                     </div>
 
                                     <div class="block lg:hidden text-xs text-gray-500 text-center mb-2 animate-pulse">

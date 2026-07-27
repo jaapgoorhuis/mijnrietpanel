@@ -109,7 +109,7 @@ trait HasPanelOptionValidation
             if ($pos <= 0 || $pos > $length) {
                 $this->addError(
                     "panelValues.$index.waterstops.$wsIndex.vertical",
-                    __('messages.Waterstop positie moet tussen 0 en de paneellengte liggen')
+                    __('messages.Waterstop positie moet tussen 0 en de elementlengte liggen')
                 );
             }
 
@@ -175,12 +175,12 @@ trait HasPanelOptionValidation
         if ($eindPositie > $length && $length > 0) {
             $this->addError(
                 "panelValues.$index.4_1",
-                __('messages.De ruimte mag niet groter zijn dan het paneel + vrije ruimte bij elkaar opgeteld')
+                __('messages.De ruimte mag niet groter zijn dan het element + vrije ruimte bij elkaar opgeteld')
             );
 
             $this->addError(
                 "panelValues.$index.4_2",
-                __('messages.De vrije ruimte valt buiten het paneel (start + breedte mag niet groter zijn dan de paneellengte)')
+                __('messages.De vrije ruimte valt buiten het element (start + breedte mag niet groter zijn dan de elementlengte)')
             );
 
             // === NIEUWE CLAMPING: voorkom dat het veld te groot wordt tijdens typen ===
@@ -210,7 +210,7 @@ trait HasPanelOptionValidation
         if ((int)$value > $max) {
             $this->addError(
                 "panelValues.$index.4_1",
-                __('messages.De positie van de vrije ruimte is te laag voor dit paneel')
+                __('messages.De positie van de vrije ruimte is te laag voor dit element')
             );
 
             // Alleen corrigeren bij blur, niet tijdens typen
@@ -337,7 +337,7 @@ trait HasPanelOptionValidation
 
         $this->addError(
             "totaleLengte.$index",
-            __('messages.Vul eerst de paneelmaat in')
+            __('messages.Vul eerst de elementmaat in')
         );
     }
 
@@ -346,7 +346,7 @@ trait HasPanelOptionValidation
         if (!$this->hasValidPanelLength($index)) {
             $this->addError(
                 "totaleLengte.$index",
-                __('messages.Vul eerst de paneelmaat in')
+                __('messages.Vul eerst de elementmaat in')
             );
 
             return;
@@ -375,7 +375,7 @@ trait HasPanelOptionValidation
         if (!$this->hasValidPanelLength($index)) {
             $this->addError(
                 "totaleLengte.$index",
-                __('messages.Vul eerst de paneelmaat in')
+                __('messages.Vul eerst de elementmaat in')
             );
 
             return;

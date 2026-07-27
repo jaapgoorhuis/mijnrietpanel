@@ -19,20 +19,34 @@
     $length = max(1, (int) $totaleLengte);
     $visualLength = max(5000, $length);
 
-    $startImage = match (true) {
-        $hasNok => 'Nokafschuining.png',
-        default => 'Standaard.png',
-    };
+    $startImage = 'Standaard.png';
 
     $middleImage = 'Riet-standaard-paneel.png';
     $endImage = $hasCutback ? 'Cutback.png' : 'Einde-paneel.png';
+
+    // Nokafschuining: een dynamische wig i.p.v. een vast plaatje, zodat de
+    // afschuining meebeweegt met de werkelijk ingevulde graden (1-60).
+    $nokDeg = (int) ($panelValues['3'] ?? 0);
+    $nokDeg = max(1, min(60, $nokDeg ?: 1));
+    $nokRad = deg2rad($nokDeg);
+
+    // 70px verticaal bereik is gekalibreerd op het oude vaste plaatje (~45°).
+    $nokCutHeightPx = 70;
+    $nokCutWidthPx = $hasNok ? (int) round($nokCutHeightPx * tan($nokRad)) : 0;
 
     $middleCount = max(10, min(20, (int) ceil($visualLength / 700)));
 
     $cutbackMm = (int) ($panelValues['2'] ?? 0);
     $cutbackMm = $hasCutback ? max(20, min(200, $cutbackMm ?: 20)) : 0;
 
-    $cutbackWidthPx = $hasCutback ? 50 : 0;
+    // 80mm is de maat waarbij de afbeelding er nu goed uitziet (50px breed).
+    // De breedte schaalt hier lineair vanaf mee, los van de paneellengte,
+    // zodat dit ook bij bijvoorbeeld een paneel van 14500mm blijft kloppen.
+    $cutbackReferenceMm = 80;
+    $cutbackReferenceWidthPx = 50;
+    $cutbackWidthPx = $hasCutback
+        ? max(10, (int) round($cutbackReferenceWidthPx * ($cutbackMm / $cutbackReferenceMm)))
+        : 0;
 
     $freeSpaceFromLeft = (int) ($panelValues['4_1'] ?? ($hasLayback ? 500 : 300));
     $freeSpaceSize = (int) ($panelValues['4_2'] ?? 0);
@@ -71,9 +85,7 @@
 
     $parts = [];
 
-    if ($hasLayback && $hasNok) {
-        $parts[] = ['type' => 'layback-nok', 'image' => 'Layback-en-nokafschuining.png', 'mm' => $laybackMm];
-    } elseif ($hasLayback) {
+    if ($hasLayback) {
         $parts[] = ['type' => 'layback', 'image' => 'Layback.png', 'mm' => $laybackMm];
     } else {
         $parts[] = ['type' => 'image', 'image' => $startImage, 'mm' => 0];
@@ -93,7 +105,13 @@
 
     $vrEndWidthPx = 42;
 
-    $laybackWidthPx = $hasLayback ? 50 : 0;
+    // Zelfde schaling als bij Cutback: 80mm blijft 50px, en schaalt lineair
+    // mee met de ingevulde laybackmaat, los van de paneellengte.
+    $laybackReferenceMm = 80;
+    $laybackReferenceWidthPx = 50;
+    $laybackWidthPx = $hasLayback
+        ? max(10, (int) round($laybackReferenceWidthPx * ($laybackMm / $laybackReferenceMm)))
+        : 0;
 
     $waterstopCount = collect($waterstops)
     ->filter(fn($ws) => !empty($ws['type']))
@@ -115,7 +133,7 @@
 
 <div
     id="panel-render-{{ $index }}"
-    class="relative w-full max-w-full overflow-visible pt-24"
+    class="relative w-full max-w-full overflow-visible pt-32"
     data-free-space-from-left="{{ $hasVrijeRuimte ? $freeSpaceFromLeft : 0 }}"
     data-free-space-size="{{ $hasVrijeRuimte ? $freeSpaceSize : 0 }}"
     data-layback-mm="{{ $laybackMm }}"
@@ -181,9 +199,10 @@
                 0,
                 parseFloat(values['4_1']) || 0
             );
-            const laybackMm = options.includes(1) ? (parseFloat(values['1']) || 0) : 0;
 
-            return this.mmToPx(fromLeft + laybackMm);
+            // 4_1 wordt (net als laybackMm) al gemeten vanaf de absolute
+            // bovenkant van het paneel, dus laybackMm hier niet nogmaals optellen.
+            return this.mmToPx(fromLeft);
         },
         freeSpaceRightPx() {
 
@@ -223,13 +242,10 @@
     );
 
 
-    const laybackMm = options.includes(1)
-        ? (parseFloat(values['1']) || 0)
-        : 0;
-
-
+    // 4_1 wordt (net als laybackMm) al gemeten vanaf de absolute
+    // bovenkant van het paneel, dus laybackMm hier niet nogmaals optellen.
     return this.mmToPx(
-        fromLeft + laybackMm + size
+        fromLeft + size
     );
 },
         freeSpaceWidthPx() {
@@ -334,6 +350,28 @@
             </div>
         @endif
 
+        @if($hasLayback)
+            <div
+                class="absolute text-center h-[45px]"
+                style="left:0;"
+                :style="`top:{{ $hasVrijeRuimte ? 45 : 0 }}px; width:${ {{ $laybackWidthPx }} * scale }px;`"
+            >
+                {{-- tekst boven --}}
+                <div class="absolute left-0 bottom-[15px] w-full leading-none whitespace-nowrap">
+                    LB {{ $panelValues['1'] ?? 0 }} {{ __('messages.mm') }}
+                </div>
+
+                {{-- lijn vaste positie --}}
+                <div class="absolute left-0 top-[35px] w-full">
+                    <div class="flex items-center w-full">
+                        <span>|</span>
+                        <span class="flex-1 border-t border-black"></span>
+                        <span>|</span>
+                    </div>
+                </div>
+            </div>
+        @endif
+
     </div>
 
 
@@ -366,9 +404,9 @@
                             "
                         ></div>
 
-                    @elseif($part['type'] === 'layback' || $part['type'] === 'layback-nok')
+                    @elseif($part['type'] === 'layback')
                         <div
-                            class="panel-part relative"
+                            class="panel-part"
                             data-mm="{{ $part['mm'] }}"
                             style="
                                 height: {{ $panelHeightPx }}px;
@@ -382,27 +420,6 @@
                                 class="block max-w-none"
                                 style="height: {{ $panelHeightPx }}px; width: {{ $laybackWidthPx }}px;"
                             >
-
-                            <div
-                                class="absolute text-center font-bold"
-                                :style="`
-                                    left:0;
-                                    top:{{ ($panelHeightPx / 2) - 60 }}px;
-                                    width:100%;
-                                    z-index:50;
-                                    font-size: ${Math.max(8, 11 / scale)}px;
-                                `"
-                            >
-                                <div class="flex items-center w-full">
-                                    <span>|</span>
-                                    <span class="flex-1 border-t border-black"></span>
-                                    <span>|</span>
-                                </div>
-
-                                <div class="leading-none mt-1 whitespace-normal break-words">
-                                    LB {{ $panelValues['1'] ?? 0 }} {{ __('messages.mm') }}
-                                </div>
-                            </div>
                         </div>
 
                     @else
@@ -420,6 +437,21 @@
                         </div>
                     @endif
                 @endforeach
+
+                @if($hasNok)
+                    {{-- Wig die de nokafschuining zichtbaar maakt, geschaald op de ingevulde graden --}}
+                    <div
+                        class="absolute pointer-events-none bg-white"
+                        style="
+                            left: 0;
+                            top: {{ $panelHeightPx - $nokCutHeightPx }}px;
+                            width: {{ $nokCutWidthPx }}px;
+                            height: {{ $nokCutHeightPx }}px;
+                            clip-path: polygon(0 0, 100% 100%, 0 100%);
+                            z-index: 25;
+                        "
+                    ></div>
+                @endif
 
                 @if($hasVrijeRuimte)
                     <div
@@ -507,7 +539,9 @@
                         $wsTopPx = $topOffsetPx + ($marginMm * $mmToPxVertical) - ($wsFromCenter * $mmToPxVertical);
                         $wsTopPx = max(0, min($panelHeightPx - $wsHeightPx, $wsTopPx));
 
-                        $wsMmPosition = $wsFromLeft + $laybackMm;
+                        // $wsFromLeft is (net als laybackMm) al gemeten vanaf de
+                        // absolute bovenkant van het paneel.
+                        $wsMmPosition = $wsFromLeft;
 
 $waterstopWidthPx = 20;
 $waterstopLineOffsetMm = -20;
@@ -560,6 +594,22 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                 @endforeach
 
                 @if($hasNok)
+                    @php
+                        // $nokDeg/$nokRad zijn al hierboven berekend (ook gebruikt voor de wig).
+                        $nokPivotX = 6;
+                        $nokPivotY = 2;
+                        $nokLineLen = 30;
+
+                        $nokDiagEndX = $nokPivotX + $nokLineLen * sin($nokRad);
+                        $nokDiagEndY = $nokPivotY + $nokLineLen * cos($nokRad);
+
+                        $nokArcRadius = 14;
+                        $nokArcStartX = $nokPivotX;
+                        $nokArcStartY = $nokPivotY + $nokArcRadius;
+                        $nokArcEndX = $nokPivotX + $nokArcRadius * sin($nokRad);
+                        $nokArcEndY = $nokPivotY + $nokArcRadius * cos($nokRad);
+                    @endphp
+
                     <div
                         class="absolute left-2 pointer-events-none"
                         style="
@@ -571,21 +621,19 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                         "
                     >
                         <svg width="100" height="80" viewBox="0 0 65 42" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <marker
-                                    id="arrow-{{ $index }}"
-                                    markerWidth="3.5" markerHeight="3.5"
-                                    refX="3" refY="1.75" orient="auto"
-                                >
-                                    <path d="M0,0 L3.5,1.75 L0,3.5 Z" fill="#000"/>
-                                </marker>
-                            </defs>
-
-                            <line x1="6" y1="2" x2="6" y2="32" stroke="#000" stroke-width="1.5"/>
-                            <line x1="8" y1="4" x2="26" y2="30" stroke="#000" stroke-width="1.5"/>
+                            <line
+                                x1="{{ $nokPivotX }}" y1="{{ $nokPivotY }}"
+                                x2="{{ $nokPivotX }}" y2="{{ $nokPivotY + $nokLineLen }}"
+                                stroke="#000" stroke-width="1.5"
+                            />
+                            <line
+                                x1="{{ $nokPivotX }}" y1="{{ $nokPivotY }}"
+                                x2="{{ $nokDiagEndX }}" y2="{{ $nokDiagEndY }}"
+                                stroke="#000" stroke-width="1.5"
+                            />
 
                             <path
-                                d="M8 4 Q18 18 26 30"
+                                d="M {{ $nokArcStartX }} {{ $nokArcStartY }} A {{ $nokArcRadius }} {{ $nokArcRadius }} 0 0 1 {{ $nokArcEndX }} {{ $nokArcEndY }}"
                                 fill="none"
                                 stroke="#000"
                                 stroke-width="1.5"
@@ -608,12 +656,12 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                     <div
                         class="absolute text-center font-bold pointer-events-none"
                         :style="`
-            left: 0;
-         top: {{ $panelHeightPx + 10 }}px;
-            width: 100%;
-            z-index: 100;
-            font-size: ${Math.max(8, 11 / scale)}px;
-        `"
+                            left: 0;
+                         top: {{ $panelHeightPx + 10 }}px;
+                            width: 100%;
+                            z-index: 100;
+                            font-size: ${Math.max(8, 11 / scale)}px;
+                        `"
                     >
                         <div class="flex items-center w-full">
                             <span>|</span>
