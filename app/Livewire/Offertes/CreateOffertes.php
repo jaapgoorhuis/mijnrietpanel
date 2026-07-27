@@ -191,6 +191,20 @@ class CreateOffertes extends Component
         }
     }
 
+    public function updatePanelValues($index, $key)
+    {
+        if (! isset($this->panelValues[$index])) {
+            $this->panelValues[$index] = [];
+            if (isset($index)) {
+                $this->normalizePanelOptions((int) $index);
+            } elseif (isset($key)) {
+                $this->normalizePanelOptions((int) $key);
+            }
+        }
+
+        $this->normalizePanelOptions($index);
+    }
+
     public function updateLb($index) {
         $this->lb[$index] = $this->fillLb[$index];
         if($this->fillLb[$index] == '') {
