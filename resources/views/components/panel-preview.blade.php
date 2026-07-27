@@ -620,7 +620,7 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                             z-index: 30;
                         "
                     >
-                        <svg width="100" height="80" viewBox="0 0 65 42" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="100" height="80" viewBox="0 0 65 42" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
                             <line
                                 x1="{{ $nokPivotX }}" y1="{{ $nokPivotY }}"
                                 x2="{{ $nokPivotX }}" y2="{{ $nokPivotY + $nokLineLen }}"
@@ -642,9 +642,9 @@ $wsLineEndMm = $wsMmPosition + $waterstopLineOffsetMm;
                             <text
                                 x="10"
                                 y="41"
-                                font-size="7"
                                 font-family="sans-serif"
                                 font-weight="700"
+                                :font-size="Math.max(7, 7 / scale)"
                             >
                                 {{ $panelValues['3'] ?? 0 }}°
                             </text>
