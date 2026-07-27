@@ -89,8 +89,9 @@ trait HasPanelOptionValidation
         if ($length <= 0) return;
 
         $waterstops = $this->panelValues[$index]['waterstops'] ?? [];
+        $vrijeRuimteActief = in_array(4, $this->selectedPanelOption[$index] ?? [], true);
         $vrijeStart = (int) ($this->panelValues[$index]['4_1'] ?? 0);
-        $vrijeBreedte = (int) ($this->panelValues[$index]['4_2'] ?? 0);
+        $vrijeBreedte = $vrijeRuimteActief ? (int) ($this->panelValues[$index]['4_2'] ?? 0) : 0;
         $vrijeEind = $vrijeStart + $vrijeBreedte;
 
         $this->resetErrorBagForWaterstops($index);
