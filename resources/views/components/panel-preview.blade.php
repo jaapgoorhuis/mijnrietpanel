@@ -22,7 +22,19 @@
     $startImage = 'Standaard.png';
 
     $middleImage = 'Riet-standaard-paneel.png';
-    $endImage = $hasCutback ? 'Cutback.png' : 'Einde-paneel.png';
+
+    // Gebruik voor het eindstuk (met en zonder cutback) dezelfde afbeelding
+    // als de tussenstukken, zodat de kleur/textuur altijd exact overeenkomt
+    // met de rest van het paneel i.p.v. een los, mogelijk afwijkend plaatje.
+    $endImage = $middleImage;
+
+    // Bij een cutback lopen het riet EN de grijze onderplaat/voetlijn door,
+    // maar het lichte stuk daaronder (de kerndikte van het paneel) niet: dat
+    // wordt gewoon wit. $middleImage bevat riet + grijze voetlijn tot
+    // ~501/619e van de hoogte (op dezelfde schaal als de rest van het
+    // paneel), daarna begint de kerndikte-strook.
+    $cutbackReedFraction = 501 / 619;
+    $cutbackReedVisibleHeightPx = (int) round($panelHeightPx * $cutbackReedFraction);
 
     // Nokafschuining: een dynamische wig i.p.v. een vast plaatje, zodat de
     // afschuining meebeweegt met de werkelijk ingevulde graden (1-60).
@@ -397,12 +409,25 @@
                                 width: {{ $cutbackWidthPx }}px;
                                 min-width: {{ $cutbackWidthPx }}px;
                                 flex: 0 0 {{ $cutbackWidthPx }}px;
-                                background-image: url('{{ asset($basePath . $part['image']) }}');
-                                background-repeat: repeat-x;
-                                background-size: auto {{ $panelHeightPx }}px;
-                                background-position: left top;
+                                background-color: #fff;
+                                position: relative;
+                                overflow: hidden;
                             "
-                        ></div>
+                        >
+                            <div
+                                style="
+                                    position: absolute;
+                                    left: 0;
+                                    top: 0;
+                                    width: 100%;
+                                    height: {{ $cutbackReedVisibleHeightPx }}px;
+                                    background-image: url('{{ asset($basePath . $part['image']) }}');
+                                    background-repeat: repeat-x;
+                                    background-size: auto {{ $panelHeightPx }}px;
+                                    background-position: left top;
+                                "
+                            ></div>
+                        </div>
 
                     @elseif($part['type'] === 'layback')
                         <div
@@ -412,15 +437,12 @@
                                 height: {{ $panelHeightPx }}px;
                                 width: {{ $laybackWidthPx }}px;
                                 flex: 0 0 {{ $laybackWidthPx }}px;
+                                background-image: url('{{ asset($basePath . $part['image']) }}');
+                                background-repeat: repeat-x;
+                                background-size: auto {{ $panelHeightPx }}px;
+                                background-position: left top;
                             "
-                        >
-                            <img
-                                src="{{ asset($basePath . $part['image']) }}"
-                                alt="Layback"
-                                class="block max-w-none"
-                                style="height: {{ $panelHeightPx }}px; width: {{ $laybackWidthPx }}px;"
-                            >
-                        </div>
+                        ></div>
 
                     @else
                         <div
