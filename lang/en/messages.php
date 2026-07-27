@@ -260,7 +260,7 @@ return [
     // Extra nette korte versie (aanbevolen)
     'free_space_exceeds_panel' => 'The free space exceeds the panel length.',
     'Waterstop positie moet tussen 0 en de elementlengte liggen' => 'Waterstop position must be between 0 and the element length',
-    'Minimaal 300 mm vanaf bovenzijde' => 'Minimum 300 mm from the top edge',
+    'Minimaal 300 mm vanaf bovenzijde, maximaal 600mm vanaf onderzijde paneel' => 'Minimum 300 mm from the top edge, maximum 600mm from bottom element',
     'Maximaal' => 'Maximum',
     'Horizontale verplaatsing vanuit midden' => 'Horizontal offset from center',
     '0 is midden' => '0 = center',

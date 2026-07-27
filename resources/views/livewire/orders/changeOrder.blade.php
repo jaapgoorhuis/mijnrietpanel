@@ -528,7 +528,7 @@
                                                                     </div>
 
                                                                     <div class="text-xs text-gray-500 mt-1">
-                                                                        {{ __('messages.Minimaal 300 mm vanaf bovenzijde') }}
+                                                                        {{ __('messages.Minimaal 300 mm vanaf bovenzijde, maximaal 600mm vanaf onderzijde paneel') }}
                                                                         @if(($totaleLengte[$index] ?? 0) > 0)
                                                                             <br>{{ __('messages.Maximaal') }}: {{ $currentVerticalMax }} {{ __('messages.mm') }}
                                                                         @endif

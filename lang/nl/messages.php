@@ -36,7 +36,7 @@ return [
     'waterstop_500' => 'Geschikt voor Ubbink dakdoorvoeren. Bij een Ubbink doorvoer, waterstop 200mm boven hart doorvoer plaatsen.',
     'waterstop_300' => 'Geschikt voor kleine dakdoorvoeren en overgangen van horizontaal naar verticaal bij dakkapellen',
     'Positie vanaf bovenzijde' => 'Positie vanaf bovenzijde',
-    'Minimaal 300 mm vanaf bovenzijde' => 'Minimaal 300 mm vanaf bovenzijde',
+    'Minimaal 300 mm vanaf bovenzijde, maximaal 600mm vanaf onderzijde paneel' => 'Minimaal 300 mm vanaf bovenzijde, maximaal 600mm vanaf onderzijde paneel',
     'Maximaal' => 'Maximaal',
     'Horizontale verplaatsing vanuit midden' => 'Horizontale verplaatsing vanuit midden',
     '0 is midden' => '0 = midden',
