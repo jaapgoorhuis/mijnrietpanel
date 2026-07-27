@@ -128,7 +128,7 @@ trait HasPanelOptionValidation
             if ($horizontal < -$maxHorizontal || $horizontal > $maxHorizontal) {
                 $this->addError(
                     "panelValues.$index.waterstops.$wsIndex.horizontal",
-                    __('messages.De horizontale verplaatsing mag maximaal ') . $maxHorizontal . ' mm naar links of rechts zijn'
+                    __('messages.horizontal_shift_max', ['max' => $maxHorizontal])
                 );
             }
 

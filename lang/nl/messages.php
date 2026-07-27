@@ -41,6 +41,7 @@ return [
     'Horizontale verplaatsing vanuit midden' => 'Horizontale verplaatsing vanuit midden',
     '0 is midden' => '0 = midden',
     'naar links' => 'naar links',
+    'horizontal_shift_max' => 'De horizontale verplaatsing mag maximaal :max mm naar links of rechts zijn',
     'naar rechts' => 'naar rechts',
     'Negatief is naar links positief is naar rechts' => 'Negatief is naar links, positief is naar rechts',
     'naar links en rechts' => 'naar links en rechts',
