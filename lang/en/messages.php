@@ -213,6 +213,7 @@ return [
     'Marketing categorieën' => 'Marketing categories',
     'Documentatie categorieën' => 'Documentation categories',
     'Cutback' => 'Cutback',
+    'Vul eerst de elementmaat in' => 'Please fill in the element dimension',
     'Cutback in mm' => 'Cutback in mm',
     'Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn' => 'Space from top till free space must be at least 300mm',
     'Dit moet een getal hoger dan 0 zijn' => 'This has to be a number bigger than 0',
