@@ -400,6 +400,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // --- Orders terug naar bak
             if (ordersContainer.contains(el) && type !== 'manual-block') {
+                // Bevestigde order: eerst waarschuwen, laat het event terugspringen tot bevestigd
+                if (info.event.extendedProps?.is_confirmed === true) {
+                    Livewire.dispatch('unplan-confirmed-order', { orderId: originalId });
+                    return;
+                }
+
                 // Voeg DOM terug naar bak
                 const div = document.createElement('div');
                 div.classList.add('fc-event', 'bg-blue-500', 'text-white', 'cursor-move', 'p-2', 'mb-2');
@@ -603,6 +609,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
             info.el.style.border = borderStyle;
             info.el.style.borderRadius = '4px';
+
+            // --- Waarschuwingsicoon: order staat gepland maar is nog niet bevestigd ---
+            if (info.event.extendedProps?.is_confirmed === false) {
+                const orderId = info.event.extendedProps?.order_id;
+
+                const wrapper = document.createElement('span');
+                wrapper.className = 'group';
+                wrapper.style.position = 'absolute';
+                wrapper.style.top = '2px';
+                wrapper.style.right = '2px';
+                wrapper.style.zIndex = '10';
+
+                const badge = document.createElement('i');
+                badge.className = 'fa-solid fa-triangle-exclamation';
+                badge.style.color = '#f59e0b';
+                badge.style.fontSize = '11px';
+                badge.style.textShadow = '0 0 2px rgba(255,255,255,0.9)';
+                badge.style.cursor = 'pointer';
+
+                badge.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (orderId) {
+                        window.location.href = '/orders/confirm/' + orderId;
+                    }
+                });
+
+                const tip = document.createElement('div');
+                tip.className = 'absolute right-0 top-full mt-1 w-48 bg-gray-700 text-white text-xs p-2 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50';
+                tip.textContent = 'Deze order is nog niet bevestigd. Klik om te bevestigen.';
+
+                wrapper.appendChild(badge);
+                wrapper.appendChild(tip);
+
+                info.el.style.position = 'relative';
+                info.el.appendChild(wrapper);
+            }
         },
         eventAdd: () => updateDayIndicators(calendar),
         eventChange: () => updateDayIndicators(calendar),
@@ -728,9 +771,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                     } else {
-                        // update eventueel geplande m2 en title
+                        // update eventueel geplande m2, title en datum (bv. na annuleren van een verplaatsing)
                         existing.setExtendedProp('planned_m2', ev.extendedProps?.planned_m2 || 0);
+                        existing.setExtendedProp('is_confirmed', ev.extendedProps?.is_confirmed);
                         existing.setProp('title', ev.title);
+                        if (ev.start && existing.startStr !== ev.start) {
+                            existing.setStart(ev.start);
+                        }
                     }
                 });
 
@@ -809,6 +856,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Livewire.on('hideLimitModal', () => {
         const modalEl = document.getElementById('limitModal');
+        modalEl.classList.add('hidden');
+        modalEl.classList.remove('flex');
+    });
+
+    Livewire.on('showReconfirmModal', () => {
+        const modalEl = document.getElementById('reconfirmModal');
+        modalEl.classList.add('flex');
+        modalEl.classList.remove('hidden');
+    });
+
+    Livewire.on('hideReconfirmModal', () => {
+        const modalEl = document.getElementById('reconfirmModal');
+        modalEl.classList.add('hidden');
+        modalEl.classList.remove('flex');
+    });
+
+    Livewire.on('showUnplanConfirmModal', () => {
+        const modalEl = document.getElementById('unplanConfirmModal');
+        modalEl.classList.add('flex');
+        modalEl.classList.remove('hidden');
+    });
+
+    Livewire.on('hideUnplanConfirmModal', () => {
+        const modalEl = document.getElementById('unplanConfirmModal');
         modalEl.classList.add('hidden');
         modalEl.classList.remove('flex');
     });

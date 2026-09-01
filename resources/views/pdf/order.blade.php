@@ -64,7 +64,7 @@
 
                     <div>{{ __('messages.Referentie') }}: {{$order->referentie}}</div>
                     <div>{{ __('messages.Verkoper') }}: {{$order->intaker}}</div>
-                    @if($order->status == 'In behandeling')
+                    @if($order->status != 'Bevestigd')
                         <div>{{ __('messages.Gewenste afleverdatum') }}: {{$order->requested_delivery_date}}</div>
                     @else
                         <div>{{ __('messages.Afleverdatum') }}: {{$order->delivery_date}}</div>

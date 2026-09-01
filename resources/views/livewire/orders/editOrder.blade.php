@@ -101,7 +101,7 @@
 
                         <br/>
                         <div class="relative z-0 w-full mb-5 group">
-                            <label for="requested_delivery_date" class="text-gray-400">Leverdatum order:</label>
+                            <label for="requested_delivery_date" class="text-gray-400">Leverdatum orderbevestiging naar klant:</label>
 
                             <input
                                 type="text"

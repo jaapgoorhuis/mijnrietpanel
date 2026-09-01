@@ -84,6 +84,8 @@
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3">Admin</th>
                             <th scope="col" class="px-4 py-3">Rol</th>
+                            <th scope="col" class="px-4 py-3">Laatst ingelogd</th>
+                            <th scope="col" class="px-4 py-3">Laatst actief</th>
                             <th scope="col" class="px-4 py-3 text-right">
                                 <span>Actie's</span>
                             </th>
@@ -130,7 +132,21 @@
                                     @endif
                                 </td>
 
+                                <td class="px-4 py-3">
+                                    @if($user->last_login_at)
+                                        {{ $user->last_login_at->format('d-m-Y H:i') }}
+                                    @else
+                                        Nog niet ingelogd
+                                    @endif
+                                </td>
 
+                                <td class="px-4 py-3">
+                                    @if($user->last_activity_at)
+                                        {{ $user->last_activity_at->format('d-m-Y H:i') }}
+                                    @else
+                                        Niet actief
+                                    @endif
+                                </td>
 
                                 <td  class="px-4 py-3 flex items-center justify-end">
                                     <button wire:ignore.self id="{{$user->id}}-dropdown-button" data-dropdown-toggle="{{$user->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none " type="button">

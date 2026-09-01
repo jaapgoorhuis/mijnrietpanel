@@ -50,6 +50,8 @@ class TwoFactorController extends Controller
 
         $request->session()->regenerate();
 
+        $user->forceFill(['last_login_at' => now()])->save();
+
         if (
             $user->is_production_employee &&
             !$user->is_admin

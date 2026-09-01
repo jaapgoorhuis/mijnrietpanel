@@ -67,7 +67,7 @@ class Orders extends Component
 
     public function confirmOrder($id)
     {
-        if(Auth::user()->is_admin) {
+        if(Auth::user()->is_admin && Order::where('id', $id)->value('status') === 'Gepland & niet bevestigd') {
             return $this->redirect('/orders/confirm/' . $id, navigate: true);
         }
         else {

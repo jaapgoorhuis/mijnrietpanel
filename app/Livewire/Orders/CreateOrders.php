@@ -236,7 +236,7 @@ class CreateOrders extends Component
         $this->panelValues[] = [
             1 => 20,
             2 => 20,
-            3 => 0,
+            3 => 15,
             '4_1' => 0,
             '4_2' => 0,
             'waterstops' => [],
@@ -346,11 +346,19 @@ class CreateOrders extends Component
             }
 
             if (in_array(3, $options)) {
-                $rules["panelValues.$index.3"] = 'required|numeric|min:1|max:60';
+                $rules["panelValues.$index.3"] = 'required|numeric|min:15|max:60';
             }
 
             if (in_array(4, $options)) {
-                $rules["panelValues.$index.4_1"] = 'required|numeric|min:300';
+                $rules["panelValues.$index.4_1"] = [
+                    'required',
+                    'numeric',
+                    function ($attribute, $value, $fail) {
+                        if ((int) $value !== 0 && (int) $value < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . 300 . ' ' . __('messages.mm'));
+                        }
+                    },
+                ];
 
                 $rules["panelValues.$index.4_2"] = [
                     'required',
@@ -358,7 +366,7 @@ class CreateOrders extends Component
                     'min:50',
                     function ($attribute, $value, $fail) use ($index) {
                         $totaal = $this->fillTotaleLengte[$index] ?? 0;
-                        $ruimte1 = $this->panelValues[$index]['4_1'] ?? 0;
+                        $ruimte1 = (int) ($this->panelValues[$index]['4_1'] ?? 0);
                         $ruimte2 = $value;
 
                         if (! $totaal) {
@@ -366,8 +374,8 @@ class CreateOrders extends Component
                             return;
                         }
 
-                        if ($ruimte1 < 300) {
-                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn'));
+                        if ($ruimte1 !== 0 && $ruimte1 < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . 300 . ' ' . __('messages.mm'));
                             return;
                         }
 
@@ -472,9 +480,9 @@ class CreateOrders extends Component
             'panelValues.*.2.numeric' => __('messages.Dit moet een getal zijn'),
             'panelValues.*.3.required' => __('messages.Vul een waarde in voor Nok afschuining'),
             'panelValues.*.3.numeric' => __('messages.Dit moet een getal zijn'),
-            'panelValues.*.3.min' => __('messages.De nokafschuining moet minimaal 1 graad zijn'),
-            'panelValues.*.3.max' => __('messages.De nokafschuining mag maximaal 60 graden zijn'),
-            'panelValues.*.4_1.min' => __('messages.Dit moet een getal hoger dan 300 mm zijn'),
+            'panelValues.*.3.min' => __('messages.De nokafschuining moet tussen 15 en 60 graden zijn'),
+            'panelValues.*.3.max' => __('messages.De nokafschuining moet tussen 15 en 60 graden zijn'),
+            'panelValues.*.4_1.min' => __('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . '300 ' . __('messages.mm'),
             'panelValues.*.4_2.min' => __('messages.Dit moet een getal hoger dan 50 mm zijn'),
             'panelValues.*.waterstops.*.type.required' => __('messages.Selecteer een type waterstop'),
             'panelValues.*.waterstops.*.type.in' => __('messages.Selecteer een geldig type waterstop'),
@@ -544,7 +552,7 @@ class CreateOrders extends Component
                 'kerndikte' => $this->kerndikte,
                 'project_naam' => $this->project_naam,
                 'user_id' => Auth::id(),
-                'status' => 'In behandeling',
+                'status' => 'Ongepland',
                 'order_id' => $orderId,
                 'marge' => $this->marge,
                 'requested_delivery_date' => $this->requested_delivery_date,

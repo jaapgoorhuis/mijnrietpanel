@@ -6,7 +6,7 @@
     </x-slot>
 
     @php
-        $openOrders = \App\Models\Order::where('status', 'In behandeling')->get();
+        $openOrders = \App\Models\Order::whereIn('status', ['Ongepland', 'Gepland & niet bevestigd'])->get();
         $user = auth()->user();
     @endphp
 

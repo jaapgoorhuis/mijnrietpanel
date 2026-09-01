@@ -7,7 +7,7 @@ class PanelOptionValidationService
     public const PANEL_LENGTH_MIN = 500;
     public const PANEL_LENGTH_MAX = 14500;
 
-    public const NOK_MIN = 1;
+    public const NOK_MIN = 15;
     public const NOK_MAX = 60;
 
     public const VR_TOP_MIN = 300;
@@ -103,7 +103,7 @@ class PanelOptionValidationService
                 $nok = (int) ($values[3] ?? 0);
 
                 if ($nok < self::NOK_MIN || $nok > self::NOK_MAX) {
-                    $errors["panelValues.$index.3"][] = __('messages.De nokafschuining moet tussen 1 en 60 graden zijn');
+                    $errors["panelValues.$index.3"][] = __('messages.De nokafschuining moet tussen 15 en 60 graden zijn');
                 }
             }
 
@@ -115,9 +115,9 @@ class PanelOptionValidationService
                     ? 500
                     : self::VR_TOP_MIN;
 
-                if ($vrStart < $minTop) {
+                if ($vrStart !== 0 && $vrStart < $minTop) {
                     $errors["panelValues.$index.4_1"][] =
-                        __('messages.Ruimte bovenkant tot vrije ruimte moet minimaal ') . $minTop . ' ' . __('messages.mm');
+                        __('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . $minTop . ' ' . __('messages.mm');
                 }
 
 
@@ -304,14 +304,16 @@ class PanelOptionValidationService
         $maxStart = $length - self::VR_BOTTOM_MIN - self::VR_WIDTH_MIN;
 
 
-        // 4_1 begrenzen
-        $values['4_1'] = max(
-            $minTop,
-            min(
-                $start,
-                $maxStart
-            )
-        );
+        // 4_1 begrenzen: 0 blijft toegestaan, anders geldt het minimum
+        $values['4_1'] = $start === 0
+            ? 0
+            : max(
+                $minTop,
+                min(
+                    $start,
+                    $maxStart
+                )
+            );
 
 
         // 4_2 begrenzen op basis van nieuwe positie
@@ -426,7 +428,7 @@ class PanelOptionValidationService
             $vrStart = (int) ($values['4_1'] ?? 0);
             $vrWidth = (int) ($values['4_2'] ?? 0);
 
-            if ($vrStart && $vrWidth) {
+            if ($vrWidth > 0) {
                 $blockedRanges[] = [
                     'start' => $vrStart,
                     'end' => $vrStart + $vrWidth + self::VR_WATERSTOP,
@@ -469,7 +471,7 @@ class PanelOptionValidationService
             $vrStart = (int) ($values['4_1'] ?? 0);
             $vrWidth = (int) ($values['4_2'] ?? 0);
 
-            if ($vrStart && $vrWidth) {
+            if ($vrWidth > 0) {
                 $ranges[] = [
                     'type' => 'vrije_ruimte',
                     'start' => $vrStart,

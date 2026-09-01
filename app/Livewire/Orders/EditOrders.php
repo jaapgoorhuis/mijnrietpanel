@@ -18,7 +18,6 @@ use Livewire\Component;
 
 class EditOrders extends Component
 {
-
     public $orderId;
     public $order;
 
@@ -52,6 +51,11 @@ class EditOrders extends Component
             'Suplier',
             'orderLines.waterstops'
         ])->findOrFail($this->orderId);
+
+        if ($this->order->status !== 'Gepland & niet bevestigd') {
+            session()->flash('error', 'Deze order kan pas bevestigd worden nadat hij is ingepland.');
+            return $this->redirect('/orders', navigate: true);
+        }
 
         $this->existing_purchage_order_email = $this->order->Suplier->suplier_email;
         $this->existing_purchage_order_suplier = $this->order->Suplier->suplier_name;
@@ -219,7 +223,7 @@ class EditOrders extends Component
             'De order #' . $order->order_id . ' is bevestigd. Er is een email verstuurd met een bevestiging naar ' . $order->user->email . '. De inkooporder is verstuurd naar inkoop@rietpanel.nl'
         );
 
-        return $this->redirect('/productPlanning');
+        return $this->redirect('/orders');
     }
 
     public function cancelUpdateOrder()

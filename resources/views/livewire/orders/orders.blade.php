@@ -108,7 +108,7 @@
                                 </td>
                                 <td class="px-4 py-3">@if($order->requested_delivery_date) {{$order->requested_delivery_date}} @else  {{ __('messages.Geen datum') }} @endif</td>
                                 <td class="px-4 py-3">@if($order->delivery_date) {{$order->delivery_date}} @else {{ __('messages.Geen datum') }} @endif</td>
-                                <td class="px-4 py-3 @if($order->status == 'In behandeling') text-orange-500 @elseif($order->status == 'Bevestigd') text-green-500  @endif whitespace-nowrap">
+                                <td class="px-4 py-3 @if($order->status == 'Ongepland') text-orange-500 @elseif($order->status == 'Gepland & niet bevestigd') text-blue-500 @elseif($order->status == 'Bevestigd') text-green-500  @endif whitespace-nowrap">
                                     {{ __('messages.'.$order->status) }}
                                 </td>
 
@@ -146,9 +146,15 @@
                                         <ul class="py-1 text-sm text-gray-700 " aria-labelledby="{{$order->id}}-dropdown-button">
                                             @admin
                                             <li>
-                                                <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="confirmOrder({{$order->id}})" @if($order->status == 'Bevestigd')disabled @endif>
-                                                    <i class="fa-solid fa-circle-check" ></i> Order bevestigen
-                                                </button>
+                                                @if(! $order->planned_start)
+                                                    <a href="{{ url('/productPlanning') }}" class="block py-2 px-4 text-left w-full hover:bg-gray-100">
+                                                        <i class="fa-solid fa-calendar-plus"></i> Order plannen
+                                                    </a>
+                                                @else
+                                                    <button class="block py-2  px-4 text-left w-full hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-[#16a34a54]" wire:click="confirmOrder({{$order->id}})" @if($order->status != 'Gepland & niet bevestigd')disabled @endif>
+                                                        <i class="fa-solid fa-circle-check" ></i> Order bevestigen
+                                                    </button>
+                                                @endif
                                             </li>
                                             @endadmin
                                             <li>
@@ -159,7 +165,7 @@
                                             @admin
                                             <li>
                                                 <a
-                                                    @if($order->status == 'In behandeling')
+                                                    @if($order->status != 'Bevestigd')
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
                                                     href="javascript:void(0)"
                                                     @else
@@ -173,7 +179,7 @@
                                             </li>
                                             <li>
                                                 <a
-                                                    @if($order->status == 'In behandeling')
+                                                    @if($order->status != 'Bevestigd')
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
                                                     href="javascript:void(0)"
                                                     @else
@@ -189,7 +195,7 @@
                                             </li>
                                             <li>
                                                 <a
-                                                    @if($order->status == 'In behandeling')
+                                                    @if($order->status != 'Bevestigd')
                                                         style="background-color:#e9eaeb; color:#b5aeae; cursor: not-allowed;"
                                                     href="javascript:void(0)"
                                                     @else

@@ -118,6 +118,11 @@
                          data-title="{{ $order->klantnaam . ' ' . $order->project_naam . ' (' . $order->total_m2 . ' m²)' }}"
                          data-color="{{ $bgColor }}">
                         {{ $order->klantnaam }} {{ $order->project_naam }} ({{ $order->total_m2 }} m²)
+                        @if($order->status === 'Bevestigd')
+                            <span title="Deze order is al bevestigd, maar nog niet ingepland">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </span>
+                        @endif
                     </div>
                 @endforeach
 
@@ -183,6 +188,62 @@
                     <button type="button" wire:click="confirmPlanOrder('split')"
                             class="py-2.5 px-5 w-full text-sm font-medium text-white bg-gray-700 rounded-lg border border-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300">
                         Splitsen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bevestigde order verplaatsen modal -->
+    <div id="reconfirmModal" wire:ignore.self class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full hidden" aria-modal="true" role="dialog">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative bg-white rounded-lg shadow-sm">
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-orange-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500">
+                        Let op: deze order is al bevestigd met een leverdatum van
+                        <strong>{{ $pendingConfirmedMoveDeliveryDate ? \Carbon\Carbon::parse($pendingConfirmedMoveDeliveryDate)->format('d-m-Y') : '-' }}</strong>.
+                        Weet je zeker dat je dit wilt wijzigen?
+                    </h3>
+
+                    <button type="button" wire:click="confirmRescheduleConfirmedOrder()"
+                            class="py-2.5 px-5 mb-2 w-full text-sm font-medium text-white bg-red-600 rounded-lg border border-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300">
+                        Ja, wijzigen
+                    </button>
+
+                    <button type="button" wire:click="cancelRescheduleConfirmedOrder()"
+                            class="py-2.5 px-5 w-full text-sm font-medium text-black bg-white rounded-lg border border-black hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Annuleren
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bevestigde order uitplannen modal -->
+    <div id="unplanConfirmModal" wire:ignore.self class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full hidden" aria-modal="true" role="dialog">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative bg-white rounded-lg shadow-sm">
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-orange-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500">
+                        Let op: deze order is al bevestigd met een leverdatum van
+                        <strong>{{ $pendingUnplanDeliveryDate ? \Carbon\Carbon::parse($pendingUnplanDeliveryDate)->format('d-m-Y') : '-' }}</strong>.
+                        Weet je zeker dat je hem wilt uitplannen?
+                    </h3>
+
+                    <button type="button" wire:click="confirmUnplanConfirmedOrder()"
+                            class="py-2.5 px-5 mb-2 w-full text-sm font-medium text-white bg-red-600 rounded-lg border border-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300">
+                        Ja, uitplannen
+                    </button>
+
+                    <button type="button" wire:click="cancelUnplanConfirmedOrder()"
+                            class="py-2.5 px-5 w-full text-sm font-medium text-black bg-white rounded-lg border border-black hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        Annuleren
                     </button>
                 </div>
             </div>

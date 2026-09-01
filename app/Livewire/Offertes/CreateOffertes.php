@@ -249,7 +249,7 @@ class CreateOffertes extends Component
         $this->panelValues[] = [
             1 => 20,
             2 => 20,
-            3=> 0,
+            3=> 15,
             '4_1' => 0,
             '4_2' => 0,
             'waterstops' => [],
@@ -363,13 +363,21 @@ class CreateOffertes extends Component
             }
 
             if (in_array(3, $options)) {
-                $rules["panelValues.$index.3"] = 'required|numeric|min:1|max:60';
+                $rules["panelValues.$index.3"] = 'required|numeric|min:15|max:60';
             }
 
             if (in_array(4, $options)) {
 
-                // 4_1 moet > 0 zijn
-                $rules["panelValues.$index.4_1"] = 'required|numeric|min:300';
+                // 4_1 moet 0 of minimaal 300 zijn
+                $rules["panelValues.$index.4_1"] = [
+                    'required',
+                    'numeric',
+                    function ($attribute, $value, $fail) {
+                        if ((int) $value !== 0 && (int) $value < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . 300 . ' ' . __('messages.mm'));
+                        }
+                    },
+                ];
 
                 // 4_2 validation
                 $rules["panelValues.$index.4_2"] = [
@@ -379,7 +387,7 @@ class CreateOffertes extends Component
                     function ($attribute, $value, $fail) use ($index) {
 
                         $totaal = $this->fillTotaleLengte[$index] ?? 0;
-                        $ruimte1 = $this->panelValues[$index]['4_1'] ?? 0;
+                        $ruimte1 = (int) ($this->panelValues[$index]['4_1'] ?? 0);
                         $ruimte2 = $value;
 
                         if (!$totaal) {
@@ -387,8 +395,8 @@ class CreateOffertes extends Component
                             return;
                         }
 
-                        if ($ruimte1 < 300) {
-                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet minimaal 300mm zijn'));
+                        if ($ruimte1 !== 0 && $ruimte1 < 300) {
+                            $fail(__('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . 300 . ' ' . __('messages.mm'));
                             return;
                         }
 
@@ -496,9 +504,9 @@ class CreateOffertes extends Component
             'panelValues.*.1.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.2.numeric' => 'Dit moet een getal zijn, hoger dan 0',
             'panelValues.*.3.numeric' => 'Dit moet een getal zijn, hoger dan 0',
-            'panelValues.*.3.min' =>  __('messages.De nokafschuining moet minimaal 0 graden zijn'),
-            'panelValues.*.3.max' =>  __('messages.De nokafschuining mag maximaal 60 graden zijn'),
-            'panelValues.*.4_1.min' =>  __('messages.Dit moet een getal hoger dan 300 mm zijn'),
+            'panelValues.*.3.min' =>  __('messages.De nokafschuining moet tussen 15 en 60 graden zijn'),
+            'panelValues.*.3.max' =>  __('messages.De nokafschuining moet tussen 15 en 60 graden zijn'),
+            'panelValues.*.4_1.min' =>  __('messages.Ruimte bovenkant tot vrije ruimte moet 0 of minimaal ') . '300 ' . __('messages.mm'),
             'panelValues.*.4_2.min' =>  __('messages.Dit moet een getal hoger dan 50 mm zijn'),
 
             'kerndikte' => __('messages.De kerndikte is een verplicht veld'),

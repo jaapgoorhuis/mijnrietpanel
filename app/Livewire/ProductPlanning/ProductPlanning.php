@@ -23,6 +23,13 @@ class ProductPlanning extends Component
     public $pendingPlanningId;
     public $pendingDate;
 
+    public $pendingConfirmedMoveIds;
+    public $pendingConfirmedMoveDate;
+    public $pendingConfirmedMoveDeliveryDate;
+
+    public $pendingUnplanOrderId;
+    public $pendingUnplanDeliveryDate;
+
     public $limitExceededOrder;
     public $limitExceededDate;
 
@@ -52,6 +59,7 @@ class ProductPlanning extends Component
     protected $listeners = [
         'plan-order' => 'planOrder',
         'unplanOrder' => 'unplanOrder',
+        'unplan-confirmed-order' => 'warnUnplanConfirmedOrder',
         'move-planning' => 'movePlanning',
         'confirm-plan-order' => 'confirmPlanOrder',
             'addBlockedDay' => 'addBlockedDay',
@@ -86,7 +94,12 @@ class ProductPlanning extends Component
             ->values()
             ->toArray();
 
-        $this->unplannedOrders = Order::whereNull('planned_start')->where('status', 'Bevestigd')->get();
+        // 'Bevestigd' orders zonder planned_start zijn een overblijfsel uit de oude situatie
+        // (voorheen kon een order bevestigd worden zonder eerst gepland te zijn) — die moeten
+        // hier ook nog verschijnen, anders zijn ze nooit meer in te plannen.
+        $this->unplannedOrders = Order::whereNull('planned_start')
+            ->whereIn('status', ['Ongepland', 'Bevestigd'])
+            ->get();
 
         $this->blockedDays = is_array($this->settings->blocked_days)
             ? $this->settings->blocked_days
@@ -160,6 +173,7 @@ class ProductPlanning extends Component
                 'planning_id' => $plan->id,
                 'order_id' => $order->id,
                 'planned_m2' => $plan->planned_m2,
+                'is_confirmed' => $order->status === 'Bevestigd',
                 'title' => $order->klantnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
             ]
         ]));
@@ -332,7 +346,7 @@ class ProductPlanning extends Component
         $this->dispatch('showSettingModal');
     }
 
-    public function movePlanning($planningIds, $targetDate)
+    public function movePlanning($planningIds, $targetDate, $skipConfirmedCheck = false)
     {
 
         if (!$planningIds || !$targetDate) return;
@@ -340,6 +354,18 @@ class ProductPlanning extends Component
         $planningIds = is_array($planningIds) ? $planningIds : [$planningIds];
         $movingPlans = OrderPlanning::whereIn('id', $planningIds)->get();
         if ($movingPlans->isEmpty()) return;
+
+        if (! $skipConfirmedCheck) {
+            $confirmedPlan = $movingPlans->first(fn ($plan) => $plan->order?->status === 'Bevestigd');
+
+            if ($confirmedPlan) {
+                $this->pendingConfirmedMoveIds = $planningIds;
+                $this->pendingConfirmedMoveDate = $targetDate;
+                $this->pendingConfirmedMoveDeliveryDate = $confirmedPlan->order->delivery_date;
+                $this->dispatch('showReconfirmModal');
+                return;
+            }
+        }
 
         $limit = $this->settings->max_m2_per_day;
 
@@ -393,10 +419,27 @@ class ProductPlanning extends Component
             $firstDate = OrderPlanning::where('order_id', $id)
                 ->orderBy('planned_date')
                 ->value('planned_date');
-            Order::where('id', $id)->update(['planned_start' => $firstDate]);
+            $this->markPlanned($id, $firstDate);
         }
 
         $this->dispatch('ordersUpdated', ['orders' => $this->getOrders()]);
+    }
+
+    public function confirmRescheduleConfirmedOrder()
+    {
+        if (! $this->pendingConfirmedMoveIds || ! $this->pendingConfirmedMoveDate) return;
+
+        $this->movePlanning($this->pendingConfirmedMoveIds, $this->pendingConfirmedMoveDate, true);
+
+        $this->dispatch('hideReconfirmModal');
+        $this->reset(['pendingConfirmedMoveIds', 'pendingConfirmedMoveDate', 'pendingConfirmedMoveDeliveryDate']);
+    }
+
+    public function cancelRescheduleConfirmedOrder()
+    {
+        $this->dispatch('hideReconfirmModal');
+        $this->dispatch('ordersUpdated', ['orders' => $this->getOrders()]);
+        $this->reset(['pendingConfirmedMoveIds', 'pendingConfirmedMoveDate', 'pendingConfirmedMoveDeliveryDate']);
     }
 
 
@@ -527,8 +570,7 @@ class ProductPlanning extends Component
                     ->orderBy('planned_date')
                     ->value('planned_date');
 
-                Order::where('id', $orderId)
-                    ->update(['planned_start' => $firstDate]);
+                $this->markPlanned($orderId, $firstDate);
             }
 
             $this->reset(['pendingPlanningId', 'pendingDate']);
@@ -558,6 +600,20 @@ class ProductPlanning extends Component
     /*---------------------------------------
     | HELPERS
     ----------------------------------------*/
+    protected function markPlanned($orderId, $firstDate)
+    {
+        $order = Order::find($orderId);
+        if (! $order) return;
+
+        $order->planned_start = $firstDate;
+
+        if ($order->status === 'Ongepland') {
+            $order->status = 'Gepland & niet bevestigd';
+        }
+
+        $order->save();
+    }
+
     protected function getDayM2($date)
     {
         return OrderPlanning::where('planned_date', $date)->sum('planned_m2');
@@ -625,7 +681,7 @@ class ProductPlanning extends Component
         $firstDate = OrderPlanning::where('order_id', $orderId)
             ->orderBy('planned_date')
             ->value('planned_date');
-        Order::where('id', $orderId)->update(['planned_start' => $firstDate]);
+        $this->markPlanned($orderId, $firstDate);
 
         // Verwijder van ongeplande orders
         $this->unplannedOrders = $this->unplannedOrders
@@ -638,9 +694,14 @@ class ProductPlanning extends Component
     }
 
 
-    public function unplanOrder($orderId)
+    public function unplanOrder($orderId, $skipConfirmedCheck = false)
     {
         $order = Order::with('orderLines','planning')->findOrFail($orderId);
+
+        if (! $skipConfirmedCheck && $order->status === 'Bevestigd') {
+            $this->warnUnplanConfirmedOrder($orderId);
+            return;
+        }
 
         // Verwijder alle planning records
         $order->planning()->delete();
@@ -658,6 +719,33 @@ class ProductPlanning extends Component
         $this->dispatch('ordersUpdated', [
             'orders' => $this->getOrders()
         ]);
+    }
+
+    public function warnUnplanConfirmedOrder($orderId)
+    {
+        $order = Order::find($orderId);
+        if (! $order) return;
+
+        $this->pendingUnplanOrderId = $orderId;
+        $this->pendingUnplanDeliveryDate = $order->delivery_date;
+        $this->dispatch('showUnplanConfirmModal');
+    }
+
+    public function confirmUnplanConfirmedOrder()
+    {
+        if (! $this->pendingUnplanOrderId) return;
+
+        $this->unplanOrder($this->pendingUnplanOrderId, true);
+
+        $this->dispatch('hideUnplanConfirmModal');
+        $this->reset(['pendingUnplanOrderId', 'pendingUnplanDeliveryDate']);
+    }
+
+    public function cancelUnplanConfirmedOrder()
+    {
+        $this->dispatch('hideUnplanConfirmModal');
+        $this->dispatch('ordersUpdated', ['orders' => $this->getOrders()]);
+        $this->reset(['pendingUnplanOrderId', 'pendingUnplanDeliveryDate']);
     }
 
     public function removeBlockedDay($date)
@@ -747,7 +835,7 @@ class ProductPlanning extends Component
         $firstDate = OrderPlanning::where('order_id', $orderId)
             ->orderBy('planned_date')
             ->value('planned_date');
-        Order::where('id', $orderId)->update(['planned_start' => $firstDate]);
+        $this->markPlanned($orderId, $firstDate);
 
         // ✅ Update ongeplande orders
         $this->unplannedOrders = $this->unplannedOrders
@@ -859,7 +947,7 @@ class ProductPlanning extends Component
         $firstDate = OrderPlanning::where('order_id', $orderId)
             ->orderBy('planned_date')
             ->value('planned_date');
-        Order::where('id', $orderId)->update(['planned_start' => $firstDate]);
+        $this->markPlanned($orderId, $firstDate);
 
         // ✅ verwijder order uit ongeplande orders als die nog daar is
         $this->unplannedOrders = $this->unplannedOrders
