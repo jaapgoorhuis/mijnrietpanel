@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ZetwerkApp Preview",
+      "runtimeExecutable": "C:\\Users\\JaapGoorhuis\\Documents\\Development\\mijnrietpanel\\.claude\\start-preview.bat",
+      "runtimeArgs": [],
+      "port": 4173
+    },
+    {
+      "name": "ZetwerkAPI",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["-d", "extension_dir=ext", "C:\\Users\\JaapGoorhuis\\Documents\\Development\\zetwerk-app\\zetwerk-api\\artisan", "serve", "--host=0.0.0.0", "--port=8000"],
+      "port": 8000
+    }
+  ]
+}

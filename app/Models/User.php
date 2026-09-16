@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\PasswordResetMail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
 
 class User extends Authenticatable
 {
@@ -43,6 +45,15 @@ class User extends Authenticatable
 
     public function companys() {
         return $this->belongsTo(Company::class, 'bedrijf_id', 'id');
+    }
+
+    /**
+     * Stuur de wachtwoord-reset-mail via onze eigen NL/EN Mailable in plaats van
+     * Laravel's standaard notificatie, die geen Nederlandse vertaling heeft.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        Mail::to($this->email)->send(new PasswordResetMail($this, $token));
     }
 
     /**
