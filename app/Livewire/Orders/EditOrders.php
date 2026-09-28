@@ -120,7 +120,19 @@ class EditOrders extends Component
 
     public function updateOrder($id)
     {
-        DB::transaction(function () {
+        $claimed = false;
+
+        DB::transaction(function () use (&$claimed) {
+            // Alleen de eerste aanroep mag doorgaan; dubbele klikken/verzoeken vallen hier af
+            // (voorkomt dat alle mails en prijsregels meerdere keren verstuurd/aangemaakt worden).
+            $claimed = Order::where('id', $this->order->id)
+                ->where('status', 'Gepland & niet bevestigd')
+                ->update(['status' => 'Bevestigd']) > 0;
+
+            if (! $claimed) {
+                return;
+            }
+
             foreach ($this->priceRules as $priceRule) {
                 $rule = trim($priceRule['rule'] ?? '');
                 $price = $priceRule['price'] ?? null;
@@ -162,6 +174,10 @@ class EditOrders extends Component
 
             app(PricingServices::class)->updateDocumentPricing($freshOrder);
         });
+
+        if (! $claimed) {
+            return $this->redirect('/orders');
+        }
 
         $order = Order::with([
             'Suplier',

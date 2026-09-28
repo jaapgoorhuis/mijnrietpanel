@@ -148,8 +148,9 @@
                             <div class="text-red-500">@error('rietpanel_comment') {{ $message }} @enderror</div>
                             </div>
 
-                            <button wire:click="updateOrder({{$order->id}})" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                                Order versturen & bevestigen
+                            <button wire:click="updateOrder({{$order->id}})" wire:loading.attr="disabled" wire:target="updateOrder" type="button" class="text-white bg-red-600 hover:bg-red-800 disabled:opacity-60 disabled:cursor-not-allowed focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                                <span wire:loading.remove wire:target="updateOrder">Order versturen & bevestigen</span>
+                                <span wire:loading wire:target="updateOrder"><i class="fa-solid fa-spinner fa-spin"></i> Bezig met versturen...</span>
                             </button>
                             <button wire:click="cancelNextModal()" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 ">Vorige</button>
                         </div>
