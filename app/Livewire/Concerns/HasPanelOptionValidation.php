@@ -344,6 +344,12 @@ trait HasPanelOptionValidation
 
     public function togglePanelOption(int $index, int $option): void
     {
+        if ($option === 1
+            && ! config('panel.layback_enabled')
+            && ! in_array(1, $this->selectedPanelOption[$index] ?? [])) {
+            return;
+        }
+
         if (!$this->hasValidPanelLength($index)) {
             $this->addError(
                 "totaleLengte.$index",

@@ -64,6 +64,7 @@
             3 => __('messages.Nok afschuining'),
             4 => __('messages.Vrije ruimte')
         ] as $option => $label)
+            @continue($option === 1 && ! config('panel.layback_enabled') && ! in_array(1, $selectedOptions))
             <label class="cursor-pointer flex flex-col relative mt-[20px]">
 
                 <div

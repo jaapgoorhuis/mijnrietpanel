@@ -741,7 +741,8 @@ class CreateOffertes extends Component
                $this->m2[$index] = 0;
            }
            else {
-               $this->m2[$index] = round($lengtePaneelM * $werkendeBreedteM * intval($this->aantal[$index]),2);
+               // Eerst per stuk afronden, zodat het totaal niet afhangt van hoe de stuks over regels verdeeld zijn
+               $this->m2[$index] = round(round($lengtePaneelM * $werkendeBreedteM, 2) * intval($this->aantal[$index]), 2);
            }
     }
 }
