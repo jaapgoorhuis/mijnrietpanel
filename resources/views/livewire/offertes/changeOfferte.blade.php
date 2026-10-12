@@ -175,6 +175,7 @@
                                 <label for="merk_paneel" class="text-gray-400">{{ __('messages.Merk element') }} *</label>
                                 <select @if(count($this->offerteLines)) disabled @endif id="merk_paneel" wire:model="merk_paneel" class="disabled:hover:cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     @foreach($this->brands as  $brands)
+                                        @continue($brands->status == 0 && $brands->name !== $this->merk_paneel)
                                         <option @if($brands->status == 0) disabled @endif class="disabled:bg-[#ededea]" value="{{$brands->name}}">{{$brands->name}}</option>
                                     @endforeach
                                 </select>
