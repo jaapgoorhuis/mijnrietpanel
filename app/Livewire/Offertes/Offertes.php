@@ -124,7 +124,7 @@ class Offertes extends Component
             'kerndikte' => $offerte->kerndikte,
             'intaker' => $offerte->intaker,
             'user_id' => Auth::user()->id,
-            'status' => 'In behandeling',
+            'status' => 'Ongepland',
             'order_id' => $orderId,
             'discount' => $offerte->discount,
             'marge' => $offerte->marge ?? 0,
