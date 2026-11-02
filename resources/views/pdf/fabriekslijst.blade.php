@@ -143,40 +143,6 @@
 {{--                    @endif--}}
                 </td>
             </tr>
-
-            @php
-                // Waterstops uit de nieuwe tabel, met fallback naar oude data op de orderregel
-                $lineWaterstops = $orderLine->waterstops->sortBy([['vertical', 'asc'], ['horizontal', 'asc']]);
-
-                if ($lineWaterstops->isEmpty() && $orderLine->waterstop_type) {
-                    $lineWaterstops = collect([
-                        (object) [
-                            'type' => $orderLine->waterstop_type,
-                            'vertical' => $orderLine->waterstop_vertical,
-                            'horizontal' => $orderLine->waterstop_horizontal ?? 0,
-                        ]
-                    ]);
-                }
-            @endphp
-
-            @if($lineWaterstops->isNotEmpty())
-                <tr>
-                    <td class="header">Waterstop</td>
-                    <td style="color:red; font-weight: bold">
-                        @foreach($lineWaterstops as $waterstop)
-                            {{ $waterstop->type }} mm &mdash; V: {{ $waterstop->vertical }} mm,
-                            @if(($waterstop->horizontal ?? 0) < 0)
-                                H: {{ abs($waterstop->horizontal) }} mm naar links
-                            @elseif(($waterstop->horizontal ?? 0) > 0)
-                                H: {{ $waterstop->horizontal }} mm naar rechts
-                            @else
-                                gecentreerd in het midden van het element
-                            @endif
-                            <br>
-                        @endforeach
-                    </td>
-                </tr>
-            @endif
         @endforeach
     </table>
 
