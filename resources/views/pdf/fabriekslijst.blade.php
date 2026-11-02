@@ -98,12 +98,22 @@
                             ? public_path("storage/images/rietpanel/paneel-$keyString.png")
                             : public_path("storage/images/rietpanel/paneel.png");
 
+                            // CB-label tussen de CB-streepjes in de afbeelding plaatsen (op ±89,65% en ±99,3% van de breedte).
+                            // De afbeelding staat gecentreerd in de banner (±632px breed, 120px hoog, background-size: contain).
+                            $cbStyle = '';
+                            if ($orderLine->fillCb && is_file($imagePath)) {
+                                [$imgW, $imgH] = getimagesize($imagePath);
+                                $renderW = min(632, 120 * $imgW / $imgH);
+                                $cbStyle = sprintf('right:auto; left:50%%; margin-left:%.1fpx; width:%.1fpx; text-align:center;',
+                                    (0.8965 - 0.5) * $renderW, 0.0965 * $renderW);
+                            }
+
                         @endphp
 
                         <div class="panel-banner" style="background-image: url('{{ $imagePath }}');">
 
                             @if($orderLine->fillCb)
-                                <div class="cb-label">
+                                <div class="cb-label" style="{{ $cbStyle }}">
                                     <strong>{{$orderLine->fillCb}} mm</strong>
                                 </div>
                             @endif
