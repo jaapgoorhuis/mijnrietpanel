@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fabriekslijst</title>
+    <title>Fabriekslijst Order #{{ $order->order_id }}</title>
     <link rel="stylesheet" href="{{ asset('pdf.css') }}" type="text/css">
 </head>
 <body>
@@ -125,7 +125,7 @@
                                         &larr; {{$orderLine->vrije_ruimte_2}} mm &rarr;
                                     </strong>
                                 </div>
-{{--                            @endif--}}
+                            @endif
 
                             @if($orderLine->lb)
                                 <div class="lb-label">
@@ -140,7 +140,7 @@
                             </div>
                         </div>
 
-                    @endif
+{{--                    @endif--}}
                 </td>
             </tr>
         @endforeach
