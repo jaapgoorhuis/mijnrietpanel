@@ -98,8 +98,8 @@ Details extends Component
                     continue;
                 }
 
-                // veilige ZIP naam
-                $safeName = str_replace(['/', '\\'], '_', $this->category->name);
+                // veilige bestandsnaam voor in de ZIP (elk bestand z'n eigen naam)
+                $safeName = str_replace(['/', '\\'], '_', $detail->file_name);
 
                 $filePath = Storage::disk('public')->path('details/' . $detail->file_name);
 

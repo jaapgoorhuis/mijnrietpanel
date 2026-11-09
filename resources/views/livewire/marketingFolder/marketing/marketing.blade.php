@@ -80,7 +80,7 @@
                                 </h2>
 
                                 {{-- Download knop klein --}}
-                                <a target="_blank" href="{{ asset('/storage/marketing/' . $marketing->file_name) }}" class="w-full mb-[20px]">
+                                <a download="{{ $marketing->file_name }}" href="{{ asset('/storage/marketing/' . $marketing->file_name) }}" class="w-full mb-[20px]">
                                     <button type="button"
                                             class="w-full bg-gray-800 hover:bg-gray-900 text-white rounded-md text-sm px-3 py-1.5 flex items-center justify-center gap-1">
                                         <i class="fa-solid fa-download text-[0.7rem]"></i>
