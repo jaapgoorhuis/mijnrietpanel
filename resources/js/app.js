@@ -33,6 +33,23 @@ function dayHasOrders(calendar, dateStr, excludeEventId = null) {
     });
 }
 
+// --- Staat er een order (geen notitie/blokkade) op deze dag? ---
+function dayHasOrderEvents(calendar, dateStr) {
+    return calendar.getEvents().some(ev =>
+        ev.extendedProps?.type === 'order' && ev.startStr === dateStr
+    );
+}
+
+// --- Staat er een blokkade of blokkerende notitie op deze dag (exclusief het gesleepte event)? ---
+function dayHasBlockingEvent(calendar, dateStr, excludeEventId = null) {
+    return calendar.getEvents().some(ev => {
+        if (ev.id === excludeEventId) return false;
+        if (ev.startStr !== dateStr) return false;
+        return ev.extendedProps?.type === 'manual-block'
+            || (ev.extendedProps?.type === 'note-block' && ev.extendedProps?.blocks_day === true);
+    });
+}
+
 function getDayLoad(calendar, dateStr) {
     let total = 0;
 
@@ -247,7 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 Livewire.dispatch('addNote', {
                     date: dateStr,
                     title: eventTitle,
-                    color: info.draggedEl?.dataset?.color || '#facc15'
+                    color: info.draggedEl?.dataset?.color || '#facc15',
+                    blocksDay: info.draggedEl?.dataset?.blocks === '1'
                 });
 
                 info.event.remove();
@@ -323,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         // --- Beperk drops binnen kalender ---
-        eventAllow: dropInfo => {
+        eventAllow: (dropInfo, draggedEvent) => {
             const dateStr = dropInfo.startStr || dropInfo.start.toISOString().split('T')[0];
             const type = dropInfo.event?.extendedProps?.type || dropInfo.draggedEl?.dataset.type || 'order';
             const draggedId = dropInfo.event?.extendedProps?.originalId || dropInfo.draggedEl?.dataset.id;
@@ -339,6 +357,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- 2️⃣ Check dagnaam voor weekenden ---
             const dayName = dropDate.toLocaleDateString('nl-NL', { weekday: 'long' }).toLowerCase();
+
+            // --- Notitie die de dag blokkeert: gedraagt zich als een handmatige blokkade ---
+            const isBlockingNote = dropInfo.draggedEl?.dataset?.blocks === '1'
+                || (draggedEvent?.extendedProps?.type === 'note-block' && draggedEvent?.extendedProps?.blocks_day === true);
+
+            if (isBlockingNote) {
+                if (manualBlockedDates.includes(dateStr)) return false;
+                if (blockedWeekDays.includes(dayName)) return false;
+                if (dayHasBlockingEvent(calendar, dateStr, draggedEvent?.id)) return false;
+                if (dayHasOrderEvents(calendar, dateStr)) return false;
+                return true;
+            }
 
             if (type === 'note-block') {
                 return true;
@@ -364,6 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Niet toestaan als er al een manual block op die dag staat
             const existingBlock = calendar.getEvents().some(ev => ev.extendedProps?.type === 'manual-block' && ev.startStr === dateStr);
             if (existingBlock) return false;
+
+            // Niet toestaan op een dag met een notitie die de dag blokkeert
+            if (dayHasBlockingEvent(calendar, dateStr)) return false;
 
             // ✅ Anders is droppen toegestaan
             return true;
@@ -572,6 +605,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 info.el.style.border = '2px solid rgba(0,0,0,0.3)';
                 info.el.style.borderRadius = '4px';
                 info.el.style.opacity = '0.9';
+
+                if (info.event.extendedProps?.blocks_day === true) {
+                    const lock = document.createElement('i');
+                    lock.className = 'fa-solid fa-lock';
+                    lock.style.marginRight = '4px';
+                    lock.style.fontSize = '10px';
+                    lock.title = 'Blokkeert de dag';
+                    (info.el.querySelector('.fc-event-title') || info.el).prepend(lock);
+                }
                 return;
             }
 
@@ -723,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: 'note-' + el.dataset.id,
                     title: el.dataset.title,
                     color: el.dataset.color || 'yellow',
-                    extendedProps: { type: 'note-block', originalId: el.dataset.id }
+                    extendedProps: { type: 'note-block', originalId: el.dataset.id, blocks_day: el.dataset.blocks === '1' }
                 }),
                 removeOnDrop: false
             });
@@ -795,7 +837,8 @@ document.addEventListener('DOMContentLoaded', () => {
             textColor: getContrastColor(note.color),
             extendedProps: {
                 type: 'note-block',
-                note_id: note.id
+                note_id: note.id,
+                blocks_day: note.blocks_day === true
             }
         });
     });
@@ -813,9 +856,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!event) return;
 
-        event.setProp('title', data.title);
-        event.setProp('backgroundColor', data.color);
-        event.setProp('borderColor', data.color);
+        const startStr = event.startStr;
+        event.remove();
+
+        // Opnieuw toevoegen zodat o.a. het slotje (blokkeert de dag) opnieuw getekend wordt
+        calendar.addEvent({
+            id,
+            title: data.title,
+            start: startStr,
+            allDay: true,
+            backgroundColor: data.color,
+            borderColor: data.color,
+            textColor: getContrastColor(data.color),
+            extendedProps: {
+                type: 'note-block',
+                note_id: data.id,
+                blocks_day: data.blocks_day === true
+            }
+        });
     });
 
 

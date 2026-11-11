@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderLines;
 use App\Models\OrderPlanning;
 use App\Models\PlanningNote;
+use App\Models\PlanningNoteTemplate;
 use App\Models\ProductPlanningSetting;
 use App\Models\User;
 use App\Services\OrderPdfService;
@@ -54,6 +55,10 @@ class ProductPlanning extends Component
     public $editingNoteId = null;
     public $editingNoteTitle = '';
     public $editingNoteColor = '#f59e0b'; // default oranje
+    public $editingNoteBlocksDay = false;
+    public $editingNoteBlockError = '';
+
+    public $noteTemplates = [];
 
 
     protected $listeners = [
@@ -115,6 +120,8 @@ class ProductPlanning extends Component
             $this->coreThicknessColors[$k->id] = $k->color;
         }
 
+        $this->resetNoteTemplates();
+
         if(Auth::user()->is_admin || Auth::user()->is_production_employee) {
             return view('livewire.productPlanning.productPlanning');
         } else {
@@ -125,15 +132,56 @@ class ProductPlanning extends Component
 
     public function render() {
         if(Auth::user()->is_admin || Auth::user()->is_production_employee) {
-            return view('livewire.productPlanning.productPlanning');
+            // De sidebar toont alleen opgeslagen standaard notities, niet de rijen die nog in de popup worden bewerkt.
+            return view('livewire.productPlanning.productPlanning', [
+                'savedNoteTemplates' => PlanningNoteTemplate::orderBy('id')->get(),
+            ]);
         } else {
             session()->flash('error','U heeft geen rechten voor deze pagina');
             return $this->redirect('/dashboard', navigate: true);
         }
     }
 
+    public function resetNoteTemplates()
+    {
+        $this->noteTemplates = PlanningNoteTemplate::orderBy('id')->get()
+            ->map(fn ($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'color' => $t->color,
+                'blocks_day' => (bool) $t->blocks_day,
+            ])
+            ->all();
+
+        $this->resetValidation();
+    }
+
+    public function addNoteTemplate()
+    {
+        $this->noteTemplates[] = [
+            'id' => null,
+            'title' => '',
+            'color' => '#facc15',
+            'blocks_day' => false,
+        ];
+    }
+
+    public function removeNoteTemplate($index)
+    {
+        unset($this->noteTemplates[$index]);
+        $this->noteTemplates = array_values($this->noteTemplates);
+    }
+
     public function saveSettings()
     {
+        $this->validate([
+            'noteTemplates.*.title' => 'required|max:60',
+            'noteTemplates.*.color' => 'required',
+        ], [
+            'noteTemplates.*.title.required' => 'Geef de standaard notitie een naam.',
+            'noteTemplates.*.title.max' => 'De naam mag maximaal 60 tekens zijn.',
+        ]);
+
         // 1️⃣ Update kerndikte kleuren
         foreach ($this->coreThicknessColors as $id => $color) {
             KerndikteColor::where('id', $id)->update([
@@ -145,6 +193,25 @@ class ProductPlanning extends Component
             'blocked_days' => $this->blockedDays,
             'max_m2_per_day' => $this->max_m2_per_day,
         ]);
+
+        // Standaard notities synchroniseren: nieuwe maken, bestaande bijwerken, verwijderde weghalen.
+        // Bestaande notities op de kalender zijn kopieën en blijven staan.
+        $keptIds = [];
+        foreach ($this->noteTemplates as $row) {
+            $data = [
+                'title' => trim($row['title']),
+                'color' => $row['color'] ?: '#facc15',
+                'blocks_day' => (bool) ($row['blocks_day'] ?? false),
+            ];
+
+            if (! empty($row['id'])) {
+                PlanningNoteTemplate::where('id', $row['id'])->update($data);
+                $keptIds[] = $row['id'];
+            } else {
+                $keptIds[] = PlanningNoteTemplate::create($data)->id;
+            }
+        }
+        PlanningNoteTemplate::whereNotIn('id', $keptIds)->delete();
 
         // 3️⃣ Feedback + modal sluiten
         $this->dispatch('hideSettingModal');
@@ -193,12 +260,15 @@ class ProductPlanning extends Component
             'extendedProps' => [
                 'type' => 'note-block',
                 'note_id' => $note->id,
+                'blocks_day' => (bool) $note->blocks_day,
             ]
         ]);
     }
 
-    public function addNote($date, $title = 'Notitie', $color = '#facc15')
+    public function addNote($date, $title = 'Notitie', $color = '#facc15', $blocksDay = false)
     {
+        $blocksDay = filter_var($blocksDay, FILTER_VALIDATE_BOOLEAN);
+
         $exists = \App\Models\PlanningNote::where('date', $date)
             ->where('title', $title)
             ->where('color', $color)
@@ -206,10 +276,16 @@ class ProductPlanning extends Component
 
         if ($exists) return;
 
+        // Een blokkerende notitie mag niet op een dag die al geblokkeerd is of al orders heeft.
+        if ($blocksDay && ($this->isBlockedDay($date) || $this->dayHasPlannedOrders($date))) {
+            return;
+        }
+
         $note = \App\Models\PlanningNote::create([
             'date' => $date,
             'title' => $title,
-            'color' => $color
+            'color' => $color,
+            'blocks_day' => $blocksDay,
         ]);
 
         // 🔥 stuur direct naar frontend
@@ -217,7 +293,8 @@ class ProductPlanning extends Component
             'id' => $note->id,
             'title' => $note->title,
             'date' => $note->date,
-            'color' => $note->color
+            'color' => $note->color,
+            'blocks_day' => (bool) $note->blocks_day,
         ]);
     }
 
@@ -230,6 +307,8 @@ class ProductPlanning extends Component
         $this->editingNoteId = $note->id;
         $this->editingNoteTitle = $note->title;
         $this->editingNoteColor = $note->color;
+        $this->editingNoteBlocksDay = (bool) $note->blocks_day;
+        $this->editingNoteBlockError = '';
 
         $this->showNoteModal = true;
     }
@@ -238,9 +317,20 @@ class ProductPlanning extends Component
     {
         $note = PlanningNote::find($this->editingNoteId);
 
+        // Alleen aanzetten als de dag niet al geblokkeerd is of orders heeft.
+        if ($this->editingNoteBlocksDay && ! $note->blocks_day) {
+            $date = $note->date instanceof \Carbon\Carbon ? $note->date->format('Y-m-d') : $note->date;
+
+            if ($this->isBlockedDay($date, $note->id) || $this->dayHasPlannedOrders($date)) {
+                $this->editingNoteBlockError = 'Deze dag is al geblokkeerd of heeft al orders, dus de notitie kan de dag niet blokkeren.';
+                return;
+            }
+        }
+
         $note->update([
             'title' => $this->editingNoteTitle,
             'color' => $this->editingNoteColor,
+            'blocks_day' => (bool) $this->editingNoteBlocksDay,
         ]);
 
         $this->showNoteModal = false;
@@ -248,7 +338,8 @@ class ProductPlanning extends Component
         $this->dispatch('noteUpdated', [
             'id' => $note->id,
             'title' => $note->title,
-            'color' => $note->color
+            'color' => $note->color,
+            'blocks_day' => (bool) $note->blocks_day,
         ]);
     }
 
@@ -298,6 +389,12 @@ class ProductPlanning extends Component
     {
         $note = PlanningNote::find($id);
         if (!$note) return;
+
+        // Een blokkerende notitie mag niet naar een geblokkeerde dag of een dag met orders.
+        if ($note->blocks_day && ($this->isBlockedDay($date, $note->id) || $this->dayHasPlannedOrders($date))) {
+            $this->dispatch('ordersUpdated'); // zet de notitie in de kalender terug op de oude dag
+            return;
+        }
 
         $note->update([
             'date' => $date
@@ -632,7 +729,12 @@ class ProductPlanning extends Component
     }
 
 
-    protected function isBlockedDay($date)
+    protected function dayHasPlannedOrders($date)
+    {
+        return OrderPlanning::where('planned_date', $date)->exists();
+    }
+
+    protected function isBlockedDay($date, $ignoreNoteId = null)
     {
         $day = strtolower(date('l', strtotime($date)));
         $translate = [
@@ -653,7 +755,11 @@ class ProductPlanning extends Component
             if ($b['date'] === $date) return true;
         }
 
-        return false;
+        // Een notitie met "blokkeert de dag" telt ook als geblokkeerde dag
+        return PlanningNote::where('date', $date)
+            ->where('blocks_day', true)
+            ->when($ignoreNoteId, fn ($q) => $q->where('id', '!=', $ignoreNoteId))
+            ->exists();
     }
 
     /*---------------------------------------

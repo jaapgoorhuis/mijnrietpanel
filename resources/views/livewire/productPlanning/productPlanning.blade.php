@@ -148,6 +148,21 @@
                          data-type="note-block">
                         Sleep notitie
                     </div>
+
+                    @foreach($savedNoteTemplates as $template)
+                        <div class="fc-event p-2 mb-2 cursor-pointer"
+                             style="background-color: {{ $template->color }}; color: {{ getContrastColor($template->color) }}; border: 2px solid rgba(0,0,0,0.6); border-radius: 4px;"
+                             data-id="tpl-{{ $template->id }}"
+                             data-title="{{ $template->title }}"
+                             data-color="{{ $template->color }}"
+                             data-blocks="{{ $template->blocks_day ? '1' : '0' }}"
+                             data-type="note-block">
+                            {{ $template->title }}
+                            @if($template->blocks_day)
+                                <i class="fa-solid fa-lock ms-1" title="Blokkeert de dag"></i>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -253,7 +268,7 @@
     <div id="settingModal" wire:ignore.self class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
 
         ```
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-xl">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
 
             <!-- Header -->
             <div class="flex items-center justify-between border-b px-6 py-4">
@@ -322,6 +337,59 @@
                     </div>
                 </div>
 
+                <!-- Standaard notities -->
+                <div>
+                    <label class="block text-sm font-medium mb-3">
+                        Standaard notities
+                    </label>
+
+                    <div class="space-y-3">
+                        @foreach($noteTemplates as $i => $noteTemplate)
+                            <div class="border rounded-lg p-3" wire:key="note-template-{{ $i }}">
+                                <div class="flex items-center gap-3">
+                                    <input type="text"
+                                           wire:model="noteTemplates.{{ $i }}.title"
+                                           maxlength="60"
+                                           class="flex-1 border rounded-lg p-2"
+                                           placeholder="Naam, bijv. Onderhoud">
+
+                                    <input type="color"
+                                           wire:model="noteTemplates.{{ $i }}.color"
+                                           class="w-10 h-10 p-0 border-0">
+
+                                    <button type="button"
+                                            wire:click="removeNoteTemplate({{ $i }})"
+                                            class="text-red-500 hover:text-red-700"
+                                            title="Verwijderen">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <label class="flex items-center gap-2 mt-2 text-sm text-gray-600">
+                                    <input type="checkbox"
+                                           wire:model="noteTemplates.{{ $i }}.blocks_day"
+                                           class="w-4 h-4 rounded">
+                                    Blokkeert de dag (er kunnen geen orders op gepland worden)
+                                </label>
+
+                                @error('noteTemplates.'.$i.'.title')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <button type="button"
+                            wire:click="addNoteTemplate"
+                            class="mt-3 text-sm text-blue-600 font-medium">
+                        + Standaard notitie toevoegen
+                    </button>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                        Na het opslaan verschijnen ze in de zijbalk onder "Notitie toevoegen", om op een dag te slepen.
+                    </p>
+                </div>
+
             </div>
 
 
@@ -329,6 +397,7 @@
             <div class="flex justify-end gap-3 border-t px-6 py-4">
 
                 <button onclick="document.getElementById('settingModal').classList.add('hidden')"
+                        wire:click="resetNoteTemplates"
                         class="w-full sm:w-auto mt-[10px] text-black bg-white hover:bg-white border border-black focus:outline-none focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5">
                     Annuleren
                 </button>
@@ -363,6 +432,17 @@
                 <input type="color"
                        wire:model="editingNoteColor"
                        class="w-16 h-10 p-0 border-0 mb-4">
+
+                <!-- Blokkeert de dag -->
+                <label class="flex items-center gap-2 text-sm mb-2">
+                    <input type="checkbox"
+                           wire:model="editingNoteBlocksDay"
+                           class="w-4 h-4 rounded">
+                    Blokkeert de dag (er kunnen geen orders op gepland worden)
+                </label>
+                <p class="text-red-500 text-sm mb-3"
+                   x-show="$wire.editingNoteBlockError"
+                   x-text="$wire.editingNoteBlockError"></p>
 
                 <div class="flex justify-end gap-2">
                     <button @click="open = false"

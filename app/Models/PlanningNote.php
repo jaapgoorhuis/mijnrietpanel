@@ -10,5 +10,10 @@ class PlanningNote extends Model
         'date',
         'title',
         'color',
+        'blocks_day',
+    ];
+
+    protected $casts = [
+        'blocks_day' => 'boolean',
     ];
 }
