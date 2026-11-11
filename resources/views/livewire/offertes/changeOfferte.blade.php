@@ -273,9 +273,9 @@
                             </button>
                         </div>
 
-                        <div class="text-right text-lg">
-                            {{ __('messages.Totaal aantal m²') }}:
-                            <strong>{{ round(collect($this->offerteLines)->keys()->sum(fn ($i) => (float) ($this->m2[$i] ?? 0)), 2) }} m²</strong>
+                        <div class="mt-4 flex items-center justify-end gap-3 border-t border-gray-200 pt-3">
+                            <span class="text-sm text-gray-500">{{ __('messages.Totaal aantal m²') }}</span>
+                            <span class="rounded-md bg-gray-100 px-3 py-1 text-lg font-semibold">{{ round(collect($this->offerteLines)->keys()->sum(fn ($i) => (float) ($this->m2[$i] ?? 0)), 2) }} m²</span>
                         </div>
 
                         <div
