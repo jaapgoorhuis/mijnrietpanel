@@ -24,6 +24,9 @@ class Orders extends Component
 
     public array $pakketten = [];
 
+    // Order-ID's die de eerste order van een bedrijf zijn (alleen gevuld voor admins)
+    public array $firstOrderIds = [];
+
 
     public function change() {
         dd('updated');
@@ -32,6 +35,15 @@ class Orders extends Component
     {
         if(Auth::user()->is_admin) {
             $this->orders = Order::get();
+
+            // Eerste order per bedrijf; gebruikers zonder gekoppeld bedrijf (bedrijf_id 0) tellen niet mee
+            $this->firstOrderIds = Order::join('users', 'users.id', '=', 'orders.user_id')
+                ->where('users.bedrijf_id', '>', 0)
+                ->groupBy('users.bedrijf_id')
+                ->selectRaw('MIN(orders.id) as first_id')
+                ->pluck('first_id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
         }
         else if(Auth::user()->companys->is_reseller) {
             $this->orders = Order::whereHas('user', function ($query) {
