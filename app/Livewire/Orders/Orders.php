@@ -37,12 +37,24 @@ class Orders extends Component
             $this->orders = Order::get();
 
             // Eerste order per bedrijf; gebruikers zonder gekoppeld bedrijf (bedrijf_id 0) tellen niet mee
+            // "Eerste" = vroegst geplaatst (created_at), bij gelijke tijd de laagste id
+            // Alleen bedrijven die nog nooit een bevestigde order hebben gehad
+            $confirmedCompanyIds = Order::join('users', 'users.id', '=', 'orders.user_id')
+                ->where('orders.status', 'Bevestigd')
+                ->pluck('users.bedrijf_id')
+                ->unique()
+                ->all();
+
             $this->firstOrderIds = Order::join('users', 'users.id', '=', 'orders.user_id')
                 ->where('users.bedrijf_id', '>', 0)
-                ->groupBy('users.bedrijf_id')
-                ->selectRaw('MIN(orders.id) as first_id')
-                ->pluck('first_id')
+                ->whereNotIn('users.bedrijf_id', $confirmedCompanyIds)
+                ->orderBy('orders.created_at')
+                ->orderBy('orders.id')
+                ->get(['orders.id', 'users.bedrijf_id as company_id'])
+                ->unique('company_id')
+                ->pluck('id')
                 ->map(fn ($id) => (int) $id)
+                ->values()
                 ->all();
         }
         else if(Auth::user()->companys->is_reseller) {
