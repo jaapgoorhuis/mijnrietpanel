@@ -415,15 +415,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.innerText = eventTitle;
                 ordersContainer.appendChild(div);
 
-                new Draggable(ordersContainer, {
-                    itemSelector: '.fc-event',
-                    eventData: el => ({
-                        id: el.dataset.id,
-                        title: el.dataset.title,
-                        extendedProps: { originalId: el.dataset.id, type: 'order' }
-                    }),
-                    removeOnDrop: true
-                });
+                // Geen nieuwe Draggable aanmaken: de bak heeft er al één (initExternalDraggable)
+                // die nieuwe items automatisch oppakt. Een tweede zorgt dat een drop dubbel
+                // wordt verstuurd en de daglimiet-melding ten onrechte verschijnt.
 
                 Livewire.dispatch('unplanOrder', { orderId: originalId });
                 info.event.remove();
