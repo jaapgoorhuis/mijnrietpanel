@@ -140,6 +140,7 @@ return [
     'Totale prijs' => 'Total price',
     'Transportkosten (onder 50m²)' => 'Transport costs (under 50m²)',
     'Lengte toeslag per zaaglengte (onder 2500mm)' => 'Length allowance per saw length (under 2500mm)',
+    'Meerprijs Gemêleerd riet (per element)' => 'Surcharge mottled thatch (per element)',
     'Offerte tool' => 'Quotation tool',
     'Voorbeeld detailFolders' => 'Detail examples',
     'Mijn marketing' => 'My marketing',

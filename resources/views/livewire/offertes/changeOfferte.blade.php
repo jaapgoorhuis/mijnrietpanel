@@ -135,6 +135,7 @@
 
                                     <option value="Old look">Old look</option>
                                     <option value="New look">New look</option>
+                                    <option value="Gemêleerd">Gemêleerd</option>
 
                                 </select>
                             </div>

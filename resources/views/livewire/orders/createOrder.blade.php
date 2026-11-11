@@ -103,6 +103,7 @@
                                 <select id="rietkleur" wire:model="rietkleur" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                                     <option value="Old look">Old look</option>
                                     <option value="New look">New look</option>
+                                    <option value="Gemêleerd">Gemêleerd</option>
                                 </select>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">

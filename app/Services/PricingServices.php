@@ -150,6 +150,12 @@ class PricingServices
                 $amount = (float) $surcharge->price;
             }
 
+            // Gemêleerd riet: meerprijs per element (alleen als de rietkleur Gemêleerd is)
+            if ($surcharge->rule === 'gemeleerd' && $document->rietkleur === 'Gemêleerd') {
+                $qty = (int) $lines->sum('aantal');
+                $amount = round($qty * round((float) $surcharge->price, 2), 2);
+            }
+
             if ($surcharge->rule === 'order' && $orderLineHeeftOversize) {
                 $qty = 1;
                 $amount = (float) $surcharge->price;
