@@ -104,6 +104,7 @@ class ProductPlanning extends Component
         // hier ook nog verschijnen, anders zijn ze nooit meer in te plannen.
         $this->unplannedOrders = Order::whereNull('planned_start')
             ->whereIn('status', ['Ongepland', 'Bevestigd'])
+            ->with('user.company')
             ->get();
 
         $this->blockedDays = is_array($this->settings->blocked_days)
@@ -226,11 +227,11 @@ class ProductPlanning extends Component
     public function getOrders()
     {
     $orders = Order::whereHas('planning')
-        ->with('planning')
+        ->with('planning', 'user.company')
         ->get()
         ->flatMap(fn($order) => $order->planning->map(fn($plan) => [
             'id' => $plan->id,
-            'title' => $order->klantnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',
+            'title' => $order->bedrijfsnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',
             'start' => $plan->planned_date,
             'backgroundColor' => $order->kerndikte_color,
             'borderColor' => $order->kerndikte_color,
@@ -241,7 +242,7 @@ class ProductPlanning extends Component
                 'order_id' => $order->id,
                 'planned_m2' => $plan->planned_m2,
                 'is_confirmed' => $order->status === 'Bevestigd',
-                'title' => $order->klantnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
+                'title' => $order->bedrijfsnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
             ]
         ]));
         return $orders
@@ -802,7 +803,7 @@ class ProductPlanning extends Component
 
     public function unplanOrder($orderId, $skipConfirmedCheck = false)
     {
-        $order = Order::with('orderLines','planning')->findOrFail($orderId);
+        $order = Order::with('orderLines','planning','user.company')->findOrFail($orderId);
 
         if (! $skipConfirmedCheck && $order->status === 'Bevestigd') {
             $this->warnUnplanConfirmedOrder($orderId);

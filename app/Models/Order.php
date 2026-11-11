@@ -41,6 +41,12 @@ class Order extends Authenticatable
        return $this->belongsTo(User::class);
    }
 
+    // Bedrijfsnaam van de klant (via de gebruiker die de order plaatste); valt terug op de klantnaam.
+    public function getBedrijfsnaamAttribute()
+    {
+        return $this->user?->company?->bedrijfsnaam ?: $this->klantnaam;
+    }
+
     public function getKerndikteColorAttribute()
     {
         // Zoek de kleur in kerndikte_colors waar de kerndikte matcht

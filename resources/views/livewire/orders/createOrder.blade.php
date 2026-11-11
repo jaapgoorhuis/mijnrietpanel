@@ -235,6 +235,11 @@
                             </button>
                         </div>
 
+                        <div class="text-right text-lg">
+                            {{ __('messages.Totaal aantal m²') }}:
+                            <strong>{{ round(collect($this->orderLines)->keys()->sum(fn ($i) => (float) ($this->m2[$i] ?? 0)), 2) }} m²</strong>
+                        </div>
+
                         <div
                             x-data="{ show:false, message:'' }"
                             x-on:show-form-error.window="

@@ -68,6 +68,8 @@ return [
     'Nee' => 'No',
     'Weet je zeker dat je de order #order_id wilt verwijderen?' => 'Are you sure you want to delete order #:order_id?',
     'Order datum' => 'Order date',
+    'Orderbevestiging #' => 'Order confirmation #',
+    'Totaal aantal m²' => 'Total m²',
     'Afleverdatum' => 'Deliverydate',
     'Gewenste afleverdatum' => 'Requested deliverydate',
     'Adres' => 'Adress',

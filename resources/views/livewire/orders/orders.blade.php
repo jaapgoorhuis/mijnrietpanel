@@ -97,7 +97,14 @@
                         <tbody>
                         @foreach($this->orders as $order)
                             <tr class="border-b ">
-                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{$order->order_id}}</th>
+                                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                                    @admin
+                                        @if(in_array($order->id, $this->firstOrderIds) && $order->status != 'Bevestigd')
+                                            <span class="text-red-600 me-1" title="Eerste order van dit bedrijf"><i class="fa-solid fa-circle-exclamation"></i></span>
+                                        @endif
+                                    @endadmin
+                                    {{$order->order_id}}
+                                </th>
                                 <td class="px-4 py-3">{{$order->project_naam}}</td>
                                 <td class="px-4 py-3">{{$order->intaker}}</td>
                                 <td class="px-4 py-3">@if($order->user->is_active)

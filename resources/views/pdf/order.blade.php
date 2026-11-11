@@ -57,7 +57,11 @@
         <table class="w-full">
             <tr>
                 <td class="w-half">
-                    <div>Order #: {{$order->order_id}}</div>
+                    @if($order->status == 'Bevestigd')
+                        <div>{{ __('messages.Orderbevestiging #') }}: {{$order->order_id}}</div>
+                    @else
+                        <div>Order #: {{$order->order_id}}</div>
+                    @endif
                     <div>{{ __('messages.Order datum') }}: {{date("d-m-Y", strtotime($order->created_at))}}</div><br/>
                     <div>{{ __('messages.Bedrijfs-id') }}: {{$company->id}}</div>
                     <div>{{ __('messages.Projectnaam') }}: {{$order->project_naam}}</div>
