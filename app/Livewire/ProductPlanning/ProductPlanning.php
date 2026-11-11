@@ -231,7 +231,7 @@ class ProductPlanning extends Component
         ->get()
         ->flatMap(fn($order) => $order->planning->map(fn($plan) => [
             'id' => $plan->id,
-            'title' => $order->bedrijfsnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',
+            'title' => $order->bedrijfsnaam.' - '.$order->project_naam.' ('.$plan->planned_m2.' m²)',
             'start' => $plan->planned_date,
             'backgroundColor' => $order->kerndikte_color,
             'borderColor' => $order->kerndikte_color,
@@ -242,7 +242,7 @@ class ProductPlanning extends Component
                 'order_id' => $order->id,
                 'planned_m2' => $plan->planned_m2,
                 'is_confirmed' => $order->status === 'Bevestigd',
-                'title' => $order->bedrijfsnaam.' '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
+                'title' => $order->bedrijfsnaam.' - '.$order->project_naam.' ('.$plan->planned_m2.' m²)',// ✅ hier het echte getal gebruiken
             ]
         ]));
         return $orders
