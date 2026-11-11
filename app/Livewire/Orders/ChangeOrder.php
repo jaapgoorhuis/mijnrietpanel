@@ -541,11 +541,17 @@ class ChangeOrder extends Component
         $this->isSaving = true;
         $wasConfirmed = $order->status === 'Bevestigd';
 
+        // Verandert kerndikte, marge of korting, dan moet de prijs per m² altijd opnieuw berekend worden
+        $pricingInputsChanged = (string) $order->kerndikte !== (string) $this->kerndikte
+            || (float) $order->marge !== (float) $this->marge
+            || (float) $order->discount !== (float) $this->discount;
+        $recalculatePrices = $this->recalculateOrderPrices || $pricingInputsChanged;
+
         $oldLinePrices = $order->orderLines
             ->values()
             ->mapWithKeys(fn ($line, $index) => [$index => $line->price_per_m2]);
 
-        DB::transaction(function () use ($order, $wasConfirmed, $oldLinePrices) {
+        DB::transaction(function () use ($order, $wasConfirmed, $oldLinePrices, $recalculatePrices) {
             $order->update([
                 'klantnaam' => $this->klant_naam,
                 'referentie' => $this->referentie,
@@ -605,7 +611,7 @@ class ChangeOrder extends Component
                     'waterstop_vertical' => $firstWaterstop ? ($firstWaterstop['vertical'] ?? null) : null,
                     'waterstop_horizontal' => $firstWaterstop ? ($firstWaterstop['horizontal'] ?? 0) : null,
 
-                    'price_per_m2' => $this->recalculateOrderPrices ? null : ($oldLinePrices[$index] ?? 0),
+                    'price_per_m2' => $recalculatePrices ? null : ($oldLinePrices[$index] ?? 0),
                 ]);
             }
 
@@ -625,7 +631,7 @@ class ChangeOrder extends Component
         $order->refresh();
         $order->load(['orderLines.waterstops', 'user', 'orderRules', 'surcharges']);
 
-        if ($this->recalculateOrderPrices || $wasConfirmed) {
+        if ($recalculatePrices || $wasConfirmed) {
             app(\App\Services\PricingServices::class)->updateDocumentPricing($order);
 
             $order->refresh();
